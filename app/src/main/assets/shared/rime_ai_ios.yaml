@@ -1,0 +1,1437 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Derived from the Trime default theme.
+config_version: '4.4'
+name: Zephyr Input · iOS QWERTY
+author: osfans
+style:
+  auto_caps: true
+  candidate_font: han.ttf
+  candidate_padding: 5
+  candidate_spacing: 0.5
+  candidate_text_size: 18.15
+  candidate_view_height: 28
+  comment_font: comment.ttf
+  comment_height: 0
+  comment_on_top: true
+  comment_text_size: 12
+  hanb_font: hanb.ttf
+  horizontal: true
+  horizontal_gap: 6
+  keyboard_padding: 3
+  keyboard_padding_left: 0
+  keyboard_padding_right: 40
+  keyboard_padding_bottom: 4
+  keyboard_padding_land: 3
+  keyboard_padding_land_bottom: 4
+  key_font: ''
+  key_height: 48
+  key_long_text_size: 16
+  key_text_size: 24
+  key_width: 10.0
+  label_text_size: 22
+  label_font: label.ttf
+  latin_font: ''
+  keyboard_height: 250
+  keyboard_height_land: 180
+  preview_font: ''
+  preview_height: 64
+  preview_offset: -2
+  preview_text_size: 34
+  proximity_correction: true
+  reset_ascii_mode: false
+  round_corner: 6
+  shadow_radius: 0.0
+  symbol_font: ''
+  symbol_text_size: 10
+  text_font: latin.ttf
+  vertical_correction: 0
+  vertical_gap: 10
+  enter_label_mode: 2
+  enter_labels:
+    go: 前往
+    done: 完成
+    next: 下个
+    pre: 上个
+    search: 搜索
+    send: 发送
+    default: return
+window:
+  insets:
+    vertical: 4
+    horizontal: 4
+  item_padding:
+    horizontal: 4
+  foreground:
+    label_font_size: 20
+    text_font_size: 20
+    comment_font_size: 16
+fallback_colors:
+  candidate_text_color: text_color
+preset_color_schemes:
+  default:
+    name: iOS Light
+    author: osfans
+    back_color: '0xd1d3d9'
+    border_color: '0xc1c7ca'
+    candidate_separator_color: '0xc1c7ca'
+    candidate_text_color: '0x151515'
+    comment_text_color: '0x66717b'
+    hilited_back_color: '0xccd3d7da'
+    hilited_candidate_back_color: '0xffffff'
+    hilited_candidate_text_color: '0x151515'
+    hilited_comment_text_color: '0x3c444b'
+    hilited_key_back_color: '0xb8bdc7'
+    hilited_key_symbol_color: '0x00000000'
+    hilited_key_text_color: '0x151515'
+    hilited_off_key_back_color: '0xd3d7da'
+    hilited_off_key_text_color: '0x151515'
+    hilited_on_key_back_color: '0xd3d7da'
+    hilited_on_key_text_color: '0x151515'
+    hilited_text_color: '0x151515'
+    key_back_color: '0xffffff'
+    key_symbol_color: '0x5f6b73'
+    key_text_color: '0x151515'
+    keyboard_back_color: '0xd1d3d9'
+    label_color: '0x151515'
+    off_key_back_color: '0xabb0ba'
+    off_key_text_color: '0x151515'
+    on_key_back_color: '0xffffff'
+    on_key_text_color: '0x151515'
+    preview_back_color: '0xffffff'
+    preview_text_color: '0x151515'
+    shadow_color: '0x00000000'
+    text_color: '0x151515'
+    text_back_color: '0xcce4e7e9'
+    candidate_background: '0xd1d3d9'
+    root_background: '0xd1d3d9'
+    key_border_color: '0xa6a9af'
+liquid_keyboard:
+  author: tumuyan
+  row: 6
+  row_land: 5
+  key_height: 40
+  key_height_land: 40
+  single_width: 60
+  vertical_gap: 1
+  margin_x: 5
+  fixed_key_bar:
+    position: bottom
+    keys:
+    - liquid_keyboard_exit
+    - space1
+    - BackSpace
+    - Return2
+    - liquid_keyboard_clipboard
+    - liquid_keyboard_switch
+  keyboards:
+  - emoji
+  - math
+  - ascii
+  - cn
+  - history
+  - clipboard
+  - collection
+  - draft
+  - symbollist
+  - list
+  - ids
+  - symbol
+  - tabs
+  - pinyin
+  - script_symbols
+  - jp
+  - grease
+  - rusa
+  - korea
+  - lation
+  - yinbiao
+  - unit
+  - yanwenzi
+  - combing
+  - emoji_full
+  - candidate
+  tabs:
+    name: 更多
+    type: TABS
+  candidate:
+    name: 候选
+    type: CANDIDATE
+  history:
+    name: 常用
+    type: HISTORY
+  emoji:
+    type: SINGLE
+    keys: 🙂😂🤣😆🙃😅🥺😎👀🙈🙉🙊☹😑😄🤐😨😱🌚🌝🤔❤💔🌹💣👌👍😣😥😮🙄😏😕😯😪😫😴😌🤑😉😋😎😍😘😚😛😜😝😒😓😔😲😷🤒😇🤓🤗🤕🙁😖😞😟😤😢😭😦😧😨😩😬😰😳😵😡😠☝✌🖕👎🙏🤘👏💪💋☘🍀🌸☕🍵🍺🍻🍦🍬🍚🍜🍲🍖🎂💤
+  emoji_full:
+    type: SINGLE
+    name: 全emoji
+    keys: 😀😃😄😁😆😅🤣😂🙂🙃🫠😉😊😇🥰😍🤩😘😗☺😚😙🥲😋😛😜🤪😝🤑🤗🤭🫢🫣🤫🤔🫡🤐🤨😐😑😶🫥😏😒🙄😬🤥😌😔😪🤤😴😷🤒🤕🤢🤮🤧🥵🥶🥴😵🤯🤠🥳🥸😎🤓🧐😕🫤😟🙁☹😮😯😲😳🥺🥹😦😧😨😰😥😢😭😱😖😣😞😓😩😫🥱😤😡😠🤬😈👿💀☠💩🤡👹👺👻👽👾🤖😺😸😹😻😼😽🙀😿😾🙈🙉🙊💌💘💝💖💗💓💞💕💟❣💔❤🧡💛💚💙💜🤎🖤🤍💋💯💢💥💫💦💨🕳💬🗨🗯💭💤👋🤚🖐✋🖖🫱🫲🫳🫴👌🤌🤏✌🤞🫰🤟🤘🤙👈👉👆🖕👇☝🫵👍👎✊👊🤛🤜👏🙌🫶👐🤲🤝🙏✍💅🤳💪🦾🦿🦵🦶👂🦻👃🧠🫀🫁🦷🦴👀👁👅👄🫦👶🧒👦👧🧑👱👨🧔👩🧓👴👵🙍🙎🙅🙆💁🙋🧏🙇🤦🤷👮🕵💂🥷👷🫅🤴👸👳👲🧕🤵👰🤰🫃🫄🤱👼🎅🤶🦸🦹🧙🧚🧛🧜🧝🧞🧟🧌💆💇🚶🧍🧎🏃💃🕺🕴👯🧖🧗🤺🏇⛷🏂🏌🏄🚣🏊⛹🏋🚴🚵🤸🤼🤽🤾🤹🧘🛀🛌👭👫👬💏💑👪🗣👤👥🫂👣🏻🏼🏽🏾🏿🦰🦱🦳🦲🐵🐒🦍🦧🐶🐕🦮🐩🐺🦊🦝🐱🐈🦁🐯🐅🐆🐴🐎🦄🦓🦌🦬🐮🐂🐃🐄🐷🐖🐗🐽🐏🐑🐐🐪🐫🦙🦒🐘🦣🦏🦛🐭🐁🐀🐹🐰🐇🐿🦫🦔🦇🐻🐨🐼🦥🦦🦨🦘🦡🐾🦃🐔🐓🐣🐤🐥🐦🐧🕊🦅🦆🦢🦉🦤🪶🦩🦚🦜🐸🐊🐢🦎🐍🐲🐉🦕🦖🐳🐋🐬🦭🐟🐠🐡🦈🐙🐚🪸🐌🦋🐛🐜🐝🪲🐞🦗🪳🕷🕸🦂🦟🪰🪱🦠💐🌸💮🪷🏵🌹🥀🌺🌻🌼🌷🌱🪴🌲🌳🌴🌵🌾🌿☘🍀🍁🍂🍃🪹🪺🍄🍇🍈🍉🍊🍋🍌🍍🥭🍎🍏🍐🍑🍒🍓🫐🥝🍅🫒🥥🥑🍆🥔🥕🌽🌶🫑🥒🥬🥦🧄🧅🥜🫘🌰🍞🥐🥖🫓🥨🥯🥞🧇🧀🍖🍗🥩🥓🍔🍟🍕🌭🥪🌮🌯🫔🥙🧆🥚🍳🥘🍲🫕🥣🥗🍿🧈🧂🥫🍱🍘🍙🍚🍛🍜🍝🍠🍢🍣🍤🍥🥮🍡🥟🥠🥡🦀🦞🦐🦑🦪🍦🍧🍨🍩🍪🎂🍰🧁🥧🍫🍬🍭🍮🍯🍼🥛☕🫖🍵🍶🍾🍷🍸🍹🍺🍻🥂🥃🫗🥤🧋🧃🧉🧊🥢🍽🍴🥄🔪🫙🏺🌍🌎🌏🌐🗺🗾🧭🏔⛰🌋🗻🏕🏖🏜🏝🏞🏟🏛🏗🧱🪨🪵🛖🏘🏚🏠🏡🏢🏣🏤🏥🏦🏨🏩🏪🏫🏬🏭🏯🏰💒🗼🗽⛪🕌🛕🕍⛩🕋⛲⛺🌁🌃🏙🌄🌅🌆🌇🌉♨🎠🛝🎡🎢💈🎪🚂🚃🚄🚅🚆🚇🚈🚉🚊🚝🚞🚋🚌🚍🚎🚐🚑🚒🚓🚔🚕🚖🚗🚘🚙🛻🚚🚛🚜🏎🏍🛵🦽🦼🛺🚲🛴🛹🛼🚏🛣🛤🛢⛽🛞🚨🚥🚦🛑🚧⚓🛟⛵🛶🚤🛳⛴🛥🚢✈🛩🛫🛬🪂💺🚁🚟🚠🚡🛰🚀🛸🛎🧳⌛⏳⌚⏰⏱⏲🕰🕛🕧🕐🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢🕗🕣🕘🕤🕙🕥🕚🕦🌑🌒🌓🌔🌕🌖🌗🌘🌙🌚🌛🌜🌡☀🌝🌞🪐⭐🌟🌠🌌☁⛅⛈🌤🌥🌦🌧🌨🌩🌪🌫🌬🌀🌈🌂☂☔⛱⚡❄☃⛄☄🔥💧🌊🎃🎄🎆🎇🧨✨🎈🎉🎊🎋🎍🎎🎏🎐🎑🧧🎀🎁🎗🎟🎫🎖🏆🏅🥇🥈🥉⚽⚾🥎🏀🏐🏈🏉🎾🥏🎳🏏🏑🏒🥍🏓🏸🥊🥋🥅⛳⛸🎣🤿🎽🎿🛷🥌🎯🪀🪁🎱🔮🪄🎮🕹🎰🎲🧩🧸🪅🪩🪆♠♥♦♣♟🃏🀄🎴🔫🎭🖼🎨🧵🪡🧶🪢👓🕶🥽🥼🦺👔👕👖🧣🧤🧥🧦👗👘🥻🩱🩲🩳👙👚👛👜👝🛍🎒🩴👞👟🥾🥿👠👡🩰👢👑👒🎩🎓🧢🪖⛑📿💄💍💎🔇🔈🔉🔊📢📣📯🔔🔕🎼🎵🎶🎙🎚🎛🎤🎧📻🎷🪗🎸🎹🎺🎻🪕🥁🪘📱📲☎📞📟📠🔋🪫🔌💻🖥🖨⌨🖱🖲💽💾💿📀🧮🎥🎞📽🎬📺📷📸📹📼🔍🔎🕯💡🔦🏮🪔📔📕📖📗📘📙📚📓📒📃📜📄📰🗞📑🔖🏷💰🪙💴💵💶💷💸💳🧾💹✉📧📨📩📤📥📦📫📪📬📭📮🗳✏✒🖋🖊🖌🖍📝💼📁📂🗂📅📆🗒🗓📇📈📉📊📋📌📍📎🖇📏📐✂🗃🗄🗑🔒🔓🔏🔐🔑🗝💣🔨🪓⛏⚒🛠🗡⚔🪃🏹🛡🪚🔧🪛🔩⚙🗜⚖🦯🔗⛓🪝🧰🧲🪜⚗🧪🧫🧬🔬🔭📡💉🩸💊🩹🩼🩺🩻🚪🛗🪞🪟🛏🛋🪑🚽🪠🚿🛁🪤🪒🧴🧷🧹🧺🧻🪣🧼🫧🪥🧽🧯🛒🧿🪬🚬⚰🪦⚱🗿🪧🪪🏧🚮🚰♿🚹🚺🚻🚼🚾🛂🛃🛄🛅⚠🚸⛔🚫🚳🚭🚯🚱🚷📵🔞☢☣⬆↗➡↘⬇↙⬅↖↕↔↩↪⤴⤵🔃🔄🔙🔚🔛🔜🔝🛐⚛🕉✡☸☯✝☦☪☮🕎🔯♈♉♊♋♌♍♎♏♐♑♒♓⛎🔀🔁🔂▶⏩⏭⏯◀⏪⏮🔼⏫🔽⏬⏸⏹⏺⏏🎦🔅🔆📶📳📴♀♂⚧✖➕➖➗🟰♾‼⁉❓❔❕❗〰💱💲⚕♻⚜🔱📛🔰⭕✅☑✔❌❎➰➿〽✳✴❇©®™🔟🔠🔡🔢🔣🔤🅰🆎🅱🆑🆒🆓ℹ🆔Ⓜ🆕🆖🅾🆗🅿🆘🆙🆚🈁🈂🈷🈶🈯🉐🈹🈚🈲🉑🈸🈴🈳㊗㊙🈺🈵🔴🟠🟡🟢🔵🟣🟤⚫⚪🟥🟧🟨🟩🟦🟪🟫⬛⬜◼◻◾◽▪▫🔶🔷🔸🔹🔺🔻💠🔘🔳🔲🏁🚩🎌🏴🏳
+  clipboard:
+    type: CLIPBOARD
+    name: 剪贴
+  collection:
+    type: COLLECTION
+    name: 收藏
+  draft:
+    type: DRAFT
+    name: 草稿
+  math:
+    type: SINGLE
+    name: 数学
+    keys: ≈＝≠≌<>≤≥≡()[]{}-+±×*/÷&∥%‰‱°′″∫∮∯∬∭∰∞∑∧∏∈∵∴⊥∝∨∪•√〒∝∽∈∩∧⊙⌒∥∟∣∂∆∞≌∉∪∨⊕⊿⊥∠∫∬∭
+  cn:
+    type: SINGLE
+    name: 中文
+    keys:
+    - ，
+    - 。
+    - ？
+    - ！
+    - ：
+    - 、
+    - “
+    - ”
+    - ‘
+    - ···
+    - ……
+    - click: '-'
+    - click: ——
+      label: 破折
+    - click: ''
+    - （
+    - ）
+    - 【
+    - 】
+    - 《
+    - 》
+    - ［
+    - ］
+    - ｛
+    - ｝
+    - 「
+    - 」
+    - 『
+    - 』
+    - ～
+  symbol:
+    name: 特殊
+    type: SINGLE
+    keys: △▽○◇□☆▲▼●◆■★▷◁▶◀♻♲†⚝✡⚹✦✸✹￼�×⌫☑☒✅❎✔✘✓✗☀☼☽☾◑◐㏂㏘☭♀♂☹☻☠☜☝☞☚☟☛▪•‥…∷※♩♪♫♬§°♭♯♮‖¶№◎¤۞℗®©卍卐℡™㏇Φ⇦⇧⇨⇩⇪↖↑↗←↔→↙↓↘⇄⇅⇆⇤↩⇥▸◂▴▾◤◥◣◢㊤㊧㊥㊨㊦❏❐◲〼▢▣↶✁↷✍⏍ϟ📝✎✆☱☰☴⚿⛮⚙☲☯☵⛶☩☐☳☷☶💬🗨⟲ღ✈☂🎤🌐🔍
+  unit:
+    name: 单位
+    type: SINGLE
+    keys: ℃¥$€฿￡㎡m³℉￥£￠₠¹²³⁴⁵ⁿ⁶⁷⁸⁹⁰ˣ⁺⁻⁼⁽⁾½⅓¼⅔¾₁₂₃₄₅ₙ₆₇₈₉₀ₓ₊₋₌₍₎℅
+  list:
+    name: 列表
+    type: SINGLE
+    keys: ①②③④⑤⑥⑦⑧⑨⑩⒈⒉⒊⒋⒌⒍⒎⒏⒐⒑⒒⒓⒔⒕⒖⒗⒘⒙⒚⒛⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂⒃⒄⒅⒆⒇㈠㈡㈢㈣㈤㈥㈦㈧㈨㈩➊➋➌➍➎➏➐➑➒➓㊀㊁㊂㊃㊄㊅㊆㊇㊈㊉ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ
+  pinyin:
+    name: 拼音
+    type: SINGLE
+    keys: āáǎàōóēéěèǒòīíǐìūúǖǘǚǜǔùêüńňㄚㄛㄜㄧㄨㄩㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙ
+  script_symbols:
+    name: 𝒶𝒜
+    type: SINGLE
+    keys: 𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵
+  grease:
+    type: SINGLE
+    name: 希腊
+    keys: ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψω
+  rusa:
+    name: 俄语
+    type: SINGLE
+    keys: АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя
+  lation:
+    name: 拉丁
+    type: SINGLE
+    keys: ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŠŸŒàáâãäåæçèéêëìíîïðñòóõôöøùúûüýþšÿœ
+  korea:
+    type: SINGLE
+    name: 韩文
+    keys: dㅏㅑㅓㅕㅗㅛㅜㅠㅡㅣㅐㅒㅔㅖㅘㅙㅚㅝㅞㅟㅢㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㄲㄸㅚㅆㅉ㉠㉡㉢㉣㉤㉥㉦㉧㉨㉩㉪㉫㉬㉭㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍㈎㈏㈐㈑㈒㈓㈔㈕㈖㈗㈘㈙㈚㈛
+  yinbiao:
+    type: SINGLE
+    name: 音标
+    keys:
+    - 'a:'
+    - 'ɔ:'
+    - ɜː
+    - 'i:'
+    - 'u:'
+    - ʌ
+    - ɒ
+    - ə
+    - ɪ
+    - ʊ
+    - e
+    - æ
+    - eɪ
+    - aɪ
+    - ɔɪ
+    - ɪə
+    - eə
+    - ʊə
+    - əʊ
+    - aʊ
+    - p
+    - t
+    - k
+    - f
+    - θ
+    - s
+    - b
+    - d
+    - g
+    - v
+    - ð
+    - z
+    - ʃ
+    - h
+    - ts
+    - tʃ
+    - j
+    - tr
+    - ʒ
+    - r
+    - dz
+    - dʒ
+    - dr
+    - w
+    - m
+    - n
+    - ŋ
+    - l
+  yanwenzi:
+    type: VAR_LENGTH
+    name: 颜文字
+    keys:
+    - ⎛⎝≥⏝⏝≤⎠⎞
+    - ^_^
+    - ^ω^
+    - ^o^
+    - ~\(≧▽≦)/~
+    - '*^_^*'
+    - ↖(^ω^)↗
+    - (^o^)／
+    - (=^▽^=)
+    - =^_^=
+    - (*^ω^*)
+    - ٩(๑^o^๑)۶
+    - o(￣▽￣)o
+    - Y(^_^)Y
+    - ٩( 'ω' )و
+    - ╰(*´︶`*)╯
+    - '*罒▽罒*'
+    - ヾ ^_^♪
+    - =￣ω￣=
+    - ︿(￣︶￣)︿
+    - (´▽｀)ノ♪
+    - 乁( ˙ ω˙乁)
+    - ✧*｡٩(ˊωˋ*)و✧*｡
+    - ～(￣▽￣～)(～￣▽￣)～
+    - QwQ
+    - (●—●)
+    - (๑• . •๑)
+    - ヾ(≧O≦)〃嗷~
+    - 罒ω罒
+    - (｡ì _ í｡)
+    - (๑•ี_เ•ี๑)
+    - ㄟ(≧◇≦)ㄏ
+    - (*/ω＼*)
+    - ●▽●
+    - ٩(๑òωó๑)۶
+    - ✺◟(∗❛ัᴗ❛ั∗)◞✺
+    - ( σ'ω')σ
+    - ♡＾▽＾♡
+    - (๑•̀ㅂ•́)و✧
+    - (ง •̀_•́)ง
+    - (｡･ω･｡)ﾉ♡
+    - (☆_☆)
+    - (๑°3°๑)
+    - _(•̀ω•́ 」∠)_
+    - ♪～(´ε｀　)
+    - ～(^з^)-☆
+    - (´∀｀)♡
+    - ლ(´ڡ`ლ)
+    - (＞﹏＜)
+    - T_T
+    - ⊙︿⊙
+    - 〒▽〒
+    - ⊙﹏⊙
+    - π_π
+    - (｡•́︿•̀｡)
+    - (ToT)/~~~
+    - ╯﹏╰
+    - ಥ_ಥ
+    - (╥╯^╰╥)
+    - (〃′o`)
+    - ●﹏●
+    - ( •̥́ ˍ •̀ू )
+    - (つд⊂)
+    - 心塞(´-ωก`)
+    - (╥﹏╥)
+    - ┭┮﹏┭┮
+    - （；´д｀）ゞ
+    - (´;︵;`)
+    - (。﹏。)
+    - ┗( T﹏T )┛
+    - QAQ
+    - ヘ(_ _ヘ)
+    - ╰（‵□′）╯
+    - (*￣︿￣)
+    - '>o<'
+    - (-`ェ´-怒)
+    - ヽ(‘⌒´メ)ノ
+    - (*｀Ω´*)v
+    - (｡•ˇ‸ˇ•｡)
+    - (怒｀Д´怒)
+    - ٩(๑`^´๑)۶
+    - (;｀O´)o
+    - ╰_╯
+    - (#｀皿´)<怒怒怒!!!
+    - <(｀^´)>
+    - （｀Δ´）！
+    - ψ(｀∇´)ψ
+    - (；′⌒`)
+    - s(・｀ヘ´・;)ゞ
+    - (▼皿▼#)
+    - ￣へ￣
+    - ←_←
+    - （╯‵□′）╯︵┴─┴
+    - （▼へ▼メ）
+    - ☄ฺ(◣д◢)☄ฺ
+    - →_→
+    - ⊙_⊙
+    - d(ŐдŐ๑)
+    - Σ( ° △ °|||)︴
+    - (((φ(◎ロ◎;)φ)))
+    - ⊙▽⊙
+    - (๑ŐдŐ)b
+    - ╭(°A°`)╮
+    - (๑òᆺó๑)
+    - ⊙ω⊙
+    - Σ(っ °Д °;)っ
+    - ' (ﾟДﾟ≡ﾟдﾟ)!?'
+    - ( *・ω・)✄╰ひ╯
+    - (⊙x⊙;)
+    - ┌(。Д。)┐
+    - (°ー°〃)
+    - ︽⊙_⊙︽
+    - '!!!∑(°Д°ノ)ノ'
+    - (๑ŐдŐ)b☆d(ŐдŐ๑)
+    - Σ⊙▃⊙川
+    - ヽ(*。>Д<)o゜
+    - ━((*′д｀)爻(′д｀*))━!!!!
+    - =_=
+    - ╮(╯_╰)╭
+    - （︶︿︶）
+    - _(:з」∠)_
+    - '@_@'
+    - ╮(╯▽╰)╭
+    - (＠￣ー￣＠)
+    - _(:3」∠❀)_
+    - 눈_눈
+    - ╭(╯ε╰)╮
+    - (ー_ー)!!
+    - _(:D)∠)_
+    - o_O
+    - ╭(╯^╰)╮
+    - (；一_一)
+    - ´_>`
+    - -_-#
+    - ┑(￣Д ￣)┍
+    - ≡￣﹏￣≡
+    - ○|￣|_
+    - -_-||
+    - ㄟ( ▔, ▔ )ㄏ
+    - ( ＿ ＿)ノ｜壁
+    - ▄█▀█●
+  combing:
+    type: SINGLE
+    name: 组合
+    keys:
+    - ⃢
+    - ꯭
+    - ̣
+    - ̲
+  ascii:
+    type: SINGLE
+    name: 英文
+    keys: ',.?!:;/\|*-+=^$`''"^~@#%&()[]{}_'
+  ids:
+    type: SINGLE
+    name: IDS
+    keys: ⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻↷↔
+  jp:
+    type: SINGLE
+    name: 假名
+    keys: あいうえおかがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろわをんアィイウェエオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロワヲン
+  symbollist:
+    type: SYMBOL
+    name: 符号表
+    keys:
+    - 符号: /fh
+    - 电脑: /dn
+    - 象棋: /xq
+    - 麻将: /mj
+    - 骰子: /sz
+    - 扑克: /pk
+    - 天气: /tq
+    - 音乐: /yy
+    - 八卦: /bg
+    - 易经: /lssg
+    - 天体: /tt
+    - 星座: /xz
+    - 星号: /xh
+    - 方块: /fk
+    - 几何: /jh
+    - 箭头: /jt
+    - 数学: /sx
+    - 上标: /sb
+    - 下标: /xb
+    - 单位: /dw
+    - 货币: /hb
+    - 拼音: /py
+    - 注音: /zy
+    - 假名: /jm
+    - 片假: /pjm
+    - 韩文: /hw
+    - 希腊: /xl
+    - 希大: /xld
+    - 罗马: /lm
+    - 罗大: /lmd
+    - 俄语: /ey
+    - 俄大: /eyd
+    - 表情: /bq
+    - 一: /1
+    - 二: /2
+    - 三: /3
+    - 四: /4
+    - 五: /5
+    - 六: /6
+    - 七: /7
+    - 八: /8
+    - 九: /9
+    - 零: /0
+    - 十: /10
+    - 分数: /fs
+    - 标点: /bd
+    - 偏旁: /pp
+    - 竖标: /bdz
+android_keys:
+  when:
+    ascii: 西文標籤
+    paging: 翻頁標籤
+    has_menu: 選單標籤
+    composing: 輸入狀態標籤
+    combo: 並擊
+    click: 單按
+    long_click: 長按
+    swipe_left: 左滑
+    swipe_right: 右滑
+    swipe_up: 上滑
+    swipe_down: 下滑
+  property:
+    width: 寬度
+    height: 高度
+    gap: 間隔
+    preview: 預覽
+    hint: 提示
+    label: 標籤
+    states: 狀態標籤
+    repeatable: 連續按鍵
+    functional: 功能鍵
+    shift_lock: Shift鎖定
+  action:
+    command: 命令
+    option: 參數
+    select: 選擇
+    toggle: 狀態
+    send: 按鍵
+    text: 文字
+    commit: 上屏
+preset_keys:
+  BRIGHTNESS_DOWN:
+    label: 亮度-
+    send: BRIGHTNESS_DOWN
+  BRIGHTNESS_UP:
+    label: 亮度+
+    send: BRIGHTNESS_UP
+  CALCULATOR:
+    label: 計算機
+    send: CALCULATOR
+  CALENDAR:
+    label: 日曆
+    send: CALENDAR
+  CONTACTS:
+    label: 電話簿
+    send: CONTACTS
+  ENVELOPE:
+    label: 信箱
+    send: ENVELOPE
+  EXPLORER:
+    label: 瀏覽器
+    send: EXPLORER
+  MUSIC:
+    label: 音樂
+    send: MUSIC
+  POWER:
+    label: 電源
+    send: POWER
+  SEARCH:
+    label: 搜尋
+    send: Find
+  SLEEP:
+    label: 休眠
+    send: SLEEP
+  VOICE_ASSIST:
+    label: 語音
+    send: VOICE_ASSIST
+  VOLUME_DOWN:
+    label: 音量-
+    send: VOLUME_DOWN
+  VOLUME_UP:
+    label: 音量+
+    send: VOLUME_UP
+  VOLUME_MUTE:
+    label: 靜音
+    send: VOLUME_MUTE
+  Shift_L:
+    label: Shift
+    send: Shift_L
+    shift_lock: ascii_long
+  Return:
+    label: enter_labels
+    send: Return
+  Return1:
+    label: Enter
+    send: Return
+  Return2:
+    label: 回车
+    send: Return
+  Hide:
+    label: 隱藏
+    send: BACK
+  BackSpace:
+    label: 退格
+    repeatable: true
+    send: BackSpace
+  space:
+    repeatable: false
+    functional: false
+    send: space
+  space1:
+    label: 空格
+    repeatable: false
+    functional: false
+    send: space
+  Escape:
+    label: Esc
+    send: Escape
+  Home:
+    label: 行首
+    send: Home
+  Insert:
+    label: 插入
+    send: Insert
+  Delete:
+    label: 刪除
+    send: Delete
+  End:
+    label: 行尾
+    send: End
+  Page_Up:
+    label: 上頁
+    send: Page_Up
+  Page_Down:
+    label: 下頁
+    send: Page_Down
+  Left:
+    label: ←
+    send: Left
+  Down:
+    label: ↓
+    send: Down
+  Up:
+    label: ↑
+    send: Up
+  Right:
+    label: →
+    send: Right
+  select_all:
+    label: 全選
+    send: Control+a
+  Clear:
+    label: 清除
+    text: '{Control+a}{BackSpace}'
+  cut:
+    label: 剪下
+    send: Control+x
+  cut_all:
+    label: 全挪
+    text: '{Control+a}{Control+x}'
+  copy:
+    label: 複製
+    send: Control+c
+  copy_all:
+    label: 全謄
+    text: '{Control+a}{Control+c}'
+  paste:
+    label: 貼上
+    send: Control+v
+  paste_text:
+    label: 貼上文本
+    send: Control+Shift+Alt+v
+  share_text:
+    label: 分享文本
+    send: Control+Alt+s
+  redo:
+    label: 重做
+    send: Control+Shift+z
+  undo:
+    label: 撤銷
+    send: Control+z
+  F4:
+    label: 方案選單
+    send: F4
+  BackToPreviousSyllable:
+    label: 刪音節
+    send: Control+BackSpace
+  CommitRawInput:
+    label: 編碼
+    send: Control+Return
+  CommitScriptText:
+    label: 編碼
+    send: Shift+Return
+  CommitComment:
+    label: 編碼
+    send: Control+Shift+Return
+  DeleteCandidate:
+    label: 刪詞
+    send: Control+Delete
+  Mode_switch:
+    toggle: ascii_mode
+    send: Mode_switch
+    states:
+    - 中文
+    - 西文
+  Zenkaku_Hankaku:
+    toggle: full_shape
+    send: Mode_switch
+    states:
+    - 半角
+    - 全角
+  Henkan:
+    toggle: simplification
+    send: Mode_switch
+    states:
+    - 漢字
+    - 汉字
+  Charset_switch:
+    toggle: extended_charset
+    send: Mode_switch
+    states:
+    - 常用
+    - 增廣
+  Punct_switch:
+    toggle: ascii_punct
+    send: Mode_switch
+    states:
+    - 。，
+    - ．，
+  Keyboard_symbols:
+    label: 符號
+    send: Eisu_toggle
+    select: symbols
+  Keyboard_number:
+    label: 數字
+    send: Eisu_toggle
+    select: number
+  Keyboard_mini:
+    label: 迷你
+    send: Eisu_toggle
+    select: mini
+  Keyboard_letter:
+    label: 字母
+    send: Eisu_toggle
+    select: default
+  Keyboard_default:
+    label: 返回
+    send: Eisu_toggle
+    select: .default
+  Keyboard_switch:
+    label: 鍵盤
+    send: Eisu_toggle
+    select: .next
+  liquid_keyboard_switch:
+    label: 更多
+    send: function
+    command: liquid_keyboard
+    option: 更多
+  liquid_keyboard_exit:
+    label: 返回
+    send: function
+    command: liquid_keyboard
+    option: '-1'
+  liquid_keyboard_emoji:
+    label: 🙂
+    send: function
+    command: liquid_keyboard
+    option: emoji
+  liquid_keyboard_clipboard:
+    label: 剪贴
+    send: function
+    command: liquid_keyboard
+    option: 剪贴
+  set_color_ink:
+    label: 切换到ink配色
+    send: function
+    command: set_color_scheme
+    option: ink
+  IME_switch:
+    label: 🌐
+    send: LANGUAGE_SWITCH
+  IME_last:
+    label: 上一輸入法
+    send: LANGUAGE_SWITCH
+    select: .last
+  IME_next:
+    label: 下一輸入法
+    send: LANGUAGE_SWITCH
+    select: .next
+  Schema_switch:
+    label: 下一方案
+    send: Control+Shift+1
+  one_hand_switch_1:
+    toggle: _one_hand_mode_1
+    send: Mode_switch
+    states:
+    - 左手
+    - 普通
+  one_hand_switch_2:
+    toggle: _one_hand_mode_2
+    send: Mode_switch
+    states:
+    - 右手
+    - 普通
+  one_hand_switch_3:
+    toggle: _one_hand_mode_3
+    send: Mode_switch
+    states:
+    - 左手
+    - 右手
+  Color_switch:
+    label: 配色
+    send: PROG_RED
+  Help:
+    label: 說明
+    send: Help
+  Info:
+    label: 關於
+    send: INFO
+  Menu:
+    label: 方案
+    send: Menu
+  Settings:
+    label: 設定
+    send: SETTINGS
+  Color_settings:
+    label: 配色
+    send: SETTINGS
+    option: color
+  Theme_settings:
+    label: 主題
+    send: SETTINGS
+    option: theme
+  Schema_settings:
+    label: 方案
+    send: SETTINGS
+    option: schema
+  Candidate_switch:
+    toggle: _hide_candidate
+    send: Mode_switch
+    states:
+    - 有候選
+    - 無候選
+  Comment_switch:
+    toggle: _hide_comment
+    send: Mode_switch
+    states:
+    - 有註釋
+    - 無註釋
+  Hint_switch:
+    toggle: _hide_key_hint
+    send: Mode_switch
+    states:
+    - 有助記
+    - 無助記
+  Date:
+    label: 日期
+    command: date
+    option: yyyy-MM-dd
+  ChineseDate:
+    label: 農曆
+    command: date
+    option: zh_CN@calendar=chinese
+  Time:
+    label: 時間
+    command: date
+    option: HH:mm:ss
+  TrimeApp:
+    label: 同文
+    command: run
+    option: com.osfans.trime
+  TrimeCmp:
+    label: 同文組件
+    command: run
+    option: com.osfans.trime/.Pref
+  Homepage:
+    label: 同文主頁
+    command: run
+    option: https://github.com/osfans/trime
+  CommitHomepage:
+    label: 同文網址
+    commit: https://github.com/osfans/trime
+  Wiki:
+    label: 維基
+    command: run
+    option: https://zh.wikipedia.org/wiki/%s
+  Google:
+    label: 谷歌
+    command: run
+    option: https://www.google.com/search?q=%s
+  MoeDict:
+    label: 萌典
+    command: run
+    option: https://www.moedict.tw/%3$s
+  Baidu:
+    label: 百度搜索
+    command: run
+    option: https://www.baidu.com/s?wd=%4$s
+  Zdic:
+    label: 漢典
+    command: run
+    option: http://www.zdic.net/sousuo/?q=%1$s
+  Zdic2:
+    label: 漢典
+    command: run
+    option: http://www.zdic.net/sousuo/?q=%2$s
+  WebSearch:
+    label: 搜索網頁
+    command: web_search
+    option: '%4$s'
+  Search:
+    label: 搜索
+    command: search
+    option: '%1$s'
+  Share:
+    label: 分享
+    command: send
+    option: '%s'
+  Deploy:
+    label: 部署
+    command: broadcast
+    option: com.osfans.trime.deploy
+  Sync:
+    label: 同步
+    command: broadcast
+    option: com.osfans.trime.sync
+  RepeatCommit:
+    label: 重复
+    command: commit
+    option: '%1$s'
+  ai_language:
+    toggle: ascii_mode
+    send: Mode_switch
+    states:
+    - 中
+    - EN
+  ai_space:
+    label: space
+    send: space
+  ai_shift:
+    label: ⇧
+    send: Shift_L
+    shift_lock: long
+  ai_delete:
+    label: ⌫
+    send: BackSpace
+    repeatable: true
+  ai_numbers:
+    label: '123'
+    send: Eisu_toggle
+    select: ios_numbers
+  ai_symbols:
+    label: '#+='
+    send: Eisu_toggle
+    select: ios_symbols
+  ai_letters:
+    label: ABC
+    send: Eisu_toggle
+    select: default
+  ai_symbol_49:
+    label: '1'
+    commit: '1'
+  ai_symbol_50:
+    label: '2'
+    commit: '2'
+  ai_symbol_51:
+    label: '3'
+    commit: '3'
+  ai_symbol_52:
+    label: '4'
+    commit: '4'
+  ai_symbol_53:
+    label: '5'
+    commit: '5'
+  ai_symbol_54:
+    label: '6'
+    commit: '6'
+  ai_symbol_55:
+    label: '7'
+    commit: '7'
+  ai_symbol_56:
+    label: '8'
+    commit: '8'
+  ai_symbol_57:
+    label: '9'
+    commit: '9'
+  ai_symbol_48:
+    label: '0'
+    commit: '0'
+  ai_symbol_45:
+    label: '-'
+    commit: '-'
+  ai_symbol_47:
+    label: /
+    commit: /
+  ai_symbol_58:
+    label: ':'
+    commit: ':'
+  ai_symbol_59:
+    label: ;
+    commit: ;
+  ai_symbol_40:
+    label: (
+    commit: (
+  ai_symbol_41:
+    label: )
+    commit: )
+  ai_symbol_36:
+    label: $
+    commit: $
+  ai_symbol_38:
+    label: '&'
+    commit: '&'
+  ai_symbol_64:
+    label: '@'
+    commit: '@'
+  ai_symbol_34:
+    label: '"'
+    commit: '"'
+  ai_symbol_46:
+    label: .
+    commit: .
+  ai_symbol_44:
+    label: ','
+    commit: ','
+  ai_symbol_63:
+    label: '?'
+    commit: '?'
+  ai_symbol_33:
+    label: '!'
+    commit: '!'
+  ai_symbol_39:
+    label: ''''
+    commit: ''''
+  ai_symbol_91:
+    label: '['
+    commit: '['
+  ai_symbol_93:
+    label: ']'
+    commit: ']'
+  ai_symbol_123:
+    label: '{'
+    commit: '{'
+  ai_symbol_125:
+    label: '}'
+    commit: '}'
+  ai_symbol_35:
+    label: '#'
+    commit: '#'
+  ai_symbol_37:
+    label: '%'
+    commit: '%'
+  ai_symbol_94:
+    label: ^
+    commit: ^
+  ai_symbol_42:
+    label: '*'
+    commit: '*'
+  ai_symbol_43:
+    label: +
+    commit: +
+  ai_symbol_61:
+    label: '='
+    commit: '='
+  ai_symbol_95:
+    label: _
+    commit: _
+  ai_symbol_92:
+    label: \
+    commit: \
+  ai_symbol_124:
+    label: '|'
+    commit: '|'
+  ai_symbol_126:
+    label: '~'
+    commit: '~'
+  ai_symbol_60:
+    label: <
+    commit: <
+  ai_symbol_62:
+    label: '>'
+    commit: '>'
+  ai_symbol_8364:
+    label: €
+    commit: €
+  ai_symbol_163:
+    label: £
+    commit: £
+  ai_symbol_165:
+    label: ¥
+    commit: ¥
+  ai_symbol_8226:
+    label: •
+    commit: •
+preset_keyboards:
+  default:
+    name: iOS QWERTY
+    author: Zephyr Input
+    width: 10
+    height: 48
+    ascii_mode: 0
+    reset_ascii_mode: false
+    lock: true
+    ascii_keyboard: default
+    columns: 30
+    auto_height_index: -1
+    label_transform: none
+    keys:
+    - click: q
+      width: 10
+    - click: w
+      width: 10
+    - click: e
+      width: 10
+    - click: r
+      width: 10
+    - click: t
+      width: 10
+    - click: y
+      width: 10
+    - click: u
+      width: 10
+    - click: i
+      width: 10
+    - click: o
+      width: 10
+    - click: p
+      width: 10
+    - click: ''
+      width: 5
+    - click: a
+      width: 10
+    - click: s
+      width: 10
+    - click: d
+      width: 10
+    - click: f
+      width: 10
+    - click: g
+      width: 10
+    - click: h
+      width: 10
+    - click: j
+      width: 10
+    - click: k
+      width: 10
+    - click: l
+      width: 10
+    - click: ''
+      width: 5
+    - click: ai_shift
+      width: 15
+      key_back_color: '0xabb0ba'
+    - click: z
+      width: 10
+    - click: x
+      width: 10
+    - click: c
+      width: 10
+    - click: v
+      width: 10
+    - click: b
+      width: 10
+    - click: n
+      width: 10
+    - click: m
+      width: 10
+    - click: ai_delete
+      width: 15
+      key_back_color: '0xabb0ba'
+    - click: ai_numbers
+      width: 14
+      key_back_color: '0xabb0ba'
+    - click: ai_language
+      width: 12
+      key_back_color: '0xabb0ba'
+    - click: ai_space
+      width: 50
+    - click: Return
+      width: 24
+  qwerty:
+    import_preset: default
+  qwerty_:
+    import_preset: default
+  qwerty0:
+    import_preset: default
+  rime_ai_simp:
+    import_preset: default
+  ios_numbers:
+    name: iOS QWERTY
+    author: Zephyr Input
+    width: 10
+    height: 48
+    ascii_mode: 0
+    reset_ascii_mode: false
+    lock: true
+    ascii_keyboard: default
+    columns: 30
+    auto_height_index: -1
+    label_transform: none
+    keys:
+    - click: ai_symbol_49
+      width: 10
+    - click: ai_symbol_50
+      width: 10
+    - click: ai_symbol_51
+      width: 10
+    - click: ai_symbol_52
+      width: 10
+    - click: ai_symbol_53
+      width: 10
+    - click: ai_symbol_54
+      width: 10
+    - click: ai_symbol_55
+      width: 10
+    - click: ai_symbol_56
+      width: 10
+    - click: ai_symbol_57
+      width: 10
+    - click: ai_symbol_48
+      width: 10
+    - click: ai_symbol_45
+      width: 10
+    - click: ai_symbol_47
+      width: 10
+    - click: ai_symbol_58
+      width: 10
+    - click: ai_symbol_59
+      width: 10
+    - click: ai_symbol_40
+      width: 10
+    - click: ai_symbol_41
+      width: 10
+    - click: ai_symbol_36
+      width: 10
+    - click: ai_symbol_38
+      width: 10
+    - click: ai_symbol_64
+      width: 10
+    - click: ai_symbol_34
+      width: 10
+    - click: ai_symbols
+      width: 15
+      key_back_color: '0xabb0ba'
+    - click: ai_symbol_46
+      width: 14
+    - click: ai_symbol_44
+      width: 14
+    - click: ai_symbol_63
+      width: 14
+    - click: ai_symbol_33
+      width: 14
+    - click: ai_symbol_39
+      width: 14
+    - click: ai_delete
+      width: 15
+      key_back_color: '0xabb0ba'
+    - click: ai_letters
+      width: 14
+      key_back_color: '0xabb0ba'
+    - click: ai_language
+      width: 12
+      key_back_color: '0xabb0ba'
+    - click: ai_space
+      width: 50
+    - click: Return
+      width: 24
+  ios_symbols:
+    name: iOS QWERTY
+    author: Zephyr Input
+    width: 10
+    height: 48
+    ascii_mode: 0
+    reset_ascii_mode: false
+    lock: true
+    ascii_keyboard: default
+    columns: 30
+    auto_height_index: -1
+    label_transform: none
+    keys:
+    - click: ai_symbol_91
+      width: 10
+    - click: ai_symbol_93
+      width: 10
+    - click: ai_symbol_123
+      width: 10
+    - click: ai_symbol_125
+      width: 10
+    - click: ai_symbol_35
+      width: 10
+    - click: ai_symbol_37
+      width: 10
+    - click: ai_symbol_94
+      width: 10
+    - click: ai_symbol_42
+      width: 10
+    - click: ai_symbol_43
+      width: 10
+    - click: ai_symbol_61
+      width: 10
+    - click: ai_symbol_95
+      width: 10
+    - click: ai_symbol_92
+      width: 10
+    - click: ai_symbol_124
+      width: 10
+    - click: ai_symbol_126
+      width: 10
+    - click: ai_symbol_60
+      width: 10
+    - click: ai_symbol_62
+      width: 10
+    - click: ai_symbol_8364
+      width: 10
+    - click: ai_symbol_163
+      width: 10
+    - click: ai_symbol_165
+      width: 10
+    - click: ai_symbol_8226
+      width: 10
+    - click: ai_numbers
+      width: 15
+      key_back_color: '0xabb0ba'
+    - click: ai_symbol_46
+      width: 14
+    - click: ai_symbol_44
+      width: 14
+    - click: ai_symbol_63
+      width: 14
+    - click: ai_symbol_33
+      width: 14
+    - click: ai_symbol_39
+      width: 14
+    - click: ai_delete
+      width: 15
+      key_back_color: '0xabb0ba'
+    - click: ai_letters
+      width: 14
+      key_back_color: '0xabb0ba'
+    - click: ai_language
+      width: 12
+      key_back_color: '0xabb0ba'
+    - click: ai_space
+      width: 50
+    - click: Return
+      width: 24
+  number:
+    name: iOS QWERTY
+    author: Zephyr Input
+    width: 10
+    height: 48
+    ascii_mode: 0
+    reset_ascii_mode: false
+    lock: true
+    ascii_keyboard: default
+    columns: 30
+    auto_height_index: -1
+    label_transform: none
+    keys:
+    - click: ai_symbol_49
+      width: 10
+    - click: ai_symbol_50
+      width: 10
+    - click: ai_symbol_51
+      width: 10
+    - click: ai_symbol_52
+      width: 10
+    - click: ai_symbol_53
+      width: 10
+    - click: ai_symbol_54
+      width: 10
+    - click: ai_symbol_55
+      width: 10
+    - click: ai_symbol_56
+      width: 10
+    - click: ai_symbol_57
+      width: 10
+    - click: ai_symbol_48
+      width: 10
+    - click: ai_symbol_45
+      width: 10
+    - click: ai_symbol_47
+      width: 10
+    - click: ai_symbol_58
+      width: 10
+    - click: ai_symbol_59
+      width: 10
+    - click: ai_symbol_40
+      width: 10
+    - click: ai_symbol_41
+      width: 10
+    - click: ai_symbol_36
+      width: 10
+    - click: ai_symbol_38
+      width: 10
+    - click: ai_symbol_64
+      width: 10
+    - click: ai_symbol_34
+      width: 10
+    - click: ai_symbols
+      width: 15
+      key_back_color: '0xabb0ba'
+    - click: ai_symbol_46
+      width: 14
+    - click: ai_symbol_44
+      width: 14
+    - click: ai_symbol_63
+      width: 14
+    - click: ai_symbol_33
+      width: 14
+    - click: ai_symbol_39
+      width: 14
+    - click: ai_delete
+      width: 15
+      key_back_color: '0xabb0ba'
+    - click: ai_letters
+      width: 14
+      key_back_color: '0xabb0ba'
+    - click: ai_language
+      width: 12
+      key_back_color: '0xabb0ba'
+    - click: ai_space
+      width: 50
+    - click: Return
+      width: 24

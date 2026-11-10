@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "version": "example-2026-11-06",
+  "models": [
+    {
+      "id": "your-model-id",
+      "name": "请替换为你的模型 ID，并核对能力",
+      "parameters": [
+        {
+          "key": "service_tier",
+          "label": "服务档位",
+          "type": "enum",
+          "choices": [
+            {
+              "label": "普通",
+              "value": "default"
+            },
+            {
+              "label": "Fast / 优先处理（可能额外计费）",
+              "value": "priority"
+            }
+          ]
+        },
+        {
+          "key": "reasoning_effort",
+          "label": "推理强度",
+          "type": "enum",
+          "choices": [
+            {
+              "label": "轻度",
+              "value": "low"
+            },
+            {
+              "label": "普通",
+              "value": "medium"
+            },
+            {
+              "label": "深度",
+              "value": "high"
+            }
+          ]
+        },
+        {
+          "key": "max_completion_tokens",
+          "label": "输出 Token 上限（包含推理）",
+          "type": "integer",
+          "min": 1,
+          "max": 8192
+        }
+      ]
+    }
+  ]
+}

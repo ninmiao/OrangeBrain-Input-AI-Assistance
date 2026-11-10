@@ -1,0 +1,11 @@
+ruanjian -> [软件, 阮籍, 软, 阮, 堧]
+fazhan -> [发展, 罚站, 发, 法, 罚]
+houmian -> [后面, 后, 候, 厚, 吼]
+shujuku -> [数据库, 数据, 书局, 数句, 书]
+shurufa -> [输入法, 输入, 书, 数, 术]
+rengongzhineng -> [人工智能, 人工智能应用, 人工智能驱动, 人工智能编程, 人工智能操作系统]
+zhongguo -> [中国, 种过, 中过, 中果, 种果]
+nihao -> [你好, 拟好, 你, 尼, 泥]
+lvse -> [绿色, 滤色, 绿, 律, 率]
+rgzn -> [人工智能, 弱冠之年, 人过中年, 人工智能编程, 人工智能操作系统]
+AI disabled; all candidates came from local Rime tables.

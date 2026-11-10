@@ -1,0 +1,56 @@
+{
+  "purpose": "Manual/live model evaluation cases; these are expected outputs, not measured results.",
+  "cases": [
+    {
+      "input": "zhe'shen'em'yi'si",
+      "chinese": true,
+      "expected": "这是什么意思"
+    },
+    {
+      "input": "woxiang chi hamnao",
+      "chinese": true,
+      "expected": "我想吃汉堡"
+    },
+    {
+      "input": "nihso",
+      "chinese": true,
+      "expected": "你好"
+    },
+    {
+      "input": "hanbaowang haocih",
+      "chinese": true,
+      "expected": "汉堡王好吃"
+    },
+    {
+      "input": "wo jintain you meeting",
+      "chinese": true,
+      "expected": "我今天有 meeting"
+    },
+    {
+      "input": "I wnated to recieve teh package",
+      "chinese": false,
+      "expected": "I wanted to receive the package"
+    },
+    {
+      "input": "see ypu tomorrow",
+      "chinese": false,
+      "expected": "see you tomorrow"
+    },
+    {
+      "input": "I do not want 15 items",
+      "chinese": false,
+      "expected": "I do not want 15 items"
+    },
+    {
+      "input": "我 tomorrow 有 meeting",
+      "chinese": false,
+      "expected": "I have a meeting tomorrow"
+    },
+    {
+      "input": "fanfaxisizhazheng",
+      "chinese": true,
+      "expected": "反法西斯战争",
+      "note": "User regression: include intended phrase among ranked candidates; live model quality must be evaluated separately."
+    }
+  ]
+}

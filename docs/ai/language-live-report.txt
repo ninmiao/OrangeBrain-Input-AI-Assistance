@@ -1,0 +1,9 @@
+Model: gpt-6-luna; reasoning_effort=none; service_tier=default; built-in prompt 2.0.0
+Chinese pinyin: PASS (1937 ms) | wojintianxiangquchaoshi -> 我今天想去超市
+English in Chinese keyboard: PASS (1093 ms) | I has a meeting tomorow. -> I have a meeting tomorrow.
+Mixed pinyin and English: PASS (981 ms) | wojintianyoumeeting -> 我今天有 meeting
+Traditional pinyin: PASS (859 ms) | shurufazhichijianfanqiehuan -> 輸入法支援簡繁切換
+English correction first: PASS (690 ms) | I has a meeting tomorow. -> I have a meeting tomorrow.
+Mixed input translated to English: PASS (847 ms) | 我 tomorrow 有 meeting -> I have a meeting tomorrow.
+Chinese translated to English: PASS (1752 ms) | 我今天想去超市 -> I want to go to the supermarket today.
+Passed: 7 / 7

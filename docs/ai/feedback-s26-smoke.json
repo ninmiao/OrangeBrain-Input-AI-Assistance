@@ -1,0 +1,16 @@
+[
+  {
+    "height_label": "Keyboard height",
+    "bounds": "[48,331][392,396]"
+  },
+  {
+    "control": "Sound on key press",
+    "original": "false",
+    "restored": "false"
+  },
+  {
+    "control": "Vibrate on key press",
+    "original": "true",
+    "restored": "true"
+  }
+]

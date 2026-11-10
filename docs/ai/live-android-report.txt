@@ -1,0 +1,9 @@
+Official /models: 96 IDs; gpt-4.1-mini found
+Direct real Chinese request: passed
+Direct real English request with priority: passed (HTTP accepted; returned tier evaluated in host suite)
+Direct real low-reasoning request: passed
+Real IME pinyin candidate commits once, local candidates retained: passed; 你好
+Real IME mixed-language replacement: passed; The latency of this model is a bit high.
+Password privacy state and absence of candidates: passed; zero-network assertion covered separately by mock test
+Credential ciphertext removed: true
+Credential alias removed: true

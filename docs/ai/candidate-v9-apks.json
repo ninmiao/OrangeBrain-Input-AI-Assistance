@@ -1,0 +1,18 @@
+{
+  "version": "3.3.7-ai.9",
+  "versionCode": 20261113,
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "file": "Rime-AI-Demo-arm64-v8a.apk",
+      "size": 29079958,
+      "sha256": "b9024f53f34aeb94a5dca267b3c5b0dff52827cbb09969d995d7da8e6f445f03"
+    },
+    {
+      "abi": "x86_64",
+      "file": "Rime-AI-Demo-x86_64.apk",
+      "size": 29157024,
+      "sha256": "8d41286d4bb1cc0dea0fe721ed1c70d0e92a791416b7a4316ea22a2a200a5a2b"
+    }
+  ]
+}

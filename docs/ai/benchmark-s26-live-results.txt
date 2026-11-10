@@ -1,0 +1,21 @@
+S26 SM-S942U1; 3.3.7-ai.4; 2026-11-07
+默认 Policy；每组无推理、普通速度；样例 wojintianyoumeeting
+完整非流式响应耗时；每模型仅一次；不代表稳定速度排名。
+
+测速完成：5/5 成功
+本次最快：第 4 组 gpt-4.1-mini · 601 ms
+
+1. gpt-6-luna · 1277 ms
+我今天有 meeting
+
+2. gpt-5.6-luna · 1232 ms
+我今天有 meeting
+
+3. gpt-5.4-nano · 1013 ms
+我今天有 meeting
+
+4. gpt-4.1-mini · 601 ms
+我今天有 meeting
+
+5. gpt-4o-mini · 816 ms
+我今天有 meeting

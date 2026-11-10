@@ -1,0 +1,65 @@
+# Local SDK, JDK, emulator, downloads and test credentials
+/.tools/
+/.idea/
+/.vscode/
+/dist/
+.gradle/
+.kotlin/
+build/
+.cxx/
+.externalNativeBuild/
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+node_modules/
+local.properties
+*.iml
+*.log
+*.hprof
+*.pyc
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.o
+*.obj
+*.so
+*.a
+*.dll
+*.exe
+*.pdb
+*.zip
+*.7z
+*.tar.gz
+*.tar.xz
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.key
+.env
+.env.*
+!.env.example
+keystore.properties
+google-services.json
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Regenerated build data and downloaded Boost (version/hash pinned in CMake)
+/app/src/main/jni/boost/
+/app/prebuilt/
+/app/src/main/assets/checksums.json
+/app/src/main/assets/shared/opencc/
+
+# Generated local junctions; canonical plugin sources are committed separately
+/app/src/main/jni/librime/plugins/librime-lua/
+/app/src/main/jni/librime/plugins/librime-octagram/
+/app/src/main/jni/librime/plugins/librime-predict/
+/app/src/main/jni/librime-lua/thirdparty/
+
+# Keep the build wrapper and ALL vendored dependency source/header trees.
+# Do not ignore librime/deps, librime/include, Makefile or CMakeLists.txt.
+!/gradle/wrapper/gradle-wrapper.jar

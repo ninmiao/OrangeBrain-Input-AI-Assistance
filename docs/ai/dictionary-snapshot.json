@@ -1,0 +1,43 @@
+{
+  "source": "https://github.com/iDvel/rime-ice",
+  "commit": "99662ba01e3affa6a0f009174ca530b887bac3b6",
+  "license": "GPL-3.0-only",
+  "files": [
+    {
+      "file": "rime_ice.dict.yaml",
+      "sha256": "df7a335f52df60797c6f1167c522b8312da3dc447c68f19766dd57173f3582a2",
+      "bytes": 1484,
+      "entries": 48
+    },
+    {
+      "file": "cn_dicts/8105.dict.yaml",
+      "sha256": "d9f36985054f485d8ef1ddf0d8505eaf15c2f702e2eda9d5e908c7a7bcfa70c1",
+      "bytes": 124556,
+      "entries": 8757
+    },
+    {
+      "file": "cn_dicts/base.dict.yaml",
+      "sha256": "cfbbb9ce1b2f698517153715415c858cef1676dc4729d39e3b81e85203d736de",
+      "bytes": 17165217,
+      "entries": 543320
+    },
+    {
+      "file": "cn_dicts/ext.dict.yaml",
+      "sha256": "bbd8c1dabe5759630424c1f35aaf6107ec5abf787026346daa3cb2807f783270",
+      "bytes": 12262798,
+      "entries": 339209
+    },
+    {
+      "file": "cn_dicts/tencent.dict.yaml",
+      "sha256": "d37793e394fda26076d9595efddb624b73ceb29144f7461cc51af90784068a10",
+      "bytes": 18321955,
+      "entries": 981574
+    },
+    {
+      "file": "cn_dicts/others.dict.yaml",
+      "sha256": "6ac33d3166368547cf6330687ceaef1296b7f4d69d2b8b491312cfd5d444458d",
+      "bytes": 18396,
+      "entries": 905
+    }
+  ]
+}
