@@ -1,0 +1,45 @@
+language	category	input	expected
+zh	regression	fanfaxisizhazheng	反法西斯战争
+zh	regression	zhe'shen'em'yi'si	这是什么意思|这什么意思
+zh	boundary	hanbaowang haochi	汉堡王好吃
+zh	transpose	hanbaowang haocih	汉堡王好吃
+zh	neighbor	nihso	你好
+zh	repeat	nihaoo	你好
+zh	omission	xiexie n	谢谢你
+zh	transpose	woxiangchi hanabo	我想吃汉堡
+zh	clean	jintiantianqihenhao	今天天气很好
+zh	clean	mingtianjian	明天见
+zh	mixed	wo jintian you meeting	我今天有 meeting
+zh	mixed	qing bangwo review daima	请帮我 review 代码
+zh	mixed	zhege API henkuai	这个 API 很快
+zh	preserve	I have a meeting tomorrow.	I have a meeting tomorrow.
+zh	preserve	不要删除文件	不要删除文件
+zh	preserve	https://example.com/a?b=1	https://example.com/a?b=1
+zh	preserve	订单号 AB-2048	订单号 AB-2048
+zh	clean	wobuxiangqu	我不想去
+zh	omission	women mingtan jian	我们明天见
+zh	repeat	qing denggg yixia	请等一下
+zh	neighbor	woxiang he kafeu	我想喝咖啡
+zh	transpose	jintian xaiyu le	今天下雨了
+en	transpose	I wnated to recieve teh package.	I wanted to receive the package.
+en	neighbor	See ypu tomorrow.	See you tomorrow.
+en	omission	I have a meting tomorow.	I have a meeting tomorrow.
+en	repeat	Pleasse sendd the fiile.	Please send the file.
+en	insert	Thank yopu very much.	Thank you very much.
+en	mixed	我 tomorrow 有 meeting	I have a meeting tomorrow.
+en	mixed	wo jintian xiang qu chaoshi	I want to go to the supermarket today.
+en	mixed	Please 帮我检查 this sentence.	Please help me check this sentence.
+en	preserve	Do not delete the file.	Do not delete the file.
+en	preserve	I owe you $20, not $200.	I owe you $20, not $200.
+en	preserve	The order number is AB-2048.	The order number is AB-2048.
+en	preserve	https://example.com/a?b=1	https://example.com/a?b=1
+en	preserve	Zephyr Input supports OpenRouter.	Zephyr Input supports OpenRouter.
+en	clean	Could you help me with this?	Could you help me with this?
+en	clean	I might arrive late.	I might arrive late.
+en	transpose	Please check teh docuemnt.	Please check the document.
+en	omission	I am loking for my glasess.	I am looking for my glasses.
+en	neighbor	The keyboard works wrll.	The keyboard works well.
+en	repeat	The application is runnning slowly.	The application is running slowly.
+en	mixed	这个 keyboard 很好用	This keyboard is easy to use.
+en	preserve	Don't change version 1.3.0.	Don't change version 1.3.0.
+en	preserve	Can you explain this without running it?	Can you explain this without running it?

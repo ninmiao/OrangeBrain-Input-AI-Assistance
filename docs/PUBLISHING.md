@@ -1,28 +1,28 @@
 # 发布 Zephyr Input
 
-项目保留 GPL-3.0-or-later 许可证、AUTHORS 和第三方源码/许可证。新仓库以本目录作为仓库根目录；不需要恢复旧 Git 历史或子模块。
+以项目根目录建库。`.gitignore` 使用根目录允许清单，并进一步排除缓存、编译输出、本机凭据、旧截图和历史测试输出。
 
-## 首次提交
+## 源码范围
 
-- 提交源码、Gradle wrapper、词库、构建脚本、文档和第三方依赖源码。
-- `.tools/` 是本机 SDK/JDK/模拟器及缓存，不提交；它不属于源码。
-- `dist/` 中 APK 留作 GitHub Release 附件，不提交进 Git 历史。
-- 已添加发布用 `.gitignore`，自动排除开发工具、下载的 Boost、构建产物和密钥。开发环境及安装方法见 [DEVELOPMENT.md](DEVELOPMENT.md)。
-- 原上游 GitHub 工作流、捐赠配置及其归档已删除。新仓库可自行配置 Actions。
-- 新仓库仍须保留上游版权及许可证；旧名称在包名、兼容配置及第三方源码中出现是有意保留。
+- `android/`、`windows/`、`shared/`：客户端、共享 AI 核心、必需原生依赖源码、词库和资源。
+- `script/`、`tests/`：构建入口、测试程序、语料生成器与人工参考集。
+- `gradle/` 和根目录构建配置：包含必须提交的 Gradle wrapper JAR。
+- `docs/DEVELOPMENT.md`：Android/Windows 开发环境和工具安装说明。
+- 当前版本验证说明、测试使用的模型配置示例和参考数据。
+- README、PRIVACY、LICENSE、AUTHORS 以及第三方组件原有许可证。
 
-## 构建
+SDK、JDK、模拟器、VS/Boost 缓存、生成语料、截图、测试日志、编译输出、私钥和用户凭据不进入源码仓库。按项目发布要求，`dist/` 例外跟踪两个当前安装包：Android 1.3.3 ARM64 APK 和 Windows 1.4.2 preview x64 ZIP；旧版本及解压目录已清理。升级时必须同步更新 `.gitignore` 的精确允许清单；其他 APK/ZIP 仍被忽略。
 
-需要 JDK 17、Android SDK（platforms;android-35、build-tools;35.0.0、NDK 28.0.13004108、CMake 3.31.6）、Git 和 Python 3。通过 JAVA_HOME / ANDROID_HOME 配置环境；本机脚本也支持 `.tools/jdk/` 和 `.tools/android-sdk/`。
+本项目仍有约五千个源码/资源文件，主要来自 Weasel、librime、OpenCC 等原生依赖及词库；它们不是开发工具缓存，不应仅为降低文件数而移除。源码体积较大的部分是必要词库。
 
-Windows PowerShell：
+## 发布前检查
 
-```powershell
-./script/build-zephyr.ps1 -Variant demo -Abis 'arm64-v8a,x86_64'
-```
+运行 `python script/check-publish.py` 检查当前文件清单、必需构建文件、被误跟踪的忽略文件、凭据特征和 GitHub 单文件大小限制。检查不会显示密钥内容，不会提交或上传。
 
-脚本会重新建立原生插件目录链接。Boost 由 CMake 按固定版本和 SHA256 下载；依赖下载需要网络。不要把本机绝对路径的 Windows junction 当作源码提交。
+`.gitignore` 不会自动取消已经跟踪的文件。如果检查提示被忽略但仍被跟踪的文件，先用 `git rm --cached -- <路径>` 取消跟踪，保留本地文件，再重新检查。不要用 `git clean -xfd`：它会删除本机工具和发布包。
 
-模拟器测试需要 Python cryptography；`script/test-android.ps1` 会在本地重新生成测试证书并构建测试包。测试私钥不会随源码发布。
+## 构建与发布附件
 
-清理不改变手机上的应用、词库或加密凭据；清理后的首次本地构建会重新生成缓存。当前发布 APK 为 1.3.0，构建和测试结果见 `docs/ai/zephyr-1.3.0.md`。
+环境与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。Windows 使用 `windows/scripts/package.ps1` 生成完整安装目录，不能只发布 exe；Android 发布 ARM64 demo APK。当前版本为 Windows 1.4.2 preview / Android 1.3.3，结果见 [当前验证](windows/1.4.2-short-prompts.md)。
+
+新库仍需保留项目及第三方源码许可证、版权和来源信息。不将手机或 Windows 用户数据放入项目；不将本地加密凭据作为“安全文件”发布。

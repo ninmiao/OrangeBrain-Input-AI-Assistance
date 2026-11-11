@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-mainDir=app/src/main
+mainDir=android/app/src/main
 resDir=$(mainDir)/res
 jniDir=$(mainDir)/jni
 
@@ -11,7 +11,7 @@ jniDir=$(mainDir)/jni
 all: release
 
 clean:
-	rm -rf build app/build app/.cxx/
+	rm -rf build android/app/build android/app/.cxx/
 	./gradlew clean
 
 build: style-lint
@@ -24,13 +24,13 @@ spotlessApply:
 	./gradlew spotlessApply
 
     cmake-format:
-	cmake-format -i app/src/main/jni/cmake/*.cmake app/src/main/jni/CMakeLists.txt
+	cmake-format -i android/app/src/main/jni/cmake/*.cmake android/app/src/main/jni/CMakeLists.txt
 
 clang-format-lint:
-	./script/clang-format.sh -n
+	./android/script/clang-format.sh -n
 
 clang-format:
-	./script/clang-format.sh -i
+	./android/script/clang-format.sh -i
 
 style-lint: spotlessCheck clang-format-lint
 

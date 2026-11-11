@@ -1,0 +1,5 @@
+EXPORTS
+	DllGetClassObject = ZephyrTSFx64.dll.DllGetClassObject
+	DllCanUnloadNow = ZephyrTSFx64.dll.DllCanUnloadNow
+	DllRegisterServer = ZephyrTSFx64.dll.DllRegisterServer
+	DllUnregisterServer = ZephyrTSFx64.dll.DllUnregisterServer

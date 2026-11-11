@@ -1,0 +1,178 @@
+hello
+world
+keyboard
+language
+computer
+application
+window
+document
+message
+meeting
+tomorrow
+yesterday
+today
+restaurant
+hamburger
+coffee
+breakfast
+dinner
+supermarket
+university
+library
+hospital
+station
+airport
+restaurant
+beautiful
+necessary
+different
+definitely
+receive
+believe
+because
+address
+beginning
+business
+calendar
+colleague
+committee
+conscious
+convenient
+curiosity
+desperate
+disappear
+embarrass
+environment
+equipment
+excellent
+experience
+February
+foreign
+government
+grammar
+guarantee
+immediately
+independent
+knowledge
+maintenance
+occasion
+occurred
+opportunity
+parallel
+particularly
+permanent
+possession
+preferred
+privilege
+pronunciation
+recommend
+relevant
+restaurant
+rhythm
+schedule
+separate
+sincerely
+successful
+tomorrow
+unfortunately
+until
+weather
+whether
+writing
+accommodation
+achievement
+acknowledge
+argument
+available
+balance
+boundary
+candidate
+cancel
+character
+clipboard
+commit
+composition
+configuration
+connection
+correct
+credential
+cursor
+debounce
+delete
+dictionary
+download
+duplicate
+editor
+English
+example
+feedback
+framework
+generation
+hardware
+highlight
+history
+installation
+interface
+latency
+memory
+microphone
+network
+offline
+package
+parameter
+password
+performance
+permission
+phrase
+policy
+prediction
+privacy
+project
+provider
+punctuation
+question
+reasoning
+request
+response
+revision
+screen
+security
+selection
+sentence
+session
+settings
+shortcut
+software
+source
+spelling
+strength
+suggestion
+support
+system
+testing
+timeout
+translation
+transport
+update
+validation
+version
+Please send the document before the meeting.
+I wanted to receive the package yesterday.
+Could you check whether the application is running?
+The keyboard should preserve punctuation and numbers.
+I do not want to delete these files.
+The request should time out after ten seconds.
+Please do not change the meaning of this sentence.
+My order number is AB-2048.
+The total is $20.50, not $205.00.
+I might be late for the meeting tomorrow.
+Can we meet at the library at 10:30?
+She has already sent the message.
+They are waiting outside the station.
+We have not received your reply yet.
+This feature works without an internet connection.
+The weather was better than we expected.
+I would like a coffee without sugar.
+Remember to save your work before closing the window.
+The new version is available for download.
+Please explain the problem without changing the code.
