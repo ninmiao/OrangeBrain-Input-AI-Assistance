@@ -181,6 +181,11 @@ class AiStore internal constructor(private val context: Context) {
             c.copy(policies = c.policies.map { if (it.id == id) replacement else it })
         }
     }
+    fun refreshKnownCapabilities(id: String) = updatePolicyConfig(id) { c ->
+        require(c.model.isNotBlank())
+        val definition = definition(c) ?: ModelDefinition(c.model)
+        c.copy(modelCatalog = c.modelCatalog.copy(models = c.modelCatalog.models.filterNot { it.id == c.model } + definition))
+    }
     fun selectPolicy(id: String) = update { c -> c.policies.first { it.id == id }.applyTo(c) }
     fun renamePolicy(id: String, name: String) = update { c ->
         require(name.isNotBlank() && name.length <= 80)

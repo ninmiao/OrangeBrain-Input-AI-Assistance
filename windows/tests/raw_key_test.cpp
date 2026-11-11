@@ -16,7 +16,7 @@ int main(int argc,char** argv) {
     auto type=[&]{for(char c:std::string("nihao"))key(c);bool ready=false;for(int i=0;i<100;i++){Sleep(50);if(client.ProcessKeyEvent(weasel::KeyEvent(0,0))){response();ready=true;break;}}if(!ready)throw std::runtime_error("config delivery timeout");};
     response();
     for(bool english:{false,true}) {
-      if(english)key(' ',ibus::CONTROL_MASK);
+      if(english)(key(ibus::Shift_L,ibus::SHIFT_MASK),key(ibus::Shift_L,ibus::RELEASE_MASK));
       type();auto expected=originalEnter?L"nihao":ctx.cinfo.candies[0].str;
       key(ibus::Return);if(commit!=expected||status.composing)throw std::runtime_error("Enter action");
       type();key(' ');

@@ -7,14 +7,15 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 namespace zephyr {
-struct KeyPreferences { bool enterOriginal=true,spaceOriginal=false; };
+struct KeyPreferences { bool enterOriginal=true,spaceOriginal=false; std::string languageShortcut="shift",scriptShortcut="ctrl_shift_t"; };
 inline std::optional<KeyPreferences> readKeyPreferences(const std::filesystem::path& path) {
   try {
     std::ifstream input(path);if(!input)return {};
     boost::property_tree::ptree tree;boost::property_tree::read_json(input,tree);
     auto enter=tree.get_optional<bool>("enterOriginal"),space=tree.get_optional<bool>("spaceOriginal");
-    if(!enter&&!space)return {}; // Legacy settings may still arrive through the pipe.
-    return KeyPreferences{enter.value_or(true),space.value_or(false)};
+    auto language=tree.get_optional<std::string>("languageShortcut"),script=tree.get_optional<std::string>("scriptShortcut");
+    if(!enter&&!space&&!language&&!script)return {};
+    return KeyPreferences{enter.value_or(true),space.value_or(false),language.value_or("shift"),script.value_or("ctrl_shift_t")};
   } catch(...) { return {}; }
 }
 // Read settings independently of cloud latency. The serialized input-service thread

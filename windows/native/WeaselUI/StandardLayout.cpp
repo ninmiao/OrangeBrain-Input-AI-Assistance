@@ -16,13 +16,9 @@ wstring FormatCandidateLabel(const wstring& label, const wchar_t* format) {
 CSize StandardLayout::_GetPreeditSize(const Text& text,
                                       ComPtr<IDWriteTextFormat1>& pTextFormat) {
   const wstring& preedit = text.str;
-  const vector<TextAttribute>& attrs = text.attributes;
   CSize size(0, 0);
   if (!preedit.empty()) {
-    weasel::TextRange range;
-    for (size_t j = 0; j < attrs.size(); ++j)
-      if (attrs[j].type == weasel::HIGHLIGHTED)
-        range = attrs[j].range;
+    const auto range = text.highlightedRange();
     if (range.start < range.end) {
       wstring before_str = preedit.substr(0, range.start);
       wstring hilited_str =
@@ -57,10 +53,7 @@ CSize StandardLayout::_GetPreeditSize(const Text& text,
 
 void StandardLayout::RecalculateSizes() {
   _preeditSize = _GetPreeditSize(_context.preedit, _pD2D->pPreeditFormat);
-  _range = TextRange();
-  for (size_t j = 0; j < _context.preedit.attributes.size(); ++j)
-    if (_context.preedit.attributes[j].type == HIGHLIGHTED)
-      _range = _context.preedit.attributes[j].range;
+  _range = _context.preedit.highlightedRange();
   _auxSize = _GetPreeditSize(_context.aux, _pD2D->pPreeditFormat);
   _pD2D->GetTextSize(_pre, _pre.length(), _pD2D->pPreeditFormat,
                      &_pagePrevSize);
@@ -420,10 +413,7 @@ void StandardLayout::_PrecomputePreeditRects(const CRect& baseRect,
       text.str.empty())
     return;
 
-  TextRange range;
-  for (size_t j = 0; j < text.attributes.size(); ++j)
-    if (text.attributes[j].type == HIGHLIGHTED)
-      range = text.attributes[j].range;
+  const auto range = text.highlightedRange();
   if (range.start >= range.end)
     return;
 

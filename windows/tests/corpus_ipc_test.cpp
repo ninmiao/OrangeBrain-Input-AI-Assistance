@@ -19,7 +19,7 @@ int main(int argc,char**argv) {
   while(std::getline(stream,line)) {
     if(line.size()<4)continue;
     bool next=line.substr(0,2)=="zh";auto raw=line.substr(3);
-    if(next!=chinese){key(' ',ibus::CONTROL_MASK);chinese=next;}
+    if(next!=chinese){(key(ibus::Shift_L,ibus::SHIFT_MASK),key(ibus::Shift_L,ibus::RELEASE_MASK));chinese=next;}
     std::wstring expected;
     // Corpus replay uses keypad digits for literal text; number-row selection is covered by ipc_test.
     for(unsigned char ch:raw){expected+=wchar_t(ch);UINT code=(ch>='0'&&ch<='9')?ibus::KP_0+ch-'0':ch;if(!key(code)||ctx.preedit.str!=expected||!commit.empty()){std::cerr<<"FAIL case "<<cases<<" at character "<<expected.size()<<"\n";return 4;}assertions+=3;}

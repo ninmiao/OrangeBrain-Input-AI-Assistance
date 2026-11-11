@@ -54,11 +54,18 @@ class TransportRegressionTest {
         assertTrue((System.nanoTime()-start)/1_000_000<1000,"Cancelled socket remained active")
         assertEquals(listOf("你好"),client.request(server.url("/v1/chat/completions").toString(),"test","model",request,2000).candidates)
     }
+    @Test fun timeoutBeforeHeadersIdentifiesWaitingForProvider() = fixture { server,client,_ ->
+        server.enqueue(MockResponse().setBody(envelope()).setHeadersDelay(3,TimeUnit.SECONDS))
+        val error=assertFailsWith<ApiTimeoutException> { client.request(server.url("/v1/chat/completions").toString(),"test","model",request,1000) }
+        assertEquals(RequestPhase.WAITING,error.phase)
+        assertFalse(error.message.orEmpty().contains("test"))
+    }
     @Test fun totalDeadlineCoversSlowBody() = fixture { server,client,_ ->
         server.enqueue(MockResponse().setBody(envelope()).setBodyDelay(3,TimeUnit.SECONDS))
         val start=System.nanoTime()
         val error=assertFailsWith<java.io.InterruptedIOException> { client.request(server.url("/v1/chat/completions").toString(),"test","model",request,1000) }
         assertEquals(AiFailure.TIMEOUT,AiFailure.from(error))
+        assertEquals(RequestPhase.RECEIVING,(error as ApiTimeoutException).phase)
         assertTrue((System.nanoTime()-start)/1_000_000<2500)
     }
 }

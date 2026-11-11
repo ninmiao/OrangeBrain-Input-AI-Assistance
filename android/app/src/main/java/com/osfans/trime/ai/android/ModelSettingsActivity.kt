@@ -108,6 +108,20 @@ class ModelSettingsActivity : AppCompatActivity() {
         label("GPT-6 Sol 支持无思考；GPT-6.1 Sol 最低为轻度，不支持无思考。以完整模型 ID 为准。")
         val definition = store.definition(c)
         val selected = store.parameters(c)
+        if (ApiRouting.isOpenRouter(c.endpoint)) {
+            label("服务端默认不等于无思考：DeepSeek Flash 默认开启思考。更新能力会保留已有选择；更换接口或主动清除参数后，请重新检查。")
+            if (definition?.parameters?.any { it.key == "reasoning_effort" && it.choices.any { choice -> choice.value == "none" } } == true)
+                button("设为无思考（保留其他参数）") { work {
+                    withContext(Dispatchers.IO) {
+                        store.updatePolicyConfig(policyId) { current ->
+                            require(current.endpoint == c.endpoint && current.model == c.model)
+                            val values = store.parameters(current) + ("reasoning_effort" to JsonPrimitive("none"))
+                            current.copy(modelValues = current.modelValues + (current.model to values))
+                        }
+                    }
+                    render(); report("已显式关闭当前模型思考；提供商与其他参数保留")
+                } }
+        }
         if (definition == null || definition.parameters.isEmpty()) label("尚未维护此模型的参数能力。可更新能力后编辑，或导入服务商对应的列表。")
         definition?.parameters?.forEach { parameter ->
             val value = selected[parameter.key]
@@ -120,17 +134,11 @@ class ModelSettingsActivity : AppCompatActivity() {
         } }
         button("更新当前模型的已知参数能力") {
             AlertDialog.Builder(this).setTitle("更新模型能力")
-                .setMessage("载入当前模型已核实的思考档位。未知型号请先刷新 OpenRouter 模型列表，或手动维护能力 JSON；不会添加未经确认的通用档位。此操作会清除当前模型已选参数。")
+                .setMessage("载入当前模型已核实的思考档位。未知型号请先刷新 OpenRouter 模型列表，或手动维护能力 JSON；不会添加未经确认的通用档位。保留仍受支持的已选参数，包括无思考；仅移除不再有效的参数。")
                 .setPositiveButton("更新能力") { _, _ -> work {
                     require(c.model.isNotBlank())
-                    val catalog = c.modelCatalog.copy(models = c.modelCatalog.models.filterNot { it.id == c.model } + (store.definition(c) ?: ModelDefinition(c.model)))
-                    withContext(Dispatchers.IO) {
-                        store.updatePolicyConfig(policyId) {
-                            require(it.endpoint == c.endpoint && it.model == c.model)
-                            it.copy(modelCatalog = catalog, modelValues = it.modelValues - c.model)
-                        }
-                    }
-                    render(); report("已更新模型能力，参数均未启用；请重新选择需要发送的参数")
+                    withContext(Dispatchers.IO) { store.refreshKnownCapabilities(policyId) }
+                    render(); report("已更新模型能力；仍有效的参数选择已保留")
                 } }.setNegativeButton("取消", null).show()
         }
         button("预览实际模型参数") { AlertDialog.Builder(this).setTitle("请求中实际发送的参数")

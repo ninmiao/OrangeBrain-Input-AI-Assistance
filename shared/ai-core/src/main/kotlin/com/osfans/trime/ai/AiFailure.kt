@@ -6,7 +6,11 @@ import java.io.InterruptedIOException
 
 // Only fixed categories/status codes escape the transport. No response bodies,
 // credentials or user input are copied into diagnostic messages.
-class ApiTimeoutException : InterruptedIOException("API request timeout")
+enum class RequestPhase(val label:String) {
+    QUEUED("排队超时"), DNS("域名解析超时"), CONNECT("连接超时"), TLS("安全连接超时"),
+    SENDING("发送超时"), WAITING("等待服务响应超时"), RECEIVING("接收结果超时")
+}
+class ApiTimeoutException(val phase:RequestPhase=RequestPhase.WAITING) : InterruptedIOException(phase.label)
 class ApiResponseException : IOException("Invalid API response")
 class ApiTruncatedException : IOException("API response truncated")
 class ApiProviderException(val status: Int?) : IOException("API provider failure${status?.let { " $it" } ?: ""}")

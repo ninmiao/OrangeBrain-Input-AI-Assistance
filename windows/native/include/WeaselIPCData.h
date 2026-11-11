@@ -45,6 +45,16 @@ struct Text {
     str.clear();
     attributes.clear();
   }
+  // Highlight offsets belong to this text, never to another panel row.
+  TextRange highlightedRange() const {
+    TextRange result;
+    for (const auto& attr : attributes)
+      if (attr.type == HIGHLIGHTED) result = attr.range;
+    if (result.start < 0 || result.end < result.start ||
+        static_cast<size_t>(result.end) > str.size())
+      return TextRange();
+    return result;
+  }
   bool empty() const { return str.empty(); }
   bool operator==(const Text& txt) const {
     if (str != txt.str || (attributes.size() != txt.attributes.size()))

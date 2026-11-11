@@ -5,6 +5,18 @@ import java.nio.file.Files
 import com.osfans.trime.ai.*
 
 class WindowsTest {
+    @Test fun shortcutDefaultsAndPersistence() {
+        assertEquals("shift",Configuration().languageShortcut)
+        assertEquals("ctrl_shift_t",Configuration().scriptShortcut)
+        val store=ConfigurationStore(Files.createTempDirectory("zephyr-shortcuts"))
+        try { for(language in ShortcutOptions.language.keys) for(script in ShortcutOptions.script.keys) {
+            store.save(Configuration(languageShortcut=language,scriptShortcut=script))
+            val loaded=store.load();assertEquals(language,loaded.languageShortcut);assertEquals(script,loaded.scriptShortcut)
+        } } finally { store.dir.toFile().deleteRecursively() }
+        assertFails { Configuration(languageShortcut="unsupported").validate() }
+        assertFails { Configuration(scriptShortcut="shift").validate() }
+    }
+
     @Test fun defaultPolicies() { val c=Configuration();c.validate();assertEquals(2,c.policies.size);assertEquals(1,c.candidateCount);assertEquals("gpt-6.1-terra",c.active().model);assertEquals("low",c.active().reasoning);assertEquals("priority",c.active().speed);assertEquals("none",c.policies[1].reasoning);assertTrue(c.enterOriginal);assertFalse(c.spaceOriginal);assertTrue(c.wordSegmentation);assertFalse(c.enabled) }
     @Test fun windowsKeysAreEncryptedAndIndependent() {
         val s=ConfigurationStore(Files.createTempDirectory("zephyr-credential-test"))

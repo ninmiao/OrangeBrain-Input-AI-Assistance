@@ -14,9 +14,10 @@ STDMETHODIMP WeaselTSF::OnSetFocus(ITfDocumentMgr* pDocMgrFocus,
   // Moving between controls in one application does not necessarily produce
   // ITfKeyEventSink::OnSetFocus(FALSE). Cancel the server composition here,
   // rather than merely hiding its UI and reviving it on a later focus.
-  if (pDocMgrFocus != pDocMgrPrevFocus &&
-      (_status.composing || _IsComposing() || _hasPendingUI))
-    _AbortComposition(true);
+  if (pDocMgrFocus != pDocMgrPrevFocus) {
+    if (_status.composing || _IsComposing() || _hasPendingUI) _AbortComposition(true);
+    else m_client.ClearComposition();
+  }
   _InitTextEditSink(pDocMgrFocus);
 
   com_ptr<ITfDocumentMgr> pCandidateListDocumentMgr;

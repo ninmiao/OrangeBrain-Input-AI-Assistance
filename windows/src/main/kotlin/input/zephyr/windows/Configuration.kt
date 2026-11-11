@@ -34,6 +34,7 @@ import java.util.UUID
 @Serializable data class Configuration(
     val settingsRevision: Int = 0,
     val enabled: Boolean = false, val selectedPolicy: String = "openai", val candidateCount: Int = 1,
+    val languageShortcut: String = "shift", val scriptShortcut: String = "ctrl_shift_t",
     val enterOriginal: Boolean = true, val spaceOriginal: Boolean = false,
     val wordSegmentation: Boolean = true, val debounceMs: Int = 200, val timeoutMs: Int = 10000,
     val style: String = "original", val completion: Boolean = false,
@@ -42,11 +43,16 @@ import java.util.UUID
 ) {
     fun active() = policies.first { it.id==selectedPolicy }
     fun validate() {
+        require(languageShortcut in ShortcutOptions.language.keys && scriptShortcut in ShortcutOptions.script.keys)
         require(candidateCount == 1 && !completion && debounceMs in 50..2000 && timeoutMs in 1000..60000)
         require(policies.size in 1..32 && policies.map { it.id }.distinct().size==policies.size)
         policies.forEach { it.validate() }; active()
         require(style in Prompts.pack.styles.map { it.id })
     }
+}
+object ShortcutOptions {
+    val language=linkedMapOf("shift" to "Shift (tap) / 轻按 Shift", "shift_left" to "Left Shift / 左 Shift", "shift_right" to "Right Shift / 右 Shift", "ctrl_space" to "Ctrl+Space", "ctrl_shift_space" to "Ctrl+Shift+Space", "disabled" to "Disabled / 不使用快捷键")
+    val script=linkedMapOf("ctrl_shift_t" to "Ctrl+Shift+T", "ctrl_shift_f" to "Ctrl+Shift+F", "ctrl_shift_c" to "Ctrl+Shift+C", "disabled" to "Disabled / 不使用快捷键")
 }
 object Prompts {
     val pack = PromptPackage.parse(requireNotNull(javaClass.getResourceAsStream("/default-prompts.json")).use { it.readBytes() })

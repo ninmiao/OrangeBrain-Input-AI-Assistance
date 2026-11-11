@@ -22,6 +22,8 @@ class SettingsWindow(private val store:ConfigurationStore):JFrame("Zephyr Input 
     private val segmentation=JCheckBox("Space marks phrase boundaries / 空格分词",config.wordSegmentation)
     private val enterOriginal=JCheckBox("Enter commits original text / 回车提交原文",config.enterOriginal)
     private val spaceOriginal=JCheckBox("Space commits original + space / 空格提交原文并加空格（优先于分词）",config.spaceOriginal)
+    private val languageShortcut=JComboBox(ShortcutOptions.language.values.toTypedArray()).apply { selectedItem=ShortcutOptions.language[config.languageShortcut] }
+    private val scriptShortcut=JComboBox(ShortcutOptions.script.values.toTypedArray()).apply { selectedItem=ShortcutOptions.script[config.scriptShortcut] }
     private val debounce=JSpinner(SpinnerNumberModel(config.debounceMs,50,2000,50))
     private val timeout=JSpinner(SpinnerNumberModel(config.timeoutMs,1000,60000,1000))
     private val style=JComboBox(Prompts.pack.styles.map { it.id }.toTypedArray())
@@ -37,7 +39,9 @@ class SettingsWindow(private val store:ConfigurationStore):JFrame("Zephyr Input 
         row(settings,"Debounce (ms) / 等待停顿",debounce)
         row(settings,"Request timeout (ms) / 请求超时",timeout);row(settings,"Expression style / 表达风格",style)
         style.selectedItem=config.style
-        settings.add(JLabel("Ctrl+Shift+Space: 中 / EN    Ctrl+Shift+T: 简 / 繁"))
+        row(settings,"Chinese / English · 中英切换",languageShortcut)
+        row(settings,"Simplified / Traditional · 繁简切换",scriptShortcut)
+        settings.add(JLabel("Tap Shift alone within 0.5 s / 单独轻按 Shift；组合键与长按不切换。保存后即时生效。"))
         settings.add(JLabel("↑↓: candidates    1…5: choose    Tab: candidate    Enter: original (default)    Ctrl+Enter: original    Esc: cancel"))
         settings.add(JLabel("←→ / Home / End: edit pending input. Space follows the options above."))
         val save=JButton("Save settings / 保存设置");save.addActionListener { attempt { saveGlobal();store.save(config);status.text="Settings saved" } };settings.add(save)
@@ -110,7 +114,7 @@ class SettingsWindow(private val store:ConfigurationStore):JFrame("Zephyr Input 
     private fun loadPolicy(p:Policy) { policy=p;name.text=p.name;endpoint.text=p.endpoint;model.text=p.model;provider.text=p.provider;speed.selectedItem=p.speed;key.text="";chinese.text=p.chinesePrompt;english.text=p.englishPrompt;active.isSelected=config.selectedPolicy==p.id;refreshReasoning(p.reasoning) }
     private fun refreshReasoningLater() { SwingUtilities.invokeLater { refreshReasoning(reasoning.selectedItem?.toString() ?: "omit") } }
     private fun refreshReasoning(value:String) { reasoning.removeAllItems();ReasoningCapabilities.options(endpoint.text,model.text,policy.catalog).forEach { reasoning.addItem(it.value) };reasoning.selectedItem=if((0 until reasoning.itemCount).any { reasoning.getItemAt(it)==value })value else "omit" }
-    private fun saveGlobal() { config=config.copy(enabled=enabled.isSelected,wordSegmentation=segmentation.isSelected,enterOriginal=enterOriginal.isSelected,spaceOriginal=spaceOriginal.isSelected,completion=false,candidateCount=1,debounceMs=debounce.value as Int,timeoutMs=timeout.value as Int,style=style.selectedItem.toString()) }
+    private fun saveGlobal() { config=config.copy(languageShortcut=ShortcutOptions.language.entries.first { it.value==languageShortcut.selectedItem }.key,scriptShortcut=ShortcutOptions.script.entries.first { it.value==scriptShortcut.selectedItem }.key,enabled=enabled.isSelected,wordSegmentation=segmentation.isSelected,enterOriginal=enterOriginal.isSelected,spaceOriginal=spaceOriginal.isSelected,completion=false,candidateCount=1,debounceMs=debounce.value as Int,timeoutMs=timeout.value as Int,style=style.selectedItem.toString()) }
     private fun savePolicy() {
         saveGlobal();val edited=policy.copy(name=name.text.trim(),endpoint=endpoint.text.trim(),model=model.text.trim(),provider=provider.text.trim(),reasoning=reasoning.selectedItem.toString(),speed=speed.selectedItem.toString(),chinesePrompt=chinese.text,englishPrompt=english.text)
         edited.validate();config=config.copy(policies=config.policies.map { if(it.id==edited.id)edited else it },selectedPolicy=if(active.isSelected)edited.id else config.selectedPolicy)

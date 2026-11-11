@@ -168,6 +168,8 @@ class AiSettingsActivity : AppCompatActivity() {
         val chinese = Switch(this).apply { text = "中文键盘（关闭为英文）"; isChecked = true }; page.addView(chinese)
         val sample = field("输入样例", "wojintianyoumeeting", multiline = true)
         val output = label("")
+        button("填入 100 字符长输入测试样例") { sample.setText("jintianwomenyilaitaolunzhongwenheyingwenshurufadecuowenjiuzhenggongnengxiwangkeyigengkuaisu".repeat(2).take(100)) }
+        label("测试使用本 Policy 的实际模型、参数、提供商和超时设置；填入样例后点击发送。")
         button("预览最终系统提示词") {
             val current = store.configForPolicy(id)
             output.text = store.prompt(current, chinese.isChecked) + "\n\n" + Protocol.encode(AiInput(sample.text.toString())) + "\n\n" + ApiRouting.wire(current.endpoint, store.parameters(current), current.provider)
@@ -204,7 +206,7 @@ class AiSettingsActivity : AppCompatActivity() {
                 report(message);source?.text=message
             } catch(e:CancellationException) { throw e
             } catch(e:Exception) {
-                val reason=when(e) { is ApiHttpException -> "HTTP ${e.status}"; is IllegalStateException -> e.message; else -> AiFailure.from(e).label }
+                val reason=when(e) { is ApiHttpException -> "HTTP ${e.status}"; is IllegalStateException -> e.message; else -> (e as? ApiTimeoutException)?.phase?.label ?: AiFailure.from(e).label }
                 val message="$name · 测试失败：$reason（${android.os.SystemClock.elapsedRealtime()-start} ms）"
                 report(message);source?.text=message
             } finally { source?.isEnabled=true }
@@ -265,7 +267,7 @@ class AiSettingsActivity : AppCompatActivity() {
         try { action() } catch (e: CancellationException) { throw e } catch (e: Exception) {
             report(when (e) {
                 is ApiHttpException -> "API HTTP ${e.status}，请检查模型、参数及 Key"
-                is java.io.InterruptedIOException, is ApiProviderException, is ApiTruncatedException, is ApiResponseException -> AiFailure.from(e).label
+                is java.io.InterruptedIOException, is ApiProviderException, is ApiTruncatedException, is ApiResponseException -> (e as? ApiTimeoutException)?.phase?.label ?: AiFailure.from(e).label
                 is java.io.IOException -> "网络或文件访问失败"
                 else -> "未保存：请检查地址、数字范围及内容格式"
             })

@@ -21,7 +21,7 @@ sealed interface AiState {
     data object Idle : AiState
     data object Loading : AiState
     data class Ready(val request: AiRequest, val result: AiResult) : AiState
-    data class Failed(val reason: AiFailure) : AiState
+    data class Failed(val reason: AiFailure, val detail:String=reason.label) : AiState
 }
 
 /** All methods and callbacks must run on the same dispatcher (Android main thread).
@@ -62,7 +62,7 @@ class AiRequestCoordinator(
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (error: Exception) {
-                if (token == generation) publish(AiState.Failed(AiFailure.from(error)))
+                if (token == generation) publish(AiState.Failed(AiFailure.from(error), (error as? ApiTimeoutException)?.phase?.label ?: AiFailure.from(error).label))
             }
         }
     }

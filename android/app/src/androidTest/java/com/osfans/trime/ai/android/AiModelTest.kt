@@ -14,6 +14,26 @@ import java.io.File
 import java.util.UUID
 
 class AiModelTest {
+    @Test fun refreshingCapabilitiesPreservesExplicitNoReasoning() {
+        val original=InstrumentationRegistry.getInstrumentation().targetContext
+        val dir=File(original.noBackupFilesDir,"capabilities-${UUID.randomUUID()}").apply { mkdirs() }
+        val context=object:ContextWrapper(original) { override fun getNoBackupFilesDir()=dir }
+        try {
+            val store=AiStore(context)
+            val router=store.config.policies.first { ApiRouting.isOpenRouter(it.endpoint) }
+            val selected=store.config.selectedPolicyId
+            store.refreshKnownCapabilities(router.id)
+            assertEquals(selected,store.config.selectedPolicyId)
+            var c=store.configForPolicy(router.id)
+            assertEquals(JsonPrimitive("none"),store.parameters(c)["reasoning_effort"])
+            assertEquals(false,ApiRouting.wire(c.endpoint,store.parameters(c),c.provider).getValue("reasoning").jsonObject.getValue("enabled").jsonPrimitive.boolean)
+            store.selectPolicy(router.id);store.refreshKnownCapabilities(router.id)
+            c=AiStore(context).config
+            assertEquals(JsonPrimitive("none"),store.parameters(c)["reasoning_effort"])
+            assertEquals(ApiRouting.WAFER,c.provider)
+        } finally { dir.deleteRecursively() }
+    }
+
     @Test fun terraDefaultsAndSolNoneSurviveLegacyConfiguration() {
         val original=InstrumentationRegistry.getInstrumentation().targetContext
         val dir=File(original.noBackupFilesDir,"migration-${UUID.randomUUID()}").apply { mkdirs() }

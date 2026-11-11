@@ -35,7 +35,8 @@ bool RimeWithWeaselHandler::_ZephyrRespond(WeaselSessionId id,EatLine eat) {
   std::wstring body=L"status.ascii_mode="+std::wstring(z.chinese?L"0":L"1")+L"\nstatus.disabled=0\nstatus.composing="+std::wstring(z.input.empty()?L"0":L"1")+
     L"\nstatus.schema_id=zephyr\nctx.preedit="+escape_string(u8tow(z.input))+L"\nctx.preedit.cursor=0,"+
     std::to_wstring(z.input.size())+L","+std::to_wstring(z.caret)+L"\nctx.aux="+
-    std::wstring(z.chinese?(z.traditional?L"繁 · Ctrl+Shift+Space → EN":L"简 · Ctrl+Shift+Space → EN"):L"EN · Ctrl+Shift+Space → 中")+
+    std::wstring(z.chinese?(z.traditional?L"繁":L"简"):L"EN")+
+    (zephyr::shortcutLabel(z.languageShortcut).empty()?L"":L" · "+zephyr::shortcutLabel(z.languageShortcut)+(z.chinese?L" → EN":L" → 中"))+
     L"\nctx.cand="+cs.str()+L"\nconfig.inline_preedit=0\n";
   auto style=session.style;style.inline_preedit=false;
   std::wstringstream ss;boost::archive::text_woarchive sa(ss);sa<<style;body+=L"style="+ss.str()+L"\n";
@@ -44,7 +45,7 @@ bool RimeWithWeaselHandler::_ZephyrRespond(WeaselSessionId id,EatLine eat) {
 }
 BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,EatLine eat) {
   auto& z=m_zephyr[id];int code=key.keycode;
-  if(auto prefs=zephyr::currentKeyPreferences()){z.enterOriginal=prefs->enterOriginal;z.spaceOriginal=prefs->spaceOriginal;}
+  if(auto prefs=zephyr::currentKeyPreferences()){z.enterOriginal=prefs->enterOriginal;z.spaceOriginal=prefs->spaceOriginal;z.languageShortcut=prefs->languageShortcut;z.scriptShortcut=prefs->scriptShortcut;}
   if(code==0) {
     if(!z.commit.empty()){_ZephyrRespond(id,eat);return TRUE;}
     auto result=m_zephyr_ai.take(id);
@@ -52,14 +53,18 @@ BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,E
     z.segmentation=result->segmentation;z.enterOriginal=result->enterOriginal;z.spaceOriginal=result->spaceOriginal;z.adopt(result->revision,result->candidates);_ZephyrRespond(id,eat);return TRUE;
   }
   bool ctrl=(key.mask&ibus::CONTROL_MASK)!=0,alt=(key.mask&ibus::MOD1_MASK)!=0;
+  auto shortcut=z.shortcuts.process(code,key.mask,GetTickCount64(),z.languageShortcut,z.scriptShortcut);
+  if(shortcut!=zephyr::ShortcutAction::None) {
+    if(shortcut==zephyr::ShortcutAction::Language)z.language();
+    else {z.traditional=!z.traditional;z.changed();}
+    _ZephyrRefresh(id);_ZephyrRespond(id,eat);return TRUE;
+  }
   if(key.mask&ibus::RELEASE_MASK){_ZephyrRespond(id,eat);return FALSE;}
   // Modifier key-down is not a shortcut by itself. Keep pending text until
   // the actual chord arrives (Ctrl+Enter, Alt+digit, Ctrl+Shift+Space, etc.).
   if(code>=ibus::Shift_L && code<=ibus::Hyper_R) {_ZephyrRespond(id,eat);return FALSE;}
   bool changed=false,handled=true;
-  if(ctrl&&code==' ') {z.language();changed=true;}
-  else if(ctrl&&(key.mask&ibus::SHIFT_MASK)&&(code=='T'||code=='t')) {z.traditional=!z.traditional;z.changed();changed=true;}
-  else if(ctrl&&code==ibus::Return&&!z.input.empty()) {z.commit=u8tow(z.input);z.clear();changed=true;}
+  if(ctrl&&code==ibus::Return&&!z.input.empty()) {z.commit=u8tow(z.input);z.clear();changed=true;}
   else if(alt&&!ctrl&&!(key.mask&(ibus::SHIFT_MASK|ibus::SUPER_MASK))&&code>='1'&&code<='5'&&z.chooseDigit(code-'0')) {changed=true;}
   else if(ctrl||alt||(key.mask&ibus::SUPER_MASK)) {if(!z.input.empty()){z.clear();changed=true;}handled=false;}
   // Number row selects an existing slot only while composing. No global

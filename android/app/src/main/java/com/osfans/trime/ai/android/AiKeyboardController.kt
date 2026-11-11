@@ -109,7 +109,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             sensitive -> "隐私字段"
             !c.enabled -> "关闭"
             state is AiState.Loading -> "请求中…"
-            state is AiState.Failed -> (state as AiState.Failed).reason.label
+            state is AiState.Failed -> (state as AiState.Failed).detail
             else -> "就绪"
         }
         if (renderedCandidates !== ready) {

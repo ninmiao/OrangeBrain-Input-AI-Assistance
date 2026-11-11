@@ -4,11 +4,14 @@
 #include <vector>
 #include <algorithm>
 #include <cstdint>
+#include "ZephyrShortcuts.h"
 
 namespace zephyr {
 // Both language modes share this buffer. Space is a boundary, not a commit.
 struct Composition {
   std::string input;
+  std::string languageShortcut="shift",scriptShortcut="ctrl_shift_t";
+  ShortcutState shortcuts;
   size_t caret = 0, selected = 0, page = 0;
   uint64_t revision = 0;
   bool chinese = true, traditional = false, segmentation = true, enterOriginal = true, spaceOriginal = false;
@@ -22,7 +25,7 @@ struct Composition {
   }
   void backspace() { if(caret) { input.erase(--caret, 1); changed(); } }
   void erase() { if(caret<input.size()) { input.erase(caret,1); changed(); } }
-  void clear() { input.clear(); caret=0; changed(); }
+  void clear() { shortcuts.reset(); input.clear(); caret=0; changed(); }
   void language() { chinese=!chinese;changed(); }
   void add(const std::wstring& text,const std::wstring& source) {
     if(!text.empty() && std::find(candidates.begin(),candidates.end(),text)==candidates.end()) {

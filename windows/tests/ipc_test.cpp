@@ -27,7 +27,7 @@ int main() {
     check(!ctx.cinfo.candies.empty()&&ctx.cinfo.candies[0].str==L"漢語","real OpenCC traditional candidate");
     key(ibus::Escape);key('T',ibus::CONTROL_MASK|ibus::SHIFT_MASK);
     type("hanbaowang haochi");check(ctx.preedit.str==L"hanbaowang haochi","Chinese spaces retained");check(commit.empty(),"Chinese space did not commit");key(ibus::Escape);
-    key(' ',ibus::CONTROL_MASK);type("I wnated to recieve teh package.");
+    (key(ibus::Shift_L,ibus::SHIFT_MASK),key(ibus::Shift_L,ibus::RELEASE_MASK));type("I wnated to recieve teh package.");
     check(status.composing,"English must show IME composition");check(ctx.preedit.str==L"I wnated to recieve teh package.","English spaces and punctuation retained");check(!ctx.cinfo.candies.empty(),"English original candidate available offline");
     key(ibus::Return,ibus::CONTROL_MASK);check(commit==L"I wnated to recieve teh package.","explicit original commit");
     type("hello world");key(ibus::Return);check(commit==L"hello world","English mode Enter submits literal input");
@@ -41,13 +41,13 @@ int main() {
     type("v");key(ibus::KP_1);check(ctx.preedit.str==L"v1","numpad enters literal digit while composing");key(ibus::Escape);
     check(!key(ibus::KP_1),"idle numpad digit passes through");
     type("shift");key('1',ibus::SHIFT_MASK);check(commit.empty()&&ctx.preedit.str==L"shift1","shifted digit is not a selection");key(ibus::Escape);
-    key(' ',ibus::CONTROL_MASK);type("shi");
+    (key(ibus::Shift_L,ibus::SHIFT_MASK),key(ibus::Shift_L,ibus::RELEASE_MASK));type("shi");
     check(ctx.cinfo.candies.size()==5,"first page has five candidates");
     auto second=ctx.cinfo.candies[1].str;key('2');check(commit==second,"plain 2 chooses second Chinese candidate");
     type("shi");for(int i=0;i<5;i++)key(ibus::Down);
     check(ctx.cinfo.currentPage==1&&!ctx.cinfo.candies.empty(),"second page available");
     auto paged=ctx.cinfo.candies[0].str;key('1');check(commit==paged,"plain 1 selects within current page");
-    key(' ',ibus::CONTROL_MASK);
+    (key(ibus::Shift_L,ibus::SHIFT_MASK),key(ibus::Shift_L,ibus::RELEASE_MASK));
     type("select me");key(ibus::Alt_L,ibus::MOD1_MASK);check(ctx.preedit.str==L"select me","Alt down preserves composition");
     key('1',ibus::MOD1_MASK);check(commit==L"select me","physical Alt then digit selects candidate");
     type("click me");client.SelectCandidateOnCurrentPage(0);key(0);check(commit==L"click me","mouse selection produces commit without synthetic keystroke");

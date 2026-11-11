@@ -3,6 +3,9 @@ package com.osfans.trime.ai
 
 import java.net.URI
 import java.io.IOException
+import java.io.InterruptedIOException
+import java.util.concurrent.atomic.AtomicReference
+import kotlinx.coroutines.CancellationException
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
@@ -39,14 +42,23 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
         require(timeoutMs in 1000..60000)
         val body = payload(model, request, parameters, endpoint, provider).toString()
             .toRequestBody("application/json; charset=utf-8".toMediaType())
-        val client = http.newBuilder().callTimeout(timeoutMs.toLong(), TimeUnit.MILLISECONDS)
+        val phase = AtomicReference(RequestPhase.QUEUED)
+        val listener = object : EventListener() {
+            override fun dnsStart(call:Call, domainName:String) { phase.set(RequestPhase.DNS) }
+            override fun connectStart(call:Call, address:java.net.InetSocketAddress, proxy:java.net.Proxy) { phase.set(RequestPhase.CONNECT) }
+            override fun secureConnectStart(call:Call) { phase.set(RequestPhase.TLS) }
+            override fun requestHeadersStart(call:Call) { phase.set(RequestPhase.SENDING) }
+            override fun requestBodyEnd(call:Call, byteCount:Long) { phase.set(RequestPhase.WAITING) }
+            override fun responseHeadersEnd(call:Call, response:Response) { phase.set(RequestPhase.RECEIVING) }
+        }
+        val client = http.newBuilder().eventListener(listener).callTimeout(timeoutMs.toLong(), TimeUnit.MILLISECONDS)
             .connectTimeout(timeoutMs.toLong(), TimeUnit.MILLISECONDS)
             .readTimeout(timeoutMs.toLong(), TimeUnit.MILLISECONDS)
             .writeTimeout(timeoutMs.toLong(), TimeUnit.MILLISECONDS).build()
         val call = client.newCall(Request.Builder().url(endpoint).header("Authorization", "Bearer $key").post(body).build())
         // Coroutine deadline also covers a queued call. The cancellation hook below
         // cancels its socket/HTTP2 stream even while the body is still being read.
-        return withTimeoutOrNull(timeoutMs.toLong()) {
+        return try { withTimeoutOrNull(timeoutMs.toLong()) {
             suspendCancellableCoroutine { continuation ->
                 continuation.invokeOnCancellation { call.cancel() }
                 call.enqueue(object : Callback {
@@ -73,7 +85,9 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
                     }
                 })
             }
-        } ?: throw ApiTimeoutException()
+        } ?: throw ApiTimeoutException(phase.get())
+        } catch (cancelled:CancellationException) { throw cancelled
+        } catch (timeout:InterruptedIOException) { throw ApiTimeoutException(phase.get()) }
     }
 
     internal fun decodeEnvelope(bytes: ByteArray, request: AiRequest): AiResult {

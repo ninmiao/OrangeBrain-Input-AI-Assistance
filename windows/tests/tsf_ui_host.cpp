@@ -40,7 +40,7 @@ int WINAPI wWinMain(HINSTANCE instance,HINSTANCE,LPWSTR,int) {
   CLSID clsid={0x652d71c8,0xb1e9,0x41ee,{0x9c,0xa6,0x7b,0x4d,0x0d,0xe6,0xcb,0x0a}};
   GUID profile={0x91ebc2a4,0x2b8e,0x4781,{0xba,0x20,0x1c,0x92,0x67,0x52,0x94,0x67}};
   if(SUCCEEDED(hr))hr=profiles->ActivateProfile(TF_PROFILETYPE_INPUTPROCESSOR,0x0804,clsid,profile,nullptr,TF_IPPMF_DONTCARECURRENTINPUTLANGUAGE|TF_IPPMF_FORPROCESS);
-  wchar_t message[128];swprintf_s(message,L"TSF profile activation: 0x%08lx · Ctrl+Shift+Space changes language",hr);SetWindowTextW(status,message);
+  wchar_t message[128];swprintf_s(message,L"TSF profile activation: 0x%08lx · Tap Shift changes language (default)",hr);SetWindowTextW(status,message);
   ShowWindow(window,SW_SHOW);UpdateWindow(window);SetFocus(first);
   MSG msg;BOOL more=TRUE;
   while(pump&&SUCCEEDED(pump->GetMessageW(&msg,nullptr,0,0,&more))&&more) {

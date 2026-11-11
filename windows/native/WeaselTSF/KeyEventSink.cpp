@@ -4,8 +4,11 @@
 #include "WeaselTSF.h"
 #include <KeyEvent.h>
 #include "CandidateList.h"
+#include "ZephyrKeySettings.h"
+#include "ZephyrShortcuts.h"
 
 static weasel::KeyEvent prevKeyEvent;
+static GUID ZephyrShiftSpaceGuid() { GUID g=GUID_IME_MODE_PRESERVED_KEY;g.Data1+=1;return g; }
 static BOOL prevfEaten = FALSE;
 static int keyCountToSimulate = 0;
 
@@ -20,9 +23,10 @@ static GUID ZephyrCandidateKeyGuid(UINT slot) {
 
 void WeaselTSF::_CheckInputContext(ITfContext* context) {
   // Some hosts change their TSF context without changing document managers.
-  if (_pEditSessionContext && context != _pEditSessionContext &&
-      (_status.composing || _IsComposing() || _hasPendingUI))
-    _AbortComposition(true);
+  if (_pEditSessionContext && context != _pEditSessionContext) {
+    if (_status.composing || _IsComposing() || _hasPendingUI) _AbortComposition(true);
+    else m_client.ClearComposition(); // Also reset an idle Shift tap.
+  }
 }
 
 void WeaselTSF::_ProcessKeyEvent(WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
@@ -183,8 +187,11 @@ STDMETHODIMP WeaselTSF::OnPreservedKey(ITfContext* pContext,
       return S_OK;
     }
   }
-  if (IsEqualGUID(rguid, GUID_IME_MODE_PRESERVED_KEY) && !_IsKeyboardDisabled() && _EnsureServerConnected()) {
-    *pfEaten = m_client.ProcessKeyEvent(weasel::KeyEvent(' ', ibus::CONTROL_MASK));
+  if ((IsEqualGUID(rguid, GUID_IME_MODE_PRESERVED_KEY)||IsEqualGUID(rguid,ZephyrShiftSpaceGuid())) && !_IsKeyboardDisabled() && _EnsureServerConnected()) {
+    int mask=ibus::CONTROL_MASK|(IsEqualGUID(rguid,ZephyrShiftSpaceGuid())?ibus::SHIFT_MASK:0);
+    auto prefs=zephyr::currentKeyPreferences().value_or(zephyr::KeyPreferences{});
+    if(!zephyr::shortcutChord(prefs.languageShortcut,' ',mask))return S_OK;
+    *pfEaten = m_client.ProcessKeyEvent(weasel::KeyEvent(' ', mask));
     _UpdateComposition(pContext);
   }
   return S_OK;
@@ -219,6 +226,8 @@ BOOL WeaselTSF::_InitPreservedKey() {
   TF_PRESERVEDKEY key{VK_SPACE, TF_MOD_CONTROL};
   HRESULT language = manager->PreserveKey(_tfClientId, GUID_IME_MODE_PRESERVED_KEY,
                                           &key, L"Zephyr language", 15);
+  TF_PRESERVEDKEY shiftSpace{VK_SPACE, TF_MOD_CONTROL|TF_MOD_SHIFT};
+  manager->PreserveKey(_tfClientId,ZephyrShiftSpaceGuid(),&shiftSpace,L"Zephyr language",15);
   for (UINT slot = 0; slot < 5; ++slot) {
     TF_PRESERVEDKEY candidate{'1' + slot, TF_MOD_ALT};
     manager->PreserveKey(_tfClientId, ZephyrCandidateKeyGuid(slot),
@@ -232,6 +241,8 @@ void WeaselTSF::_UninitPreservedKey() {
   if (_pThreadMgr && SUCCEEDED(_pThreadMgr->QueryInterface(&manager))) {
     TF_PRESERVEDKEY key{VK_SPACE, TF_MOD_CONTROL};
     manager->UnpreserveKey(GUID_IME_MODE_PRESERVED_KEY, &key);
+    TF_PRESERVEDKEY shiftSpace{VK_SPACE,TF_MOD_CONTROL|TF_MOD_SHIFT};
+    manager->UnpreserveKey(ZephyrShiftSpaceGuid(),&shiftSpace);
     for (UINT slot = 0; slot < 5; ++slot) {
       TF_PRESERVEDKEY candidate{'1' + slot, TF_MOD_ALT};
       manager->UnpreserveKey(ZephyrCandidateKeyGuid(slot), &candidate);

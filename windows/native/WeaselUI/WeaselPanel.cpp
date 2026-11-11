@@ -514,7 +514,7 @@ bool WeaselPanel::_DrawPreedit(const Text& text, bool isPreedit) {
   PtTextFormat& pTextFormat = m_pD2D->pPreeditFormat;
 
   if (!t.empty()) {
-    const TextRange& range = m_layout->GetPreeditRange();
+    const TextRange range = text.highlightedRange();
     if (range.start < range.end) {
       auto before_str = t.substr(0, range.start);
       auto hilited_str = t.substr(range.start, range.end - range.start);

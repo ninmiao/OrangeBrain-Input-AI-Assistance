@@ -24,7 +24,7 @@ try {
     $output = & $adb -s $Device shell am instrument -w -r -e class com.osfans.trime.ai.android.AiStorageTest,com.osfans.trime.ai.android.AiFlowTest,com.osfans.trime.ai.android.AiModelTest,com.osfans.trime.ai.android.AiDictionaryTest,com.osfans.trime.ai.android.AiRedesignTest,com.osfans.trime.ai.android.AiBenchmarkTest,com.osfans.trime.ai.android.SpaceCursorTest,com.osfans.trime.ai.android.PolicyAndSegmentationTest,com.osfans.trime.ai.android.CandidateCountTest,com.osfans.trime.ai.android.AiTransportRegressionTest com.osfans.trime.ai.debug.test/androidx.test.runner.AndroidJUnitRunner
     $output | Set-Content -Encoding UTF8 "$projectRoot\.tools\instrumentation-latest.log"
     $output | Write-Output
-    if (($output -join "`n") -notmatch 'OK \(26 tests\)') { throw 'Android integration tests failed; see .tools/instrumentation-latest.log.' }
+    if (($output -join "`n") -notmatch 'OK \(27 tests\)') { throw 'Android integration tests failed; see .tools/instrumentation-latest.log.' }
 } finally {
     if (!$server.HasExited) { Stop-Process -Id $server.Id }
 }
