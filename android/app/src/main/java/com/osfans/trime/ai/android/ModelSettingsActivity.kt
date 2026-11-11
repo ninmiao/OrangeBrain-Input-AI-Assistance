@@ -85,6 +85,23 @@ class ModelSettingsActivity : AppCompatActivity() {
             render(); report("已刷新 $count 个模型；OpenRouter 思考档位同步自服务端，OpenAI 已知型号使用核实规则")
         } }
 
+        if (ApiRouting.isOpenRouter(c.endpoint)) {
+            label("提供商路由", 20f)
+            label("留空由 OpenRouter 自动路由；指定提供商时只使用该提供商。请填写当前模型支持的提供商 ID，例如 wafer/us。")
+            val provider = field("OpenRouter 提供商（留空自动路由）", c.provider)
+            button("保存提供商") { work {
+                val route = provider.text.toString().trim()
+                ApiRouting.wire(c.endpoint, emptyMap(), route)
+                withContext(Dispatchers.IO) {
+                    store.updatePolicyConfig(policyId) {
+                        require(it.endpoint == c.endpoint && it.model == c.model)
+                        it.copy(provider = route)
+                    }
+                }
+                render(); report("提供商已保存；下次请求生效")
+            } }
+        }
+
         label("当前模型参数", 20f)
         label("Temperature 与 Top P 通常只调一项；部分推理模型不支持采样参数。输出上限只能使用服务支持的一个字段。")
         label("OpenAI 默认 6.1 Terra、低思考、Fast 快速模式。OpenRouter 默认 DeepSeek Flash、无思考、Wafer US；普通速度保持默认路由，Fast 优先低延迟，固定提供商时不会切换其他端点。可用参数取决于模型与服务。")

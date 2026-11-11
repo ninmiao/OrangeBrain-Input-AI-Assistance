@@ -190,5 +190,7 @@ secrets.properties
 # User-requested release artifacts: only the two current packages belong in Git.
 !/dist/
 /dist/*
-!/dist/Zephyr-Input-1.3.3-arm64-v8a-demo.apk
+!/dist/Zephyr-Input-1.3.4-arm64-v8a-demo.apk
 !/dist/Zephyr-Input-Windows-1.4.2-preview-x64.zip
+
+!/docs/ai/zephyr-1.3.4.md

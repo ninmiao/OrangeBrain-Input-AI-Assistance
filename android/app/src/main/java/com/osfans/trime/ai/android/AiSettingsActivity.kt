@@ -224,7 +224,6 @@ class AiSettingsActivity : AppCompatActivity() {
             }
         }
         val endpoint = input("完整 HTTPS Chat Completions 地址", c.endpoint)
-        val provider = input("OpenRouter 提供商（留空自动路由）", c.provider)
         val key = input("新 API Key（同域名留空保留）", "", true)
         val dialog = AlertDialog.Builder(this).setTitle("连接配置").setView(ScrollView(this).apply { addView(container) }).setPositiveButton("保存", null).setNegativeButton("取消", null).create()
         dialog.setOnShowListener { dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { work {
@@ -235,7 +234,7 @@ class AiSettingsActivity : AppCompatActivity() {
                 val credentials = store.credentialsForPolicy(id)
                 require(secret.isNotBlank() || credentials.read(url) != null)
                 if (secret.isNotBlank()) credentials.save(url, secret)
-                store.updatePolicyConfig(id) { it.copy(endpoint = url, provider = provider.text.toString().trim()) }
+                store.updatePolicyConfig(id) { it.copy(endpoint = url) }
             }
             key.text.clear(); dialog.dismiss(); render(); report("连接配置已加密保存")
         } } }
