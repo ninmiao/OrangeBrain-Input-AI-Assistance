@@ -4,6 +4,8 @@
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
+**目前还是原型，请谨慎使用。** 虽然我已经在日常使用，但还有不少地方要打磨。API token 消耗目前比较大，我还没来得及优化，建议先用小型模型试试。我用 Luna 和 Qwen3.8 27B 测下来效果还不错。
+
 Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 Android** 两个版本。离线用雾凇词库，联网后用 **LLM 和提示词**补足词库匹配：修正漏输、重复、错序和邻键误触，处理长拼音和中英文混输，也可以按描述生成颜表情。
 
 中文模式下，拼音转汉字，英语保留并纠错；英文模式下，优先纠正英语，把中文、拼音或混输转成英文。两种模式都有候选区，每次请求返回一个 AI 候选，由你选中上屏。
@@ -15,6 +17,8 @@ Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 And
 ### English
 
 I built Zephyr for my own daily typing: fast pinyin input, clear privacy controls, and some tolerance for clumsy fingers. You're welcome to be a guinea pig too—open an issue when something feels off.
+
+**This is still a prototype; please use it with care.** I use it daily, but there is plenty left to improve. API token usage is currently quite high, and I haven't optimized it yet. Start with a smaller model; Luna and Qwen3.8 27B have worked fairly well in my own testing.
 
 **Zephyr Input** is a **Rime-based pinyin keyboard for Windows and Android**. It uses Rime Ice dictionaries offline and adds **LLM assistance** for missing letters, repeated characters, swapped letters, nearby-key mistakes, long pinyin, and mixed Chinese–English input. It can also turn a short description into a kaomoji.
 
@@ -30,7 +34,7 @@ These examples show the intended corrections. Wording varies with the model and 
 
 | 输入 / Input | 模式 / Mode | 候选示例 / Example candidate |
 | --- | --- | --- |
-| `wo yao chi pzza` | 中文 / Chinese | 我要吃 pizza |
+| `wo yao chi huo gu` | 中文 / Chinese | 我要吃火锅 |
 | `nihoa shijie` | 中文 / Chinese | 你好世界 |
 | `I wnated to recieve teh package` | EN | I wanted to receive the package |
 | `I reallly loce this` | EN | I really love this |
