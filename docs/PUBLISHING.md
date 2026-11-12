@@ -11,7 +11,7 @@
 - 当前版本验证说明、测试使用的模型配置示例和参考数据。
 - README、PRIVACY、LICENSE、AUTHORS 以及第三方组件原有许可证。
 
-SDK、JDK、模拟器、VS/Boost 缓存、生成语料、截图、测试日志、编译输出、私钥和用户凭据不进入源码仓库。按项目发布要求，`dist/` 例外跟踪两个当前安装包：Android 1.3.5 ARM64 APK 和 Windows 1.4.4 preview x64 ZIP；旧版本及解压目录已清理。升级时必须同步更新 `.gitignore` 的精确允许清单；其他 APK/ZIP 仍被忽略。
+SDK、JDK、模拟器、VS/Boost 缓存、生成语料、截图、测试日志、编译输出、私钥和用户凭据不进入源码仓库。按项目发布要求，`dist/` 例外跟踪两个当前安装包：Android 1.3.6 ARM64 APK 和 Windows 1.4.5 preview x64 ZIP；旧版本及解压目录已清理。升级时必须同步更新 `.gitignore` 的精确允许清单；其他 APK/ZIP 仍被忽略。
 
 本项目仍有约五千个源码/资源文件，主要来自 Weasel、librime、OpenCC 等原生依赖及词库；它们不是开发工具缓存，不应仅为降低文件数而移除。源码体积较大的部分是必要词库。
 
@@ -23,6 +23,8 @@ SDK、JDK、模拟器、VS/Boost 缓存、生成语料、截图、测试日志�
 
 ## 构建与发布附件
 
-环境与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。Windows 使用 `windows/scripts/package.ps1` 生成完整安装目录，不能只发布 exe；Android 发布 ARM64 demo APK。当前版本为 Windows 1.4.4 preview / Android 1.3.5，结果见 [Windows 验证](windows/1.4.4-shortcuts.md) 和 [Android 1.3.5](ai/zephyr-1.3.5.md)。
+环境与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。Windows 使用 `windows/scripts/package.ps1` 生成完整安装目录，不能只发布 exe；Android 发布 ARM64 demo APK。当前版本为 Windows 1.4.5 preview / Android 1.3.6，结果见 [Windows 验证](windows/1.4.4-shortcuts.md) 和 [Android 1.3.6](ai/zephyr-1.3.5.md)。
 
 新库仍需保留项目及第三方源码许可证、版权和来源信息。不将手机或 Windows 用户数据放入项目；不将本地加密凭据作为“安全文件”发布。
+
+最新颜表情功能与验证见 [更新说明](ai/kaomoji-1.3.6-1.4.5.md)。

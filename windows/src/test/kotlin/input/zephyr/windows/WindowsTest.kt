@@ -5,6 +5,18 @@ import java.nio.file.Files
 import com.osfans.trime.ai.*
 
 class WindowsTest {
+    @Test fun kaomojiRuleIsSharedAndPreservesLegacyOverrides() {
+        val pack=PromptPackage.parse(requireNotNull(javaClass.getResourceAsStream("/default-prompts.json")).readBytes())
+        for (chinese in listOf(true,false)) {
+            val prompt=pack.compose("original",chinese,false)
+            assertEquals(1,prompt.split(PromptPackage.KAOMOJI_RULE).size-1)
+            assertTrue(prompt.contains("candidates"))
+            val old=pack.copy(revision=9,keyboard_language_rules=LanguageRules("CUSTOM ZH","CUSTOM EN"))
+            assertTrue(old.compose("original",chinese,false).startsWith("CUSTOM"))
+            assertTrue(old.compose("original",chinese,false).endsWith(PromptPackage.KAOMOJI_RULE))
+        }
+    }
+
     @Test fun shortcutDefaultsAndPersistence() {
         assertEquals("shift",Configuration().languageShortcut)
         assertEquals("ctrl_shift_t",Configuration().scriptShortcut)

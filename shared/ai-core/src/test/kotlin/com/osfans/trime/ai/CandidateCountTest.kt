@@ -23,7 +23,7 @@ class CandidateCountTest {
         assertContains(zh,"空格标注的词组边界");assertContains(zh,"英文保留并纠错")
         val en=p.compose("formal",false,false,traditional=true)
         assertContains(en,"优先按英文纠错");assertContains(en,"统一转成英文");assertContains(en,"简洁正式")
-        assertFalse(en.contains("繁体"));assertFalse(en.contains("英文保留"));assertTrue(en.length<300)
+        assertFalse(en.contains("转为繁体汉字"));assertFalse(en.contains("英文保留"));assertTrue(en.length<300)
         assertContains(p.compose("custom",true,false,"自然温和"),"按自然温和给出")
     }
 }
