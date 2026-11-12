@@ -1,5 +1,7 @@
 # Zephyr Input · 微风输入法
 
+**License: [GPL-3.0-or-later](LICENSE)** · [授权范围与第三方例外 / Scope and third-party exceptions](LICENSE-NOTICE.md)
+
 **Rime 的离线底座，LLM 的理解力：让拼音、英文和手滑一起被读懂。**
 
 **Rime underneath, LLM assistance on top—for pinyin, English, and the typos in between.**
@@ -114,6 +116,12 @@ On Android, open **AI assistance → Edit policy**, authenticate to save the end
 **第一次没成功？** 先确认已开启云端 AI、正确 Policy 已应用，再检查 Key 是否属于对应平台、完整模型 ID 是否可用、参数是否受支持。OpenRouter 固定供应商不可用时可改为 Auto 再测。延迟测试会发送真实请求，可能产生费用；离线候选正常并不表示云端连接已成功。
 
 **Not working yet?** Check cloud AI is enabled, the intended policy is active, and the key, exact model ID, and parameters are valid for that service. If a pinned OpenRouter provider is unavailable, try Auto. Latency tests make real API requests and may incur charges; working offline candidates do not prove the cloud connection is working.
+
+## 许可证 · License
+
+Zephyr 原创代码与文档采用 **GPL-3.0-or-later**，允许商用、修改和分发；分发受 GPL 覆盖的修改版或安装包时，应按许可证提供对应源码并保留署名。第三方组件继续遵循原许可证，特别是雾凇词库的 **GPL-3.0-only**。完整正文见 [LICENSE](LICENSE)，详细适用范围见 [LICENSE-NOTICE.md](LICENSE-NOTICE.md)。
+
+Zephyr's original code and documentation use **GPL-3.0-or-later**. Commercial use, modification, and redistribution are permitted; distribution of GPL-covered works requires complying with corresponding-source and notice obligations. Third-party licenses remain intact, including **GPL-3.0-only** for the bundled Rime Ice dictionaries. See the [license text](LICENSE) and [scope notice](LICENSE-NOTICE.md).
 
 ### 开源致谢与引用 · Open-source acknowledgements
 

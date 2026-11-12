@@ -10,4 +10,4 @@
 - **Kotlin, kotlinx.coroutines, kotlinx.serialization**: Apache-2.0. **JNA**: LGPL-2.1-or-later / Apache-2.0, using the Apache-2.0 option.
 - **OpenJDK runtime**: GPLv2 with Classpath Exception. Runtime legal notices are included in the generated app image.
 
-Zephyr source remains GPL-3.0-or-later. Distributors must retain notices and provide corresponding source for covered components; this document does not replace their licenses. No API credentials are included in source or packages.
+Zephyr original source remains GPL-3.0-or-later; see [the project licensing notice](../LICENSE-NOTICE.md). Rime Ice dictionaries retain GPL-3.0-only; the project grant does not relicense them. Distributors must retain notices and provide corresponding source for covered components; this document does not replace their licenses. No API credentials are included in source or packages.
