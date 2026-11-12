@@ -128,9 +128,9 @@ Windows 默认轻按 `Shift` 切换中英文，`Ctrl+Shift+T` 切换繁简；数
 
 On Windows, tap `Shift` for Chinese/English and use `Ctrl+Shift+T` for simplified/traditional Chinese. Number keys select candidates; `Enter` commits the original input. These controls are configurable. On Android, use the keyboard's language and script buttons and tap a candidate to commit it.
 
-完整操作见 [Windows 使用说明](windows/README.md)。两端均支持 Policy 复制和延迟测试。
+两端均支持 Policy 复制和延迟测试。
 
-See the [Windows guide](windows/README.md) for more controls. Both clients support policy copying and latency tests.
+Both clients support policy copying and latency tests.
 
 ## 开发 · Development
 
@@ -147,10 +147,6 @@ The Android frontend builds on Trime and the Windows frontend on Weasel. The Kot
 | `dist/` | 当前安装包 / Current installers |
 
 - [开发环境与构建 / Build instructions](docs/DEVELOPMENT.md)
-- [Windows 测试记录 / Windows validation](docs/windows/VALIDATION.md)
-- [Android 测试记录 / Android validation](docs/ai/number-row-providers-1.4.0.md)
-- [纠错测试语料 / Correction corpus](tests/corpus/README.md)
-- [发布说明 / Publishing](docs/PUBLISHING.md)
 
 ## 开源致谢 · Acknowledgements
 
