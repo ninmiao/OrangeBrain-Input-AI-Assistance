@@ -1,4 +1,63 @@
-# Zephyr Input
+# Zephyr Input · 微风输入法
+
+**Rime 的离线底座，LLM 的理解力：让拼音、英文和手滑一起被读懂。**
+
+**Rime underneath, LLM assistance on top—for pinyin, English, and the typos in between.**
+
+做好中文拼音输入法并不容易，尤其当你既想打得快，又在意隐私，还不想每天和词库、选词以及手滑斗智斗勇。于是，我做了 **Zephyr Input**，先解决自己的日常输入需求，也欢迎你来当一位友善的“小白鼠”——一起试用、挑毛病，让微风吹得更顺一点。
+
+Zephyr 基于 **Rime**，目前提供 **Android 和 Windows** 客户端。它保留本地词库与离线候选，再通过 **LLM + 精简 prompts** 理解输入意图，补足传统词库匹配的局限：拼音不必每次都敲得完美，中英文也不必总是分开输入。云端目前支持 **OpenAI 与 OpenRouter API**，可以通过独立 Policy 配置模型、Key、思考强度、速度和 OpenRouter 供应商。
+
+- **LLM 拼音匹配与纠错**：结合上下文处理漏输、错输、重复字符、字母错序和邻键误触，尽量还原你原本想说的话，而不只是寻找字面完全匹配的词条。
+- **中英文混输**：中文模式将拼音转为汉字，并保留、纠正英文；英文模式优先纠正英文，将明确的中文、拼音或中英混输转成英文。两种模式都使用候选界面。
+- **少选词，少打断**：每次请求只返回一个最可能的 AI 候选，控制输出 token；本地 Rime 候选仍然可用。
+- **不止打字，还有颜表情**：用描述让 LLM 生成 kaomoji，例如 `颜 笑死` → `(„ಡωಡ„)`。触发规则以客户端版本为准，见下方安装包说明。
+- **模型由你选，预算由你定**：支持多 Policy、延迟测试及模型参数配置。纠错和拼音匹配究竟能有多强？取决于模型的本事，也取决于你的钱包愿不愿意配合（笑）。不同模型的准确率、速度和费用会有差异。
+
+**关于隐私：**本地 Rime 候选不需要云端模型。启用云端 AI 后，输入内容及所配置的前后文会发送到你选择的 API 服务；Key 在设备本地加密保存。你可以关闭云端 AI，继续使用离线输入。这是可选择的取舍，不是“用了云端也绝不上传输入”的承诺。
+
+### English
+
+Building a good Chinese pinyin input method is surprisingly hard—especially when you care about both speed and privacy, and would rather write than wrestle with dictionaries, candidate lists, and typos. I built **Zephyr Input** for my own daily use. You are welcome to join as a friendly test pilot, too: bring your imperfect typing and help make the breeze a little smoother.
+
+Built on **Rime**, Zephyr currently runs on **Android and Windows**. It keeps local dictionaries and offline candidates, then adds **LLMs and concise prompts** to interpret what you meant beyond exact dictionary matches. Pinyin does not have to be perfect, and Chinese and English do not have to stay in separate boxes. Cloud assistance supports the **OpenAI and OpenRouter APIs**, with independent policies for models, keys, reasoning effort, speed, and OpenRouter provider routing.
+
+- **LLM-assisted pinyin matching and correction:** use context to recover missing or wrong letters, repetitions, swapped letters, and nearby-key mistakes—not just look up an exact spelling.
+- **Mixed Chinese–English input:** Chinese mode converts pinyin to Chinese while preserving and correcting English. English mode prioritizes English correction and translates recognizable Chinese, pinyin, or mixed input into English. Both modes offer a candidate interface.
+- **Less candidate hunting:** each AI request returns one likely result to limit output tokens, while local Rime candidates remain available.
+- **A little personality:** describe an expression and let the model produce a kaomoji, such as `颜 笑死` → `(„ಡωಡ„)`. Trigger support depends on the client release; see the package notes below.
+- **Your model, your budget:** multiple policies, latency tests, and model controls let you choose your trade-offs. How strong is the correction? That depends on your model—and how cooperative your wallet feels. Accuracy, latency, and cost vary.
+
+**Privacy:** local Rime candidates do not require a cloud model. Enabling cloud AI sends your input and configured surrounding context to the API service you choose; API keys are encrypted locally on your device. You can turn cloud assistance off and continue typing offline. Cloud assistance is an explicit trade-off, not a promise that your input never leaves your device.
+
+### 开源致谢与引用 · Open-source acknowledgements
+
+Zephyr 建立在以下项目的工作之上。感谢原作者、维护者和词库贡献者；本项目的 AI 辅助与平台改动并不替代他们的署名。
+
+Zephyr builds on the projects below. Credit belongs to their authors, maintainers, and dictionary contributors; our AI integration and platform changes do not replace their attribution.
+
+| 项目 / Project | 在 Zephyr 中的作用 / Role | 许可证及本地说明 / License & local notices |
+| --- | --- | --- |
+| [Rime / librime](https://github.com/rime/librime) | 两端离线输入引擎 / Offline input engine | BSD-3-Clause · [LICENSE](android/app/src/main/jni/librime/LICENSE) |
+| [同文 / Trime](https://github.com/osfans/trime) | Android 输入法前端与项目基础 / Android IME foundation | GPL-3.0-or-later · 保留原始源码署名 / Original source headers retained · [LICENSE](LICENSE) |
+| [小狼毫 / Weasel](https://github.com/rime/weasel) | Windows TSF 前端与输入服务 / Windows TSF frontend and service | GPL-3.0-or-later · [LICENSE](windows/native/LICENSE.txt) · 上游快照 / Snapshot: `f96ed24a8a535961b6ffc7160d98851a69cee4f8` |
+| [雾凇拼音 / Rime Ice](https://github.com/iDvel/rime-ice) | 简体拼音词库与方案规则 / Simplified Chinese dictionaries and spelling rules | GPL-3.0-only（上游声明 / upstream declaration）· [LICENSE](android/app/src/main/assets/shared/licenses/rime-ice/LICENSE.txt) · [来源与快照 / NOTICE](android/app/src/main/assets/shared/licenses/rime-ice/NOTICE.txt) |
+| [OpenCC](https://github.com/BYVoid/OpenCC) | 简繁转换 / Simplified–traditional conversion | Apache-2.0 · [LICENSE](android/app/src/main/jni/OpenCC/LICENSE) |
+| [Boost](https://www.boost.org/) | 原生 C++ 依赖 / Native C++ dependencies | BSL-1.0 · [LICENSE](android/app/src/main/jni/boost/LICENSE_1_0.txt) |
+| [Kotlin](https://github.com/JetBrains/kotlin), [Coroutines](https://github.com/Kotlin/kotlinx.coroutines), [Serialization](https://github.com/Kotlin/kotlinx.serialization) | 共享 AI 逻辑、异步任务与 JSON / Shared AI logic, asynchronous work and JSON | Apache-2.0 · [共享模块依赖 / Shared dependencies](shared/ai-core/build.gradle.kts) |
+| [OkHttp](https://github.com/square/okhttp) / [Okio](https://github.com/square/okio) | HTTPS 请求与 I/O / HTTPS transport and I/O | Apache-2.0 · [组件说明 / Component notes](windows/THIRD-PARTY.md) |
+| [JNA](https://github.com/java-native-access/jna) | Windows 原生 API 互操作 / Windows native API access | Apache-2.0 / LGPL-2.1-or-later 双许可，本项目选用 Apache-2.0 / Apache-2.0 option used |
+| [OpenJDK](https://openjdk.org/) | Windows 内置 Java 运行时与 Swing / Bundled Windows runtime and Swing UI | GPLv2 with Classpath Exception · 运行时法律声明随安装包提供 / Runtime legal notices included in the package |
+
+雾凇使用快照为 `99662ba01e3affa6a0f009174ca530b887bac3b6`，包含 `8105`、`base`、`ext`、`tencent`、`others` 等词表；各词表原始来源保留在文件头中。本项目并未移植雾凇的完整 Lua、emoji 和反查功能包。
+
+The Rime Ice snapshot above includes the `8105`, `base`, `ext`, `tencent`, and `others` dictionaries, with original word-source attribution retained in their headers. Zephyr does not ship the complete upstream Lua, emoji, and reverse-lookup feature bundle.
+
+更多直接、间接及构建依赖见 [Windows 组件说明](windows/THIRD-PARTY.md)、[Android 依赖清单](gradle/libs.versions.toml)、[Android 原生源码](android/app/src/main/jni) 和 [Windows 依赖配置](windows/build.gradle.kts)。此表是主要组件索引，不替代各组件的 LICENSE、NOTICE 和源码署名；项目沿用 GPL-3.0-or-later，第三方组件按各自许可证提供。OpenAI 与 OpenRouter 是可选 API 服务，并非本项目包含的开源模型或官方背书。
+
+For further direct, transitive, and build dependencies, see the linked manifests and component notices. This table is an index, not a replacement for individual licenses, notices, or source attribution. Zephyr retains GPL-3.0-or-later licensing, with third-party components under their respective terms. OpenAI and OpenRouter are optional API services, not bundled open-source models or endorsements of this project.
+
+## 项目结构与使用 · Project structure and usage
 
 微风输入法 · Zephyr。Android 与 Windows 共用 AI 协议、提示词、模型能力和纠错回归数据；平台输入前端各自实现。
 
