@@ -3,7 +3,8 @@ $ErrorActionPreference='Stop'
 $root=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 if(!$Report){$Report=Join-Path $root '.tools/installer-validation.json'}
 $setupPath=(Resolve-Path -LiteralPath $Setup).Path
-if([IO.Path]::GetFileName($setupPath) -ne 'Zephyr-Input-Windows-1.5.0-Setup-x64.exe'){throw 'Unexpected installer'}
+if([IO.Path]::GetFileName($setupPath) -notmatch '^Zephyr-Input-Windows-(?<version>[0-9]+\.[0-9]+\.[0-9]+)-Setup-x64\.exe$'){throw 'Unexpected installer'}
+$expectedVersion=$Matches.version
 $target=Join-Path $env:ProgramFiles 'Zephyr Input'
 $uninstallKey='HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{EBA0B59B-4AD5-46C9-9F26-1C517208A753}_is1'
 $data=Join-Path $env:APPDATA 'ZephyrInput'
@@ -22,7 +23,7 @@ function Install-Check([string]$label) {
  $p=Start-Process -FilePath $setupPath -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',('/LOG="'+$log+'"')) -WindowStyle Hidden -Wait -PassThru
  if($p.ExitCode -notin @(0,3010)){throw "Install failed: $($p.ExitCode)"}
  $state=Get-Content -LiteralPath "$target/installation.json" -Raw | ConvertFrom-Json
- if($state.version -ne '1.5.0'){throw 'Wrong installed version'}
+ if($state.version -ne $expectedVersion){throw 'Wrong installed version'}
  $null=Get-Uninstaller
  foreach($arch in @('x64','x86')){if(!(Test-Path -LiteralPath (Join-Path $target $state.$arch))){throw 'TSF DLL missing'}}
  $checks.Add($label)

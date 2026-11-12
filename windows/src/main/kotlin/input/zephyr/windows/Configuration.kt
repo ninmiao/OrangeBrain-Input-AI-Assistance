@@ -15,6 +15,7 @@ import java.util.UUID
     val provider: String = "", val reasoning: String = "low", val speed: String = "priority",
     val chinesePrompt: String = "", val englishPrompt: String = "",
     val catalog: ModelCatalog = ModelCatalog(),
+    val modelList: ModelListCache? = null,
 ) {
     fun validate() {
         require(id.matches(Regex("[A-Za-z0-9-]{1,64}")))
@@ -22,9 +23,9 @@ import java.util.UUID
         val url=URI(endpoint)
         require(url.scheme=="https" && !url.host.isNullOrBlank() && url.userInfo==null && url.query==null && url.fragment==null)
         require(speed in listOf("default","priority"))
-        require(reasoning in ReasoningCapabilities.options(endpoint,model,catalog).map { it.value }) { "Unsupported reasoning for $model" }
+        require(reasoning in ReasoningCapabilities.options(endpoint,model,effectiveCatalog()).map { it.value }) { "Unsupported reasoning for $model" }
         require(chinesePrompt.length<=8192 && englishPrompt.length<=8192)
-        catalog.validate()
+        catalog.validate();modelList?.validate()
     }
     fun parameters(): Map<String,JsonPrimitive> = buildMap {
         if(reasoning!="omit") put("reasoning_effort",JsonPrimitive(reasoning))

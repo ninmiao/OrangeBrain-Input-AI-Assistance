@@ -9,14 +9,18 @@ import javax.swing.event.DocumentListener
 import kotlinx.coroutines.runBlocking
 import java.util.UUID
 
-class SettingsWindow(private val store:ConfigurationStore):JFrame("Zephyr Input · 微风输入法") {
+class SettingsWindow(private val store:ConfigurationStore,
+    private val discoverModels:suspend (String,String)->ModelsClient.Discovery = { endpoint,key -> ModelsClient().discover(endpoint,key) }
+):JFrame("Zephyr Input · 微风输入法") {
     private var config=store.load()
     private var policy=config.active()
-    private val choices=JComboBox<String>()
-    private val name=JTextField();private val endpoint=JTextField();private val model=JTextField();private val provider=JComboBox<String>().apply { isEditable=true }
+    private val choices=JComboBox<String>().apply { name="policy-selector" }
+    private val name=JTextField();private val endpoint=JTextField().apply { name="api-endpoint" };private val model=EditableModelSelector();private val provider=JComboBox<String>().apply { isEditable=true }
     private var providerOptions=emptyList<ProviderOption>()
     private var providerGeneration=0
     private val providerTimer=Timer(600) { refreshProviders() }.apply { isRepeats=false }
+    private var modelGeneration=0
+    private val updateModels=JButton("Update models / 更新模型列表").apply { name="refresh-models" }
     private val key=JPasswordField()
     private val reasoning=JComboBox<String>();private val speed=JComboBox(arrayOf("default","priority"))
     private val chinese=JTextArea(7,50);private val english=JTextArea(7,50)
@@ -30,7 +34,7 @@ class SettingsWindow(private val store:ConfigurationStore):JFrame("Zephyr Input 
     private val debounce=JSpinner(SpinnerNumberModel(config.debounceMs,50,2000,50))
     private val timeout=JSpinner(SpinnerNumberModel(config.timeoutMs,1000,60000,1000))
     private val style=JComboBox(Prompts.pack.styles.map { it.id }.toTypedArray())
-    private val status=JLabel("Ready · API keys are encrypted for your Windows account")
+    private val status=JLabel("Ready · API keys are encrypted for your Windows account").apply { name="status" }
     init {
         defaultCloseOperation=DISPOSE_ON_CLOSE;minimumSize=Dimension(780,660);size=Dimension(920,800);setLocationRelativeTo(null)
         val tabs=JTabbedPane()
@@ -50,14 +54,17 @@ class SettingsWindow(private val store:ConfigurationStore):JFrame("Zephyr Input 
         val save=JButton("Save settings / 保存设置");save.addActionListener { attempt { saveGlobal();store.save(config);status.text="Settings saved" } };settings.add(save)
         tabs.addTab("Input / 输入",JScrollPane(settings))
         val p=column();row(p,"Policy",choices);p.add(active)
-        row(p,"Name / 名称",name);row(p,"API endpoint / 完整接口地址",endpoint);row(p,"Model ID / 模型",model);row(p,"Provider routing / 提供商（可空）",provider)
+        row(p,"Name / 名称",name);row(p,"API endpoint / 完整接口地址",endpoint);row(p,"Model / 模型（可选或输入）",model)
+        updateModels.addActionListener { refreshModels() };p.add(updateModels)
+        p.add(JLabel("Save policy to remember the list / 更新后保存 Policy 可记住模型列表"))
+        row(p,"Provider routing / 提供商（可空）",provider)
         row(p,"Reasoning / 思考强度",reasoning);row(p,"Speed / 速度",speed);row(p,"API Key（留空保留已存密钥）",key)
         val refreshProviders=JButton("Refresh providers / 刷新供应商")
         refreshProviders.addActionListener { refreshProviders() };p.add(refreshProviders)
         p.add(JLabel("Chinese policy instructions / 中文附加提示词"));p.add(JScrollPane(chinese))
         p.add(JLabel("English policy instructions / 英文附加提示词"));p.add(JScrollPane(english))
         val actions=JPanel(FlowLayout(FlowLayout.LEFT))
-        val savePolicy=JButton("Save policy / 保存 Policy");savePolicy.addActionListener { attempt { savePolicy();status.text="Policy saved" } };actions.add(savePolicy)
+        val savePolicy=JButton("Save policy / 保存 Policy").apply { name="save-policy" };savePolicy.addActionListener { attempt { savePolicy();status.text="Policy saved" } };actions.add(savePolicy)
         val test=JButton("Test latency / 测试当前 Policy");test.addActionListener {
             attempt { savePolicy();val snapshot=config;val selected=policy
                 background(test) { val started=System.nanoTime();val result=runBlocking { AiService(store).request(snapshot,selected,Wire.Request(true,false,"fanfaxisizhazheng")) }
@@ -118,14 +125,58 @@ class SettingsWindow(private val store:ConfigurationStore):JFrame("Zephyr Input 
             override fun insertUpdate(e:DocumentEvent)=refreshReasoningLater()
             override fun removeUpdate(e:DocumentEvent)=refreshReasoningLater()
             override fun changedUpdate(e:DocumentEvent)=refreshReasoningLater()
-        };model.document.addDocumentListener(listener);endpoint.document.addDocumentListener(listener)
+        };model.document.addDocumentListener(listener)
+        endpoint.document.addDocumentListener(object:DocumentListener {
+            private fun changed() {
+                modelGeneration++;updateModels.isEnabled=true
+                SwingUtilities.invokeLater { refreshModelOptions();refreshReasoningLater() }
+            }
+            override fun insertUpdate(e:DocumentEvent)=changed()
+            override fun removeUpdate(e:DocumentEvent)=changed()
+            override fun changedUpdate(e:DocumentEvent)=changed()
+        })
     }
     private fun column()=JPanel().apply { layout=BoxLayout(this,BoxLayout.Y_AXIS);border=BorderFactory.createEmptyBorder(18,22,18,22) }
     private fun row(panel:JPanel,label:String,field:JComponent) { panel.add(JPanel(BorderLayout(12,6)).apply { border=BorderFactory.createEmptyBorder(4,0,4,0);add(JLabel(label).apply { preferredSize=Dimension(290,28) },BorderLayout.WEST);add(field,BorderLayout.CENTER);maximumSize=Dimension(Int.MAX_VALUE,44) }) }
     private fun reloadChoices(index:Int) { choices.removeAllItems();config.policies.forEach { choices.addItem("${it.name} · ${it.model} · ${it.reasoning} / ${it.speed}" + if(ApiRouting.isOpenRouter(it.endpoint)) " · ${it.provider.ifBlank { "Auto" }}" else "") };choices.selectedIndex=index.coerceAtLeast(0) }
-    private fun loadPolicy(p:Policy) { policy=p;name.text=p.name;endpoint.text=p.endpoint;model.text=p.model;providerOptions=emptyList();provider.removeAllItems();provider.addItem(p.provider);provider.selectedItem=p.provider;providerTimer.restart();speed.selectedItem=p.speed;key.text="";chinese.text=p.chinesePrompt;english.text=p.englishPrompt;active.isSelected=config.selectedPolicy==p.id;refreshReasoning(p.reasoning) }
+    private fun loadPolicy(p:Policy) {
+        modelGeneration++;updateModels.isEnabled=true;policy=p
+        name.text=p.name;endpoint.text=p.endpoint;model.text=p.model;refreshModelOptions()
+        providerOptions=emptyList();provider.removeAllItems();provider.addItem(p.provider);provider.selectedItem=p.provider
+        providerTimer.restart();speed.selectedItem=p.speed;key.text="";chinese.text=p.chinesePrompt;english.text=p.englishPrompt
+        active.isSelected=config.selectedPolicy==p.id;refreshReasoning(p.reasoning)
+    }
+    private fun refreshModelOptions() {
+        val ep=endpoint.text.trim()
+        val cached=policy.modelList?.takeIf { it.endpoint==ep }?.ids.orEmpty()
+        model.setOptions(cached+policy.effectiveCatalog(ep).models.map { it.id }+config.policies.filter { it.endpoint==ep }.map { it.model })
+    }
+    private fun refreshModels() = attempt {
+        val ep=endpoint.text.trim();ModelsClient.listUrl(ep)
+        val id=policy.id;val generation=++modelGeneration;val previousCatalog=policy.effectiveCatalog(ep)
+        val password=key.password
+        val entered=try { if(password.isNotEmpty())String(password) else null } finally { password.fill('\u0000') }
+        updateModels.isEnabled=false;status.text="Loading models… / 正在更新模型列表…"
+        Thread {
+            val result=runCatching {
+                val secret=entered ?: store.key(id,ep)
+                require(secret.isNotBlank()) { "Configure an API Key first / 请先填写或保存当前 Policy 的 Key" }
+                ModelListCache.from(ep,runBlocking { discoverModels(ep,secret) },previousCatalog)
+            }
+            SwingUtilities.invokeLater {
+                if(generation!=modelGeneration || id!=policy.id || ep!=endpoint.text.trim() || !isDisplayable)return@invokeLater
+                updateModels.isEnabled=true
+                result.onSuccess { cache ->
+                    policy=policy.copy(modelList=cache)
+                    refreshModelOptions();refreshReasoning(reasoning.selectedItem?.toString() ?: "omit")
+                    status.text="${cache.ids.size} models loaded / 模型列表已更新，保存 Policy 后保留"
+                }.onFailure { status.text="Model update failed / 模型列表更新失败："+(if(it is ApiHttpException) "HTTP ${it.status}" else safeError(it)) }
+            }
+        }.apply { isDaemon=true;start() }
+    }
+    override fun dispose() { modelGeneration++;providerGeneration++;providerTimer.stop();super.dispose() }
     private fun refreshReasoningLater() { providerTimer.restart(); SwingUtilities.invokeLater { refreshReasoning(reasoning.selectedItem?.toString() ?: "omit") } }
-    private fun refreshReasoning(value:String) { reasoning.removeAllItems();ReasoningCapabilities.options(endpoint.text,model.text,policy.catalog).forEach { reasoning.addItem(it.value) };reasoning.selectedItem=if((0 until reasoning.itemCount).any { reasoning.getItemAt(it)==value })value else "omit" }
+    private fun refreshReasoning(value:String) { reasoning.removeAllItems();ReasoningCapabilities.options(endpoint.text.trim(),model.text.trim(),policy.effectiveCatalog(endpoint.text.trim())).forEach { reasoning.addItem(it.value) };reasoning.selectedItem=if((0 until reasoning.itemCount).any { reasoning.getItemAt(it)==value })value else "omit" }
     private fun providerId():String {
         val value=provider.editor.item?.toString()?.trim().orEmpty()
         return if(value=="Auto / 自动路由") "" else providerOptions.firstOrNull{it.label==value}?.id ?: value
@@ -149,11 +200,11 @@ class SettingsWindow(private val store:ConfigurationStore):JFrame("Zephyr Input 
     }
     private fun saveGlobal() { config=config.copy(languageShortcut=ShortcutOptions.language.entries.first { it.value==languageShortcut.selectedItem }.key,scriptShortcut=ShortcutOptions.script.entries.first { it.value==scriptShortcut.selectedItem }.key,enabled=enabled.isSelected,wordSegmentation=segmentation.isSelected,enterOriginal=enterOriginal.isSelected,spaceOriginal=spaceOriginal.isSelected,completion=false,candidateCount=1,debounceMs=debounce.value as Int,timeoutMs=timeout.value as Int,style=style.selectedItem.toString()) }
     private fun savePolicy() {
-        saveGlobal();val edited=policy.copy(name=name.text.trim(),endpoint=endpoint.text.trim(),model=model.text.trim(),provider=providerId(),reasoning=reasoning.selectedItem.toString(),speed=speed.selectedItem.toString(),chinesePrompt=chinese.text,englishPrompt=english.text)
+        saveGlobal();val edited=policy.copy(name=name.text.trim(),endpoint=endpoint.text.trim(),model=model.text.trim(),catalog=if(endpoint.text.trim()==policy.endpoint)policy.catalog else ModelCatalog(),modelList=policy.modelList?.takeIf { it.endpoint==endpoint.text.trim() },provider=providerId(),reasoning=reasoning.selectedItem.toString(),speed=speed.selectedItem.toString(),chinesePrompt=chinese.text,englishPrompt=english.text)
         edited.validate();config=config.copy(policies=config.policies.map { if(it.id==edited.id)edited else it },selectedPolicy=if(active.isSelected)edited.id else config.selectedPolicy)
         val password=key.password
         try { if(password.isNotEmpty())store.saveKey(edited.id,String(password),edited.endpoint) } finally { password.fill('\u0000');key.text="" }
-        store.save(config);policy=edited
+        store.save(config);policy=edited;reloadChoices(config.policies.indexOfFirst { it.id==edited.id })
     }
     private fun attempt(block:()->Unit) { try { block() } catch(e:Exception) { status.text=safeError(e) } }
     private fun safeError(e:Throwable)=if(e is ApiHttpException) "API HTTP error" else (e.message ?: e.javaClass.simpleName).take(180)
