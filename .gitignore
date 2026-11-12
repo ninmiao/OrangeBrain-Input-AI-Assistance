@@ -210,3 +210,9 @@ secrets.properties
 !/docs/windows/policy-copy-1.4.6.md
 
 !/docs/windows/model-picker-1.5.1.md
+
+# README screenshots
+!/docs/images/
+/docs/images/*
+!/docs/images/windows-settings.png
+!/docs/images/android-keyboard.png

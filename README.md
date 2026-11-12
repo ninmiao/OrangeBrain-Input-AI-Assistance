@@ -26,6 +26,23 @@ Chinese mode converts pinyin to Chinese while keeping and correcting English. En
 
 Cloud assistance supports **OpenAI and OpenRouter**, with separate policies for models, reasoning effort, speed, and provider routing. The quality depends on the model—and your wallet. **LLM features require an internet connection: models run on remote services accessed through OpenAI or OpenRouter, not locally on your phone or computer.** Offline typing uses Rime and local dictionaries. Cloud AI sends your input and configured surrounding context to your chosen API service. Keys are encrypted on your device.
 
+## 界面预览 · Screenshots
+
+<table>
+  <tr>
+    <th>Windows · Policy 与模型配置</th>
+    <th>Android · 拼音候选与键盘</th>
+  </tr>
+  <tr>
+    <td valign="top"><img src="docs/images/windows-settings.png" alt="Windows 1.5.5：当前 Policy 高亮、OpenAI 与 OpenRouter 配置、模型和思考参数" width="620"></td>
+    <td valign="top"><img src="docs/images/android-keyboard.png" alt="Android 模拟器：nihaoshijie 拼音候选、数字行、中英与繁简切换" width="280"></td>
+  </tr>
+</table>
+
+Windows 1.5.5 的设置页：顶部高亮当前 Policy，下方配置模型、思考强度和速度。Android 调试版模拟器实图：拼音提示、本地候选、数字行和中英、繁简切换，图中云端 AI 关闭。
+
+Windows 1.5.5 shows the active policy and model controls. The Android debug build is shown in an emulator with pinyin, local candidates, a number row, and language/script switches; cloud AI is off in this capture.
+
 ## 输入示例 · Examples
 
 下面展示想要的纠错和混输效果，具体措辞随模型与上下文变化。
