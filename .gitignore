@@ -191,7 +191,7 @@ secrets.properties
 !/dist/
 /dist/*
 !/dist/Zephyr-Input-1.4.0-arm64-v8a-demo.apk
-!/dist/Zephyr-Input-Windows-1.5.4-Setup-x64.exe
+!/dist/Zephyr-Input-Windows-1.5.5-Setup-x64.exe
 !/docs/ai/number-row-providers-1.4.0.md
 !/docs/windows/installer-providers-1.5.0.md
 

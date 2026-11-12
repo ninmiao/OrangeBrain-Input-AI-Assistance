@@ -10,13 +10,18 @@ import kotlinx.coroutines.runBlocking
 import java.util.UUID
 
 class SettingsWindow(private val store:ConfigurationStore,
-    private val discoverModels:suspend (String,String)->ModelsClient.Discovery = { endpoint,key -> ModelsClient().discover(endpoint,key) }
+    private val discoverModels:suspend (String,String)->ModelsClient.Discovery = { endpoint,key -> ModelsClient().discover(endpoint,key) },
+    private val confirmDelete:(Component,String)->Boolean = { parent,message ->
+        JOptionPane.showConfirmDialog(parent,message,"Delete policy / 删除 Policy",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE)==JOptionPane.YES_OPTION
+    }
 ):JFrame("Zephyr Input · 微风输入法") {
     private var config=store.load()
     private var policy=config.active()
-    private val choices=JList<String>().apply { name="policy-selector"; selectionMode=ListSelectionModel.SINGLE_SELECTION; visibleRowCount=3 }
+    private val choices=JList<String>().apply { name="policy-selector"; selectionMode=ListSelectionModel.SINGLE_SELECTION; visibleRowCount=5; font=font.deriveFont(12f) }
+    private val deletePolicyButton=JButton("Delete policy / 删除 Policy").apply { name="delete-policy" }
     private val currentPolicy=JLabel().apply { name="current-policy" }
     private var reloadingPolicies=false
+    private val benchmarkSources=mutableListOf<JComboBox<String>>()
     private val name=JTextField();private val endpoint=JTextField().apply { name="api-endpoint" };private val model=EditableModelSelector();private val provider=JComboBox<String>().apply { isEditable=true }
     private var providerOptions=emptyList<ProviderOption>()
     private var providerGeneration=0
@@ -86,13 +91,13 @@ class SettingsWindow(private val store:ConfigurationStore,
         val samples=mutableListOf<Triple<JComboBox<String>,JTextField,Pair<JComboBox<String>,JComboBox<String>>>>()
         val defaultModels=listOf("gpt-6-luna","deepseek/deepseek-v4-flash-0731","gpt-5.4-nano","gpt-5.4-mini","gpt-6-sol")
         defaultModels.forEachIndexed { i,id ->
-            val source=JComboBox(arrayOf("openai","openrouter"));source.selectedItem=if(i==1)"openrouter" else "openai"
+            val source=JComboBox(config.policies.map { it.id }.toTypedArray()).apply { name="benchmark-policy-$i" };source.selectedItem=config.policies.firstOrNull { ApiRouting.isOpenRouter(it.endpoint)==(i==1) }?.id ?: config.policies.first().id;benchmarkSources.add(source)
             val m=JTextField(id,28);val r=JComboBox(arrayOf("none","omit","low","medium","high","xhigh","max"));val s=JComboBox(arrayOf("default","priority"))
             val line=JPanel(FlowLayout(FlowLayout.LEFT));line.add(source);line.add(m);line.add(r);line.add(s);bench.add(line)
             samples+=Triple(source,m,r to s)
             fun refreshOptions() {
                 val previous=r.selectedItem?.toString() ?: "none"
-                val url=if(source.selectedItem=="openrouter")"https://openrouter.ai/api/v1/chat/completions" else "https://api.openai.com/v1/chat/completions"
+                val url=config.policies.firstOrNull { it.id==source.selectedItem }?.endpoint ?: config.active().endpoint
                 val options=ReasoningCapabilities.options(url,m.text).map { it.value }
                 r.removeAllItems();options.forEach { r.addItem(it) };r.selectedItem=if(previous in options)previous else "omit"
             }
@@ -108,7 +113,7 @@ class SettingsWindow(private val store:ConfigurationStore,
         run.addActionListener { attempt {
             saveGlobal();store.save(config)
             val rows=samples.map { (source,m,options) -> config.policies.first { it.id==source.selectedItem }.copy(model=m.text.trim(),reasoning=options.first.selectedItem.toString(),speed=options.second.selectedItem.toString()).also { it.validate() } }
-            require(rows.map { it.endpoint }.distinct().size>=2) { "Keep at least one OpenAI and one OpenRouter row" }
+            require(rows.map { ApiRouting.isOpenRouter(it.endpoint) }.toSet().containsAll(config.policies.map { ApiRouting.isOpenRouter(it.endpoint) }.toSet())) { "Include each configured API / 请包含每个已配置的 API" }
             background(run) {
                 val lines=rows.map { item -> runCatching {
                     val t=System.nanoTime();val result=runBlocking { AiService(store).request(config,item,Wire.Request(false,false,"I wnated to recieve teh package")) }
@@ -129,16 +134,17 @@ class SettingsWindow(private val store:ConfigurationStore,
                 if(inUse) { label.background=Color(220,242,228);label.foreground=Color(20,85,46) }
                 label.border=BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(if(selected)Color(50,110,200) else label.background,2),
-                    BorderFactory.createEmptyBorder(4,6,4,6))
+                    BorderFactory.createEmptyBorder(1,6,1,6))
                 return label
             }
         }
+        deletePolicyButton.addActionListener { attempt { deleteSelectedPolicy() } }
         val policyHeader=JPanel(BorderLayout(8,6)).apply {
             border=BorderFactory.createEmptyBorder(10,14,10,14)
             add(currentPolicy,BorderLayout.NORTH)
-            add(JScrollPane(choices).apply { preferredSize=Dimension(400,108) },BorderLayout.CENTER)
-            add(JPanel(GridLayout(3,1,0,6)).apply {
-                add(applyPolicy);add(savePolicy);add(JLabel("选中仅编辑 · 应用后切换"))
+            add(JScrollPane(choices).apply { preferredSize=Dimension(400,124) },BorderLayout.CENTER)
+            add(JPanel(GridLayout(4,1,0,4)).apply {
+                add(applyPolicy);add(savePolicy);add(deletePolicyButton);add(JLabel("选中仅编辑 · 应用后切换"))
             },BorderLayout.EAST)
         }
         add(policyHeader,BorderLayout.NORTH);add(tabs,BorderLayout.CENTER);add(status,BorderLayout.SOUTH)
@@ -187,7 +193,29 @@ class SettingsWindow(private val store:ConfigurationStore,
             choices.selectedIndex=index.coerceIn(0,config.policies.lastIndex)
         } finally { reloadingPolicies=false }
         loadPolicy(config.policies[choices.selectedIndex]);refreshCurrentPolicy()
+        benchmarkSources.forEach { source ->
+            val previous=source.selectedItem
+            source.model=DefaultComboBoxModel(config.policies.map { it.id }.toTypedArray())
+            source.selectedItem=previous?.takeIf { id -> config.policies.any { it.id==id } } ?: config.selectedPolicy
+        }
+        deletePolicyButton.isEnabled=config.policies.size>1
         choices.ensureIndexIsVisible(choices.selectedIndex)
+    }
+    private fun deleteSelectedPolicy() {
+        require(config.policies.size>1) { "Keep at least one policy / 至少保留一个 Policy" }
+        val selected=policy
+        val replacement=config.policies.first { it.id!=selected.id }
+        val message="删除 Policy：${selected.name}？\n同时删除该 Policy 单独保存的 Key，无法撤销。"+
+            if(config.selectedPolicy==selected.id) "\n正在使用此 Policy；删除后切换为：${replacement.name}" else ""
+        if(!confirmDelete(this,message))return
+        val index=choices.selectedIndex
+        if(store.load().policies.any { it.id==selected.id }) {
+            config=store.deletePolicy(selected.id)
+        } else {
+            config=config.copy(policies=config.policies.filterNot { it.id==selected.id })
+        }
+        reloadChoices(index.coerceAtMost(config.policies.lastIndex))
+        status.text="Policy deleted / 已删除 Policy 及其独立 Key"
     }
     private fun loadPolicy(p:Policy) {
         modelGeneration++;updateModels.isEnabled=true;policy=p

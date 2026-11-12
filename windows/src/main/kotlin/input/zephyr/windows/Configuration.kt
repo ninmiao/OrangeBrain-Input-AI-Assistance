@@ -118,6 +118,17 @@ class ConfigurationStore(val dir: Path = Paths.get(System.getenv("APPDATA"),"Zep
         }
         return copy
     }
+    @Synchronized fun deletePolicy(id:String):Configuration {
+        val before=load()
+        require(before.policies.any { it.id==id }) { "Policy not found / Policy 不存在" }
+        require(before.policies.size>1) { "Keep at least one policy / 至少保留一个 Policy" }
+        val remaining=before.policies.filterNot { it.id==id }
+        val updated=before.copy(policies=remaining,selectedPolicy=if(before.selectedPolicy==id)remaining.first().id else before.selectedPolicy)
+        save(updated)
+        try { Files.deleteIfExists(dir.resolve(keyFile(id))) }
+        catch(e:Exception) { save(before);throw e }
+        return load()
+    }
     fun recordRequestStatus(state:String) {
         require(state.matches(Regex("[A-Za-z0-9 ._-]{1,100}")))
         atomic("last-request-status.json", buildJsonObject { put("time",java.time.Instant.now().toString());put("state",state) }.toString().toByteArray())

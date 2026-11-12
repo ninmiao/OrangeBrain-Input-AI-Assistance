@@ -25,13 +25,13 @@ class ModelSelectionTest {
         while(System.nanoTime()<until) { if(edt(predicate))return;Thread.sleep(20) }
         assertTrue(edt(predicate),"UI operation did not finish")
     }
-    private fun fixture(fetch:suspend (String,String)->ModelsClient.Discovery,block:(SettingsWindow,ConfigurationStore)->Unit) {
+    private fun fixture(fetch:suspend (String,String)->ModelsClient.Discovery,confirm:(Component,String)->Boolean={ _,_ -> false },block:(SettingsWindow,ConfigurationStore)->Unit) {
         org.junit.jupiter.api.Assumptions.assumeFalse(GraphicsEnvironment.isHeadless())
         val dir=Files.createTempDirectory("zephyr-model-ui-");val store=ConfigurationStore(dir)
         val first=Policy(id="one",endpoint=endpoint,model="manual-model",reasoning="omit",speed="default")
         store.save(Configuration(selectedPolicy="one",policies=listOf(first,first.copy(id="two",model="second-model"))))
         store.saveKey("one","fixture-one",endpoint);store.saveKey("two","fixture-two",endpoint)
-        val window=edt { SettingsWindow(store,fetch).also { it.addNotify() } }
+        val window=edt { SettingsWindow(store,fetch,confirm).also { it.addNotify() } }
         try { block(window,store) } finally { edt { window.dispose() };dir.toFile().deleteRecursively() }
     }
     @Test fun editableChoicesPreserveTypedModelAndAllowSelection() = edt {
@@ -110,6 +110,32 @@ class ModelSelectionTest {
                 list.selectedIndex=0
                 assertEquals("two",store.load().selectedPolicy)
                 assertTrue(list.model.getElementAt(1).contains("Active"))
+            }
+        }
+    }
+    @Test fun deleteButtonConfirmsAndRefreshesActiveHighlight() {
+        var accept=false
+        fixture({ _,_ -> error("No network expected") },{ _,message -> assertTrue(message.contains("切换"));accept }) { window,store ->
+            edt {
+                window.isVisible=true
+                val list=find<JList<String>>(window,"policy-selector")
+                val button=find<JButton>(window,"delete-policy")
+                assertEquals(12f,list.font.size2D)
+                button.doClick()
+                assertEquals(2,store.load().policies.size)
+                assertEquals("fixture-one",store.key("one",endpoint))
+                accept=true;button.doClick()
+                assertEquals("two",store.load().selectedPolicy)
+                assertEquals(1,list.model.size)
+                assertTrue(list.model.getElementAt(0).contains("Active"))
+                assertFalse(button.isEnabled)
+                for(i in 0..4) {
+                    val source=find<JComboBox<String>>(window,"benchmark-policy-$i")
+                    assertEquals(1,source.itemCount)
+                    assertEquals("two",source.selectedItem)
+                }
+                assertFalse(Files.exists(store.dir.resolve("credential-one.bin")))
+                assertEquals("fixture-two",store.key("two",endpoint))
             }
         }
     }

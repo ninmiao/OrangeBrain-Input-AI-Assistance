@@ -71,6 +71,29 @@ class WindowsTest {
         assertFails { Configuration(scriptShortcut="shift").validate() }
     }
 
+    @Test fun deletingPolicyPreservesOtherKeysAndSelectsFallback() {
+        val store=ConfigurationStore(Files.createTempDirectory("zephyr-delete-test"))
+        try {
+            store.save(Configuration())
+            store.saveKey("openai","fixture-a");store.saveKey("openrouter","fixture-b")
+            val result=store.deletePolicy("openai")
+            assertEquals("openrouter",result.selectedPolicy)
+            assertEquals(1,result.policies.size)
+            assertFalse(Files.exists(store.dir.resolve("credential-openai.bin")))
+            assertEquals("fixture-b",store.key("openrouter"))
+            assertFails { store.deletePolicy("openrouter") }
+            assertEquals(result,store.load())
+            assertEquals("fixture-b",store.key("openrouter"))
+        } finally { store.dir.toFile().deleteRecursively() }
+    }
+    @Test fun deletingInactivePolicyDoesNotSwitchActive() {
+        val store=ConfigurationStore(Files.createTempDirectory("zephyr-delete-inactive"))
+        try {
+            store.save(Configuration())
+            assertFails { store.deletePolicy("missing") }
+            assertEquals("openai",store.deletePolicy("openrouter").selectedPolicy)
+        } finally { store.dir.toFile().deleteRecursively() }
+    }
     @Test fun defaultPolicies() { val c=Configuration();c.validate();assertEquals(2,c.policies.size);assertEquals(1,c.candidateCount);assertEquals("gpt-6.1-terra",c.active().model);assertEquals("low",c.active().reasoning);assertEquals("priority",c.active().speed);assertEquals("none",c.policies[1].reasoning);assertTrue(c.enterOriginal);assertFalse(c.spaceOriginal);assertTrue(c.wordSegmentation);assertFalse(c.enabled) }
     @Test fun windowsKeysAreEncryptedAndIndependent() {
         val s=ConfigurationStore(Files.createTempDirectory("zephyr-credential-test"))
