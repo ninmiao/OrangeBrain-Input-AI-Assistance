@@ -61,6 +61,34 @@ class ModelSelectionTest {
             }
         } finally { edt { UIManager.setLookAndFeel(previous) } }
     }
+    @Test fun settingsPagesScrollToEveryControlInSmallWindow() {
+        fixture({ _,_ -> error("No network expected") }) { window,_ ->
+            edt {
+                window.size=java.awt.Dimension(640,480)
+                window.isVisible=true
+                val tabs=components(window).filterIsInstance<JTabbedPane>().single()
+                for(i in 0 until tabs.tabCount) {
+                    tabs.selectedIndex=i;window.validate()
+                    val scroll=tabs.getComponentAt(i) as JScrollPane
+                    assertTrue(scroll.verticalScrollBar.isVisible)
+                    val panel=scroll.viewport.view as JPanel
+                    panel.components.forEach { component ->
+                        assertTrue(component.height>=component.preferredSize.height,"Tab $i clipped a control vertically")
+                    }
+                    val last=panel.components.last()
+                    panel.scrollRectToVisible(last.bounds)
+                    assertTrue(scroll.viewport.viewRect.intersects(last.bounds),"Tab $i cannot reach final control")
+                    if(panel.preferredSize.width>scroll.viewport.extentSize.width)assertTrue(scroll.horizontalScrollBar.isVisible)
+                }
+                tabs.selectedIndex=1;window.validate()
+                val save=find<JButton>(window,"save-policy")
+                save.scrollRectToVisible(java.awt.Rectangle(0,0,save.width,save.height))
+                val scroll=tabs.getComponentAt(1) as JScrollPane
+                val bounds=SwingUtilities.convertRectangle(save.parent,save.bounds,scroll.viewport.view)
+                assertTrue(scroll.viewport.viewRect.contains(bounds),"Save policy must be fully reachable")
+            }
+        }
+    }
     @Test fun cachedDiscoveryPersistsAndDoesNotCrossEndpoints() {
         val router="https://openrouter.ai/api/v1/chat/completions"
         val definition=ModelDefinition(ApiRouting.DEEPSEEK,parameters=listOf(ModelParameter("reasoning_effort","Effort",choices=ReasoningCapabilities.choices(listOf("low")))))

@@ -45,7 +45,7 @@ python windows/scripts/prepare-deps.py
 
 标准 VS 安装通过 vcvars 使用 ATL；此机额外的 `.tools/windows-atl` 是本机提取的微软开发依赖缓存，不属于项目源码，也不要求其他开发者复制。原生脚本使用可用的 VS 安装路径，不固定当前用户名。
 
-`package.ps1` 从已提交的 OpenCC 源词表生成 Windows 文本词典，不依赖 Android 的历史构建产物。它运行 JVM 测试、打包自包含 Java 运行时、两个位数的 TSF DLL、x64 输入服务和词库。输出目录必须是新目录，避免覆盖正在运行的包。安装包不包含用户配置、API Key、测试证书或几十万条生成语料。`build-installer.ps1` 将 app-image 包装为单个 `dist/Zephyr-Input-Windows-1.5.2-Setup-x64.exe`；安装器源码位于 `windows/installer/`。EXE 尚未进行产品代码签名。
+`package.ps1` 从已提交的 OpenCC 源词表生成 Windows 文本词典，不依赖 Android 的历史构建产物。它运行 JVM 测试、打包自包含 Java 运行时、两个位数的 TSF DLL、x64 输入服务和词库。输出目录必须是新目录，避免覆盖正在运行的包。安装包不包含用户配置、API Key、测试证书或几十万条生成语料。`build-installer.ps1` 将 app-image 包装为单个 `dist/Zephyr-Input-Windows-1.5.3-Setup-x64.exe`；安装器源码位于 `windows/installer/`。EXE 尚未进行产品代码签名。
 
 管理员 PowerShell 中可执行 `windows/scripts/test-installer.ps1 -Setup <Setup完整路径>`，它实际执行更新、重复覆盖、卸载和重装，检查注册项、程序文件及配置/凭据哈希。该脚本会暂时中断本机输入法，适合专用验证环境，不作为普通单元测试执行。最终恢复当前版本，原始报告保存在 `.tools/installer-validation.json`。
 

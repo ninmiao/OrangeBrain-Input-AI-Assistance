@@ -36,7 +36,7 @@ class SettingsWindow(private val store:ConfigurationStore,
     private val style=JComboBox(Prompts.pack.styles.map { it.id }.toTypedArray())
     private val status=JLabel("Ready · API keys are encrypted for your Windows account").apply { name="status" }
     init {
-        defaultCloseOperation=DISPOSE_ON_CLOSE;minimumSize=Dimension(780,660);size=Dimension(920,800);setLocationRelativeTo(null)
+        defaultCloseOperation=DISPOSE_ON_CLOSE;minimumSize=Dimension(600,420);size=Dimension(920,800);setLocationRelativeTo(null)
         val tabs=JTabbedPane()
         val settings=column()
         settings.add(JLabel("Zephyr Input",SwingConstants.LEFT).apply { font=font.deriveFont(Font.BOLD,26f) })
@@ -52,7 +52,7 @@ class SettingsWindow(private val store:ConfigurationStore,
         settings.add(JLabel("↑↓: candidates    1…5: choose    Tab: candidate    Enter: original (default)    Ctrl+Enter: original    Esc: cancel"))
         settings.add(JLabel("←→ / Home / End: edit pending input. Space follows the options above."))
         val save=JButton("Save settings / 保存设置");save.addActionListener { attempt { saveGlobal();store.save(config);status.text="Settings saved" } };settings.add(save)
-        tabs.addTab("Input / 输入",JScrollPane(settings))
+        tabs.addTab("Input / 输入",settingsScroll(settings))
         val p=column();row(p,"Policy",choices);p.add(active)
         row(p,"Name / 名称",name);row(p,"API endpoint / 完整接口地址",endpoint);row(p,"Model / 模型（可选或输入）",model)
         updateModels.addActionListener { refreshModels() };p.add(updateModels)
@@ -80,7 +80,7 @@ class SettingsWindow(private val store:ConfigurationStore,
         } };actions.add(duplicate)
         val add=JButton("New policy / 新建");add.addActionListener { config=config.copy(policies=config.policies+Policy(id=UUID.randomUUID().toString(),name="New policy"));reloadChoices(config.policies.lastIndex) };actions.add(add)
         p.add(actions);p.add(JLabel("Additional prompts cannot change the JSON schema. Core language rules remain shared with Android."))
-        tabs.addTab("Policies / 策略",JScrollPane(p))
+        tabs.addTab("Policies / 策略",settingsScroll(p))
         val bench=column();bench.add(JLabel("At most five sequential requests. Each row can select either saved API policy."))
         val samples=mutableListOf<Triple<JComboBox<String>,JTextField,Pair<JComboBox<String>,JComboBox<String>>>>()
         val defaultModels=listOf("gpt-6-luna","deepseek/deepseek-v4-flash-0731","gpt-5.4-nano","gpt-5.4-mini","gpt-6-sol")
@@ -116,8 +116,8 @@ class SettingsWindow(private val store:ConfigurationStore,
                 SwingUtilities.invokeLater { output.text=lines.joinToString("\n\n") };"Benchmark finished"
             }
         } }
-        bench.add(run);bench.add(JScrollPane(output));tabs.addTab("Benchmark / 测速",JScrollPane(bench))
-        listOf(settings,p,bench).forEach { panel -> panel.components.filterIsInstance<JComponent>().forEach { it.alignmentX=Component.LEFT_ALIGNMENT } }
+        bench.add(run);bench.add(JScrollPane(output));tabs.addTab("Benchmark / 测速",settingsScroll(bench))
+        listOf(settings,p,bench).forEach { panel -> panel.components.filterIsInstance<JComponent>().forEach { it.alignmentX=Component.LEFT_ALIGNMENT; val preferred=it.preferredSize; it.minimumSize=Dimension(preferred.width,preferred.height); it.maximumSize=Dimension(Int.MAX_VALUE,preferred.height) } }
         add(tabs,BorderLayout.CENTER);add(status,BorderLayout.SOUTH)
         choices.addActionListener { val i=choices.selectedIndex;if(i in config.policies.indices)loadPolicy(config.policies[i]) }
         reloadChoices(config.policies.indexOfFirst { it.id==config.selectedPolicy })
@@ -136,7 +136,18 @@ class SettingsWindow(private val store:ConfigurationStore,
             override fun changedUpdate(e:DocumentEvent)=changed()
         })
     }
-    private fun column()=JPanel().apply { layout=BoxLayout(this,BoxLayout.Y_AXIS);border=BorderFactory.createEmptyBorder(18,22,18,22) }
+    private fun settingsScroll(panel:JPanel)=JScrollPane(panel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED).apply {
+        verticalScrollBar.unitIncrement=24
+        horizontalScrollBar.unitIncrement=24
+        isWheelScrollingEnabled=true
+    }
+    private fun column()=object:JPanel(),Scrollable {
+        override fun getPreferredScrollableViewportSize()=preferredSize
+        override fun getScrollableTracksViewportWidth()=false
+        override fun getScrollableTracksViewportHeight()=false
+        override fun getScrollableUnitIncrement(rect:Rectangle,orientation:Int,direction:Int)=24
+        override fun getScrollableBlockIncrement(rect:Rectangle,orientation:Int,direction:Int)=maxOf(24,(if(orientation==SwingConstants.VERTICAL)rect.height else rect.width)-24)
+    }.apply { layout=BoxLayout(this,BoxLayout.Y_AXIS);border=BorderFactory.createEmptyBorder(18,22,18,22) }
     private fun row(panel:JPanel,label:String,field:JComponent) { panel.add(JPanel(BorderLayout(12,6)).apply { border=BorderFactory.createEmptyBorder(4,0,4,0);add(JLabel(label).apply { preferredSize=Dimension(290,28) },BorderLayout.WEST);add(field,BorderLayout.CENTER);maximumSize=Dimension(Int.MAX_VALUE,44) }) }
     private fun reloadChoices(index:Int) { choices.removeAllItems();config.policies.forEach { choices.addItem("${it.name} · ${it.model} · ${it.reasoning} / ${it.speed}" + if(ApiRouting.isOpenRouter(it.endpoint)) " · ${it.provider.ifBlank { "Auto" }}" else "") };choices.selectedIndex=index.coerceAtLeast(0) }
     private fun loadPolicy(p:Policy) {

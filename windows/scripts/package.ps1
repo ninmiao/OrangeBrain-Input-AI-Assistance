@@ -16,7 +16,7 @@ if(Test-Path -LiteralPath $image){throw "Output already exists: $image. Choose a
 New-Item -ItemType Directory -Path $Destination -Force | Out-Null
 $launcher=Join-Path $root 'windows/build/broker.properties'
 [IO.File]::WriteAllText($launcher,"arguments=--broker`nwin-console=false`n",[Text.UTF8Encoding]::new($false))
-& $jdk.FullName --type app-image --name ZephyrSettings --app-version 1.5.2 --vendor 'Zephyr Input' --description 'Zephyr Input for Windows' --dest $Destination --input "$root/windows/build/install/Zephyr-Windows/lib" --main-jar Zephyr-Windows.jar --main-class input.zephyr.windows.MainKt --add-launcher "ZephyrBroker=$launcher"
+& $jdk.FullName --type app-image --name ZephyrSettings --app-version 1.5.3 --vendor 'Zephyr Input' --description 'Zephyr Input for Windows' --dest $Destination --input "$root/windows/build/install/Zephyr-Windows/lib" --main-jar Zephyr-Windows.jar --main-class input.zephyr.windows.MainKt --add-launcher "ZephyrBroker=$launcher"
 if($LASTEXITCODE){throw 'jpackage failed'}
 foreach($pair in @(@('WeaselServer.exe','ZephyrServer.exe'),@('WeaselDeployer.exe','ZephyrDeployer.exe'),@('weaselx64.dll','ZephyrTSFx64.dll'),@('weasel.dll','ZephyrTSFx86.dll'),@('rime.dll','rime.dll'))){Copy-Item -LiteralPath (Join-Path $native $pair[0]) -Destination (Join-Path $image $pair[1])}
 Copy-Item -LiteralPath "$native/data" -Destination "$image/data" -Recurse
