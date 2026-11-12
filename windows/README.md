@@ -1,10 +1,10 @@
 # Zephyr Input for Windows
 
-Windows 1.5.3，已在 Windows 11 x64 验证。C++ TSF 前端与输入服务基于 Weasel，离线使用 librime、雾凇词库和 OpenCC；Kotlin/JVM 复用共享 AI 核心。设置窗口使用 JDK Swing。安装包携带 Java 运行时，使用者不需要安装 Kotlin、JDK 或 Android 开发环境。
+Windows 1.5.4，已在 Windows 11 x64 验证。C++ TSF 前端与输入服务基于 Weasel，离线使用 librime、雾凇词库和 OpenCC；Kotlin/JVM 复用共享 AI 核心。设置窗口使用 JDK Swing。安装包携带 Java 运行时，使用者不需要安装 Kotlin、JDK 或 Android 开发环境。
 
 ## 安装与运行
 
-双击 `Zephyr-Input-Windows-1.5.3-Setup-x64.exe`，完成 Windows 管理员授权。安装程序自动定位 `%ProgramFiles%\Zephyr Input`，注册独立的 x64/x86 TSF 组件、开始菜单和登录启动项。运行新版 Setup 即可覆盖更新，保留当前用户的设置、Key 和词库。安装后注销再登录，从 Windows 输入法菜单选择 **Zephyr Input**。如未显示，在中文（简体，中国）的语言选项中添加 Zephyr Input。
+双击 `Zephyr-Input-Windows-1.5.4-Setup-x64.exe`，完成 Windows 管理员授权。安装程序自动定位 `%ProgramFiles%\Zephyr Input`，注册独立的 x64/x86 TSF 组件、开始菜单和登录启动项。运行新版 Setup 即可覆盖更新，保留当前用户的设置、Key 和词库。安装后注销再登录，从 Windows 输入法菜单选择 **Zephyr Input**。如未显示，在中文（简体，中国）的语言选项中添加 Zephyr Input。
 
 开始菜单 **Zephyr Input** 打开设置；`ZephyrSettings.exe` 也可直接运行。`start_service.bat` 启动当前用户的 AI Broker 和本地输入服务。从 Windows“设置 → 应用 → 已安装的应用 → Zephyr Input”卸载，或运行安装目录的 `unins*.exe（具体编号以系统卸载入口为准）`。卸载程序注销输入法、清理程序文件、开始菜单和启动项；被其他应用占用的旧 TSF DLL 在重启时删除。用户数据默认保留在 `%APPDATA%\ZephyrInput`，便于重装恢复。
 

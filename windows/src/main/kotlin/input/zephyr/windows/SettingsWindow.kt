@@ -14,7 +14,9 @@ class SettingsWindow(private val store:ConfigurationStore,
 ):JFrame("Zephyr Input · 微风输入法") {
     private var config=store.load()
     private var policy=config.active()
-    private val choices=JComboBox<String>().apply { name="policy-selector" }
+    private val choices=JList<String>().apply { name="policy-selector"; selectionMode=ListSelectionModel.SINGLE_SELECTION; visibleRowCount=3 }
+    private val currentPolicy=JLabel().apply { name="current-policy" }
+    private var reloadingPolicies=false
     private val name=JTextField();private val endpoint=JTextField().apply { name="api-endpoint" };private val model=EditableModelSelector();private val provider=JComboBox<String>().apply { isEditable=true }
     private var providerOptions=emptyList<ProviderOption>()
     private var providerGeneration=0
@@ -24,7 +26,6 @@ class SettingsWindow(private val store:ConfigurationStore,
     private val key=JPasswordField()
     private val reasoning=JComboBox<String>();private val speed=JComboBox(arrayOf("default","priority"))
     private val chinese=JTextArea(7,50);private val english=JTextArea(7,50)
-    private val active=JCheckBox("Use this policy / 使用此 Policy")
     private val enabled=JCheckBox("Enable cloud AI / 启用云端 AI",config.enabled)
     private val segmentation=JCheckBox("Space marks phrase boundaries / 空格分词",config.wordSegmentation)
     private val enterOriginal=JCheckBox("Enter commits original text / 回车提交原文",config.enterOriginal)
@@ -51,9 +52,9 @@ class SettingsWindow(private val store:ConfigurationStore,
         settings.add(JLabel("Tap Shift alone within 0.5 s / 单独轻按 Shift；组合键与长按不切换。保存后即时生效。"))
         settings.add(JLabel("↑↓: candidates    1…5: choose    Tab: candidate    Enter: original (default)    Ctrl+Enter: original    Esc: cancel"))
         settings.add(JLabel("←→ / Home / End: edit pending input. Space follows the options above."))
-        val save=JButton("Save settings / 保存设置");save.addActionListener { attempt { saveGlobal();store.save(config);status.text="Settings saved" } };settings.add(save)
+        val save=JButton("Save settings / 保存设置");save.addActionListener { attempt { saveGlobal();store.save(config);refreshCurrentPolicy();status.text="Settings saved" } };settings.add(save)
         tabs.addTab("Input / 输入",settingsScroll(settings))
-        val p=column();row(p,"Policy",choices);p.add(active)
+        val p=column()
         row(p,"Name / 名称",name);row(p,"API endpoint / 完整接口地址",endpoint);row(p,"Model / 模型（可选或输入）",model)
         updateModels.addActionListener { refreshModels() };p.add(updateModels)
         p.add(JLabel("Save policy to remember the list / 更新后保存 Policy 可记住模型列表"))
@@ -64,7 +65,7 @@ class SettingsWindow(private val store:ConfigurationStore,
         p.add(JLabel("Chinese policy instructions / 中文附加提示词"));p.add(JScrollPane(chinese))
         p.add(JLabel("English policy instructions / 英文附加提示词"));p.add(JScrollPane(english))
         val actions=JPanel(FlowLayout(FlowLayout.LEFT))
-        val savePolicy=JButton("Save policy / 保存 Policy").apply { name="save-policy" };savePolicy.addActionListener { attempt { savePolicy();status.text="Policy saved" } };actions.add(savePolicy)
+        val savePolicy=JButton("Save policy / 保存 Policy").apply { name="save-policy" };savePolicy.addActionListener { attempt { savePolicy();status.text="Policy saved" } }
         val test=JButton("Test latency / 测试当前 Policy");test.addActionListener {
             attempt { savePolicy();val snapshot=config;val selected=policy
                 background(test) { val started=System.nanoTime();val result=runBlocking { AiService(store).request(snapshot,selected,Wire.Request(true,false,"fanfaxisizhazheng")) }
@@ -118,8 +119,30 @@ class SettingsWindow(private val store:ConfigurationStore,
         } }
         bench.add(run);bench.add(JScrollPane(output));tabs.addTab("Benchmark / 测速",settingsScroll(bench))
         listOf(settings,p,bench).forEach { panel -> panel.components.filterIsInstance<JComponent>().forEach { it.alignmentX=Component.LEFT_ALIGNMENT; val preferred=it.preferredSize; it.minimumSize=Dimension(preferred.width,preferred.height); it.maximumSize=Dimension(Int.MAX_VALUE,preferred.height) } }
-        add(tabs,BorderLayout.CENTER);add(status,BorderLayout.SOUTH)
-        choices.addActionListener { val i=choices.selectedIndex;if(i in config.policies.indices)loadPolicy(config.policies[i]) }
+        val applyPolicy=JButton("Apply policy / 应用此 Policy").apply { name="apply-policy"; font=font.deriveFont(Font.BOLD) }
+        applyPolicy.addActionListener { attempt { savePolicy(activate=true);status.text="Policy applied / 已应用 Policy" } }
+        choices.cellRenderer=object:DefaultListCellRenderer() {
+            override fun getListCellRendererComponent(list:JList<*>?,value:Any?,index:Int,selected:Boolean,focus:Boolean):Component {
+                val label=super.getListCellRendererComponent(list,value,index,selected,focus) as JLabel
+                val inUse=config.policies.getOrNull(index)?.id==config.selectedPolicy
+                label.font=label.font.deriveFont(if(inUse)Font.BOLD else Font.PLAIN)
+                if(inUse) { label.background=Color(220,242,228);label.foreground=Color(20,85,46) }
+                label.border=BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(if(selected)Color(50,110,200) else label.background,2),
+                    BorderFactory.createEmptyBorder(4,6,4,6))
+                return label
+            }
+        }
+        val policyHeader=JPanel(BorderLayout(8,6)).apply {
+            border=BorderFactory.createEmptyBorder(10,14,10,14)
+            add(currentPolicy,BorderLayout.NORTH)
+            add(JScrollPane(choices).apply { preferredSize=Dimension(400,108) },BorderLayout.CENTER)
+            add(JPanel(GridLayout(3,1,0,6)).apply {
+                add(applyPolicy);add(savePolicy);add(JLabel("选中仅编辑 · 应用后切换"))
+            },BorderLayout.EAST)
+        }
+        add(policyHeader,BorderLayout.NORTH);add(tabs,BorderLayout.CENTER);add(status,BorderLayout.SOUTH)
+        choices.addListSelectionListener { event -> val i=choices.selectedIndex;if(!reloadingPolicies && !event.valueIsAdjusting && i in config.policies.indices)loadPolicy(config.policies[i]) }
         reloadChoices(config.policies.indexOfFirst { it.id==config.selectedPolicy })
         val listener=object:DocumentListener {
             override fun insertUpdate(e:DocumentEvent)=refreshReasoningLater()
@@ -149,13 +172,29 @@ class SettingsWindow(private val store:ConfigurationStore,
         override fun getScrollableBlockIncrement(rect:Rectangle,orientation:Int,direction:Int)=maxOf(24,(if(orientation==SwingConstants.VERTICAL)rect.height else rect.width)-24)
     }.apply { layout=BoxLayout(this,BoxLayout.Y_AXIS);border=BorderFactory.createEmptyBorder(18,22,18,22) }
     private fun row(panel:JPanel,label:String,field:JComponent) { panel.add(JPanel(BorderLayout(12,6)).apply { border=BorderFactory.createEmptyBorder(4,0,4,0);add(JLabel(label).apply { preferredSize=Dimension(290,28) },BorderLayout.WEST);add(field,BorderLayout.CENTER);maximumSize=Dimension(Int.MAX_VALUE,44) }) }
-    private fun reloadChoices(index:Int) { choices.removeAllItems();config.policies.forEach { choices.addItem("${it.name} · ${it.model} · ${it.reasoning} / ${it.speed}" + if(ApiRouting.isOpenRouter(it.endpoint)) " · ${it.provider.ifBlank { "Auto" }}" else "") };choices.selectedIndex=index.coerceAtLeast(0) }
+    private fun refreshCurrentPolicy() {
+        val selected=config.active()
+        currentPolicy.text="当前 Policy / Active: ${selected.name} · ${selected.model}"+if(config.enabled) "" else " · 云端 AI 已关闭"
+        currentPolicy.toolTipText=currentPolicy.text
+    }
+    private fun reloadChoices(index:Int) {
+        reloadingPolicies=true
+        try {
+            choices.setListData(config.policies.map {
+                (if(it.id==config.selectedPolicy) "● 正在使用 / Active · " else "○ ")+"${it.name} · ${it.model} · ${it.reasoning} / ${it.speed}"+
+                    if(ApiRouting.isOpenRouter(it.endpoint)) " · ${it.provider.ifBlank { "Auto" }}" else ""
+            }.toTypedArray())
+            choices.selectedIndex=index.coerceIn(0,config.policies.lastIndex)
+        } finally { reloadingPolicies=false }
+        loadPolicy(config.policies[choices.selectedIndex]);refreshCurrentPolicy()
+        choices.ensureIndexIsVisible(choices.selectedIndex)
+    }
     private fun loadPolicy(p:Policy) {
         modelGeneration++;updateModels.isEnabled=true;policy=p
         name.text=p.name;endpoint.text=p.endpoint;model.text=p.model;refreshModelOptions()
         providerOptions=emptyList();provider.removeAllItems();provider.addItem(p.provider);provider.selectedItem=p.provider
         providerTimer.restart();speed.selectedItem=p.speed;key.text="";chinese.text=p.chinesePrompt;english.text=p.englishPrompt
-        active.isSelected=config.selectedPolicy==p.id;refreshReasoning(p.reasoning)
+        refreshReasoning(p.reasoning)
     }
     private fun refreshModelOptions() {
         val ep=endpoint.text.trim()
@@ -210,12 +249,12 @@ class SettingsWindow(private val store:ConfigurationStore,
         }.apply{isDaemon=true;start()}
     }
     private fun saveGlobal() { config=config.copy(languageShortcut=ShortcutOptions.language.entries.first { it.value==languageShortcut.selectedItem }.key,scriptShortcut=ShortcutOptions.script.entries.first { it.value==scriptShortcut.selectedItem }.key,enabled=enabled.isSelected,wordSegmentation=segmentation.isSelected,enterOriginal=enterOriginal.isSelected,spaceOriginal=spaceOriginal.isSelected,completion=false,candidateCount=1,debounceMs=debounce.value as Int,timeoutMs=timeout.value as Int,style=style.selectedItem.toString()) }
-    private fun savePolicy() {
+    private fun savePolicy(activate:Boolean=false) {
         saveGlobal();val edited=policy.copy(name=name.text.trim(),endpoint=endpoint.text.trim(),model=model.text.trim(),catalog=if(endpoint.text.trim()==policy.endpoint)policy.catalog else ModelCatalog(),modelList=policy.modelList?.takeIf { it.endpoint==endpoint.text.trim() },provider=providerId(),reasoning=reasoning.selectedItem.toString(),speed=speed.selectedItem.toString(),chinesePrompt=chinese.text,englishPrompt=english.text)
-        edited.validate();config=config.copy(policies=config.policies.map { if(it.id==edited.id)edited else it },selectedPolicy=if(active.isSelected)edited.id else config.selectedPolicy)
+        edited.validate();val updated=config.copy(policies=config.policies.map { if(it.id==edited.id)edited else it },selectedPolicy=if(activate)edited.id else config.selectedPolicy)
         val password=key.password
         try { if(password.isNotEmpty())store.saveKey(edited.id,String(password),edited.endpoint) } finally { password.fill('\u0000');key.text="" }
-        store.save(config);policy=edited;reloadChoices(config.policies.indexOfFirst { it.id==edited.id })
+        store.save(updated);config=updated;policy=edited;reloadChoices(config.policies.indexOfFirst { it.id==edited.id })
     }
     private fun attempt(block:()->Unit) { try { block() } catch(e:Exception) { status.text=safeError(e) } }
     private fun safeError(e:Throwable)=if(e is ApiHttpException) "API HTTP error" else (e.message ?: e.javaClass.simpleName).take(180)

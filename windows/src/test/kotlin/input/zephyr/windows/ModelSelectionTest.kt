@@ -82,10 +82,34 @@ class ModelSelectionTest {
                 }
                 tabs.selectedIndex=1;window.validate()
                 val save=find<JButton>(window,"save-policy")
-                save.scrollRectToVisible(java.awt.Rectangle(0,0,save.width,save.height))
-                val scroll=tabs.getComponentAt(1) as JScrollPane
-                val bounds=SwingUtilities.convertRectangle(save.parent,save.bounds,scroll.viewport.view)
-                assertTrue(scroll.viewport.viewRect.contains(bounds),"Save policy must be fully reachable")
+                assertTrue(save.isShowing)
+                val buttonBounds=SwingUtilities.convertRectangle(save.parent,save.bounds,window.contentPane)
+                assertTrue(window.contentPane.bounds.width>=buttonBounds.x+buttonBounds.width)
+                assertTrue(buttonBounds.y<200,"Save policy must stay at the top")
+            }
+        }
+    }
+    @Test fun policyListDistinguishesEditingFromAppliedPolicy() {
+        fixture({ _,_ -> error("No network expected") }) { window,store ->
+            edt {
+                window.isVisible=true
+                val list=find<JList<String>>(window,"policy-selector")
+                val current=find<JLabel>(window,"current-policy")
+                assertEquals(2,list.model.size)
+                assertTrue(list.model.getElementAt(0).contains("Active"))
+                list.selectedIndex=1
+                assertEquals("one",store.load().selectedPolicy)
+                assertTrue(current.text.contains("manual-model"))
+                find<JButton>(window,"save-policy").doClick()
+                assertEquals("one",store.load().selectedPolicy)
+                find<JButton>(window,"apply-policy").doClick()
+                assertEquals("two",store.load().selectedPolicy)
+                assertTrue(list.model.getElementAt(1).contains("Active"))
+                assertFalse(list.model.getElementAt(0).contains("Active"))
+                assertTrue(current.text.contains("second-model"))
+                list.selectedIndex=0
+                assertEquals("two",store.load().selectedPolicy)
+                assertTrue(list.model.getElementAt(1).contains("Active"))
             }
         }
     }
@@ -135,7 +159,7 @@ class ModelSelectionTest {
         fixture({ _,_ -> started.countDown();release.await(10,TimeUnit.SECONDS);finished.countDown();ModelsClient.Discovery(listOf("old-policy-result"),emptyList()) }) { w,store ->
             try {
                 edt { find<JButton>(w,"refresh-models").doClick() };assertTrue(started.await(5,TimeUnit.SECONDS))
-                edt { find<JComboBox<*>>(w,"policy-selector").selectedIndex=1 }
+                edt { find<JList<*>>(w,"policy-selector").selectedIndex=1 }
                 release.countDown();assertTrue(finished.await(5,TimeUnit.SECONDS));Thread.sleep(200)
                 edt {
                     val picker=find<EditableModelSelector>(w,"model-selector")
