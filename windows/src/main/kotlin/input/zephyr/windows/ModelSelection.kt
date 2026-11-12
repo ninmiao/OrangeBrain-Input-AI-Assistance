@@ -32,7 +32,7 @@ fun Policy.effectiveCatalog(apiEndpoint:String=endpoint):ModelCatalog =
 
 /** Updating choices must never replace an unfinished, manually typed model ID. */
 class EditableModelSelector:JComboBox<String>() {
-    init { isEditable=true; maximumRowCount=14; prototypeDisplayValue="provider/model-name"; name="model-selector"; addItemListener { event -> if(event.stateChange==java.awt.event.ItemEvent.SELECTED)editor.item=event.item } }
+    init { setEditable(true); maximumRowCount=14; prototypeDisplayValue="provider/model-name"; name="model-selector"; addItemListener { event -> if(event.stateChange==java.awt.event.ItemEvent.SELECTED)editor.item=event.item } }
     private val textField get()=editor.editorComponent as JTextField
     val document get()=textField.document
     var text:String

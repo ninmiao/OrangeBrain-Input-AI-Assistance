@@ -43,6 +43,24 @@ class ModelSelectionTest {
         (picker.editor.editorComponent as JTextField).text="typed-new-model"
         picker.setOptions(listOf("server-c"));assertEquals("typed-new-model",picker.text)
     }
+    @Test fun settingsWindowDisplaysUnderWindowsLookAndFeel() {
+        org.junit.jupiter.api.Assumptions.assumeFalse(GraphicsEnvironment.isHeadless())
+        val previous=edt { UIManager.getLookAndFeel().javaClass.name }
+        try {
+            edt { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()) }
+            fixture({ _,_ -> error("No network expected") }) { window,_ ->
+                edt {
+                    window.isVisible=true
+                    assertTrue(window.isShowing)
+                    val picker=find<EditableModelSelector>(window,"model-selector")
+                    assertTrue(picker.minimumSize.width>0)
+                    assertTrue(picker.components.contains(picker.editor.editorComponent))
+                    picker.selectedItem="another-model"
+                    assertEquals("another-model",picker.text)
+                }
+            }
+        } finally { edt { UIManager.setLookAndFeel(previous) } }
+    }
     @Test fun cachedDiscoveryPersistsAndDoesNotCrossEndpoints() {
         val router="https://openrouter.ai/api/v1/chat/completions"
         val definition=ModelDefinition(ApiRouting.DEEPSEEK,parameters=listOf(ModelParameter("reasoning_effort","Effort",choices=ReasoningCapabilities.choices(listOf("low")))))
