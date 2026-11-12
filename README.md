@@ -6,13 +6,13 @@
 
 **目前还是原型，请谨慎使用。** 虽然我已经在日常使用，但还有不少地方要打磨。API token 消耗目前比较大，我还没来得及优化，建议先用小型模型试试。我用 Luna 和 Qwen3.8 27B 测下来效果还不错。
 
-Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 Android** 两个版本。离线用雾凇词库，联网后用 **LLM 和提示词**补足词库匹配：修正漏输、重复、错序和邻键误触，处理长拼音和中英文混输，也可以按描述生成颜表情。
+Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 Android** 两个版本。离线用雾凇词库，联网后调用 **在线 LLM API**，通过提示词补足词库匹配：修正漏输、重复、错序和邻键误触，处理长拼音和中英文混输，也可以按描述生成颜表情。
 
 中文模式下，拼音转汉字，英语保留并纠错；英文模式下，优先纠正英语，把中文、拼音或混输转成英文。两种模式都有候选区，每次请求返回一个 AI 候选，由你选中上屏。
 
 云端支持 **OpenAI 和 OpenRouter**。模型、思考强度、速度和供应商都可以自己选，也可以保存成多个 Policy 随时切换。纠错能有多强、等待有多短，取决于模型的能力，以及你的钱包（笑）。
 
-本地输入可离线使用。开启云端 AI 后，输入及设置范围内的前后文会发送给所选 API 服务，Key 加密保存在设备上。
+**LLM 功能需要联网，模型在 OpenAI、OpenRouter 接入的远程服务端运行，不在手机或电脑本地运行。** 离线输入使用 Rime 和本地词库。开启云端 AI 后，输入及设置范围内的前后文会发送给所选 API 服务，Key 加密保存在设备上。
 
 ### English
 
@@ -20,11 +20,11 @@ I built Zephyr for my own daily typing: fast pinyin input, clear privacy control
 
 **This is still a prototype; please use it with care.** I use it daily, but there is plenty left to improve. API token usage is currently quite high, and I haven't optimized it yet. Start with a smaller model; Luna and Qwen3.8 27B have worked fairly well in my own testing.
 
-**Zephyr Input** is a **Rime-based pinyin keyboard for Windows and Android**. It uses Rime Ice dictionaries offline and adds **LLM assistance** for missing letters, repeated characters, swapped letters, nearby-key mistakes, long pinyin, and mixed Chinese–English input. It can also turn a short description into a kaomoji.
+**Zephyr Input** is a **Rime-based pinyin keyboard for Windows and Android**. It uses Rime Ice dictionaries offline and calls **online LLM APIs** for missing letters, repeated characters, swapped letters, nearby-key mistakes, long pinyin, and mixed Chinese–English input. It can also turn a short description into a kaomoji.
 
 Chinese mode converts pinyin to Chinese while keeping and correcting English. English mode corrects English and translates Chinese, pinyin, or mixed input into English. Both modes show candidates; each AI request returns one suggestion for you to select.
 
-Cloud assistance supports **OpenAI and OpenRouter**, with separate policies for models, reasoning effort, speed, and provider routing. The quality depends on the model—and your wallet. Local typing works offline; cloud AI sends your input and configured surrounding context to your chosen API service. Keys are encrypted on your device.
+Cloud assistance supports **OpenAI and OpenRouter**, with separate policies for models, reasoning effort, speed, and provider routing. The quality depends on the model—and your wallet. **LLM features require an internet connection: models run on remote services accessed through OpenAI or OpenRouter, not locally on your phone or computer.** Offline typing uses Rime and local dictionaries. Cloud AI sends your input and configured surrounding context to your chosen API service. Keys are encrypted on your device.
 
 ## 输入示例 · Examples
 
