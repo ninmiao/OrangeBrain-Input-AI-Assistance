@@ -30,6 +30,91 @@ Built on **Rime**, Zephyr currently runs on **Android and Windows**. It keeps lo
 
 **Privacy:** local Rime candidates do not require a cloud model. Enabling cloud AI sends your input and configured surrounding context to the API service you choose; API keys are encrypted locally on your device. You can turn cloud assistance off and continue typing offline. Cloud assistance is an explicit trade-off, not a promise that your input never leaves your device.
 
+## 看看它能做什么 · See it in action
+
+下面是用于说明功能的输入与**预期候选示例**，不是每个模型、每次请求都能复现的实测承诺。结果受模型、上下文和设置影响；请先用你选定的 Policy 测试。
+
+These are **illustrative inputs and intended candidates**, not guaranteed outputs or benchmark results. Try them with your chosen policy; models, context, and settings affect the result.
+
+| 场景 / Scenario | 模式 / Mode | 你输入 / You type | 预期候选 / Intended candidate |
+| --- | --- | --- | --- |
+| 不完美的长拼音 / Imperfect pinyin | 中文 / Chinese | `fanfaxisizhazheng` | `反法西斯战争` |
+| 字母错序 / Transposed letters | 中文 / Chinese | `nihoa shijie` | `你好世界` |
+| 漏输与错序 / Missing and swapped letters | EN | `I wnated to recieve teh package` | `I wanted to receive the package` |
+| 重复与邻键误触 / Repeated letters and adjacent-key errors | EN | `I reallly loce this` | `I really love this` |
+| 中文里保留英语 / Keep English inside Chinese | 中文 / Chinese | `wo jintian you meeting` | `我今天有 meeting` |
+| 混输统一成英文 / Turn mixed input into English | EN | `wo jintian you meeting` | `I have a meeting today` |
+| 用空格标出词组 / Mark phrase boundaries | 中文 / Chinese | `hanbaowang haochi` | `汉堡王好吃` |
+| 描述生成颜表情 / Describe a kaomoji | 中文 / Chinese | `颜 笑死` | `(„ಡωಡ„)` |
+
+空格分词示例需要开启相应设置；颜表情短触发词适用于 Windows 1.5.5，当前 Android 1.4.0 安装包使用较早的触发规则，可输入 `颜表情 笑死`。模型可能生成不同但语义相近的表情。**候选由你确认后上屏**，不会把纠错当作自动改写已经提交的文字。
+
+The phrase-boundary example requires that setting to be enabled. The short kaomoji trigger is available in Windows 1.5.5; the current Android 1.4.0 package uses the earlier trigger, such as `颜表情 笑死`. Equivalent expressions may vary. **You choose the candidate before committing it**; this is not automatic rewriting of text you have already submitted.
+
+## 快速上手 · Quick start
+
+### 1. 安装并切换输入法 · Install and select the keyboard
+
+**Windows**
+
+1. 下载 [Windows 1.5.5 安装包](dist/Zephyr-Input-Windows-1.5.5-Setup-x64.exe)，双击并允许 UAC 管理员授权。无需另装 Java 或 Kotlin。
+2. 安装后注销再登录，通过系统输入法切换菜单选择 **Zephyr Input**。没有出现时，在 Windows 的“中文（简体，中国）→ 语言选项”中添加它。
+3. 从开始菜单打开 **Zephyr Input** 设置。默认轻按 `Shift` 切换中英文，`Ctrl+Shift+T` 切换繁简；数字键选候选，`Enter` 默认提交原文。更多操作见 [Windows 使用说明](windows/README.md)。
+
+Download and run the Windows installer, approve UAC, sign out and back in, then select Zephyr Input from the system input-method menu. Open settings from the Start menu. Tap `Shift` for Chinese/English, use number keys to select candidates, or `Enter` to commit the original input by default. Java is bundled.
+
+**Android**
+
+1. 下载 [Android 1.4.0 ARM64 APK](dist/Zephyr-Input-1.4.0-arm64-v8a-demo.apk)，允许浏览器或文件管理器安装该 APK。
+2. 打开 Zephyr Input，按引导在系统中启用并选择输入法；首次词库部署请耐心等待。
+3. 进入应用设置中的 **AI 辅助** 页面配置云端。只使用本地 Rime 输入时，不需要 API Key。
+
+Install the ARM64 APK, enable and select Zephyr Input in Android's keyboard settings, and let the initial dictionary deployment finish. Open **AI 辅助 / AI assistance** for cloud configuration. Local Rime input does not require an API key.
+
+### 2. 准备 API Key 与模型 · Set up an API key and model
+
+**一个 Policy 就是一套“接口 + Key + 模型 + 参数 + 提示词”。** OpenAI 和 OpenRouter 的 Key 不通用；填写自己账号有权限、余额或配额可用的模型，不能只写显示昵称。内置默认值也不保证你的账号有权限调用。
+
+**A policy bundles an endpoint, key, model, parameters, and prompts.** OpenAI and OpenRouter keys are not interchangeable. Use the exact model ID available to your API account, with sufficient quota or credit; a friendly display name is not a model ID. Preset defaults do not guarantee account access.
+
+| 配置 / Setting | OpenAI | OpenRouter |
+| --- | --- | --- |
+| Key 管理 / Key management | [OpenAI API Keys](https://platform.openai.com/api-keys) | [OpenRouter Keys](https://openrouter.ai/settings/keys) |
+| 完整接口地址 / Full endpoint | `https://api.openai.com/v1/chat/completions` | `https://openrouter.ai/api/v1/chat/completions` |
+| 模型 / Model | 从更新后的列表选择或填完整模型 ID / Select or enter the exact model ID | 从列表选择或复制目录中的完整 ID，通常为 `作者/模型` / Full catalog ID, usually `author/model` |
+| 提供商 / Provider | 留空 / Leave blank | 可选 Auto；也可刷新后选择该模型的供应商 / Auto, or refresh and select a provider for that model |
+| 思考 / Reasoning | 使用该模型支持的选项 / Use a supported value | 使用该模型与路由支持的选项 / Use a value supported by the model and route |
+| 速度 / Speed | `default` 为普通速度；`priority` 仅在支持时使用 / Default, or priority if supported | 默认路由先验证可用，再按需要调整 / Verify the default route before tuning |
+
+此客户端使用 **Chat Completions**：请填完整地址，不是网站首页、只有 `/v1` 的根地址或 `/responses`。接口参考：[OpenAI Chat API](https://developers.openai.com/api/reference/resources/chat)、[OpenRouter Chat Completions](https://openrouter.ai/docs/api-reference/chat-completion)。`omit` / 服务端默认表示“不发送该参数”，**不等于无思考**；选项不可用时不要强行填写。提示词已有内置默认值，初次配置不需要修改。
+
+This client uses **Chat Completions**: enter the full endpoint, not the website URL, a bare `/v1` base URL, or `/responses`. `omit` / server default means the parameter is not sent; **it does not mean reasoning is disabled**. Keep the built-in prompts for your first setup.
+
+### 3. 保存、应用、测试 · Save, apply, and test
+
+**Windows**
+
+1. 在顶部 Policy 列表选一项，到 **Policies / 策略** 页填写接口、模型和 API Key。
+2. 点击 **Save policy / 保存 Policy**。Key 输入框保存后会清空，这是正常行为；相同接口下留空会保留已存 Key。
+3. 点击 **Update models / 更新模型列表**，选择模型并检查思考、速度、供应商设置，再保存。列表也允许手动输入完整模型 ID。
+4. 点击顶部 **Apply policy / 应用此 Policy**，确认目标项出现绿色“正在使用”标记。**仅选中或保存，不会切换正在使用的 Policy。**
+5. 在 **Input / 输入** 勾选 **Enable cloud AI / 启用云端 AI**，点击 **Save settings / 保存设置**。然后到 Policy 页点击 **Test latency / 测试当前 Policy**，通过后在文本框试输上面的示例。
+
+On Windows, edit the endpoint, model, and key in **Policies**, then **Save policy**. A cleared key field after saving is normal. Use **Update models** or type an exact ID, check parameters, and save again. Click **Apply policy** to switch—the active row turns green. Enable cloud AI in **Input**, save settings, and run **Test latency**. Selecting or saving a policy alone does not activate it.
+
+**Android**
+
+1. 打开 **AI 辅助 → 编辑目标 Policy**，点击 **验证身份并配置连接 / 密钥**。先设置手机锁屏密码或 PIN，按系统提示验证后保存地址和 Key。
+2. 打开该 Policy 的模型参数设置，选择或填写模型，并检查思考强度、速度及 OpenRouter 供应商，保存修改。
+3. 返回 Policy 列表，**勾选要使用的 Policy**；开启云端 AI 并确认输入会发送到所选 API 的提示。
+4. 点击 **测试当前 Policy 延迟** 或列表里的 **测试延迟**；确认成功后再开始输入。
+
+On Android, open **AI assistance → Edit policy**, authenticate to save the endpoint and key, then configure the model and parameters. Return to the policy list, select the policy, enable cloud AI with consent, and run its latency test. Device screen-lock authentication is required for credential configuration.
+
+**第一次没成功？** 先确认已开启云端 AI、正确 Policy 已应用，再检查 Key 是否属于对应平台、完整模型 ID 是否可用、参数是否受支持。OpenRouter 固定供应商不可用时可改为 Auto 再测。延迟测试会发送真实请求，可能产生费用；离线候选正常并不表示云端连接已成功。
+
+**Not working yet?** Check cloud AI is enabled, the intended policy is active, and the key, exact model ID, and parameters are valid for that service. If a pinned OpenRouter provider is unavailable, try Auto. Latency tests make real API requests and may incur charges; working offline candidates do not prove the cloud connection is working.
+
 ### 开源致谢与引用 · Open-source acknowledgements
 
 Zephyr 建立在以下项目的工作之上。感谢原作者、维护者和词库贡献者；本项目的 AI 辅助与平台改动并不替代他们的署名。
