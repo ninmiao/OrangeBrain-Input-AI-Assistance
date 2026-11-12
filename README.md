@@ -30,7 +30,7 @@ These examples show the intended corrections. Wording varies with the model and 
 
 | 输入 / Input | 模式 / Mode | 候选示例 / Example candidate |
 | --- | --- | --- |
-| `shuhaojianfei youchileliangwanfan` | 中文 / Chinese | 说好减肥，又吃了两碗饭 |
+| `shuohaojianfei youchileliangwanfn`<br>“饭”：`fan` → **`fn`**，漏了 `a` / missing `a` | 中文 / Chinese | 说好减肥，又吃了两碗饭 |
 | `nihoa shijie` | 中文 / Chinese | 你好世界 |
 | `I wnated to recieve teh package` | EN | I wanted to receive the package |
 | `I reallly loce this` | EN | I really love this |
