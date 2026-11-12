@@ -26,22 +26,13 @@ Chinese mode converts pinyin to Chinese while keeping and correcting English. En
 
 Cloud assistance supports **OpenAI and OpenRouter**, with separate policies for models, reasoning effort, speed, and provider routing. The quality depends on the model—and your wallet. **LLM features require an internet connection: models run on remote services accessed through OpenAI or OpenRouter, not locally on your phone or computer.** Offline typing uses Rime and local dictionaries. Cloud AI sends your input and configured surrounding context to your chosen API service. Keys are encrypted on your device.
 
-## 界面预览 · Screenshots
+## 输入与 AI 纠错 · AI-assisted typing
 
-<table>
-  <tr>
-    <th>Windows · Policy 与模型配置</th>
-    <th>Android · 拼音候选与键盘</th>
-  </tr>
-  <tr>
-    <td valign="top"><img src="docs/images/windows-settings.png" alt="Windows 1.5.5：当前 Policy 高亮、OpenAI 与 OpenRouter 配置、模型和思考参数" width="620"></td>
-    <td valign="top"><img src="docs/images/android-keyboard.png" alt="Android 模拟器：nihaoshijie 拼音候选、数字行、中英与繁简切换" width="280"></td>
-  </tr>
-</table>
+<img src="docs/images/android-keyboard.png" alt="真实在线 AI 纠错：输入 woyaochihuogu，本地候选为我要吃货古，下方 AI 候选为我要吃火锅" width="360">
 
-Windows 1.5.5 的设置页：顶部高亮当前 Policy，下方配置模型、思考强度和速度。Android 调试版模拟器实图：拼音提示、本地候选、数字行和中英、繁简切换，图中云端 AI 关闭。
+Android 调试版模拟器实图：输入 `woyaochihuogu`，上方本地候选为“我要吃货古”，下方在线 LLM 给出“我要吃火锅”。点击 AI 候选即可上屏。
 
-Windows 1.5.5 shows the active policy and model controls. The Android debug build is shown in an emulator with pinyin, local candidates, a number row, and language/script switches; cloud AI is off in this capture.
+Actual Android debug build in an emulator: for `woyaochihuogu`, the local candidate reads “我要吃货古”, while the online LLM suggests “我要吃火锅” (I want to eat hotpot). Tap the AI suggestion to commit it.
 
 ## 输入示例 · Examples
 

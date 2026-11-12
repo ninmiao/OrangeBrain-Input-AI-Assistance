@@ -214,5 +214,4 @@ secrets.properties
 # README screenshots
 !/docs/images/
 /docs/images/*
-!/docs/images/windows-settings.png
 !/docs/images/android-keyboard.png
