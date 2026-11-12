@@ -28,6 +28,16 @@ Cloud assistance supports **OpenAI and OpenRouter**, with separate policies for 
 
 ## 输入与 AI 纠错 · AI-assisted typing
 
+### Windows
+
+<img src="docs/images/windows-input.png" alt="Windows 实际输入：错序拼音 nihoa，AI 候选为你好，下面保留 Rime 本地候选" width="860">
+
+实际 TSF 输入窗口：`nihoa` 中的字母顺序打错后，在线 AI 给出“你好”。候选窗用 **AI** 和 **Rime** 标明来源，可直接选词上屏。
+
+A real TSF input window: the online AI corrects the transposed pinyin `nihoa` to “你好” (hello). **AI** and **Rime** labels distinguish the online suggestion from local candidates.
+
+### Android
+
 <img src="docs/images/android-keyboard.png" alt="真实在线 AI 纠错：输入 woyaochihuogu，本地候选为我要吃货古，下方 AI 候选为我要吃火锅" width="360">
 
 Android 调试版模拟器实图：输入 `woyaochihuogu`，上方本地候选为“我要吃货古”，下方在线 LLM 给出“我要吃火锅”。点击 AI 候选即可上屏。

@@ -215,3 +215,4 @@ secrets.properties
 !/docs/images/
 /docs/images/*
 !/docs/images/android-keyboard.png
+!/docs/images/windows-input.png
