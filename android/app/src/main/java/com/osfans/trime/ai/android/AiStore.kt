@@ -199,6 +199,28 @@ class AiStore internal constructor(private val context: Context) {
         }
         return id
     }
+    @Synchronized fun duplicatePolicy(sourceId: String): String {
+        val source = config.policies.first { it.id == sourceId }
+        require(config.policies.size < 20) { "最多保存 20 个 Policy" }
+        val sourceCredentials = credentialsForPolicy(sourceId)
+        val secret = if (sourceCredentials.hasCredential())
+            sourceCredentials.read(source.endpoint) ?: error("原 Policy 密钥无法读取，请重新配置后再复制") else null
+        val id = UUID.randomUUID().toString()
+        val base = source.name.take(65) + " 副本"
+        var name = base
+        var suffix = 2
+        while (config.policies.any { it.name == name }) name = "$base ${suffix++}"
+        val destination = credentialsForPolicy(id)
+        try {
+            if (secret != null) destination.save(source.endpoint, secret)
+            update { it.copy(policies = it.policies + source.copy(id = id, name = name)) }
+        } catch (e: Exception) {
+            runCatching { destination.clear() }
+            throw e
+        }
+        return id
+    }
+
     fun deletePolicy(id: String) {
         update { c ->
             require(c.policies.size > 1)

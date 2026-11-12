@@ -45,6 +45,8 @@ interface RimeApi {
         sequence: String,
     ): Boolean
 
+    suspend fun processMixedKey(value: Int): Boolean
+
     suspend fun selectCandidate(idx: Int): Boolean
 
     suspend fun forgetCandidate(idx: Int): Boolean

@@ -5,6 +5,44 @@ import java.nio.file.Files
 import com.osfans.trime.ai.*
 
 class WindowsTest {
+    @Test fun publicModelProvidersLoadWithoutCredential() {
+        org.junit.jupiter.api.Assumptions.assumeTrue(System.getenv("ZEPHYR_LIVE_PROVIDERS")=="1")
+        val options=kotlinx.coroutines.runBlocking { ProvidersClient().fetch(ApiRouting.DEEPSEEK) }
+        assertTrue(options.any{it.id=="wafer/us"});assertEquals(options.size,options.map{it.id}.distinct().size)
+    }
+    @Test fun duplicatePolicyCopiesSettingsAndEncryptedKeyIndependently() {
+        val s=ConfigurationStore(Files.createTempDirectory("zephyr-copy-test"))
+        try {
+            val initial=s.load();val source=initial.policies[1].copy(chinesePrompt="Custom ZH",englishPrompt="Custom EN")
+            s.save(initial.copy(policies=initial.policies.map{if(it.id==source.id)source else it}))
+            s.saveKey(source.id,"copy-fixture-key",source.endpoint)
+            val copied=s.duplicatePolicy(source.id)
+            assertEquals(source.copy(id=copied.id,name=copied.name),copied)
+            assertEquals(initial.selectedPolicy,s.load().selectedPolicy)
+            assertEquals("copy-fixture-key",s.key(copied.id,copied.endpoint))
+            assertFails { s.key(copied.id,"https://different.example/v1") }
+            assertFalse(Files.readAllBytes(s.dir.resolve("credential-${copied.id}.bin")).toString(Charsets.UTF_8).contains("copy-fixture-key"))
+            s.saveKey(copied.id,"replacement-fixture-key",copied.endpoint)
+            assertEquals("copy-fixture-key",s.key(source.id,source.endpoint))
+            val second=s.duplicatePolicy(source.id);assertNotEquals(copied.name,second.name)
+            Files.delete(s.dir.resolve("credential-${copied.id}.bin"))
+            assertEquals("copy-fixture-key",s.key(source.id,source.endpoint))
+        } finally { s.dir.toFile().deleteRecursively() }
+    }
+    @Test fun duplicateWithoutKeyAndRejectUnreadableOrExcessPolicies() {
+        val s=ConfigurationStore(Files.createTempDirectory("zephyr-copy-failure-test"))
+        try {
+            s.save(s.load());val copied=s.duplicatePolicy("openai")
+            assertEquals("",s.key(copied.id,copied.endpoint))
+            s.saveKey("openai","fixture","https://different.example/v1")
+            val before=s.load();val files=Files.list(s.dir).use{it.count()}
+            assertFails { s.duplicatePolicy("openai") };assertEquals(before,s.load())
+            assertEquals(files,Files.list(s.dir).use{it.count()})
+            s.save(before.copy(policies=(1..32).map{Policy(id="p$it")},selectedPolicy="p1"))
+            assertFails { s.duplicatePolicy("p1") };assertEquals(32,s.load().policies.size)
+        } finally { s.dir.toFile().deleteRecursively() }
+    }
+
     @Test fun kaomojiRuleIsSharedAndPreservesLegacyOverrides() {
         val pack=PromptPackage.parse(requireNotNull(javaClass.getResourceAsStream("/default-prompts.json")).readBytes())
         for (chinese in listOf(true,false)) {
@@ -14,6 +52,10 @@ class WindowsTest {
             val old=pack.copy(revision=9,keyboard_language_rules=LanguageRules("CUSTOM ZH","CUSTOM EN"))
             assertTrue(old.compose("original",chinese,false).startsWith("CUSTOM"))
             assertTrue(old.compose("original",chinese,false).endsWith(PromptPackage.KAOMOJI_RULE))
+            // An already-saved revision 10 must replace the old rule, not grow the prompt.
+            val legacyRule="优先识别任意形式的“颜表情＋描述”意图并生成对应 kaomoji，如“颜表情 笑死”或“yanbiaoqing xiaosi”→(„ಡωಡ„)。"
+            val saved=pack.copy(revision=10,keyboard_language_rules=LanguageRules("CUSTOM ZH"+legacyRule,"CUSTOM EN"+legacyRule))
+            assertEquals((if(chinese) "CUSTOM ZH" else "CUSTOM EN")+PromptPackage.KAOMOJI_RULE,saved.compose("original",chinese,false))
         }
     }
 

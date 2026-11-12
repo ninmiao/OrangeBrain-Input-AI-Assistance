@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 #include <WeaselIPCData.h>
 #include <thread>
@@ -242,6 +242,8 @@ bool WeaselTSF::_EnsureServerConnected() {
     retry++;
     if (retry >= 6) {
       HANDLE hMutex = CreateMutex(NULL, TRUE, L"ZephyrDeployerExclusiveMutex");
+      // Capture immediately: IPC may change the thread's last-error value.
+      const bool deploymentActive = !hMutex || GetLastError() == ERROR_ALREADY_EXISTS;
       const auto count_server_process = []() -> int {
         int count = 0;
         HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -258,7 +260,7 @@ bool WeaselTSF::_EnsureServerConnected() {
         CloseHandle(snap);
         return count;
       };
-      if (!m_client.Echo() && GetLastError() != ERROR_ALREADY_EXISTS &&
+      if (!deploymentActive && !m_client.Echo() &&
           !count_server_process()) {
         std::wstring dir = _GetRootDir();
         ShellExecuteW(NULL,L"open",(dir+L"\\ZephyrServer.exe").c_str(),NULL,dir.c_str(),SW_HIDE);

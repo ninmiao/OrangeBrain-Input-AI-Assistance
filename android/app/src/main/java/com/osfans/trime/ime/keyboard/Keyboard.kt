@@ -139,9 +139,11 @@ class Keyboard(
     val isLock = selfConfig?.lock ?: false // 切換程序時記憶鍵盤
     val asciiKeyboard: String? = selfConfig?.asciiKeyboard // 英文鍵盤
 
+    private val showNumberRow = theme.configId == "rime_ai_ios" && selfConfig?.keys?.firstOrNull()?.click == "q" && AppPrefs.defaultInstance().keyboard.numberRowEnabled.getValue()
+
     // todo 把按下按键弹出的内容改为单独设计的view，而不是keyboard
     val keyboardHeight: Int = if (theme.configId == "rime_ai_ios") {
-        val heightDp = AppPrefs.defaultInstance().keyboard.keyboardHeightDp.getValue().coerceIn(180, 340)
+        val heightDp = AppPrefs.defaultInstance().keyboard.keyboardHeightDp.getValue().coerceIn(180, 340) + if (showNumberRow) 40 else 0
         appContext.dp(if (appContext.isLandscapeMode()) (heightDp * 0.72f).toInt() else heightDp)
     } else intArrayOf(
             selfConfig?.let { getKeyboardHeightFromKeyboardConfig(it) } ?: 0,
@@ -160,7 +162,10 @@ class Keyboard(
             // 3. 由于高度只能取整数，缩放后仍然存在余数的，由 auto_height_index 指定的行吸收（遵循四舍五入）
             //    特别的，当值为负数时，为倒序序号（-1即倒数第一个）;当值大于按键行数时，为最后一行
             val autoHeightIndex = selfConfig.autoHeightIndex
-            val keys = selfConfig.keys
+            val keys = if (showNumberRow) "1234567890".map { digit ->
+                selfConfig.keys.first().copy(click = digit.toString(), label = digit.toString(),
+                    width = 10f, height = 30f, keyTextSize = 16f, behaviors = mapOf(KeyBehavior.CLICK to digit.toString()))
+            } + selfConfig.keys else selfConfig.keys
             val keyboardKeyWidth = selfConfig.width
             val maxColumns = if (columns == -1) Int.MAX_VALUE else columns
             val isSplit = theme.configId != "rime_ai_ios" && appContext.isLandscapeMode() && landscapePercent > 0

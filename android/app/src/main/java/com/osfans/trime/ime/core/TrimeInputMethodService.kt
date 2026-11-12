@@ -88,6 +88,14 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             kind==android.text.InputType.TYPE_CLASS_TEXT && variation !in setOf(android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD,android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,android.text.InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD) &&
             !rime.run { statusCached.isAsciiMode }
     }
+    suspend fun mixedTextKey(api: com.osfans.trime.core.RimeApi, value: Int, modifiers: Int = 0): Boolean {
+        val info=currentInputEditorInfo ?: return false
+        val kind=info.inputType and android.text.InputType.TYPE_MASK_CLASS
+        val variation=info.inputType and android.text.InputType.TYPE_MASK_VARIATION
+        if (kind!=android.text.InputType.TYPE_CLASS_TEXT || variation in setOf(android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD,android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,android.text.InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD)) return false
+        if (modifiers and (KeyEvent.META_CTRL_ON or KeyEvent.META_ALT_ON or KeyEvent.META_META_ON) != 0) return false
+        return api.processMixedKey(value)
+    }
     suspend fun segmentSpace(api:com.osfans.trime.core.RimeApi):Boolean {
         if(!wordSegmentationActive()) return false
         val raw=rime.run { rawInputCached }
@@ -796,6 +804,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             val empty = if (up) KeyModifiers.Release else KeyModifiers.Empty
             val m = if (event.number.code == charCode) empty else modifiers
             postRimeJob {
+                if (!up && mixedTextKey(this, charCode, event.metaState)) return@postRimeJob
                 processKey(charCode, m.modifiers, isVirtual = false)
             }
             return true
@@ -803,6 +812,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         val keyVal = KeyValue.fromKeyEvent(event)
         if (keyVal.value != RimeKeyMapping.RimeKey_VoidSymbol) {
             postRimeJob {
+                if(!up && mixedTextKey(this,keyVal.value,event.metaState)) return@postRimeJob
                 if(event.keyCode==KeyEvent.KEYCODE_SPACE && event.metaState==0 && !up && segmentSpace(this)) return@postRimeJob
                 processKey(keyVal, modifiers, isVirtual = false)
             }

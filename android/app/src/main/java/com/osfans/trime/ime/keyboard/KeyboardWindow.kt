@@ -76,6 +76,7 @@ class KeyboardWindow(
 
     private val presetKeyboardIds = theme.presetKeyboards.keys.toList()
     private var currentKeyboardId = ""
+    private var numberRowPreference = com.osfans.trime.data.prefs.AppPrefs.defaultInstance().keyboard.numberRowEnabled.getValue()
     private var heightPreference = com.osfans.trime.data.prefs.AppPrefs.defaultInstance().keyboard.keyboardHeightDp.getValue()
     private var lastKeyboardId = ""
     private var lastLockKeyboardId = ""
@@ -200,7 +201,9 @@ class KeyboardWindow(
 
     override fun onStartInput(info: EditorInfo) {
         val height = com.osfans.trime.data.prefs.AppPrefs.defaultInstance().keyboard.keyboardHeightDp.getValue()
-        if (::keyboardView.isInitialized && height != heightPreference) {
+        val numberRow = com.osfans.trime.data.prefs.AppPrefs.defaultInstance().keyboard.numberRowEnabled.getValue()
+        if (::keyboardView.isInitialized && (height != heightPreference || numberRow != numberRowPreference)) {
+            numberRowPreference = numberRow
             heightPreference = height
             detachCurrentView()
             cachedKeyboards.clear()

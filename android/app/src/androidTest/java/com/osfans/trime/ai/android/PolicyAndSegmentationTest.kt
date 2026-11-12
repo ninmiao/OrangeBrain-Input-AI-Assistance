@@ -62,6 +62,9 @@ class PolicyAndSegmentationTest {
             for (c in "hello") { d.pressKeyCode(KeyEvent.KEYCODE_A + (c - 'a')); delay(60) }
             space()
             for (c in "world") { d.pressKeyCode(KeyEvent.KEYCODE_A + (c - 'a')); delay(60) }
+            assertEquals("hello world",s.run{rawInputCached})
+            assertFalse("English leaked before confirmation",d.findObject(By.desc("test-editor")).text.contains("hello"))
+            d.pressKeyCode(KeyEvent.KEYCODE_ENTER)
             assertTrue("ASCII editor="+d.findObject(By.desc("test-editor")).text,d.wait(Until.hasObject(By.desc("test-editor").text("hello world")),5000))
         } finally {s.runOnReady{clearComposition()};store.credentials.clear();store.update{old.copy(enabled=false)};RimeDaemon.destroySession("segmentation-test")}
     }

@@ -129,6 +129,10 @@ class Rime {
     return cStr ? cStr : "";
   }
 
+  bool setInput(const std::string& input) {
+    return RIME_API_AVAILABLE(rime, set_input) && rime->set_input(session(), input.c_str());
+  }
+
   size_t caretPosition() { return rime->get_caret_pos(session()); }
 
   void setCaretPosition(size_t caretPos) {
@@ -350,6 +354,11 @@ Java_com_osfans_trime_core_Rime_simulateRimeKeySequence(JNIEnv *env,
                                                         jclass /* thiz */,
                                                         jstring key_sequence) {
   return Rime::Instance().simulateKeySequence(CString(env, key_sequence));
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_osfans_trime_core_Rime_setRimeRawInput(JNIEnv *env, jclass, jstring input) {
+  return Rime::Instance().setInput(CString(env, input));
 }
 
 extern "C" JNIEXPORT jstring JNICALL

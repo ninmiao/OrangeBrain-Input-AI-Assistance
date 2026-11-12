@@ -98,6 +98,25 @@ class ConfigurationStore(val dir: Path = Paths.get(System.getenv("APPDATA"),"Zep
             credential.key
         } finally { raw.fill(0) }
     }
+    @Synchronized fun duplicatePolicy(sourceId:String):Policy {
+        val config=load()
+        require(config.policies.size<32) { "At most 32 policies / 最多 32 个 Policy" }
+        val source=config.policies.first { it.id==sourceId }
+        val secret=key(sourceId,source.endpoint)
+        val id=UUID.randomUUID().toString()
+        val base=source.name + " 副本"
+        var name=base;var suffix=2
+        while(config.policies.any { it.name==name })name="$base ${suffix++}"
+        val copy=source.copy(id=id,name=name)
+        try {
+            if(secret.isNotEmpty())saveKey(id,secret,copy.endpoint)
+            save(config.copy(policies=config.policies+copy))
+        } catch(e:Exception) {
+            runCatching { Files.deleteIfExists(dir.resolve(keyFile(id))) }
+            throw e
+        }
+        return copy
+    }
     fun recordRequestStatus(state:String) {
         require(state.matches(Regex("[A-Za-z0-9 ._-]{1,100}")))
         atomic("last-request-status.json", buildJsonObject { put("time",java.time.Instant.now().toString());put("state",state) }.toString().toByteArray())

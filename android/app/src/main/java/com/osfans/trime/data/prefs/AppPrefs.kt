@@ -154,6 +154,7 @@ class AppPrefs(
 
         val softCursorEnabled = bool(SOFT_CURSOR_ENABLED, true)
         val popupKeyPressEnabled = bool(POPUP_KEY_PRESS_ENABLED, true)
+        val numberRowEnabled = bool("keyboard__number_row", true)
         val keyboardHeightDp = int("keyboard__height_dp", 250)
         val hideQuickBar = bool(HIDE_QUICK_BAR, false)
 

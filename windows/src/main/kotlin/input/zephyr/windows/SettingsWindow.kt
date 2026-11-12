@@ -13,7 +13,10 @@ class SettingsWindow(private val store:ConfigurationStore):JFrame("Zephyr Input 
     private var config=store.load()
     private var policy=config.active()
     private val choices=JComboBox<String>()
-    private val name=JTextField();private val endpoint=JTextField();private val model=JTextField();private val provider=JTextField()
+    private val name=JTextField();private val endpoint=JTextField();private val model=JTextField();private val provider=JComboBox<String>().apply { isEditable=true }
+    private var providerOptions=emptyList<ProviderOption>()
+    private var providerGeneration=0
+    private val providerTimer=Timer(600) { refreshProviders() }.apply { isRepeats=false }
     private val key=JPasswordField()
     private val reasoning=JComboBox<String>();private val speed=JComboBox(arrayOf("default","priority"))
     private val chinese=JTextArea(7,50);private val english=JTextArea(7,50)
@@ -49,6 +52,8 @@ class SettingsWindow(private val store:ConfigurationStore):JFrame("Zephyr Input 
         val p=column();row(p,"Policy",choices);p.add(active)
         row(p,"Name / 名称",name);row(p,"API endpoint / 完整接口地址",endpoint);row(p,"Model ID / 模型",model);row(p,"Provider routing / 提供商（可空）",provider)
         row(p,"Reasoning / 思考强度",reasoning);row(p,"Speed / 速度",speed);row(p,"API Key（留空保留已存密钥）",key)
+        val refreshProviders=JButton("Refresh providers / 刷新供应商")
+        refreshProviders.addActionListener { refreshProviders() };p.add(refreshProviders)
         p.add(JLabel("Chinese policy instructions / 中文附加提示词"));p.add(JScrollPane(chinese))
         p.add(JLabel("English policy instructions / 英文附加提示词"));p.add(JScrollPane(english))
         val actions=JPanel(FlowLayout(FlowLayout.LEFT))
@@ -59,6 +64,13 @@ class SettingsWindow(private val store:ConfigurationStore):JFrame("Zephyr Input 
                     "${(System.nanoTime()-started)/1_000_000} ms · ${result.candidates.joinToString(" / ")}" }
             }
         };actions.add(test)
+        val duplicate=JButton("Copy policy + Key / 复制 Policy（含 Key）")
+        duplicate.addActionListener { attempt {
+            savePolicy()
+            val copied=store.duplicatePolicy(policy.id)
+            config=store.load();reloadChoices(config.policies.indexOfFirst { it.id==copied.id })
+            status.text="Policy copied with independent encrypted Key / 已复制，Key 独立加密保存"
+        } };actions.add(duplicate)
         val add=JButton("New policy / 新建");add.addActionListener { config=config.copy(policies=config.policies+Policy(id=UUID.randomUUID().toString(),name="New policy"));reloadChoices(config.policies.lastIndex) };actions.add(add)
         p.add(actions);p.add(JLabel("Additional prompts cannot change the JSON schema. Core language rules remain shared with Android."))
         tabs.addTab("Policies / 策略",JScrollPane(p))
@@ -110,13 +122,34 @@ class SettingsWindow(private val store:ConfigurationStore):JFrame("Zephyr Input 
     }
     private fun column()=JPanel().apply { layout=BoxLayout(this,BoxLayout.Y_AXIS);border=BorderFactory.createEmptyBorder(18,22,18,22) }
     private fun row(panel:JPanel,label:String,field:JComponent) { panel.add(JPanel(BorderLayout(12,6)).apply { border=BorderFactory.createEmptyBorder(4,0,4,0);add(JLabel(label).apply { preferredSize=Dimension(290,28) },BorderLayout.WEST);add(field,BorderLayout.CENTER);maximumSize=Dimension(Int.MAX_VALUE,44) }) }
-    private fun reloadChoices(index:Int) { choices.removeAllItems();config.policies.forEach { choices.addItem(it.name) };choices.selectedIndex=index.coerceAtLeast(0) }
-    private fun loadPolicy(p:Policy) { policy=p;name.text=p.name;endpoint.text=p.endpoint;model.text=p.model;provider.text=p.provider;speed.selectedItem=p.speed;key.text="";chinese.text=p.chinesePrompt;english.text=p.englishPrompt;active.isSelected=config.selectedPolicy==p.id;refreshReasoning(p.reasoning) }
-    private fun refreshReasoningLater() { SwingUtilities.invokeLater { refreshReasoning(reasoning.selectedItem?.toString() ?: "omit") } }
+    private fun reloadChoices(index:Int) { choices.removeAllItems();config.policies.forEach { choices.addItem("${it.name} · ${it.model} · ${it.reasoning} / ${it.speed}" + if(ApiRouting.isOpenRouter(it.endpoint)) " · ${it.provider.ifBlank { "Auto" }}" else "") };choices.selectedIndex=index.coerceAtLeast(0) }
+    private fun loadPolicy(p:Policy) { policy=p;name.text=p.name;endpoint.text=p.endpoint;model.text=p.model;providerOptions=emptyList();provider.removeAllItems();provider.addItem(p.provider);provider.selectedItem=p.provider;providerTimer.restart();speed.selectedItem=p.speed;key.text="";chinese.text=p.chinesePrompt;english.text=p.englishPrompt;active.isSelected=config.selectedPolicy==p.id;refreshReasoning(p.reasoning) }
+    private fun refreshReasoningLater() { providerTimer.restart(); SwingUtilities.invokeLater { refreshReasoning(reasoning.selectedItem?.toString() ?: "omit") } }
     private fun refreshReasoning(value:String) { reasoning.removeAllItems();ReasoningCapabilities.options(endpoint.text,model.text,policy.catalog).forEach { reasoning.addItem(it.value) };reasoning.selectedItem=if((0 until reasoning.itemCount).any { reasoning.getItemAt(it)==value })value else "omit" }
+    private fun providerId():String {
+        val value=provider.editor.item?.toString()?.trim().orEmpty()
+        return if(value=="Auto / 自动路由") "" else providerOptions.firstOrNull{it.label==value}?.id ?: value
+    }
+    private fun refreshProviders() {
+        val ep=endpoint.text.trim();val m=model.text.trim();val generation=++providerGeneration
+        provider.isEnabled=ApiRouting.isOpenRouter(ep)
+        if(!provider.isEnabled || !m.contains('/'))return
+        Thread {
+            val result=runCatching { runBlocking { ProvidersClient().fetch(m) } }
+            SwingUtilities.invokeLater {
+                if(generation!=providerGeneration || ep!=endpoint.text.trim() || m!=model.text.trim() || !isDisplayable)return@invokeLater
+                result.onSuccess { options ->
+                    val selected=providerId();providerOptions=options;provider.removeAllItems();provider.addItem("Auto / 自动路由")
+                    options.forEach{provider.addItem(it.label)}
+                    provider.selectedItem=if(selected.isBlank())"Auto / 自动路由" else options.firstOrNull{it.id==selected}?.label ?: selected
+                    status.text="Providers loaded: ${options.size} / 已获取供应商，原选择保留"
+                }.onFailure { status.text="Provider lookup failed; retry or type an ID / 获取失败，可重试或手动填写" }
+            }
+        }.apply{isDaemon=true;start()}
+    }
     private fun saveGlobal() { config=config.copy(languageShortcut=ShortcutOptions.language.entries.first { it.value==languageShortcut.selectedItem }.key,scriptShortcut=ShortcutOptions.script.entries.first { it.value==scriptShortcut.selectedItem }.key,enabled=enabled.isSelected,wordSegmentation=segmentation.isSelected,enterOriginal=enterOriginal.isSelected,spaceOriginal=spaceOriginal.isSelected,completion=false,candidateCount=1,debounceMs=debounce.value as Int,timeoutMs=timeout.value as Int,style=style.selectedItem.toString()) }
     private fun savePolicy() {
-        saveGlobal();val edited=policy.copy(name=name.text.trim(),endpoint=endpoint.text.trim(),model=model.text.trim(),provider=provider.text.trim(),reasoning=reasoning.selectedItem.toString(),speed=speed.selectedItem.toString(),chinesePrompt=chinese.text,englishPrompt=english.text)
+        saveGlobal();val edited=policy.copy(name=name.text.trim(),endpoint=endpoint.text.trim(),model=model.text.trim(),provider=providerId(),reasoning=reasoning.selectedItem.toString(),speed=speed.selectedItem.toString(),chinesePrompt=chinese.text,englishPrompt=english.text)
         edited.validate();config=config.copy(policies=config.policies.map { if(it.id==edited.id)edited else it },selectedPolicy=if(active.isSelected)edited.id else config.selectedPolicy)
         val password=key.password
         try { if(password.isNotEmpty())store.saveKey(edited.id,String(password),edited.endpoint) } finally { password.fill('\u0000');key.text="" }

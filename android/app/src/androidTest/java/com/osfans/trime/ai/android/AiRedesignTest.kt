@@ -66,6 +66,8 @@ class AiRedesignTest {
         val session = RimeDaemon.createSession("layout-test")
         val prefs = AppPrefs.defaultInstance().keyboard
         val originalHeight = prefs.keyboardHeightDp.getValue()
+        val originalNumberRow = prefs.numberRowEnabled.getValue()
+        prefs.numberRowEnabled.setValue(false)
         try {
             session.runOnReady { selectedSchemaId() }
             val theme = Theme.decodeByConfigId("rime_ai_ios")
@@ -93,7 +95,7 @@ class AiRedesignTest {
             listOf("ios_numbers", "ios_symbols").forEach { name ->
                 assertEquals(4, Keyboard(theme, theme.presetKeyboards.getValue(name)).keys.map { it.row }.distinct().size)
             }
-        } finally { prefs.keyboardHeightDp.setValue(originalHeight); RimeDaemon.destroySession("layout-test") }
+        } finally { prefs.numberRowEnabled.setValue(originalNumberRow); prefs.keyboardHeightDp.setValue(originalHeight); RimeDaemon.destroySession("layout-test") }
     }
     @Test fun nativeScriptToggleAndPromptFollowSameState() = runBlocking {
         val session = RimeDaemon.createSession("script-test")

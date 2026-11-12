@@ -152,7 +152,10 @@ class CommonKeyboardActionListener(
             override fun onAction(action: KeyAction) {
                 val shouldHandle = when {
                     action.commit.isNotEmpty() -> {
-                        service.commitText(action.commit, true)
+                        service.postRimeJob {
+                            if (action.commit.length != 1 || !service.mixedTextKey(this,action.commit[0].code))
+                                service.commitText(action.commit, true)
+                        }
                         false
                     }
                     KeyboardSwitcher.currentKeyboard.let { keyboard ->
@@ -315,6 +318,7 @@ class CommonKeyboardActionListener(
                 }
                 val modifiers = KeyModifiers.fromMetaState(m).modifiers
                 service.postRimeJob {
+                    if(service.mixedTextKey(this,value,m)) return@postRimeJob
                     if(keyEventCode==KeyEvent.KEYCODE_SPACE && m==0 && service.segmentSpace(this)) return@postRimeJob
                     if (service.hookKeyboard(keyEventCode, m)) {
                         Timber.d("handleKey: hook")
@@ -359,6 +363,7 @@ class CommonKeyboardActionListener(
                         } else if (!slice[0].isAsciiPrintable()) {
                             service.commitText(slice)
                         } else {
+                            if (slice.length==1 && service.mixedTextKey(this,slice[0].code)) return@postRimeJob
                             val escapedSlice = slice.replace("{}", "{braceleft}{braceright}")
                             simulateKeySequence(escapedSlice)
                         }

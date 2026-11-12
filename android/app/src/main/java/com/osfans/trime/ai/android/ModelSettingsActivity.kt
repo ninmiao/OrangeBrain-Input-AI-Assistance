@@ -21,6 +21,9 @@ class ModelSettingsActivity : AppCompatActivity() {
     private fun current() = store.configForPolicy(policyId)
     private var importEndpoint = ""
     private var exported = ""
+    private var providerRequest = ""
+    private var providerOptions = emptyList<ProviderOption>()
+    private var providerState = ""
     private val importFile = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) work {
             val endpoint = importEndpoint
@@ -58,6 +61,13 @@ class ModelSettingsActivity : AppCompatActivity() {
         setContentView(TextView(this).apply { text = "加载模型设置…" })
         lifecycleScope.launch { store = withContext(Dispatchers.IO) { AiStore.get(this@ModelSettingsActivity) }; render() }
     }
+    private suspend fun fetchProviders(identity:String,model:String) {
+        val result=runCatching { ProvidersClient().fetch(model) }
+        if(providerRequest!=identity || isFinishing)return
+        result.onSuccess {providerOptions=it;providerState="已获取 ${it.size} 个供应商；不修改已保存的选择"}
+            .onFailure {providerState="获取失败，可重试或手动填写供应商 ID"}
+        render()
+    }
     private fun render() {
         val c = current()
         page = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; isFocusableInTouchMode = true; setPadding(24, 48, 24, 48) }
@@ -88,6 +98,20 @@ class ModelSettingsActivity : AppCompatActivity() {
         if (ApiRouting.isOpenRouter(c.endpoint)) {
             label("提供商路由", 20f)
             label("留空由 OpenRouter 自动路由；指定提供商时只使用该提供商。请填写当前模型支持的提供商 ID，例如 wafer/us。")
+            val identity=c.endpoint+"|"+c.model
+            label(providerState.ifBlank { "正在获取当前模型的供应商…" })
+            if(providerRequest!=identity) {
+                providerRequest=identity;providerOptions=emptyList()
+                lifecycleScope.launch { fetchProviders(identity,c.model) }
+            }
+            button("选择供应商（${providerOptions.size}）") {
+                val options=listOf(ProviderOption("","自动路由"))+providerOptions
+                AlertDialog.Builder(this).setTitle("当前模型供应商").setItems(options.map{if(it.id.isEmpty())it.name else it.label}.toTypedArray()) { _,index -> work {
+                    withContext(Dispatchers.IO){store.updatePolicyConfig(policyId){require(it.endpoint==c.endpoint && it.model==c.model);it.copy(provider=options[index].id)}}
+                    render();report("供应商已保存")
+                } }.setNegativeButton("取消",null).show()
+            }
+            button("刷新供应商列表") { lifecycleScope.launch { fetchProviders(identity,c.model) } }
             val provider = field("OpenRouter 提供商（留空自动路由）", c.provider)
             button("保存提供商") { work {
                 val route = provider.text.toString().trim()

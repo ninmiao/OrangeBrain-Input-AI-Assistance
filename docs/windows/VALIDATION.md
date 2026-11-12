@@ -1,6 +1,6 @@
 # Windows 开发预览验证
 
-当前更新：**Windows 1.4.2 / Android 1.3.3：短提示词、单候选与原文提交**，结果见 [本次验证](1.4.2-short-prompts.md)。下方为历史结果，不能当作本版完整桌面兼容性复测。
+当前更新：**Windows 1.5.0 / Android 1.4.0：安装程序、供应商列表和 Android 数字混输**，结果见 [Windows 本次验证](installer-providers-1.5.0.md) 及 [Android 本次验证](../ai/number-row-providers-1.4.0.md)。下方为历史结果，不能当作本版完整桌面兼容性复测。
 
 ## Windows 1.4.0 历史记录
 

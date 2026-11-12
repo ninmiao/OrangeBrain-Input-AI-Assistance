@@ -99,6 +99,7 @@ class AiSettingsActivity : AppCompatActivity() {
         label("键盘", 20f)
         label("空格左侧的中/EN 切换中文与英文；候选栏的简/繁同时控制本地和 AI 汉字。")
         val prefs = AppPrefs.defaultInstance().keyboard
+        toggle("字母键盘顶部数字行", prefs.numberRowEnabled.getValue()) { prefs.numberRowEnabled.setValue(it); report("数字行设置已保存，下次打开键盘生效") }
         toggle("按键震动", prefs.vibrateOnKeyPress.getValue()) { enabled ->
             prefs.vibrateOnKeyPress.setValue(enabled)
             if (enabled) feedbackPreview.vibrate(page)
@@ -124,15 +125,23 @@ class AiSettingsActivity : AppCompatActivity() {
         val group = RadioGroup(this)
         c.policies.forEach { policy ->
             group.addView(RadioButton(this).apply {
-                id = android.view.View.generateViewId(); text = "${policy.name}\n${policy.model}\n${store.policyParameterSummary(policy)}"
+                id = android.view.View.generateViewId(); text = "${policy.name}\n${policy.model}${if (ApiRouting.isOpenRouter(policy.endpoint)) " · 供应商：${policy.provider.ifBlank { "自动" }}" else ""}\n${store.policyParameterSummary(policy)}"
                 isChecked = policy.id == c.selectedPolicyId; contentDescription = "选择 Policy ${policy.name}"
                 setOnClickListener { work { withContext(Dispatchers.IO) { store.selectPolicy(policy.id) }; render() } }
             })
             group.addView(Button(this).apply { text = "编辑 ${policy.name}"; isAllCaps = false; setOnClickListener { openPolicy(policy.id) } })
+            group.addView(Button(this).apply { text = "复制 Policy（含 Key） · ${policy.name}"; isAllCaps = false; setOnClickListener { duplicatePolicy(policy.id) } })
             group.addView(Button(this).apply { text="测试延迟 · ${policy.name}"; isAllCaps=false; setOnClickListener { testPolicyLatency(policy.id,this) } })
         }
         page.addView(group)
         button("新增 Policy") { work { val id = withContext(Dispatchers.IO) { store.addPolicy("Policy ${store.config.policies.size + 1}") }; openPolicy(id) } }
+    }
+    private fun duplicatePolicy(id: String) {
+        val action: () -> Unit = { work {
+            val copied = withContext(Dispatchers.IO) { store.duplicatePolicy(id) }
+            render(); openPolicy(copied)
+        } }
+        if (store.credentialsForPolicy(id).hasCredential()) verify(action) else action()
     }
     private fun openPolicy(id: String) { startActivity(Intent(this, AiSettingsActivity::class.java).putExtra("policy", id)) }
     private fun renderPolicy(id: String) {
@@ -141,9 +150,10 @@ class AiSettingsActivity : AppCompatActivity() {
         label("Policy · ${policy.name}", 24f)
         status = label(if (id == store.config.selectedPolicyId) "正在使用" else "尚未选用；返回列表勾选即可切换")
         val name = field("Policy 名称", policy.name)
+        button("复制此 Policy（含 Key）") { duplicatePolicy(id) }
         button("保存名称") { work { withContext(Dispatchers.IO) { store.renamePolicy(id, name.text.toString()) }; render() } }
         label("连接与模型", 20f)
-        label("接口：${c.endpoint}\n模型：${c.model}\nKey：${if (store.credentialsFor(c).hasCredential()) "已加密保存" else "尚未配置"}")
+        label("接口：${c.endpoint}\n模型：${c.model}${if (ApiRouting.isOpenRouter(c.endpoint)) "\n供应商：${c.provider.ifBlank { "自动路由" }}" else ""}\nKey：${if (store.credentialsFor(c).hasCredential()) "已加密保存" else "尚未配置"}")
         button("测试当前 Policy 延迟") { testPolicyLatency(id) }
         button("一键测速（OpenAI + OpenRouter）") { startActivity(Intent(this, BenchmarkActivity::class.java).putExtra("policy", id)) }
         button("验证身份并配置连接 / 密钥") { verify { editConnection(id) } }

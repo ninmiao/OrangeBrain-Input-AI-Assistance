@@ -118,6 +118,29 @@ class Rime :
         }.also { Timber.d("simulateKeySequence ${if (it) "success" else "failed"}") }
     }
 
+    // Called only for non-sensitive text editors. Keep letters and digits in one composition.
+    override suspend fun processMixedKey(value: Int): Boolean = withRimeContext {
+        val raw = getRimeRawInput()
+        val english = getRimeStatus().isAsciiMode
+        val mixed = raw.any { it in '0'..'9' } || (english && raw.isNotEmpty())
+        val digit = value in 48..57
+        if (!mixed && !digit && !(english && value in 33..126)) return@withRimeContext false
+        if (value == 0xff0d && raw.isNotEmpty()) {
+            clearRimeComposition(); emitResponse { RimeProto.Commit(raw) }; return@withRimeContext true
+        }
+        val caret = getRimeCaretPos().coerceIn(0, raw.length)
+        var next = raw
+        var pos = caret
+        when {
+            value == 0xff08 && raw.isNotEmpty() -> if (caret > 0) { next = raw.removeRange(caret-1,caret); pos-- }
+            value == 0xffff && raw.isNotEmpty() -> if (caret < raw.length) next = raw.removeRange(caret,caret+1)
+            value in 32..126 -> { if (raw.length >= 300) return@withRimeContext true; next=raw.substring(0,caret)+value.toChar()+raw.substring(caret);pos++ }
+            else -> return@withRimeContext false
+        }
+        if (next.isEmpty()) clearRimeComposition() else { if (!setRimeRawInput(next)) return@withRimeContext false;setRimeCaretPos(pos) }
+        emitResponse(); true
+    }
+
     override suspend fun selectCandidate(idx: Int): Boolean = withRimeContext {
         selectRimeCandidate(idx).also { if (it) emitResponse() }
     }
@@ -382,6 +405,9 @@ class Rime :
 
         @JvmStatic
         external fun getRimeRawInput(): String
+
+        @JvmStatic
+        external fun setRimeRawInput(input: String): Boolean
 
         @JvmStatic
         external fun getRimeCaretPos(): Int

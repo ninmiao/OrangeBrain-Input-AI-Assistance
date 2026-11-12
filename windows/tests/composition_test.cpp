@@ -53,6 +53,13 @@ int main() {
       check(choice.chooseDigit(2)&&choice.commit==L"candidate6","digit respects current page");
       check(!choice.chooseDigit(1),"idle digit is not consumed");
     }
+    for(bool chinese:{true,false}) {
+      zephyr::Composition mixed;mixed.chinese=chinese;
+      for(char c:std::string("hello123world2026"))mixed.insert(c);
+      check(mixed.input=="hello123world2026"&&mixed.commit.empty(),"literal keypad digits remain in mixed composition");
+      mixed.add(L"hello123world2026",L"Original");mixed.choose(0);
+      check(mixed.commit==L"hello123world2026","mixed numbers commit without loss");
+    }
     std::cout<<checks<<" native composition checks passed\n";return 0;
   } catch(const std::exception& e){std::cerr<<e.what()<<"\n";return 1;}
 }
