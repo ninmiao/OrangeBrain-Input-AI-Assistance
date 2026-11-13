@@ -1,5 +1,5 @@
 {
-  "note": "固定验收样本和评判条件，不是模型实测结果。每条分别比较 original、minimal、casual、formal、academic。",
+  "note": "固定验收样本和评判条件，不是模型实测结果；每条使用当前语言模式的短提示词，返回一个纯文本候选。",
   "cases": [
     {
       "id": "pinyin",
@@ -89,7 +89,6 @@
       "id": "completion",
       "chinese_keyboard": false,
       "input": "今天开会主要讨论",
-      "completion_enabled": true,
       "expect": "候选忠实翻译；补全为独立完整文本，英文，不编造具体决定"
     },
     {

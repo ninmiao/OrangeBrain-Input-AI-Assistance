@@ -20,22 +20,24 @@ object Wire {
         val raw=unhex(fields[3]);require(raw.length in 1..300 && raw.none { it.isISOControl() })
         return Request(fields[1]=="zh",fields[2]=="1",raw)
     }
-    fun response(config:Configuration,result:AiResult?)="Z1\t${if(config.wordSegmentation) 1 else 0}\t${config.debounceMs}\t${if(config.enterOriginal) 1 else 0}\t${if(config.spaceOriginal) 1 else 0}\n"+
+    fun response(config:Configuration,result:AiResult?,error:String?=null)="Z1\t${if(config.wordSegmentation) 1 else 0}\t${config.debounceMs}\t${if(config.enterOriginal) 1 else 0}\t${if(config.spaceOriginal) 1 else 0}\n"+
+        (if(error!=null) "E\t${hex(error)}\n" else "")+
         (result?.candidates ?: emptyList()).take(1).joinToString("\n") { hex(it) }
 }
 class AiService(private val store:ConfigurationStore) {
     suspend fun request(config:Configuration,policy:Policy,raw:Wire.Request):AiResult {
-        config.validate()
+        config.validate();policy.validate()
         val key=store.key(policy.id,policy.endpoint);require(key.isNotBlank()) { "No API key saved for this policy" }
         val request=AiRequest(RequestStamp(0,0,0,0,0),AiInput(raw.input),Prompts.compose(config,policy,raw.chinese,raw.traditional),config.completion,config.candidateCount)
-        return ChatCompletionsClient().request(policy.endpoint,key,policy.model,request,config.timeoutMs,policy.parameters(),policy.provider)
+        return ChatCompletionsClient().request(policy.endpoint,key,policy.model,request,config.timeoutMs,policy.parameters(),policy.provider,policy.presets.selected(raw.chinese,raw.traditional))
     }
     fun handle(bytes:ByteArray):ByteArray {
         val raw=Wire.decode(bytes.toString(Charsets.UTF_8));val config=store.load()
+        var presetError:String?=null
         val result=if(config.enabled && raw.input.isNotBlank()) runCatching { runBlocking { request(config,config.active(),raw) } }
             .onSuccess { runCatching { store.recordRequestStatus("OK") } }
-            .onFailure { error -> runCatching { store.recordRequestStatus(if(error is ApiHttpException) "HTTP ${error.status}" else error.javaClass.simpleName) } }.getOrNull() else null
-        return Wire.response(config,result).toByteArray(Charsets.UTF_8)
+            .onFailure { error -> if(error is ApiPresetException)presetError=AiFailure.PRESET.label;runCatching { store.recordRequestStatus(if(error is ApiHttpException) "HTTP ${error.status}" else error.javaClass.simpleName) } }.getOrNull() else null
+        return Wire.response(config,result,presetError).toByteArray(Charsets.UTF_8)
     }
 }
 private interface CancelApi:StdCallLibrary {

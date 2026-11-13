@@ -60,7 +60,7 @@ class CandidateCountTest {
             store.updatePolicyConfig(id) { it.copy(endpoint=endpoint,model="candidates-test") }
             store.credentialsForPolicy(id).save(endpoint,"emulator-test-key");store.selectPolicy(id)
             store.update { it.copy(enabled=true,consent=true,automatic=true,wordSegmentation=true,traditional=false) }
-            assertTrue(store.prompt(store.config,true).contains("一个最可能的结果"))
+            assertTrue(store.prompt(store.config,true).contains("一个候选"))
             // Rime deployment and cold IME creation can outlast the old 10-second UI wait.
             s.runOnReady { clearComposition();selectSchema("rime_ai_simp");setRuntimeOption("ascii_mode",false) }
             d.executeShellCommand("settings put secure show_ime_with_hard_keyboard 1")

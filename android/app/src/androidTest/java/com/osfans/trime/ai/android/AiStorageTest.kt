@@ -35,12 +35,12 @@ class AiStorageTest {
             val store = AiStore(context)
             val builtin = store.builtin
             val nextRevision = builtin.revision + 1
-            val updated = builtin.copy(revision = nextRevision, version = "test-3", base_prompt = "Remote v3")
+            val updated = builtin.copy(revision = nextRevision, version = "test-3", keyboard_language_rules = LanguageRules(chinese="Remote v3"))
             store.activate(updated, "https://example.com/prompt.json", true)
-            store.edit(updated.copy(base_prompt = "Local instruction"))
+            store.edit(updated.copy(keyboard_language_rules = LanguageRules(chinese="Local instruction")))
             store.activate(updated.copy(revision = nextRevision + 1, version = "test-4"), "https://example.com/prompt.json", true)
-            assertEquals("Local instruction", store.effective().base_prompt)
-            assertEquals("Local instruction", AiStore(context).effective().base_prompt)
+            assertEquals("Local instruction", store.effective().keyboard_language_rules.chinese)
+            assertEquals("Local instruction", AiStore(context).effective().keyboard_language_rules.chinese)
             try { store.activate(updated, "https://example.com/prompt.json", true); fail("Downgrade accepted") } catch (_: IllegalArgumentException) { }
             assertEquals(nextRevision + 1, store.config.active!!.pack.revision)
             store.clearOverride()

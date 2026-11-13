@@ -20,7 +20,7 @@ class LiveRouterLengthTest {
         val store=AiStore.get(InstrumentationRegistry.getInstrumentation().targetContext)
         val seed="jintianwomenyilaitaolunzhongwenheyingwenshurufadecuowenjiuzhenggongnengxiwangkeyigengkuaisu"
         for (length in listOf(100,200)) {
-            val request=AiRequest(RequestStamp(0,length.toLong(),0,0,0),AiInput(seed.repeat(4).take(length)),store.builtin.compose("original",true,false),false)
+            val request=AiRequest(RequestStamp(0,length.toLong(),0,0,0),AiInput(seed.repeat(4).take(length)),store.builtin.compose(true),false)
             val start=android.os.SystemClock.elapsedRealtime()
             val result=ChatCompletionsClient().request(ApiRouting.OPENROUTER,key,ApiRouting.DEEPSEEK,request,10000,
                 mapOf("reasoning_effort" to JsonPrimitive("none"),"service_tier" to JsonPrimitive("default")),ApiRouting.WAFER)

@@ -11,13 +11,13 @@ import okhttp3.tls.HeldCertificate
 
 class TransportRegressionTest {
     private val request = AiRequest(RequestStamp(1,1,1,1,1),AiInput("nihao"),"system",false)
-    private fun envelope(content:String="""{"candidates":["你好"],"completion":""}""") =
+    private fun envelope(content:String="你好") =
         """{"choices":[{"finish_reason":"stop","message":{"content":${kotlinx.serialization.json.JsonPrimitive(content)}}}]}"""
 
     @Test fun duplicateLongCandidatesKeepFirstAndPreserveOrder() {
         val text="我今天下午有一个重要的会议，需要和 team 一起讨论项目进度以及下周计划，请你明天早上九点之前把整理好的文件发给我。"
         val client=ChatCompletionsClient()
-        val result=client.decodeEnvelope(envelope("""{"candidates":["$text","$text","另一种合理表达"],"completion":""}""").toByteArray(),request)
+        val result=client.decodeEnvelope(envelope(text).toByteArray(),request)
         assertEquals(listOf(text),result.candidates)
     }
     @Test fun classifiesProviderErrorInsideHttp200WithoutLeakingMessage() {
@@ -28,7 +28,7 @@ class TransportRegressionTest {
     }
     @Test fun truncatedAndMalformedResponsesRemainFailures() {
         assertFailsWith<ApiTruncatedException> { ChatCompletionsClient().decodeEnvelope("""{"choices":[{"finish_reason":"length"}]}""".toByteArray(),request) }
-        assertFailsWith<ApiResponseException> { ChatCompletionsClient().decodeEnvelope(envelope("not json").toByteArray(),request) }
+        assertFailsWith<ApiResponseException> { ChatCompletionsClient().decodeEnvelope(envelope(" ").toByteArray(),request) }
     }
     private fun fixture(block: suspend (MockWebServer,ChatCompletionsClient,OkHttpClient)->Unit) = runBlocking {
         val cert=HeldCertificate.Builder().addSubjectAlternativeName("localhost").addSubjectAlternativeName("127.0.0.1").build()

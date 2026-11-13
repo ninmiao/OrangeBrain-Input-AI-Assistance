@@ -34,7 +34,7 @@ class AiLanguageLiveTest {
             key = Json.parseToJsonElement(HttpsDownload.get("${TestNetwork.baseUrl}/credential/$token", 4096).toString(Charsets.UTF_8)).jsonObject.getValue("key").jsonPrimitive.content
             for (case in cases) {
                 val start = android.os.SystemClock.elapsedRealtime()
-                val request = AiRequest(RequestStamp(1, 1, 1, 1, 1), AiInput(case.input), pack.compose("original", case.chinese, false, traditional = case.traditional), false)
+                val request = AiRequest(RequestStamp(1, 1, 1, 1, 1), AiInput(case.input), pack.compose(case.chinese,traditional=case.traditional), false)
                 try {
                     val result = ChatCompletionsClient().request(TerraDefaults.ENDPOINT, key, TerraDefaults.MODEL, request, 10000, TerraDefaults.values().getValue(TerraDefaults.MODEL))
                     val first = result.candidates.first()

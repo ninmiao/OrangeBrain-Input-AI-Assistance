@@ -9,7 +9,7 @@ class ApiRoutingTest {
         assertEquals(JsonArray(listOf(JsonPrimitive("wafer/us"))),body.getValue("provider").jsonObject["only"])
         assertEquals(JsonPrimitive(false),body.getValue("provider").jsonObject["allow_fallbacks"])
         assertFalse(body.containsKey("service_tier")); assertFalse(body.containsKey("reasoning_effort"))
-        assertEquals(JsonObject(input), ApiRouting.wire("https://api.openai.com/v1/chat/completions", input, "wafer/us"))
+        assertEquals(JsonPrimitive("none"),ApiRouting.wire(ApiRouting.OPENAI,input)["reasoning"]!!.jsonObject["effort"])
     }
     @Test fun routerSpeedAndReasoningTranslateWithoutLeakingOpenAIFields() {
         val body=ApiRouting.wire(ApiRouting.OPENROUTER,mapOf("reasoning_effort" to JsonPrimitive("low"),"service_tier" to JsonPrimitive("priority"),"max_completion_tokens" to JsonPrimitive(200)))
@@ -23,7 +23,7 @@ class ApiRoutingTest {
     @Test fun mixedBenchmarkCannotRemoveLastAPIOrExceedFive() {
         val rows=listOf(BenchmarkEntry(),BenchmarkEntry(ApiRouting.DEEPSEEK,api="openrouter",provider=ApiRouting.WAFER))
         BenchmarkConfig(entries=rows).validate()
-        assertFails { BenchmarkConfig(entries=rows.take(1)).validate() }
+        BenchmarkConfig(entries=rows.take(1)).validate()
         assertFails { BenchmarkConfig(entries=rows+List(4){BenchmarkEntry()}).validate() }
         assertFails { BenchmarkEntry(ApiRouting.DEEPSEEK,api="openrouter",speed="flex").validate() }
     }

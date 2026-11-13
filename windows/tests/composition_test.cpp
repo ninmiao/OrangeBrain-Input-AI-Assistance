@@ -36,6 +36,12 @@ int main() {
     }
     zephyr::Composition z;z.insert('x');z.add(L"x",L"Original");z.adopt(z.revision,{L"one",L"one",L"two"});
     check(z.candidates==std::vector<std::wstring>({L"one",L"two",L"x"}),"ranking and deduplication");
+    zephyr::Composition mapped;mapped.insert('x');mapped.add(L"现在",L"Rime",2);
+    auto previous=mapped.revision;mapped.adopt(previous,{L"完整纠错"});
+    check(mapped.rimeIndices==std::vector<int>({-1,2}),"AI ranking preserves native candidate indices");
+    mapped.partialSelection=true;mapped.changed();
+    check(!mapped.adopt(previous,{L"old"}),"partial selection invalidates pending AI output");
+    mapped.clear();check(!mapped.partialSelection&&mapped.rimeIndices.empty(),"cancel clears segment state");
     z.choose(50);check(z.input=="x","out of bounds selection is ignored");
     for(bool chinese:{true,false}) {
       for(int slot=1;slot<=5;++slot) {
@@ -60,6 +66,11 @@ int main() {
       mixed.add(L"hello123world2026",L"Original");mixed.choose(0);
       check(mixed.commit==L"hello123world2026","mixed numbers commit without loss");
     }
+    zephyr::Composition errorState;errorState.insert('n');errorState.add(L"你好",L"Rime");
+    errorState.aiError=L"Preset unavailable";
+    check(errorState.candidates.size()==1&&errorState.commit.empty(),"preset error is never a selectable candidate");
+    errorState.insert('i');check(errorState.aiError.empty(),"new input clears stale preset failure");
+    errorState.aiError=L"Preset unavailable";errorState.clear();check(errorState.aiError.empty(),"cancel clears preset failure");
     std::cout<<checks<<" native composition checks passed\n";return 0;
   } catch(const std::exception& e){std::cerr<<e.what()<<"\n";return 1;}
 }

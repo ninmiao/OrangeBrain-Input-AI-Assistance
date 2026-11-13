@@ -6,13 +6,13 @@ import org.junit.Test
 class KaomojiPromptTest {
  @Test fun packagedRulesAndSavedPolicyUpgrade() {
   val pack=AiStore.get(InstrumentationRegistry.getInstrumentation().targetContext).builtin
-  assertEquals(10L,pack.revision)
+  assertEquals(12L,pack.revision)
   for (chinese in listOf(true,false)) {
-   val prompt=pack.compose("original",chinese,false)
+   val prompt=pack.compose(chinese)
    assertEquals(1,prompt.split(PromptPackage.KAOMOJI_RULE).size-1)
    val old=pack.copy(revision=9,keyboard_language_rules=LanguageRules("CUSTOM ZH","CUSTOM EN"))
-   assertTrue(old.compose("original",chinese,false).startsWith("CUSTOM"))
-   assertTrue(old.compose("original",chinese,false).endsWith(PromptPackage.KAOMOJI_RULE))
+   assertEquals(pack.compose(chinese),old.compose(chinese))
+   assertTrue(old.compose(chinese).endsWith(PromptPackage.KAOMOJI_RULE))
   }
  }
 }

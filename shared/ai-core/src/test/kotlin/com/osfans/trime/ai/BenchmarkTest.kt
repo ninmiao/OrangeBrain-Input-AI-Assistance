@@ -9,12 +9,12 @@ class BenchmarkTest {
     @Test fun fiveSmallDefaultsDisableReasoningWithoutUnsupportedLegacyField() {
         val config = BenchmarkConfig().validate()
         assertEquals(5, config.entries.size)
-        assertEquals(setOf("openai", "openrouter"), config.entries.map { it.api }.toSet())
-        assertFailsWith<IllegalArgumentException> { config.copy(entries = config.entries.filter { it.api == "openai" }).validate() }
+        assertEquals(setOf("openai", "openrouter", "gemini"), config.entries.map { it.api }.toSet())
+        config.copy(entries = config.entries.filter { it.api == "openai" }).validate()
         assertEquals(5, config.entries.map { it.model }.distinct().size)
-        config.entries.forEach { assertEquals("none", it.reasoning); assertEquals(JsonPrimitive("default"), it.parameters()["service_tier"]) }
+        config.entries.forEach { assertEquals(if(it.api=="gemini")"low" else "none", it.reasoning); assertEquals(JsonPrimitive("default"), it.parameters()["service_tier"]) }
         assertEquals(JsonPrimitive("none"), config.entries.first().parameters()["reasoning_effort"])
-        assertFalse(config.entries[3].parameters().containsKey("reasoning_effort"))
+        assertFalse(config.entries[2].parameters().containsKey("reasoning_effort"))
         assertFailsWith<IllegalArgumentException> { config.copy(entries = config.entries + BenchmarkEntry()).validate() }
         assertFailsWith<IllegalArgumentException> { config.copy(entries = emptyList()).validate() }
         assertFailsWith<IllegalArgumentException> { config.copy(timeoutMs = 60001).validate() }

@@ -16,7 +16,23 @@ int main() {
     auto response=[&] {ctx.clear();commit.clear();weasel::ResponseParser parser(&commit,&ctx,&status,&config,&style);check(client.GetResponseData(std::ref(parser)),"response must parse");};
     auto key=[&](UINT code,UINT mask=0) {bool handled=client.ProcessKeyEvent(weasel::KeyEvent(code,mask));response();return handled;};
     auto type=[&](const std::string& input){for(unsigned char ch:input)key(ch);};
-    response();type("nihao");check(status.composing,"Chinese composition visible");check(ctx.preedit.str==L"nihao","raw input shown");
+    response();
+    for(bool mouse:{false,true}) {
+      type("xianzaishurufahouxuanyouenti");
+      size_t index=0;
+      for(;index<ctx.cinfo.candies.size();++index)if(ctx.cinfo.candies[index].str==L"现在")break;
+      check(index<ctx.cinfo.candies.size(),"prefix candidate is available");
+      if(mouse) {client.SelectCandidateOnCurrentPage(index);check(key(0),"partial click refreshes without a commit");}
+      else key(UINT('1'+index));
+      check(commit.empty(),"prefix choice must not commit or discard the tail");
+      check(status.composing,"prefix selection remains composing");
+      check(ctx.preedit.str.find(L"现在")==0,"chosen phrase appears in preedit");
+      check(ctx.preedit.str.find(L"shu")!=std::wstring::npos,"remaining pinyin is preserved");
+      for(int i=0;i<20&&status.composing;++i)key('1');
+      check(!status.composing,"remaining segments can be selected to completion");
+      check(commit.find(L"现在")==0&&commit.size()>2,"final commit keeps selected prefix and remaining text");
+    }
+    type("nihao");check(status.composing,"Chinese composition visible");check(ctx.preedit.str==L"nihao","raw input shown");
     check(!ctx.cinfo.candies.empty()&&ctx.cinfo.candies[0].str==L"你好","real Rime simplified candidate");
     check(ctx.cinfo.labels[0].str==L"1","candidate label is plain digit");
     key('1');check(commit==L"你好","plain digit selects Chinese candidate");check(!status.composing,"composition ends after commit");

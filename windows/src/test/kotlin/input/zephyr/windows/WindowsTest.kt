@@ -43,19 +43,13 @@ class WindowsTest {
         } finally { s.dir.toFile().deleteRecursively() }
     }
 
-    @Test fun kaomojiRuleIsSharedAndPreservesLegacyOverrides() {
-        val pack=PromptPackage.parse(requireNotNull(javaClass.getResourceAsStream("/default-prompts.json")).readBytes())
-        for (chinese in listOf(true,false)) {
-            val prompt=pack.compose("original",chinese,false)
-            assertEquals(1,prompt.split(PromptPackage.KAOMOJI_RULE).size-1)
-            assertTrue(prompt.contains("candidates"))
-            val old=pack.copy(revision=9,keyboard_language_rules=LanguageRules("CUSTOM ZH","CUSTOM EN"))
-            assertTrue(old.compose("original",chinese,false).startsWith("CUSTOM"))
-            assertTrue(old.compose("original",chinese,false).endsWith(PromptPackage.KAOMOJI_RULE))
-            // An already-saved revision 10 must replace the old rule, not grow the prompt.
-            val legacyRule="优先识别任意形式的“颜表情＋描述”意图并生成对应 kaomoji，如“颜表情 笑死”或“yanbiaoqing xiaosi”→(„ಡωಡ„)。"
-            val saved=pack.copy(revision=10,keyboard_language_rules=LanguageRules("CUSTOM ZH"+legacyRule,"CUSTOM EN"+legacyRule))
-            assertEquals((if(chinese) "CUSTOM ZH" else "CUSTOM EN")+PromptPackage.KAOMOJI_RULE,saved.compose("original",chinese,false))
+    @Test fun kaomojiRuleAndPlainTextMigrationAreShared() {
+        val pack=Prompts.pack
+        for(chinese in listOf(true,false)) {
+            assertEquals(1,pack.compose(chinese).split(PromptPackage.KAOMOJI_RULE).size-1)
+            val old=pack.copy(revision=9,keyboard_language_rules=LanguageRules("OLD JSON ZH","OLD JSON EN"))
+            assertEquals(pack.compose(chinese),old.compose(chinese))
+            assertFalse(pack.compose(chinese).contains("candidates"))
         }
     }
 
@@ -78,11 +72,12 @@ class WindowsTest {
             store.saveKey("openai","fixture-a");store.saveKey("openrouter","fixture-b")
             val result=store.deletePolicy("openai")
             assertEquals("openrouter",result.selectedPolicy)
-            assertEquals(1,result.policies.size)
+            assertEquals(2,result.policies.size)
             assertFalse(Files.exists(store.dir.resolve("credential-openai.bin")))
             assertEquals("fixture-b",store.key("openrouter"))
+            val last=store.deletePolicy("gemini")
             assertFails { store.deletePolicy("openrouter") }
-            assertEquals(result,store.load())
+            assertEquals(last,store.load())
             assertEquals("fixture-b",store.key("openrouter"))
         } finally { store.dir.toFile().deleteRecursively() }
     }
@@ -94,7 +89,7 @@ class WindowsTest {
             assertEquals("openai",store.deletePolicy("openrouter").selectedPolicy)
         } finally { store.dir.toFile().deleteRecursively() }
     }
-    @Test fun defaultPolicies() { val c=Configuration();c.validate();assertEquals(2,c.policies.size);assertEquals(1,c.candidateCount);assertEquals("gpt-6.1-terra",c.active().model);assertEquals("low",c.active().reasoning);assertEquals("priority",c.active().speed);assertEquals("none",c.policies[1].reasoning);assertTrue(c.enterOriginal);assertFalse(c.spaceOriginal);assertTrue(c.wordSegmentation);assertFalse(c.enabled) }
+    @Test fun defaultPolicies() { val c=Configuration();c.validate();assertEquals(3,c.policies.size);assertEquals(1,c.candidateCount);assertEquals("gpt-6.1-terra",c.active().model);assertEquals("low",c.active().reasoning);assertEquals("priority",c.active().speed);assertEquals("none",c.policies[1].reasoning);assertTrue(c.enterOriginal);assertFalse(c.spaceOriginal);assertTrue(c.wordSegmentation);assertFalse(c.enabled) }
     @Test fun windowsKeysAreEncryptedAndIndependent() {
         val s=ConfigurationStore(Files.createTempDirectory("zephyr-credential-test"))
         try {
@@ -114,7 +109,7 @@ class WindowsTest {
     }
     @Test fun configurationRoundTrip() {
         val s=ConfigurationStore(Files.createTempDirectory("zephyr-config-test"))
-        try { val c=Configuration(candidateCount=5,completion=true,wordSegmentation=false,enterOriginal=false,spaceOriginal=true);s.save(c);assertEquals(c.copy(settingsRevision=1,candidateCount=1,completion=false),s.load()) }
+        try { val c=Configuration(candidateCount=5,completion=true,wordSegmentation=false,enterOriginal=false,spaceOriginal=true);s.save(c);assertEquals(c.copy(settingsRevision=2,candidateCount=1,completion=false),s.load()) }
         finally { s.dir.toFile().deleteRecursively() }
     }
     @Test fun rejectsKeyPathTraversal() { val s=ConfigurationStore(Files.createTempDirectory("zephyr-path-test"));try { assertFails { s.key("../other") } }finally { s.dir.toFile().deleteRecursively() } }
@@ -127,12 +122,28 @@ class WindowsTest {
     @Test fun wirePreservesUnicode() { val raw="我 tomorrow 有 meeting 😊";assertEquals(raw,Wire.decode("Z1\ten\t0\t"+Wire.hex(raw)).input) }
     @Test fun rejectsMalformedMessages() { listOf("Z0\tzh\t0\t61","Z1\tjp\t0\t61","Z1\tzh\t0\t6","Z1\tzh\t0\tzz","Z1\tzh\t0\t0a").forEach { assertFails { Wire.decode(it) } } }
     @Test fun rejectsOversizedComposition() { assertFails { Wire.decode("Z1\tzh\t0\t"+Wire.hex("a".repeat(301))) } }
-    @Test fun englishUsesEnglishPrompt() { val c=Configuration();val text=Prompts.compose(c,c.active(),false,true);assertContains(text,"优先按英文纠错");assertContains(text,"统一转成英文");assertTrue(text.length<300) }
+    @Test fun englishUsesEnglishPrompt() { val c=Configuration();val text=Prompts.compose(c,c.active(),false,true);assertContains(text,"修正英文");assertContains(text,"转为英文");assertTrue(text.length<300) }
     @Test fun chineseRetainsEnglishSpans() { val c=Configuration();val text=Prompts.compose(c,c.active(),true,false);assertContains(text,"简体汉字");assertContains(text,"英文保留并纠错") }
     @Test fun traditionalChineseContract() { val c=Configuration();assertContains(Prompts.compose(c,c.active(),true,true),"繁体汉字") }
-    @Test fun countAndRankingAreShared() { val c=Configuration(candidateCount=5);assertContains(Prompts.compose(c,c.active(),true,false),"一个最可能的结果") }
+    @Test fun countAndRankingAreShared() { val c=Configuration(candidateCount=5);assertContains(Prompts.compose(c,c.active(),true,false),"一个候选") }
     @Test fun disabledBrokerMakesNoNetworkRequest() { val s=ConfigurationStore(Files.createTempDirectory("zephyr-disabled-test"));try { val result=AiService(s).handle(("Z1\ten\t0\t"+Wire.hex("hello world")).toByteArray());assertEquals("Z1\t1\t200\t1\t0\n",result.toString(Charsets.UTF_8)) }finally { s.dir.toFile().deleteRecursively() } }
     @Test fun responseKeepsRankAndCount() { val c=Configuration(candidateCount=2);val lines=Wire.response(c,AiResult(listOf("你好","您好","你们好"),"")).lines();assertEquals(listOf("Z1\t1\t200\t1\t0",Wire.hex("你好")),lines) }
+
+    @Test fun oldContextAndStylePreferencesAreDiscardedWithoutLosingKeys() {
+        val store=ConfigurationStore(Files.createTempDirectory("zephyr-plain-migration"))
+        try {
+            Files.writeString(store.dir.resolve("settings.json"),"""{"settingsRevision":1,"selectedPolicy":"openai","style":"custom","contextEnabled":true,"beforeLimit":200,"policies":[{"id":"openai","model":"gpt-6.1-terra","reasoning":"low","speed":"default"}]}""")
+            store.saveKey("openai","migration-fixture")
+            val migrated=store.load();assertEquals("openai",migrated.selectedPolicy)
+            assertTrue(migrated.policies.any { ApiRouting.isGemini(it.endpoint) })
+            store.save(migrated)
+            assertEquals("migration-fixture",store.key("openai"))
+            val saved=Files.readString(store.dir.resolve("settings.json"))
+            listOf("contextEnabled","beforeLimit","\"style\"").forEach { assertFalse(saved.contains(it)) }
+            val afterDelete=store.deletePolicy("gemini");assertEquals(1,afterDelete.policies.size)
+            assertFalse(store.load().policies.any { ApiRouting.isGemini(it.endpoint) })
+        } finally { store.dir.toFile().deleteRecursively() }
+    }
     @Test fun legacyFileMigratesWithoutLosingIndependentPolicyOrKey() {
         val store=ConfigurationStore(Files.createTempDirectory("zephyr-migration"))
         try {

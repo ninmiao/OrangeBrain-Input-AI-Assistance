@@ -57,7 +57,10 @@ def english_seeds():
                 for t in times:entries.add(f'{p} {a} {o} {t}.')
     for text in sorted(entries):yield 'en',text,[text],'zephyr-authored'
 
-def build(limit,out):
+def build(limit,out,overwrite=False):
+    existing=[name for name in ('typos.jsonl','gold.jsonl','manifest.json') if (out/name).exists()]
+    if existing and not overwrite:
+        raise FileExistsError(f'Corpus already exists in {out}. Use a new --output directory or explicitly pass --overwrite.')
     out.mkdir(parents=True,exist_ok=True);stats=collections.Counter();families=0;total=0
     digest=hashlib.sha256()
     with (out/'typos.jsonl').open('w',encoding='utf-8',newline='\n') as f:
@@ -77,6 +80,6 @@ def build(limit,out):
     report=dict(schema=1,total=total,seed_families=families,sha256=digest.hexdigest(),counts=dict(sorted(stats.items())),note='Synthetic expected alternatives are source-derived references, not verified unique intended meanings. Report live model quality separately.')
     (out/'manifest.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print(json.dumps(report,ensure_ascii=False,indent=2))
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--chinese-seeds',type=int,default=20000);parser.add_argument('--output',type=Path,default=HERE/'generated');a=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--chinese-seeds',type=int,default=20000);parser.add_argument('--output',type=Path,default=HERE/'generated');parser.add_argument('--overwrite',action='store_true',help='Explicitly replace an existing generated corpus');a=parser.parse_args()
     if not 1<=a.chinese_seeds<=200000:parser.error('seed count must be 1..200000')
-    build(a.chinese_seeds,a.output)
+    build(a.chinese_seeds,a.output,a.overwrite)

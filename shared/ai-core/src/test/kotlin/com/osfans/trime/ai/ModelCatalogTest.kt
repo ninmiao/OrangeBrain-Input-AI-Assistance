@@ -11,8 +11,8 @@ class ModelCatalogTest {
         val values = mapOf("reasoning_effort" to JsonPrimitive("low"), "service_tier" to JsonPrimitive("priority"), "max_completion_tokens" to JsonPrimitive(128))
         val body = client.payload("test", request, values)
         values.forEach { (key, value) -> assertEquals(value, body[key]) }
-        val user = Json.parseToJsonElement(body.getValue("messages").jsonArray[1].jsonObject.getValue("content").jsonPrimitive.content).jsonObject
-        assertEquals(setOf("input", "before", "after"), user.keys)
+        val user = body.getValue("messages").jsonArray[1].jsonObject.getValue("content").jsonPrimitive.content
+        assertEquals("nihao",user)
     }
     @Test fun parametersCannotOverrideTransportOrMessages() {
         for (key in listOf("model", "messages", "stream", "api_key", "endpoint", "tools")) {

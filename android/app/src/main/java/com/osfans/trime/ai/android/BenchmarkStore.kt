@@ -14,12 +14,12 @@ class BenchmarkStore(context: Context, policyId: String) {
     private val policyHash = MessageDigest.getInstance("SHA-256").digest(policyId.toByteArray()).joinToString("") { "%02x".format(it) }
     private val file = AtomicFile(File(context.noBackupFilesDir, "ai-benchmark-$policyHash.json"))
     private val json = Json { encodeDefaults = true; ignoreUnknownKeys = true }
-    @Synchronized fun read(): BenchmarkConfig = runCatching {
+    @Synchronized fun read(defaults: BenchmarkConfig = BenchmarkConfig()): BenchmarkConfig = runCatching {
         file.openRead().use { stream ->
             require(stream.channel.size() <= 32768)
             json.decodeFromString<BenchmarkConfig>(stream.readBytes().toString(Charsets.UTF_8)).validate()
         }
-    }.getOrElse { BenchmarkConfig() }
+    }.getOrElse { defaults }
     @Synchronized fun save(config: BenchmarkConfig) {
         val bytes = json.encodeToString(config.validate()).toByteArray(Charsets.UTF_8)
         val stream = file.startWrite()

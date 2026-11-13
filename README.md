@@ -1,30 +1,30 @@
 # Zephyr Input · 微风输入法
 
-[下载 Windows 版](dist/Zephyr-Input-Windows-1.5.5-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.4.0-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
+[下载 Windows 版](dist/Zephyr-Input-Windows-1.6.1-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.5.1-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
-**目前还是原型，请谨慎使用。** 虽然我已经在日常使用，但还有不少地方要打磨。API token 消耗目前比较大，我还没来得及优化，建议先用小型模型试试。我用 Luna 和 Qwen3.8 27B 测下来效果还不错。
+**目前还是原型，请谨慎使用。** 虽然我已经在日常使用，但还有不少地方要打磨。已精简提示词和候选输出，但长输入和模型思考的 token 消耗仍可能比较大，建议先用小型模型试试。我用 Luna 和 Qwen3.8 27B 测下来效果还不错。
 
 Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 Android** 两个版本。离线用雾凇词库，联网后调用 **在线 LLM API**，通过提示词补足词库匹配：修正漏输、重复、错序和邻键误触，处理长拼音和中英文混输，也可以按描述生成颜表情。
 
 中文模式下，拼音转汉字，英语保留并纠错；英文模式下，优先纠正英语，把中文、拼音或混输转成英文。两种模式都有候选区，每次请求返回一个 AI 候选，由你选中上屏。
 
-云端支持 **OpenAI 和 OpenRouter**。模型、思考强度、速度和供应商都可以自己选，也可以保存成多个 Policy 随时切换。纠错能有多强、等待有多短，取决于模型的能力，以及你的钱包（笑）。
+云端支持 **OpenAI、OpenRouter 和 Google Gemini**。可以把接口、Key、模型和参数保存成多个 Policy 随时切换；OpenRouter 还支持供应商路由和后台 Preset 提示词。纠错能有多强、等待有多短，取决于模型的能力，以及你的钱包（笑）。
 
-**LLM 功能需要联网，模型在 OpenAI、OpenRouter 接入的远程服务端运行，不在手机或电脑本地运行。** 离线输入使用 Rime 和本地词库。开启云端 AI 后，输入及设置范围内的前后文会发送给所选 API 服务，Key 加密保存在设备上。
+**LLM 功能需要联网，模型在 OpenAI、OpenRouter 或 Google Gemini 的远程服务端运行，不在手机或电脑本地运行。** 离线输入使用 Rime 和本地词库。开启云端 AI 后，当前输入会发送给所选 API 服务，Key 加密保存在设备上。
 
 ### English
 
 I built Zephyr for my own daily typing: fast pinyin input, clear privacy controls, and some tolerance for clumsy fingers. You're welcome to be a guinea pig too—open an issue when something feels off.
 
-**This is still a prototype; please use it with care.** I use it daily, but there is plenty left to improve. API token usage is currently quite high, and I haven't optimized it yet. Start with a smaller model; Luna and Qwen3.8 27B have worked fairly well in my own testing.
+**This is still a prototype; please use it with care.** I use it daily, but there is plenty left to improve. Prompts and output are now shorter, but long input and model reasoning can still use plenty of tokens. Start with a smaller model; Luna and Qwen3.8 27B have worked fairly well in my own testing.
 
 **Zephyr Input** is a **Rime-based pinyin keyboard for Windows and Android**. It uses Rime Ice dictionaries offline and calls **online LLM APIs** for missing letters, repeated characters, swapped letters, nearby-key mistakes, long pinyin, and mixed Chinese–English input. It can also turn a short description into a kaomoji.
 
 Chinese mode converts pinyin to Chinese while keeping and correcting English. English mode corrects English and translates Chinese, pinyin, or mixed input into English. Both modes show candidates; each AI request returns one suggestion for you to select.
 
-Cloud assistance supports **OpenAI and OpenRouter**, with separate policies for models, reasoning effort, speed, and provider routing. The quality depends on the model—and your wallet. **LLM features require an internet connection: models run on remote services accessed through OpenAI or OpenRouter, not locally on your phone or computer.** Offline typing uses Rime and local dictionaries. Cloud AI sends your input and configured surrounding context to your chosen API service. Keys are encrypted on your device.
+Cloud assistance supports **OpenAI, OpenRouter, and Google Gemini**, with separate policies for keys, models, and parameters. OpenRouter also supports provider routing and server-side prompt presets. The quality depends on the model—and your wallet. **LLM features require an internet connection: models run on remote services accessed through OpenAI, OpenRouter, or Google Gemini, not locally on your phone or computer.** Offline typing uses Rime and local dictionaries. Cloud AI sends your current input to your chosen API service. Keys are encrypted on your device.
 
 ## 输入与 AI 纠错 · AI-assisted typing
 
@@ -46,9 +46,9 @@ Actual Android debug build in an emulator: for `woyaochihuogu`, the local candid
 
 ## 输入示例 · Examples
 
-下面展示想要的纠错和混输效果，具体措辞随模型与上下文变化。
+下面展示想要的纠错和混输效果，具体措辞随输入内容和模型变化。
 
-These examples show the intended corrections. Wording varies with the model and context.
+These examples show the intended corrections. Wording varies with the input and model.
 
 | 输入 / Input | 模式 / Mode | 候选示例 / Example candidate |
 | --- | --- | --- |
@@ -61,16 +61,16 @@ These examples show the intended corrections. Wording varies with the model and 
 | `hanbaowang haochi` | 中文，空格分词 / Chinese, phrase boundaries | 汉堡王好吃 |
 | `颜表情 笑死` | 中文 / Chinese | („ಡωಡ„) |
 
-Windows 还可以用 `颜 笑死` 或 `表情 笑死` 生成颜表情。Android 1.4.0 使用 `颜表情` 开头的写法。
+两端都可以用 `颜 笑死`、`表情 笑死` 或 `颜表情 笑死` 生成颜表情。
 
-Windows also accepts the shorter `颜` and `表情` prefixes. Use `颜表情` with Android 1.4.0.
+Both clients accept `颜`, `表情`, and `颜表情` followed by a description.
 
 ## 安装 · Installation
 
 | 平台 / Platform | 安装包 / Download |
 | --- | --- |
-| Windows x64 | [1.5.5 Setup EXE](dist/Zephyr-Input-Windows-1.5.5-Setup-x64.exe) |
-| Android ARM64 | [1.4.0 APK](dist/Zephyr-Input-1.4.0-arm64-v8a-demo.apk) |
+| Windows x64 | [1.6.1 Setup EXE](dist/Zephyr-Input-Windows-1.6.1-Setup-x64.exe) |
+| Android ARM64 | [1.5.1 APK](dist/Zephyr-Input-1.5.1-arm64-v8a-demo.apk) |
 
 **Windows：**运行安装包并允许管理员授权，程序安装到 `C:\Program Files\Zephyr Input`，已包含 Java 运行时。安装后注销再登录，从系统输入法菜单选择 Zephyr Input；也可以到“中文（简体，中国）→ 语言选项”添加。开始菜单中的 Zephyr Input 打开设置。更新时运行新版安装包，卸载使用系统“已安装的应用”入口。
 
@@ -82,69 +82,149 @@ Windows also accepts the shorter `颜` and `表情` prefixes. Use `颜表情` wi
 
 ## 配置 API 和模型 · API and model setup
 
-一个 **Policy** 保存一套接口、Key、模型、参数和提示词。先配置一套能正常调用的，再按需要复制、调整。
+两端均内置 OpenAI、OpenRouter、Gemini 三个独立 Policy。一个 **Policy** 保存一套接口、Key、模型、参数和提示词配置。先配好一套并测试延迟，再按需复制或切换。
 
-A **policy** holds an endpoint, key, model, parameters, and prompts. Set up one working policy first, then copy or adjust it as needed.
+Both clients include separate OpenAI, OpenRouter, and Gemini policies. A **policy** holds an endpoint, key, model, parameters, and prompt settings. Configure one, test its latency, then copy or switch policies as needed.
 
-| 配置 / Setting | OpenAI | OpenRouter |
+| 配置 / Setting | OpenAI | OpenRouter | Google Gemini |
+| --- | --- | --- | --- |
+| 创建 Key / Create a key | [OpenAI](https://platform.openai.com/api-keys) | [OpenRouter](https://openrouter.ai/settings/keys) | [Google AI Studio](https://aistudio.google.com/apikey) |
+| 完整接口地址 / Full endpoint | `https://api.openai.com/v1/responses` | `https://openrouter.ai/api/v1/chat/completions` | `https://generativelanguage.googleapis.com/v1beta/interactions` |
+| 客户端默认模型 / App default model | `gpt-6.1-terra` | `deepseek/deepseek-v4-flash-0731` | `gemini-4-hydrogen` |
+| 默认思考 / Default thinking | `low` | `none` | `low` |
+| 默认速度 / Default speed | `priority`（快速 / Fast） | `default`（普通 / Normal） | `default`（普通 / Normal） |
+| 默认供应商 / Default provider | 不使用 / Not used | `wafer/us`，可改 Auto / Can use Auto | 不使用 / Not used |
+| OpenRouter Preset | 不使用 / Not used | 可选，默认关闭 / Optional, off by default | 不使用 / Not used |
+
+这是客户端的初始配置。三家平台各用自己的 Key；模型列表可更新，也可手填完整 ID。模型和思考选项以该 Key 实际可调用的项目为准。`omit` 表示不发送思考参数，由服务端决定；它与“无思考”不是同一个选项。
+
+These are the app's initial settings. Each service needs its own key. Refresh the model list or enter a full model ID available to your key. `omit` leaves the reasoning parameter out of the request; it does not mean reasoning is disabled.
+
+### Windows：配置并应用 Policy · Configure and apply
+
+1. 从开始菜单打开 **Zephyr Input**，在顶部列表选择要编辑的 Policy。
+2. 在 **Policies / 策略** 页填写完整接口地址和 Key，点击顶部 **Save policy / 保存 Policy**。
+3. 点击 **Update models / 更新模型列表**，选择或输入模型，调整思考和速度，再保存。OpenRouter 的供应商可选 Auto，也可刷新列表后选择具体路由。
+4. 点击 **Test latency / 测试当前 Policy**，确认结果区出现候选和耗时。
+5. 点击顶部 **Apply policy / 应用此 Policy**；绿色“正在使用”标记表示当前实际使用的配置。选中列表里的另一项只会进入编辑。
+6. 到 **Input / 输入** 页开启 **Enable cloud AI / 启用云端 AI**，点击 **Save settings / 保存设置**。
+
+Open **Zephyr Input** from Start, select a policy in the top list, and enter its endpoint and key under **Policies**. **Save policy**, refresh or enter the model, check its parameters, save again, and run **Test latency**. Click **Apply policy** to activate it; the active row is green. Enable cloud AI under **Input** and **Save settings**. Selecting another row only changes which policy you are editing.
+
+Key 保存后输入框会清空；同一接口下留空保存会保留原 Key。顶部可删除 Policy，策略页可复制 Policy 连同 Key 一起调整。
+
+The key field clears after saving. Leaving it blank keeps the saved key for that endpoint. You can delete a policy from the top controls or copy a policy together with its key in the Policies page.
+
+### Android：配置并选用 Policy · Configure and select
+
+1. 打开应用的 **AI 辅助**，找到要使用的 Policy，点击 **编辑**。
+2. 点击 **验证身份并配置连接 / 密钥**，完成锁屏验证，保存完整接口地址和对应平台的 Key。
+3. 打开 **模型与参数（速度 / 推理强度）**，更新列表或填写模型 ID，设置思考、速度；OpenRouter 的供应商也在这里选择。
+4. 点击 **测试当前 Policy 延迟**，确认能返回候选。
+5. 返回 Policy 列表，勾选该项并开启 **启用 AI**。开启“停手自动请求”后，键盘会在停顿时请求 AI 候选。
+
+Open **AI assistance**, edit a policy, authenticate with your device screen lock, and save the endpoint and key. Under **Model and parameters**, choose the model and its thinking/speed settings; OpenRouter provider routing is on this page too. Test the policy's latency, return to the list, select it, and enable AI. Automatic requests run after you pause typing when that option is enabled.
+
+### 使用 Google Gemini · Using Google Gemini
+
+在 [Google AI Studio](https://aistudio.google.com/apikey) 创建 Gemini API Key。Key 关联的 Google Cloud 项目决定可用权限、配额和计费。[Google Key 使用说明](https://aistudio.google.com/docs/api-key)
+
+Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/apikey). Its Google Cloud project supplies the permissions, quota, and billing setup. [Google's key guide](https://aistudio.google.com/docs/api-key)
+
+选中内置的 **Gemini · Hydrogen** Policy，按上面的平台步骤保存 Key，检查以下配置，然后测试并应用：
+
+Choose the built-in **Gemini · Hydrogen** policy, save your key using the steps above, check these settings, then test and activate it:
+
+```text
+Endpoint: https://generativelanguage.googleapis.com/v1beta/interactions
+Model:    gemini-4-hydrogen
+Thinking: low
+Speed:    default
+```
+
+Zephyr 使用 Gemini 原生 Interactions 接口，Key 填在密钥栏，地址填写完整的 `/v1beta/interactions`。该 Policy 无供应商和 Preset 设置；应用每次发送本地完整提示词与当前输入，不接续上一次输入。Hydrogen 的 `low` 仍可能消耗思考 token，可在 Policy 测速结果里查看。
+
+Zephyr uses the native Gemini Interactions API. Put the key in the key field and use the full `/v1beta/interactions` endpoint. This policy has no provider routing or Preset controls. Each request sends the complete local prompt and current input independently. Hydrogen's `low` setting can still use reasoning tokens, shown in policy latency results.
+
+### OpenRouter Preset：把提示词放在后台 · Store prompts on OpenRouter
+
+**Preset 是 OpenRouter Policy 中的可选开关，默认关闭。** 普通输入不需要配置 Preset，直接使用内置提示词即可。
+
+**Preset is an optional switch in each OpenRouter policy, off by default.** You can use the built-in prompts without setting up any presets.
+
+| 开关 / Switch | 请求内容 / What the app sends | 提示词来源 / Prompt source |
 | --- | --- | --- |
-| API Key | [创建 Key / Create a key](https://platform.openai.com/api-keys) | [创建 Key / Create a key](https://openrouter.ai/settings/keys) |
-| 完整接口地址 / Endpoint | `https://api.openai.com/v1/chat/completions` | `https://openrouter.ai/api/v1/chat/completions` |
-| 模型 / Model | 选择或输入账号可用的完整模型 ID / Exact model ID available to your account | 选择或输入完整 ID，通常为 `作者/模型` / Full ID, usually `author/model` |
-| 供应商 / Provider | 留空 / Leave blank | Auto，或刷新列表后指定 / Auto, or select from the refreshed list |
+| 关闭 / Off | 完整本地提示词 + 当前输入 / Full local prompt + current input | 本地内置或该 Policy 的自定义提示词 / Built-in or policy-customized local prompt |
+| 开启 / On | 对应 Preset 引用 + 当前输入 / Selected preset reference + current input | OpenRouter 后台 / OpenRouter backend |
 
-两家平台各用自己的 Key。思考强度按模型可用选项选择，速度可以先用普通模式。`omit` 表示交给服务端决定；关闭思考需要模型支持相应选项。提示词可以直接用内置版本。
+**先配置后台 / Set up the backend first**
 
-Each service needs its own key. Choose a supported reasoning setting and start with normal speed. `omit` leaves the parameter to the server; disabling reasoning requires model support. The built-in prompts are ready to use.
+1. 登录该 Policy 的 Key 所属账号及工作区，打开 [OpenRouter Presets](https://openrouter.ai/settings/presets)。
+2. 按下表创建三个 Preset，把 [配置模板](OPENROUTER_PRESETS.md) 里的对应 System Prompt 复制进去，保存并启用。
+3. 回到客户端，打开该 OpenRouter Policy 的 **使用 OpenRouter Preset**，此时显示三个可编辑字段。默认值如下；后台用了其他 slug，就改成后台实际的完整引用。
 
-### Windows
+Sign in to the account/workspace that owns your policy's key. Create the three presets in [OpenRouter Presets](https://openrouter.ai/settings/presets), copy their System Prompts from the [setup template](OPENROUTER_PRESETS.md), and save/activate them. Turn on **Use OpenRouter Preset** in the app to reveal the three editable references. Change the defaults if your backend uses different slugs.
 
-1. 在顶部列表选择 Policy，进入 **Policies / 策略** 页，填写接口、模型和 Key，点击 **Save policy / 保存 Policy**。
-2. 点击 **Update models / 更新模型列表**，选择或手填完整模型 ID，检查思考、速度及供应商，再保存。
-3. 点击顶部 **Apply policy / 应用此 Policy**。绿色“正在使用”标记表示当前实际配置；选中其他项可以单独编辑。
-4. 在 **Input / 输入** 页开启 **Enable cloud AI / 启用云端 AI**，保存设置。
-5. 点击 **Test latency / 测试当前 Policy**，确认连接后开始输入。测试会发送一次 API 请求，按服务商规则计费。
+| 输入模式 / Input mode | 后台 slug / Backend slug | 客户端默认引用 / App default reference |
+| --- | --- | --- |
+| 中文、简体 / Chinese, simplified | `zephyr-zh-hans` | `@preset/zephyr-zh-hans` |
+| 中文、繁体 / Chinese, traditional | `zephyr-zh-hant` | `@preset/zephyr-zh-hant` |
+| 英文 / English | `zephyr-en` | `@preset/zephyr-en` |
 
-Key 保存后输入框会清空，之后在同一接口下留空即可保留。顶部也可以删除 Policy，或在策略页复制一份连同 Key 一起调整。
+**保存并使用 / Save and use**
 
-Select a policy, enter its endpoint, model, and key in **Policies**, then **Save policy**. Use **Update models** to refresh the list or enter a full ID, check the parameters, and save. Click **Apply policy** to activate it—the active row is green. Enable cloud AI in **Input**, save settings, and run **Test latency**. Saved keys are hidden; leaving the key field empty keeps the existing key for that endpoint. Latency tests make a real request billed by the API service.
+- **Windows：**打开开关、编辑引用后，点击顶部 **保存 Policy**，再 **应用此 Policy**。
+- **Android：**开关即时保存；修改引用后点击 **保存 Preset**，返回列表勾选该 Policy。
+- 键盘切换中英或繁简后，应用自动选择对应引用，每次只用其中一个。
 
-### Android
+On **Windows**, save the policy after changing the switch or references, then apply it. On **Android**, the switch saves immediately; use **Save Preset** after editing references, then select the policy in the list. Keyboard language/script changes select the matching reference automatically; each request uses one preset.
 
-1. 进入 **AI 辅助 → 编辑 Policy → 验证身份并配置连接 / 密钥**，用手机锁屏验证后保存地址和 Key。
-2. 打开该 Policy 的模型参数设置，填写模型，调整思考强度、速度和供应商。
-3. 返回列表，勾选这个 Policy，开启云端 AI。
-4. 点击 **测试延迟** 检查连接，之后就可以在键盘里使用。
+**出现“你的 Key 没有设置可用的 Preset，请关闭 Preset 功能后重试。”时：**在这个 Policy 中关闭 Preset；Windows 再保存 Policy，即可恢复完整本地提示词请求。想继续使用后台提示词，再检查 Key 所属工作区、三个 slug 及启用状态，修正后重新开启。默认引用只是预填名称，应用不会替你的账号创建 Preset。
 
-Open **AI assistance → Edit policy**, authenticate with your device screen lock, and save the endpoint and key. Configure the model and parameters, select the policy in the list, enable cloud AI, and run its latency test.
+If you see **“Your Key has no available Preset; disable Preset and retry”** (shown in Chinese), switch Preset off for that policy and save on Windows to resume full local prompts. To use it again, check the key's workspace, preset slugs, and active versions before re-enabling it. Prefilled references do not create presets in your account.
 
-连接失败时，依次检查 Key、账号额度、完整模型 ID 和参数；OpenRouter 固定供应商连接失败时，可以切回 Auto 测试。
+同一组后台提示词可以供多个 Policy 使用。模型、思考、速度和供应商继续由客户端设置覆盖；使用 Preset 时，本地提示词修改不会参与请求。修改后台提示词后，后续请求使用新配置。**Preset 减少客户端上传文本，模型处理的提示词仍计入 token 费用。** [OpenRouter Preset 说明](https://openrouter.ai/docs/guides/features/presets)
 
-If a request fails, check the key, account quota, model ID, and parameters. Try Auto routing if a pinned OpenRouter provider is unavailable.
+Several policies can share the same backend prompts. The app still sends its model, thinking, speed, and provider settings as overrides. Local prompt edits are unused while Preset is on; edit the backend prompt for subsequent requests. **Presets reduce client upload text; model prompt tokens are still billed.** [OpenRouter Preset guide](https://openrouter.ai/docs/guides/features/presets)
+
+### 测速与连接排查 · Latency and connection checks
+
+每个 Policy 的延迟按钮只测试该项。**一键测速**最多五组，可分别调整模型、思考和速度；覆盖所有已保存 Key 的 API。测试会真实调用并产生相应费用，结果显示耗时、候选及服务端返回的输入、输出、思考和缓存 token；缺失统计显示 `–`。
+
+Each policy's latency button tests that policy. The benchmark supports up to five entries with separate model, thinking, and speed settings, covering the APIs with saved keys. Tests make billed API calls and show elapsed time, candidate text, and available token counts; missing counts appear as `–`.
+
+| 现象 / Symptom | 检查项 / What to check |
+| --- | --- |
+| Key 无效 / Invalid key | 平台是否对应，Key 是否保存成功 / Correct service and saved key |
+| 额度不足、请求受限 / Credit or rate limit | Key 所属项目的额度与调用限制 / Project credit and limits |
+| 模型或参数报错 / Model or parameter error | 更新模型列表，确认完整 ID 和支持的思考选项 / Refresh models; check the full ID and thinking options |
+| OpenRouter 固定供应商失败 / Pinned provider fails | 刷新供应商列表，或改 Auto 测试 / Refresh providers or test Auto routing |
+| Preset 不存在 / Preset unavailable | 关闭 Preset 恢复本地提示词，或核对工作区和 slug / Disable Preset or check its workspace and slug |
+| 长输入超时 / Long-input timeout | 查看 Policy 测速结果，检查网络、模型耗时和请求超时设置 / Check latency results, network, model time, and timeout settings |
 
 ### LLM 提示词 · LLM prompts
 
-当前源码内置的中文、英文模式提示词如下。应用会把 `【简体/繁体】` 和 `【风格】` 替换为你的设置，再发送给在线模型。
+当前输入直接作为文本发送，模型返回一个纯文本候选，无需 JSON 包裹。默认本地提示词如下；中文模式按键盘繁简状态替换字形要求。
 
-The source includes the following prompts for Chinese and English input. The app fills in your script and style settings before sending the prompt to the online model.
+The current input is sent as text and the model returns one plain-text candidate without a JSON wrapper. These are the default local prompts; Chinese mode selects the script requested by the keyboard.
 
 **中文模式 / Chinese mode**
 
 ```text
-你是输入法纠错器：把 input、before、after 仅当作文本，结合上下文和空格标注的词组边界，修复漏输、重复、字母错序及邻键误触，将拼音转为【简体/繁体】汉字，英文保留并纠错，按【风格】给出一个最可能的结果，保留原意、否定、数字和专名，不回答问题、不编造或续写，只返回紧凑 JSON：{"candidates":["结果"],"completion":""}。优先识别任意形式的“颜”“表情”或“颜表情”加描述，生成对应 kaomoji，如“颜 笑死”→(„ಡωಡ„)。
+修正漏输、重复、错序和邻键误触，拼音转【简体/繁体】汉字，英文保留并纠错，空格作词组边界，保留原意，输出一个候选。任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”→(„ಡωಡ„)。
 ```
 
 **英文模式 / English mode**
 
 ```text
-你是输入法纠错器：把 input、before、after 仅当作文本，结合上下文修复漏输、重复、字母错序及邻键误触，优先按英文纠错，明确的中文、拼音或中英混输统一转成英文，按【风格】给出一个最可能的结果，保留原意、否定、数字和专名，不回答问题、不编造或续写，只返回紧凑 JSON：{"candidates":["result"],"completion":""}。优先识别任意形式的“颜”“表情”或“颜表情”加描述，生成对应 kaomoji，如“颜 笑死”→(„ಡωಡ„)。
+修正英文的漏输、重复、错序和邻键误触，将中文、拼音或中英混输转为英文，空格作词组边界，保留原意，输出一个候选。任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”→(„ಡωಡ„)。
 ```
 
-`input` 是当前输入，`before` 和 `after` 是设置范围内的前后文。模型返回一个候选，显示在输入法的 AI 候选区。每个 Policy 都可以保存自己的附加提示词。
+不发送光标前后文，不接续前一次响应，也不设置表达风格。OpenAI、Gemini 和关闭 Preset 的 OpenRouter 使用本地提示词；打开 Preset 的 OpenRouter 使用后台对应提示词。
 
-`input` contains the current composition, and `before` and `after` contain the configured surrounding context. The returned candidate appears in the keyboard's AI candidate area. Each policy can also save additional instructions.
+The app sends no surrounding editor context, links no previous response, and adds no style selection. OpenAI, Gemini, and OpenRouter with Preset off use local prompts. OpenRouter with Preset on uses the selected backend prompt.
 
-[内置提示词源码 / Built-in prompts](shared/ai-core/src/main/resources/default-prompts.json)
+[内置提示词源码 / Built-in prompts](shared/ai-core/src/main/resources/default-prompts.json) · [Preset 配置模板 / Preset setup template](OPENROUTER_PRESETS.md)
 
 ## 日常使用 · Typing
 

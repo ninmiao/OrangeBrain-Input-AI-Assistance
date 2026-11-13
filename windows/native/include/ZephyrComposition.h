@@ -17,27 +17,33 @@ struct Composition {
   bool chinese = true, traditional = false, segmentation = true, enterOriginal = true, spaceOriginal = false;
   std::vector<std::wstring> candidates;
   std::vector<std::wstring> comments;
+  std::vector<int> rimeIndices;
+  bool partialSelection = false;
+  bool refreshPending = false;
+  std::wstring preedit;
+  size_t preeditCaret = 0;
   std::wstring commit;
-  void changed() { ++revision; selected = page = 0; candidates.clear(); comments.clear(); }
+  std::wstring aiError;
+  void changed() { aiError.clear(); ++revision; selected = page = 0; candidates.clear(); comments.clear(); rimeIndices.clear(); }
   bool insert(char ch) {
     if (ch < 32 || ch > 126 || input.size() >= 300) return false;
     input.insert(caret++, 1, ch); changed(); return true;
   }
   void backspace() { if(caret) { input.erase(--caret, 1); changed(); } }
   void erase() { if(caret<input.size()) { input.erase(caret,1); changed(); } }
-  void clear() { shortcuts.reset(); input.clear(); caret=0; changed(); }
+  void clear() { shortcuts.reset(); input.clear(); caret=0; partialSelection=false; preedit.clear(); changed(); }
   void language() { chinese=!chinese;changed(); }
-  void add(const std::wstring& text,const std::wstring& source) {
+  void add(const std::wstring& text,const std::wstring& source, int rimeIndex = -1) {
     if(!text.empty() && std::find(candidates.begin(),candidates.end(),text)==candidates.end()) {
-      candidates.push_back(text);comments.push_back(source);
+      candidates.push_back(text);comments.push_back(source);rimeIndices.push_back(rimeIndex);
     }
   }
   bool adopt(uint64_t expected, const std::vector<std::wstring>& values) {
     if(expected!=revision || input.empty()) return false;
-    auto old=candidates, labels=comments;
-    candidates.clear(); comments.clear();
+    auto old=candidates, labels=comments;auto indices=rimeIndices;
+    candidates.clear(); comments.clear(); rimeIndices.clear();
     for(const auto& v:values) add(v,L"AI");
-    for(size_t i=0;i<old.size();++i) if(labels[i]!=L"AI") add(old[i],labels[i]);
+    for(size_t i=0;i<old.size();++i) if(labels[i]!=L"AI") add(old[i],labels[i],indices[i]);
     selected=page=0;return true;
   }
   bool chooseDigit(int digit) {

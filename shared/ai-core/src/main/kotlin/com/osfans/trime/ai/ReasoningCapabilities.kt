@@ -11,6 +11,12 @@ object ReasoningCapabilities {
     },value) }
     fun known(endpoint:String,model:String):List<String>? {
         val host=runCatching { URI(endpoint).host }.getOrNull()
+        if (ApiRouting.isGemini(endpoint)) return when {
+            model.startsWith("gemini-4-hydrogen") -> listOf("low","medium","high","xhigh")
+            model.startsWith("gemini-4-") || model.startsWith("gemini-3.8-flash") -> listOf("low","medium","high")
+            model.startsWith("gemini-3.6-flash") || model.startsWith("gemini-3.5-flash-lite") -> listOf("minimal","low","medium","high")
+            else -> null
+        }
         val router=host=="openrouter.ai"
         if (!router && host!="api.openai.com") return null
         val id=if(router) model.removePrefix("openai/") else model
@@ -29,7 +35,10 @@ object ReasoningCapabilities {
         val existing=catalog.models.firstOrNull { it.id==model }
         if (runCatching { URI(endpoint).host }.getOrNull() == "openrouter.ai" && catalog.version.startsWith("models-") && existing!=null) return existing
         val levels=known(endpoint,model) ?: return existing
-        val base=existing ?: ModelDefinition(model)
+        val base=if (ApiRouting.isGemini(endpoint)) (existing ?: ModelDefinition(model)).let { definition ->
+            definition.copy(parameters = definition.parameters.filter { it.key in setOf("reasoning_effort", "max_completion_tokens", "max_tokens") } +
+                ModelParameter("service_tier", "速度", choices=listOf(ParameterChoice("普通", "default"))))
+        } else existing ?: ModelDefinition(model)
         return base.copy(parameters=base.parameters.filterNot { it.key=="reasoning_effort" } +
             if(levels.isEmpty()) emptyList() else listOf(ModelParameter("reasoning_effort","思考强度",choices=choices(levels))))
     }

@@ -45,7 +45,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         val config = store.config
         require(config.generation == request.stamp.apiGeneration)
         val key = withContext(Dispatchers.IO) { store.credentialsFor(config).read(config.endpoint) } ?: error("Missing credential")
-        client.request(config.endpoint, key, config.model, request, config.timeoutMs, store.parameters(config), config.provider)
+        client.request(config.endpoint, key, config.model, request, config.timeoutMs, store.parameters(config), config.provider, store.preset(config, chinese))
     }, { update -> state = update; ready = update as? AiState.Ready; render() })
     private val configJob = scope.launch {
         store.changes.collect { changed ->
@@ -198,8 +198,10 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         val raw = rime.run { rawInputCached }
         if (raw.isNotEmpty()) {
             if (raw.length > c.targetLimit) return null
-            // No context until composition boundaries are reliable; never duplicate preedit.
-            return Target(AiInput(if(c.wordSegmentation && chinese) raw.replace('\'', ' ') else raw), true, 0, 0, 0, 0, 0, manual)
+            // Confirmed segments are part of this composition, not surrounding editor text.
+            val preedit = rime.run { compositionCached.preedit }.orEmpty()
+            val input = if (chinese && preedit.any { it in '\u3400'..'\u9fff' }) preedit else raw
+            return Target(AiInput(if(c.wordSegmentation && chinese) input.replace('\'', ' ') else input), true, 0, 0, 0, 0, 0, manual)
         }
         if (!manual && !directEligible) return null
         val extracted = connection.getExtractedText(ExtractedTextRequest().apply { hintMaxChars = 2048 }, 0) ?: return null
@@ -214,9 +216,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         val start = range.start
         val input = range.original
         if (a != b && connection.getSelectedText(0)?.toString() != input) return null
-        val before = if (c.contextEnabled) text.substring(0, start).takeLast(c.beforeLimit) else ""
-        val after = if (c.contextEnabled) text.substring(end).take(c.afterLimit) else ""
-        return Target(AiInput(input, before, after), false, start, end, a, b, text.hashCode(), manual)
+        return Target(AiInput(input), false, start, end, a, b, text.hashCode(), manual)
     }
 
     private fun refresh(manual: Boolean) {

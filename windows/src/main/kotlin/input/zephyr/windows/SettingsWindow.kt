@@ -6,14 +6,15 @@ import java.awt.*
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.util.UUID
 
 class SettingsWindow(private val store:ConfigurationStore,
     private val discoverModels:suspend (String,String)->ModelsClient.Discovery = { endpoint,key -> ModelsClient().discover(endpoint,key) },
     private val confirmDelete:(Component,String)->Boolean = { parent,message ->
         JOptionPane.showConfirmDialog(parent,message,"Delete policy / 删除 Policy",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE)==JOptionPane.YES_OPTION
-    }
+    },
+    private val measurePolicy:suspend (Configuration,Policy,Wire.Request)->AiResult = { c,p,r -> AiService(store).request(c,p,r) }
 ):JFrame("Zephyr Input · 微风输入法") {
     private var config=store.load()
     private var policy=config.active()
@@ -21,6 +22,7 @@ class SettingsWindow(private val store:ConfigurationStore,
     private val deletePolicyButton=JButton("Delete policy / 删除 Policy").apply { name="delete-policy" }
     private val currentPolicy=JLabel().apply { name="current-policy" }
     private var reloadingPolicies=false
+    private var reloadingBenchmarks=false
     private val benchmarkSources=mutableListOf<JComboBox<String>>()
     private val name=JTextField();private val endpoint=JTextField().apply { name="api-endpoint" };private val model=EditableModelSelector();private val provider=JComboBox<String>().apply { isEditable=true }
     private var providerOptions=emptyList<ProviderOption>()
@@ -39,7 +41,16 @@ class SettingsWindow(private val store:ConfigurationStore,
     private val scriptShortcut=JComboBox(ShortcutOptions.script.values.toTypedArray()).apply { selectedItem=ShortcutOptions.script[config.scriptShortcut] }
     private val debounce=JSpinner(SpinnerNumberModel(config.debounceMs,50,2000,50))
     private val timeout=JSpinner(SpinnerNumberModel(config.timeoutMs,1000,60000,1000))
-    private val style=JComboBox(Prompts.pack.styles.map { it.id }.toTypedArray())
+    private val presetEnabled=JCheckBox("Use OpenRouter Preset / 使用 Preset").apply { name="preset-enabled" }
+    private val presetOptions=JPanel().apply { name="preset-options";layout=BoxLayout(this,BoxLayout.Y_AXIS) }
+    private val presetChinese=JTextField().apply { name="preset-chinese" }
+    private val presetTraditional=JTextField().apply { name="preset-traditional" }
+    private val presetEnglish=JTextField().apply { name="preset-english" }
+    private val policyLatency=JTextArea(4,50).apply { name="policy-latency-result";isEditable=false;lineWrap=true;wrapStyleWord=true }
+    private val testPolicy=JButton("Test latency / 测试当前 Policy").apply { name="test-policy" }
+    private val latencyResults=mutableMapOf<String,String>()
+    private val testingPolicies=mutableSetOf<String>()
+    private val testScope=CoroutineScope(SupervisorJob()+Dispatchers.IO)
     private val status=JLabel("Ready · API keys are encrypted for your Windows account").apply { name="status" }
     init {
         defaultCloseOperation=DISPOSE_ON_CLOSE;minimumSize=Dimension(600,420);size=Dimension(920,800);setLocationRelativeTo(null)
@@ -50,8 +61,7 @@ class SettingsWindow(private val store:ConfigurationStore,
         settings.add(enabled);settings.add(enterOriginal);settings.add(spaceOriginal);settings.add(segmentation)
         settings.add(JLabel("AI returns one candidate, without continuation / AI 固定一个候选，不续写"))
         row(settings,"Debounce (ms) / 等待停顿",debounce)
-        row(settings,"Request timeout (ms) / 请求超时",timeout);row(settings,"Expression style / 表达风格",style)
-        style.selectedItem=config.style
+        row(settings,"Request timeout (ms) / 请求超时",timeout)
         row(settings,"Chinese / English · 中英切换",languageShortcut)
         row(settings,"Simplified / Traditional · 繁简切换",scriptShortcut)
         settings.add(JLabel("Tap Shift alone within 0.5 s / 单独轻按 Shift；组合键与长按不切换。保存后即时生效。"))
@@ -67,16 +77,17 @@ class SettingsWindow(private val store:ConfigurationStore,
         row(p,"Reasoning / 思考强度",reasoning);row(p,"Speed / 速度",speed);row(p,"API Key（留空保留已存密钥）",key)
         val refreshProviders=JButton("Refresh providers / 刷新供应商")
         refreshProviders.addActionListener { refreshProviders() };p.add(refreshProviders)
+        testPolicy.addActionListener { testSelectedPolicy() };p.add(testPolicy);p.add(JScrollPane(policyLatency))
+        presetEnabled.addActionListener { refreshPresetControls() };p.add(presetEnabled)
+        row(presetOptions,"简体 / Simplified Preset",presetChinese)
+        row(presetOptions,"繁体 / Traditional Preset",presetTraditional)
+        row(presetOptions,"英文 / English Preset",presetEnglish)
+        presetOptions.add(JLabel("@preset/name · 保存 Policy 后生效；关闭后发送本地完整提示词。"))
+        p.add(presetOptions)
         p.add(JLabel("Chinese policy instructions / 中文附加提示词"));p.add(JScrollPane(chinese))
         p.add(JLabel("English policy instructions / 英文附加提示词"));p.add(JScrollPane(english))
         val actions=JPanel(FlowLayout(FlowLayout.LEFT))
         val savePolicy=JButton("Save policy / 保存 Policy").apply { name="save-policy" };savePolicy.addActionListener { attempt { savePolicy();status.text="Policy saved" } }
-        val test=JButton("Test latency / 测试当前 Policy");test.addActionListener {
-            attempt { savePolicy();val snapshot=config;val selected=policy
-                background(test) { val started=System.nanoTime();val result=runBlocking { AiService(store).request(snapshot,selected,Wire.Request(true,false,"fanfaxisizhazheng")) }
-                    "${(System.nanoTime()-started)/1_000_000} ms · ${result.candidates.joinToString(" / ")}" }
-            }
-        };actions.add(test)
         val duplicate=JButton("Copy policy + Key / 复制 Policy（含 Key）")
         duplicate.addActionListener { attempt {
             savePolicy()
@@ -85,15 +96,23 @@ class SettingsWindow(private val store:ConfigurationStore,
             status.text="Policy copied with independent encrypted Key / 已复制，Key 独立加密保存"
         } };actions.add(duplicate)
         val add=JButton("New policy / 新建");add.addActionListener { config=config.copy(policies=config.policies+Policy(id=UUID.randomUUID().toString(),name="New policy"));reloadChoices(config.policies.lastIndex) };actions.add(add)
-        p.add(actions);p.add(JLabel("Additional prompts cannot change the JSON schema. Core language rules remain shared with Android."))
+        p.add(actions);p.add(JLabel("One plain-text candidate. Presets replace local instructions for their language mode / 只输出一个纯文本候选。"))
         tabs.addTab("Policies / 策略",settingsScroll(p))
-        val bench=column();bench.add(JLabel("At most five sequential requests. Each row can select either saved API policy."))
+        val bench=column();bench.add(JLabel("At most five requests; include every API with a saved Key / 最多五组，每个已配置 Key 的 API 至少一组。"))
         val samples=mutableListOf<Triple<JComboBox<String>,JTextField,Pair<JComboBox<String>,JComboBox<String>>>>()
-        val defaultModels=listOf("gpt-6-luna","deepseek/deepseek-v4-flash-0731","gpt-5.4-nano","gpt-5.4-mini","gpt-6-sol")
-        defaultModels.forEachIndexed { i,id ->
-            val source=JComboBox(config.policies.map { it.id }.toTypedArray()).apply { name="benchmark-policy-$i" };source.selectedItem=config.policies.firstOrNull { ApiRouting.isOpenRouter(it.endpoint)==(i==1) }?.id ?: config.policies.first().id;benchmarkSources.add(source)
-            val m=JTextField(id,28);val r=JComboBox(arrayOf("none","omit","low","medium","high","xhigh","max"));val s=JComboBox(arrayOf("default","priority"))
-            val line=JPanel(FlowLayout(FlowLayout.LEFT));line.add(source);line.add(m);line.add(r);line.add(s);bench.add(line)
+        val selectedSamples=mutableListOf<JCheckBox>()
+        BenchmarkEntry.defaults().forEachIndexed { i,entry ->
+            val candidates=config.policies.filter { ApiRouting.api(it.endpoint)==entry.api }
+            val initial=candidates.firstOrNull { store.hasKey(it.id) } ?: candidates.firstOrNull() ?: config.active()
+            val source=JComboBox(config.policies.map { it.id }.toTypedArray()).apply { name="benchmark-policy-$i" };source.selectedItem=initial.id;benchmarkSources.add(source)
+            source.renderer=object:DefaultListCellRenderer() {
+                override fun getListCellRendererComponent(list:JList<*>?,value:Any?,index:Int,selected:Boolean,focus:Boolean):Component =
+                    super.getListCellRendererComponent(list,config.policies.firstOrNull { it.id==value }?.name ?: value,index,selected,focus)
+            }
+            val selected=JCheckBox("${i+1}",store.hasKey(initial.id) && ApiRouting.api(initial.endpoint)==entry.api).apply { name="benchmark-enabled-$i" };selectedSamples.add(selected)
+            val m=JTextField(entry.model,28).apply { name="benchmark-model-$i" };val r=JComboBox(arrayOf("none","omit","low","medium","high","xhigh","max"));val s=JComboBox(arrayOf("default","priority"))
+            r.selectedItem=entry.reasoning;s.selectedItem=entry.speed
+            val line=JPanel(FlowLayout(FlowLayout.LEFT));line.add(selected);line.add(source);line.add(m);line.add(r);line.add(s);bench.add(line)
             samples+=Triple(source,m,r to s)
             fun refreshOptions() {
                 val previous=r.selectedItem?.toString() ?: "none"
@@ -101,7 +120,7 @@ class SettingsWindow(private val store:ConfigurationStore,
                 val options=ReasoningCapabilities.options(url,m.text).map { it.value }
                 r.removeAllItems();options.forEach { r.addItem(it) };r.selectedItem=if(previous in options)previous else "omit"
             }
-            source.addActionListener { refreshOptions() }
+            source.addActionListener { if(!reloadingBenchmarks) { config.policies.firstOrNull { it.id==source.selectedItem }?.let { m.text=it.model;s.selectedItem=it.speed };refreshOptions() } }
             m.document.addDocumentListener(object:DocumentListener {
                 override fun insertUpdate(e:DocumentEvent) { SwingUtilities.invokeLater { refreshOptions() } }
                 override fun removeUpdate(e:DocumentEvent) { SwingUtilities.invokeLater { refreshOptions() } }
@@ -111,13 +130,14 @@ class SettingsWindow(private val store:ConfigurationStore,
         val output=JTextArea(12,65).apply { isEditable=false;lineWrap=true;wrapStyleWord=true }
         val run=JButton("Run five-model benchmark / 一键测速")
         run.addActionListener { attempt {
-            saveGlobal();store.save(config)
-            val rows=samples.map { (source,m,options) -> config.policies.first { it.id==source.selectedItem }.copy(model=m.text.trim(),reasoning=options.first.selectedItem.toString(),speed=options.second.selectedItem.toString()).also { it.validate() } }
-            require(rows.map { ApiRouting.isOpenRouter(it.endpoint) }.toSet().containsAll(config.policies.map { ApiRouting.isOpenRouter(it.endpoint) }.toSet())) { "Include each configured API / 请包含每个已配置的 API" }
+            savePolicy();val snapshot=config
+            val rows=samples.filterIndexed { i,_ -> selectedSamples[i].isSelected }.map { (source,m,options) -> config.policies.first { it.id==source.selectedItem }.copy(model=m.text.trim(),reasoning=options.first.selectedItem.toString(),speed=options.second.selectedItem.toString()).also { it.validate() } }
+            require(rows.size in 1..5) { "Select 1–5 rows / 请选择 1–5 组" }
+            require(rows.map { ApiRouting.api(it.endpoint) }.toSet().containsAll(snapshot.policies.filter { store.hasKey(it.id) }.map { ApiRouting.api(it.endpoint) }.toSet())) { "Include each configured API / 请包含每个已配置的 API" }
             background(run) {
                 val lines=rows.map { item -> runCatching {
-                    val t=System.nanoTime();val result=runBlocking { AiService(store).request(config,item,Wire.Request(false,false,"I wnated to recieve teh package")) }
-                    "${item.model}: ${(System.nanoTime()-t)/1_000_000} ms · ${result.candidates.joinToString(" / ")}"
+                    val t=System.nanoTime();val result=runBlocking { measurePolicy(snapshot,item,Wire.Request(false,false,"I wnated to recieve teh package")) }
+                    "${item.name} · ${item.model} · ${item.reasoning}/${item.speed}: ${(System.nanoTime()-t)/1_000_000} ms\n${result.candidates.joinToString(" / ")}\n${result.usage?.summary().orEmpty()}"
                 }.getOrElse { "${item.model}: ${safeError(it)}" } }
                 SwingUtilities.invokeLater { output.text=lines.joinToString("\n\n") };"Benchmark finished"
             }
@@ -195,8 +215,13 @@ class SettingsWindow(private val store:ConfigurationStore,
         loadPolicy(config.policies[choices.selectedIndex]);refreshCurrentPolicy()
         benchmarkSources.forEach { source ->
             val previous=source.selectedItem
-            source.model=DefaultComboBoxModel(config.policies.map { it.id }.toTypedArray())
-            source.selectedItem=previous?.takeIf { id -> config.policies.any { it.id==id } } ?: config.selectedPolicy
+            val retained=previous?.takeIf { id -> config.policies.any { it.id==id } }
+            reloadingBenchmarks=true
+            try {
+                source.model=DefaultComboBoxModel(config.policies.map { it.id }.toTypedArray())
+                source.selectedItem=retained ?: config.selectedPolicy
+            } finally { reloadingBenchmarks=false }
+            if(retained==null) { source.selectedIndex=-1;source.selectedItem=config.selectedPolicy }
         }
         deletePolicyButton.isEnabled=config.policies.size>1
         choices.ensureIndexIsVisible(choices.selectedIndex)
@@ -221,7 +246,12 @@ class SettingsWindow(private val store:ConfigurationStore,
         modelGeneration++;updateModels.isEnabled=true;policy=p
         name.text=p.name;endpoint.text=p.endpoint;model.text=p.model;refreshModelOptions()
         providerOptions=emptyList();provider.removeAllItems();provider.addItem(p.provider);provider.selectedItem=p.provider
-        providerTimer.restart();speed.selectedItem=p.speed;key.text="";chinese.text=p.chinesePrompt;english.text=p.englishPrompt
+        providerTimer.restart();speed.isEnabled=!ApiRouting.isGemini(p.endpoint);speed.selectedItem=p.speed;key.text="";
+        presetEnabled.isSelected=p.presets.enabled
+        val presets=p.presets.withDefaults()
+        presetChinese.text=presets.chinese;presetTraditional.text=presets.traditional;presetEnglish.text=presets.english
+        refreshPresetControls()
+        policyLatency.text=latencyResults[p.id] ?: "尚未测试此 Policy / Not tested";testPolicy.isEnabled=p.id !in testingPolicies;chinese.text=p.chinesePrompt;english.text=p.englishPrompt
         refreshReasoning(p.reasoning)
     }
     private fun refreshModelOptions() {
@@ -252,7 +282,7 @@ class SettingsWindow(private val store:ConfigurationStore,
             }
         }.apply { isDaemon=true;start() }
     }
-    override fun dispose() { modelGeneration++;providerGeneration++;providerTimer.stop();super.dispose() }
+    override fun dispose() { testScope.cancel();modelGeneration++;providerGeneration++;providerTimer.stop();super.dispose() }
     private fun refreshReasoningLater() { providerTimer.restart(); SwingUtilities.invokeLater { refreshReasoning(reasoning.selectedItem?.toString() ?: "omit") } }
     private fun refreshReasoning(value:String) { reasoning.removeAllItems();ReasoningCapabilities.options(endpoint.text.trim(),model.text.trim(),policy.effectiveCatalog(endpoint.text.trim())).forEach { reasoning.addItem(it.value) };reasoning.selectedItem=if((0 until reasoning.itemCount).any { reasoning.getItemAt(it)==value })value else "omit" }
     private fun providerId():String {
@@ -261,6 +291,9 @@ class SettingsWindow(private val store:ConfigurationStore,
     }
     private fun refreshProviders() {
         val ep=endpoint.text.trim();val m=model.text.trim();val generation=++providerGeneration
+        speed.isEnabled=!ApiRouting.isGemini(ep)
+        if(!speed.isEnabled) speed.selectedItem="default"
+        refreshPresetControls()
         provider.isEnabled=ApiRouting.isOpenRouter(ep)
         if(!provider.isEnabled || !m.contains('/'))return
         Thread {
@@ -276,15 +309,52 @@ class SettingsWindow(private val store:ConfigurationStore,
             }
         }.apply{isDaemon=true;start()}
     }
-    private fun saveGlobal() { config=config.copy(languageShortcut=ShortcutOptions.language.entries.first { it.value==languageShortcut.selectedItem }.key,scriptShortcut=ShortcutOptions.script.entries.first { it.value==scriptShortcut.selectedItem }.key,enabled=enabled.isSelected,wordSegmentation=segmentation.isSelected,enterOriginal=enterOriginal.isSelected,spaceOriginal=spaceOriginal.isSelected,completion=false,candidateCount=1,debounceMs=debounce.value as Int,timeoutMs=timeout.value as Int,style=style.selectedItem.toString()) }
+    private fun saveGlobal() { config=config.copy(languageShortcut=ShortcutOptions.language.entries.first { it.value==languageShortcut.selectedItem }.key,scriptShortcut=ShortcutOptions.script.entries.first { it.value==scriptShortcut.selectedItem }.key,enabled=enabled.isSelected,wordSegmentation=segmentation.isSelected,enterOriginal=enterOriginal.isSelected,spaceOriginal=spaceOriginal.isSelected,completion=false,candidateCount=1,debounceMs=debounce.value as Int,timeoutMs=timeout.value as Int) }
+    private fun refreshPresetControls() {
+        val router=ApiRouting.isOpenRouter(endpoint.text.trim())
+        presetEnabled.isVisible=router
+        presetOptions.isVisible=router && presetEnabled.isSelected
+        presetOptions.parent?.revalidate();presetOptions.parent?.repaint()
+    }
     private fun savePolicy(activate:Boolean=false) {
-        saveGlobal();val edited=policy.copy(name=name.text.trim(),endpoint=endpoint.text.trim(),model=model.text.trim(),catalog=if(endpoint.text.trim()==policy.endpoint)policy.catalog else ModelCatalog(),modelList=policy.modelList?.takeIf { it.endpoint==endpoint.text.trim() },provider=providerId(),reasoning=reasoning.selectedItem.toString(),speed=speed.selectedItem.toString(),chinesePrompt=chinese.text,englishPrompt=english.text)
+        saveGlobal();val edited=policy.copy(name=name.text.trim(),endpoint=endpoint.text.trim(),model=model.text.trim(),catalog=if(endpoint.text.trim()==policy.endpoint)policy.catalog else ModelCatalog(),modelList=policy.modelList?.takeIf { it.endpoint==endpoint.text.trim() },provider=if(ApiRouting.isOpenRouter(endpoint.text.trim())) providerId() else "",presets=if(ApiRouting.isOpenRouter(endpoint.text.trim())) PromptPresets(presetChinese.text.trim(),presetTraditional.text.trim(),presetEnglish.text.trim(),enabled=presetEnabled.isSelected).withDefaults() else PromptPresets(),reasoning=reasoning.selectedItem.toString(),speed=speed.selectedItem.toString(),chinesePrompt=chinese.text,englishPrompt=english.text)
         edited.validate();val updated=config.copy(policies=config.policies.map { if(it.id==edited.id)edited else it },selectedPolicy=if(activate)edited.id else config.selectedPolicy)
         val password=key.password
         try { if(password.isNotEmpty())store.saveKey(edited.id,String(password),edited.endpoint) } finally { password.fill('\u0000');key.text="" }
         store.save(updated);config=updated;policy=edited;reloadChoices(config.policies.indexOfFirst { it.id==edited.id })
     }
+
+    private fun testSelectedPolicy() = attempt {
+        savePolicy()
+        val snapshot=config;val selected=policy
+        if(!testingPolicies.add(selected.id)) return@attempt
+        val heading="${selected.name} · ${selected.model} · ${selected.reasoning}/${selected.speed}" +
+            if(ApiRouting.isOpenRouter(selected.endpoint)) " · ${selected.provider.ifBlank { "Auto" }}" else ""
+        latencyResults[selected.id]="$heading\n正在测试… / Running…"
+        policyLatency.text=latencyResults[selected.id];testPolicy.isEnabled=false
+        testScope.launch {
+            val start=System.nanoTime()
+            val outcome=try {
+                val result=measurePolicy(snapshot,selected,Wire.Request(true,false,"woxianghekafe"))
+                require(result.candidates.size==1 && result.candidates.single().isNotBlank()) { "Empty candidate" }
+                "$heading\n${(System.nanoTime()-start)/1_000_000} ms · ${result.candidates.single()}\n${result.usage?.summary().orEmpty()}"
+            } catch(e:CancellationException) { throw e }
+              catch(e:Exception) { "$heading\n${(System.nanoTime()-start)/1_000_000} ms · ${safeError(e)}" }
+            SwingUtilities.invokeLater {
+                testingPolicies.remove(selected.id)
+                if(!isDisplayable)return@invokeLater
+                latencyResults[selected.id]=outcome
+                if(policy.id==selected.id) { policyLatency.text=outcome;testPolicy.isEnabled=true }
+            }
+        }
+    }
+
     private fun attempt(block:()->Unit) { try { block() } catch(e:Exception) { status.text=safeError(e) } }
-    private fun safeError(e:Throwable)=if(e is ApiHttpException) "API HTTP error" else (e.message ?: e.javaClass.simpleName).take(180)
+    private fun safeError(e:Throwable)=when(e) {
+        is ApiHttpException -> "HTTP ${e.status} · ${AiFailure.from(e).label}"
+        is ApiTimeoutException -> "${AiFailure.from(e).label} · ${e.phase.label}"
+        is ApiPresetException,is ApiResponseException,is ApiProviderException,is ApiTruncatedException -> AiFailure.from(e).label
+        else -> (e.message ?: e.javaClass.simpleName).take(180)
+    }
     private fun background(button:JButton,task:()->String) { button.isEnabled=false;status.text="Running…";Thread { val message=runCatching(task).getOrElse(::safeError);SwingUtilities.invokeLater { status.text=message;button.isEnabled=true } }.apply { isDaemon=true;start() } }
 }

@@ -46,8 +46,12 @@ class BenchmarkActivity : AppCompatActivity() {
             store = withContext(Dispatchers.IO) { AiStore.get(this@BenchmarkActivity) }
             policyId = intent.getStringExtra("policy") ?: store.config.selectedPolicyId
             if (store.config.policies.none { it.id == policyId }) { finish(); return@launch }
-            saved = BenchmarkStore(this@BenchmarkActivity, "mixed-v2")
-            config = withContext(Dispatchers.IO) { saved.read() }
+            saved = BenchmarkStore(this@BenchmarkActivity, "mixed-v3")
+            config = withContext(Dispatchers.IO) {
+                val available=store.config.policies.filter { store.credentialsForPolicy(it.id).hasCredential() }.map { ApiRouting.api(it.endpoint) }.toSet()
+                val defaults=BenchmarkEntry.defaults().filter { it.api in available }.ifEmpty { BenchmarkEntry.defaults() }
+                saved.read(BenchmarkConfig(entries=defaults))
+            }
             state?.getString("draft")?.let { raw -> runCatching { Json.decodeFromString<BenchmarkConfig>(raw).validate() }.getOrNull()?.let { config = it } }
             render()
         }
@@ -72,7 +76,7 @@ class BenchmarkActivity : AppCompatActivity() {
             view.setPadding(dp(16) + bars.left, bars.top, dp(16) + bars.right, bars.bottom); insets
         }
         text(outer, "一键测速 · 最多 5 组", 24f)
-        text(outer, "OpenAI + OpenRouter · 各至少 1 组 · 合计最多 5 组")
+        text(outer, "OpenAI / OpenRouter / Gemini · 已配置 Key 的每种 API 至少 1 组 · 最多 5 组")
         val actions = LinearLayout(this); outer.addView(actions)
         start = button(actions, "一键开始测速") { begin() }.apply { layoutParams = LinearLayout.LayoutParams(0, dp(52), 1f) }
         stop = button(actions, "停止后续测试") {
@@ -100,13 +104,13 @@ class BenchmarkActivity : AppCompatActivity() {
             val row = LinearLayout(this); card.addView(row)
             button(row, "修改第 ${index + 1} 组") { edit(index) }.apply { layoutParams = LinearLayout.LayoutParams(0, -2, 1f) }
             button(row, "删除第 ${index + 1} 组") { change { it.copy(entries = it.entries.filterIndexed { i, _ -> i != index }) } }
-                .apply { isEnabled = config.entries.count { it.api == entry.api } > 1; layoutParams = LinearLayout.LayoutParams(0, -2, 1f) }
+                .apply { isEnabled = config.entries.size > 1; layoutParams = LinearLayout.LayoutParams(0, -2, 1f) }
         }
         controls += button(page, "添加一组（${config.entries.size}/5）") { change { it.copy(entries = it.entries + BenchmarkEntry()) } }
             .apply { isEnabled = config.entries.size < 5 }
-        controls += button(page, "恢复双 API 的 5 组预设") { change { it.copy(entries = BenchmarkEntry.defaults()) } }
+        controls += button(page, "恢复三种 API 的 5 组预设") { change { it.copy(entries = BenchmarkEntry.defaults()) } }
         text(page, "预设按小型、低成本系列选择，并非官方参数量排名。部分旧型号已进入弃用期，是否可用以当前接口为准。模型 ID 可手动填写或从 Policy 的模型列表选择。")
-        text(page, "每组选择自己的 Policy，使用对应接口和 Key；不改变键盘当前 Policy。OpenRouter 无思考发送 reasoning.enabled=false；普通速度不附加排序，Fast 优先低延迟，固定提供商时仍限制在该端点。开始前会检查两家凭据，不会串用 Key。")
+        text(page, "每组选择自己的 Policy，使用对应接口和 Key；不改变键盘当前 Policy。OpenRouter 无思考发送 reasoning.enabled=false；普通速度不附加排序，Fast 优先低延迟，固定提供商时仍限制在该端点。开始前会检查所选 Policy 的凭据，不会串用 Key。")
         setContentView(outer)
         // The loading view may already have consumed the initial inset dispatch.
         ViewCompat.requestApplyInsets(outer)
@@ -131,7 +135,7 @@ class BenchmarkActivity : AppCompatActivity() {
             contentDescription = "API / Policy"
             adapter = ArrayAdapter(this@BenchmarkActivity, android.R.layout.simple_spinner_dropdown_item, policies.map { it.name })
             setSelection(policies.indexOfFirst { it.id == entry.policyId }.takeIf { it >= 0 }
-                ?: policies.indexOfFirst { ApiRouting.isOpenRouter(it.endpoint) == (entry.api == "openrouter") }.coerceAtLeast(0))
+                ?: policies.indexOfFirst { ApiRouting.api(it.endpoint) == entry.api }.coerceAtLeast(0))
             text(panel, "API / Policy"); panel.addView(this)
         }
         val provider = input(panel, "OpenRouter 提供商（留空自动）", entry.provider).apply { setSingleLine() }
@@ -178,7 +182,7 @@ class BenchmarkActivity : AppCompatActivity() {
         dialog.setOnShowListener { dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             try {
                 val updated = BenchmarkEntry(model.text.toString().trim(), reasoningChoices[reasoning.selectedItemPosition].value, BenchmarkEntry.speedOptions[speed.selectedItemPosition].value,
-                    api = if (ApiRouting.isOpenRouter(policies[policyPicker.selectedItemPosition].endpoint)) "openrouter" else "openai",
+                    api = ApiRouting.api(policies[policyPicker.selectedItemPosition].endpoint),
                     policyId = policies[policyPicker.selectedItemPosition].id, provider = provider.text.toString().trim()).validate()
                 val next = draft().copy(entries = config.entries.mapIndexed { i, old -> if (i == index) updated else old }).validate()
                 saved.save(next); config = next; results.clear(); dialog.dismiss(); render(); status.text = "第 ${index + 1} 组已保存"
@@ -193,12 +197,14 @@ class BenchmarkActivity : AppCompatActivity() {
         results.clear(); setRunning(true)
         job = lifecycleScope.launch(start = CoroutineStart.LAZY) {
             try {
+                val configured=store.config.policies.filter { store.credentialsForPolicy(it.id).hasCredential() }.map { ApiRouting.api(it.endpoint) }.toSet()
+                require(snapshot.entries.map { it.api }.toSet().containsAll(configured)) { "每个已配置 Key 的 API 至少保留一组" }
                 val connections = snapshot.entries.associateWith { entry ->
                     val match = if (entry.policyId.isNotBlank()) store.config.policies.firstOrNull { it.id == entry.policyId }
-                        else store.config.policies.firstOrNull { ApiRouting.isOpenRouter(it.endpoint) == (entry.api == "openrouter") }
+                        else store.config.policies.firstOrNull { ApiRouting.api(it.endpoint) == entry.api }
                     require(match != null) { "请为 ${entry.api} 配置 Policy" }
                     val policy = store.configForPolicy(match.id)
-                    require(ApiRouting.isOpenRouter(policy.endpoint) == (entry.api == "openrouter")) { "Policy 接口已变化，请重新选择测速 API" }
+                    require(ApiRouting.api(policy.endpoint) == entry.api) { "Policy 接口已变化，请重新选择测速 API" }
                     val key = withContext(Dispatchers.IO) { store.credentialsFor(policy).read(policy.endpoint) }
                     if (key == null) { status.text = "${match.name} 尚未配置 Key，请先在此 Policy 保存 Key。"; return@launch }
                     policy to key
@@ -208,20 +214,20 @@ class BenchmarkActivity : AppCompatActivity() {
                     val allowed=ReasoningCapabilities.options(policy.endpoint,entry.model,policy.modelCatalog).map { it.value }
                     require(entry.reasoning in allowed || (entry.reasoning=="none" && ReasoningCapabilities.known(policy.endpoint,entry.model)?.isEmpty()==true)) { "模型思考档位已变化，请重新选择" }
                     val request = AiRequest(RequestStamp(0, 0, 0, 0, policy.generation), AiInput(snapshot.sample), store.prompt(policy, snapshot.chinese), policy.completion, policy.candidateCount)
-                    ChatCompletionsClient().request(policy.endpoint, key, entry.model, request, snapshot.timeoutMs, parameters, entry.provider)
+                    ChatCompletionsClient().request(policy.endpoint, key, entry.model, request, snapshot.timeoutMs, parameters, if(entry.api=="openrouter")entry.provider else "", store.preset(policy,snapshot.chinese))
                 }, onStart = { index -> showResults("正在测试 ${index + 1}/${snapshot.entries.size}：${snapshot.entries[index].model}") },
                     onResult = { index, result -> results[index] = result; showResults("已完成 ${results.size}/${snapshot.entries.size}") })
                 val fastest = results.filterValues { it.error == null }.minByOrNull { it.value.elapsedMs }
                 val success = results.values.count { it.error == null }
                 showResults("测速完成：$success/${snapshot.entries.size} 成功" + (fastest?.let { "\n本次最快：第 ${it.key + 1} 组 ${it.value.entry.model} · ${it.value.elapsedMs} ms" } ?: ""))
             } catch (cancelled: CancellationException) { showResults("已停止；完成 ${results.size}/${snapshot.entries.size} 组"); throw cancelled }
-            catch (_: Exception) { showResults("无法开始测速，请检查 Policy 配置") }
+            catch (e: Exception) { showResults(e.message ?: "无法开始测速，请检查 Policy 配置") }
             finally { job = null; setRunning(false) }
         }.also { it.start() }
     }
     private fun showResults(heading: String) {
         status.text = heading + results.entries.joinToString("", prefix = "\n") { (i, r) ->
-            "\n${i + 1}. ${r.entry.model} · ${r.elapsedMs} ms\n${r.error ?: r.output}\n"
+            "\n${i + 1}. ${r.entry.model} · ${r.elapsedMs} ms\n${r.error ?: r.output}\n${r.usage?.summary().orEmpty()}\n"
         }
     }
     private fun setRunning(running: Boolean) {
@@ -233,7 +239,7 @@ class BenchmarkActivity : AppCompatActivity() {
             // Restore the 1–5 limits after temporarily disabling every configuration control.
             for (i in 0 until cards.childCount) {
                 val row = (cards.getChildAt(i) as LinearLayout).getChildAt(2) as LinearLayout
-                row.getChildAt(1).isEnabled = config.entries.count { it.api == config.entries[i].api } > 1
+                row.getChildAt(1).isEnabled = config.entries.size > 1
             }
             controls.filterIsInstance<Button>().firstOrNull { it.text.startsWith("添加一组") }?.isEnabled = config.entries.size < 5
         }

@@ -29,8 +29,8 @@ class AiFlowTest {
                 }
                 assertTrue("Settings control not visible", device.hasObject(selector))
             }
-            reveal(By.text("预览最终系统提示词"))
-            device.findObject(By.text("预览最终系统提示词")).click()
+            reveal(By.text("预览实际请求（不含 Key）"))
+            device.findObject(By.text("预览实际请求（不含 Key）")).click()
             reveal(By.textContains("英文保留并纠错"), upward = true)
         } catch (failure: Throwable) {
             device.dumpWindowHierarchy(java.io.File(instrumentation.targetContext.getExternalFilesDir(null), "settings-failure.xml"))
@@ -43,10 +43,10 @@ class AiFlowTest {
         val store = AiStore.get(instrumentation.targetContext)
         val old = store.config
         try {
-            val request = AiRequest(RequestStamp(1,1,1,1,1),AiInput("nihao"),store.builtin.compose("original",true,false),false)
+            val request = AiRequest(RequestStamp(1,1,1,1,1),AiInput("nihao"),store.builtin.compose(true),false)
             val result = ChatCompletionsClient().request("${TestNetwork.baseUrl}/v1/chat/completions","emulator-test-key","mock",request)
             assertEquals(listOf("你好，世界"),result.candidates)
-            val english = request.copy(systemPrompt = store.builtin.compose("academic",false,false))
+            val english = request.copy(systemPrompt = store.builtin.compose(false))
             assertEquals("Hello from AI.",ChatCompletionsClient().request("${TestNetwork.baseUrl}/v1/chat/completions","emulator-test-key","mock",english).candidates.single())
             store.update { it.copy(remoteUrl="${TestNetwork.baseUrl}/prompts.json") }
             store.checkRemote(false)
@@ -78,7 +78,7 @@ class AiFlowTest {
             assertTrue("Cannot select pinyin schema after deployment", selected)
             session.runOnReady { setRuntimeOption("ascii_mode", false) }
             store.credentials.save("${TestNetwork.baseUrl}/v1/chat/completions","emulator-test-key")
-            store.update { it.copy(enabled=true,consent=true,automatic=true,traditional=false,endpoint="${TestNetwork.baseUrl}/v1/chat/completions",model="mock",localOverride=null,active=null,style="original") }
+            store.update { it.copy(enabled=true,consent=true,automatic=true,traditional=false,endpoint="${TestNetwork.baseUrl}/v1/chat/completions",model="mock",localOverride=null,active=null) }
             device.executeShellCommand("settings put secure show_ime_with_hard_keyboard 1")
             device.executeShellCommand("ime enable --user 0 ${context.packageName}/com.osfans.trime.ime.core.TrimeInputMethodService")
             device.executeShellCommand("ime set --user 0 ${context.packageName}/com.osfans.trime.ime.core.TrimeInputMethodService")

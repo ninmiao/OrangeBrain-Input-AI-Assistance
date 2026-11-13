@@ -11,11 +11,13 @@ enum class RequestPhase(val label:String) {
     SENDING("发送超时"), WAITING("等待服务响应超时"), RECEIVING("接收结果超时")
 }
 class ApiTimeoutException(val phase:RequestPhase=RequestPhase.WAITING) : InterruptedIOException(phase.label)
+class ApiPresetException : IOException(AiFailure.PRESET.label)
 class ApiResponseException : IOException("Invalid API response")
 class ApiTruncatedException : IOException("API response truncated")
 class ApiProviderException(val status: Int?) : IOException("API provider failure${status?.let { " $it" } ?: ""}")
 
 enum class AiFailure(val label: String) {
+    PRESET("你的 Key 没有设置可用的 Preset，请关闭 Preset 功能后重试。"),
     TIMEOUT("请求超时"), AUTHENTICATION("Key 无效"), CREDIT("额度不足"),
     RATE_LIMIT("请求受限"), PROVIDER("服务商失败"), TRUNCATED("返回被截断"),
     INVALID_RESPONSE("响应格式错误"), NETWORK("网络连接失败"), UNKNOWN("暂不可用");
@@ -23,6 +25,7 @@ enum class AiFailure(val label: String) {
         fun from(error: Exception): AiFailure {
             val status = when(error) { is ApiHttpException -> error.status; is ApiProviderException -> error.status; else -> null }
             return when {
+                error is ApiPresetException -> PRESET
                 error is InterruptedIOException -> TIMEOUT
                 status in listOf(401,403) -> AUTHENTICATION
                 status == 402 -> CREDIT

@@ -10,4 +10,10 @@
 
 运行 `python -m unittest discover -s tests/corpus -p test_corpus.py` 校验全部生成记录的编辑重放、长度、哈希和划分。
 
-真实 API 质量评估：先在 Windows 设置中保存密钥，再用 `ZephyrSettings.exe --evaluate gold.jsonl report.json 44`。最多 500 条/次，显式指定数量。报告 top-1/top-3、错误、逐条延迟；网络/协议通过不代表模型纠错通过。普通本地测试不会调用付费 API。
+真实 API 质量评估：先在 Windows 设置中保存密钥，再用 `ZephyrSettings.exe --evaluate gold.jsonl report.json 60`。最多 500 条/次，显式指定数量。报告 top-1/top-3、错误、逐条延迟；网络/协议通过不代表模型纠错通过。普通本地测试不会调用付费 API。
+
+## 长输入与数据保留
+
+`gold.tsv` 共 60 条，中英文各 30 条。其中新增 16 条输入超过 50 字符的长句，中英文各 8 条，覆盖拼音长句、英文漏输、错序、重复、数字与否定保留。
+
+生成语料保留在 `generated/`，开发清理时保留该目录。已有输出默认拒绝覆盖，需要另存时用 `--output` 指定新目录，明确替换时用 `--overwrite`。生成完成后的 `manifest.json` 记录语料数量与 SHA256。

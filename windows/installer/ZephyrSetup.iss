@@ -2,7 +2,7 @@
   #error Image required
 #endif
 #ifndef Version
-  #define Version "1.5.5"
+  #define Version "1.6.1"
 #endif
 [Setup]
 AppId={{EBA0B59B-4AD5-46C9-9F26-1C517208A753}
@@ -54,7 +54,7 @@ Type: files; Name: "{app}\install.ps1"
 Type: files; Name: "{app}\uninstall.ps1"
 Type: files; Name: "{app}\Install.cmd"
 Type: files; Name: "{app}\install.log"
-Type: files; Name: "{app}\1.4.1-digits.md"
+Type: files; Name: "{app}\1.5.0-digits.md"
 Type: files; Name: "{app}\1.4.2-short-prompts.md"
 Type: files; Name: "{app}\1.4.3-candidate-crash.md"
 Type: dirifempty; Name: "{app}"

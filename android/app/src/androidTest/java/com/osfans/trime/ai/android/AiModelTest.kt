@@ -92,7 +92,7 @@ class AiModelTest {
         val pack = ModelCatalog.parse(HttpsDownload.get("${TestNetwork.baseUrl}/model-catalog.json", ModelCatalog.MAX_BYTES))
         assertEquals("parameter-test", pack.models.first().id)
         val store = AiStore.get(InstrumentationRegistry.getInstrumentation().targetContext)
-        val request = AiRequest(RequestStamp(1,1,1,1,1), AiInput("nihao"), store.builtin.compose("original", true, false), false)
+        val request = AiRequest(RequestStamp(1,1,1,1,1), AiInput("nihao"), store.builtin.compose(true), false)
         val parameters = mapOf("reasoning_effort" to JsonPrimitive("low"), "service_tier" to JsonPrimitive("priority"), "max_completion_tokens" to JsonPrimitive(128))
         val result = ChatCompletionsClient().request(endpoint, "emulator-test-key", "parameter-test", request, parameters = parameters)
         assertEquals("Parameters accepted", result.candidates.single())
@@ -140,7 +140,7 @@ class AiModelTest {
             assertTrue(device.wait(Until.hasObject(By.textStartsWith("参数已保存")), 5000))
             Thread.sleep(500)
             assertEquals(JsonPrimitive(128), store.parameters()["max_completion_tokens"])
-            val request = AiRequest(RequestStamp(1,1,1,1,1), AiInput("nihao"), store.builtin.compose("original", true, false), false)
+            val request = AiRequest(RequestStamp(1,1,1,1,1), AiInput("nihao"), store.builtin.compose(true), false)
             val result = ChatCompletionsClient().request(store.config.endpoint, "emulator-test-key", store.config.model, request, parameters = store.parameters())
             assertEquals("Parameters accepted", result.candidates.single())
         } catch (failure: Throwable) {

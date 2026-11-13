@@ -35,14 +35,14 @@ class AiLiveTest {
             key = Json.parseToJsonElement(HttpsDownload.get("${TestNetwork.baseUrl}/credential/$token", 4096).toString(Charsets.UTF_8)).jsonObject.getValue("key").jsonPrimitive.content
             require(key.isNotBlank())
             store.update { it.copy(enabled=false, endpoint=endpoint, model="gpt-4.1-mini", timeoutMs=45000,
-                localOverride=null, active=null, style="original", completion=false, contextEnabled=false, automatic=false) }
+                localOverride=null, active=null, completion=false, automatic=false) }
             store.credentials.save(endpoint, key)
             assertTrue("Credential was not encrypted", File(context.noBackupFilesDir, "ai-credential.bin").readBytes().toString(Charsets.UTF_8).let { !it.contains(key) })
             val count = store.refreshModels()
             assertTrue(store.config.discoveredModels.contains("gpt-4.1-mini"))
             report += "Official /models: $count IDs; gpt-4.1-mini found"
             val client = ChatCompletionsClient()
-            fun req(input: String, chinese: Boolean) = AiRequest(RequestStamp(1,1,1,1,1), AiInput(input), store.builtin.compose("original",chinese,false),false)
+            fun req(input: String, chinese: Boolean) = AiRequest(RequestStamp(1,1,1,1,1), AiInput(input), store.builtin.compose(chinese),false)
             val parameters = mapOf("max_completion_tokens" to JsonPrimitive(512))
             val chinese = client.request(endpoint,key,"gpt-4.1-mini",req("nihao",true),45000,parameters)
             assertTrue(chinese.candidates.first().contains("你好"))

@@ -7,6 +7,7 @@
 !/.clang-format
 !/.github/
 !/README.md
+!/OPENROUTER_PRESETS.md
 !/PRIVACY.md
 !/LICENSE
 !/LICENSE-NOTICE.md
@@ -14,6 +15,8 @@
 !/Makefile
 !/cliff.toml
 !/CHANGELOG.md
+!/UPDATE_LOG.md
+!/AGENTS.md
 !/build.gradle.kts
 !/settings.gradle.kts
 !/gradle.properties
@@ -191,8 +194,8 @@ secrets.properties
 # User-requested release artifacts: only the two current packages belong in Git.
 !/dist/
 /dist/*
-!/dist/Zephyr-Input-1.4.0-arm64-v8a-demo.apk
-!/dist/Zephyr-Input-Windows-1.5.5-Setup-x64.exe
+!/dist/Zephyr-Input-1.5.1-arm64-v8a-demo.apk
+!/dist/Zephyr-Input-Windows-1.6.1-Setup-x64.exe
 !/docs/ai/number-row-providers-1.4.0.md
 !/docs/windows/installer-providers-1.5.0.md
 
@@ -216,3 +219,5 @@ secrets.properties
 /docs/images/*
 !/docs/images/android-keyboard.png
 !/docs/images/windows-input.png
+
+!/docs/ai/plain-text-gemini.md

@@ -1,8 +1,22 @@
-import unittest,json,hashlib,collections
+import unittest,json,hashlib,collections,csv,tempfile
 from pathlib import Path
-from generate import mutations,NEIGHBORS,HERE
+from generate import mutations,NEIGHBORS,HERE,build
 
 class CorpusTests(unittest.TestCase):
+    def test_long_gold_inputs(self):
+        with (HERE/'gold.tsv').open(encoding='utf-8') as stream:
+            rows=list(csv.DictReader(stream,delimiter='\t'))
+        for language in ('zh','en'):
+            long_rows=[r for r in rows if r['language']==language and len(r['input'])>50]
+            self.assertGreaterEqual(len(long_rows),8)
+            self.assertTrue(all(len(r['input'])<=300 and r['expected'] for r in long_rows))
+
+    def test_existing_corpus_is_preserved(self):
+        with tempfile.TemporaryDirectory() as directory:
+            out=Path(directory);(out/'typos.jsonl').write_text('preserved',encoding='utf-8')
+            with self.assertRaises(FileExistsError):build(1,out)
+            self.assertEqual('preserved',(out/'typos.jsonl').read_text(encoding='utf-8'))
+
     def test_neighbor_geometry(self):
         self.assertIn('s',NEIGHBORS['a']);self.assertIn('q',NEIGHBORS['a']);self.assertNotIn('p',NEIGHBORS['a'])
     def test_mutations_reconstruct_input(self):

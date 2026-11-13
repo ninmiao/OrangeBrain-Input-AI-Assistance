@@ -31,19 +31,20 @@ data class AiPolicy(
     val localOverride: PromptPackage? = null,
     val history: List<PromptVersion> = emptyList(),
     val provider: String = "",
+    val presets: PromptPresets = PromptPresets(),
 ) {
     fun applyTo(c: AiConfig) = c.copy(selectedPolicyId = id, endpoint = endpoint, model = model,
-        provider = provider, modelCatalog = catalog, discoveredModels = discoveredModels, modelValues = modelValues,
+        provider = provider, presets = presets, modelCatalog = catalog, discoveredModels = discoveredModels, modelValues = modelValues,
         active = active, localOverride = localOverride, history = history,
         remoteUrl = "", autoUpdate = false, modelCatalogUrl = "")
 }
 
 private fun AiConfig.snapshotPolicy(name: String) = AiPolicy(selectedPolicyId, name, endpoint, model,
-    modelCatalog, discoveredModels, modelValues, active, localOverride, history, provider)
+    modelCatalog, discoveredModels, modelValues, active, localOverride, history, provider, presets)
 
 object TerraDefaults {
     const val MODEL = "gpt-6.1-terra"
-    const val ENDPOINT = "https://api.openai.com/v1/chat/completions"
+    const val ENDPOINT = ApiRouting.OPENAI
     fun catalog() = ModelCatalog(models = listOf(ModelCatalog.template(MODEL).let { definition ->
         definition.copy(parameters = definition.parameters.filter { it.key in setOf("reasoning_effort", "service_tier", "max_completion_tokens") }
             .map { if (it.key == "reasoning_effort") it.copy(choices = it.choices.filter { choice -> choice.value in setOf("none", "low", "medium", "high", "xhigh", "max") }) else it })
@@ -58,9 +59,6 @@ data class AiConfig(
     val consent: Boolean = false,
     val automatic: Boolean = true,
     val wordSegmentation: Boolean = true,
-    val contextEnabled: Boolean = false,
-    val beforeLimit: Int = 200,
-    val afterLimit: Int = 50,
     val targetLimit: Int = 300,
     val debounceMs: Long = 200,
     val timeoutMs: Int = 10000,
@@ -70,8 +68,6 @@ data class AiConfig(
     val discoveredModels: List<String> = emptyList(),
     val modelValues: Map<String, Map<String, JsonPrimitive>> = TerraDefaults.values(),
     val modelCatalogUrl: String = "",
-    val style: String = "original",
-    val customStyle: String = "风格：忠实保留原意，自然表达。",
     val completion: Boolean = false,
     val candidateCount: Int = 1,
     val remoteUrl: String = "",
@@ -85,6 +81,7 @@ data class AiConfig(
     val policies: List<AiPolicy> = emptyList(),
     val policyVersion: Int = 0,
     val provider: String = "",
+    val presets: PromptPresets = PromptPresets(),
 )
 
 class AiStore internal constructor(private val context: Context) {
@@ -138,12 +135,22 @@ class AiStore internal constructor(private val context: Context) {
             }
             policies.first { it.id == c.selectedPolicyId }.applyTo(c).copy(policies = policies, policyVersion = 3)
         }
+        if (config.policyVersion < 4) update { c ->
+            val gemini = AiPolicy("gemini","Gemini · Hydrogen",ApiRouting.GEMINI,ApiRouting.HYDROGEN,
+                catalog=ModelCatalog(models=listOf(ReasoningCapabilities.definition(ApiRouting.GEMINI,ApiRouting.HYDROGEN,ModelCatalog())!!)),
+                modelValues=mapOf(ApiRouting.HYDROGEN to mapOf("reasoning_effort" to JsonPrimitive("low"),"service_tier" to JsonPrimitive("default"))))
+            c.copy(policyVersion=4, policies=c.policies + if(c.policies.size>=20 || c.policies.any { ApiRouting.isGemini(it.endpoint) }) emptyList() else listOf(if(c.policies.any { it.id==gemini.id })gemini.copy(id=UUID.randomUUID().toString()) else gemini))
+        }
+        if (config.policyVersion < 5) update { c ->
+            val policies = c.policies.map { it.copy(presets=it.presets.withDefaults()) }
+            policies.first { it.id == c.selectedPolicyId }.applyTo(c).copy(policies=policies,policyVersion=5)
+        }
     }
-    fun effective(c: AiConfig = config) = c.localOverride ?: c.active?.pack ?: builtin
+    fun effective(c: AiConfig = config) = (c.localOverride ?: c.active?.pack ?: builtin).upgraded()
+    fun preset(c: AiConfig, chinese: Boolean) = if(ApiRouting.isOpenRouter(c.endpoint)) c.presets.selected(chinese,c.traditional) else ""
     fun prompt(c: AiConfig, chinese: Boolean): String {
         val pack = effective(c)
-        val style = c.style.takeIf { it == "custom" || pack.styles.any { s -> s.id == it } } ?: "original"
-        return pack.compose(style, chinese, false, c.customStyle, c.traditional, 1)
+        return pack.compose(chinese,c.traditional)
     }
 
     fun policyParameterSummary(policy: AiPolicy): String {
@@ -171,7 +178,7 @@ class AiStore internal constructor(private val context: Context) {
         update { c ->
             val policy = c.policies.first { it.id == id }
             var edited = transform(policy.applyTo(c))
-            if (edited.endpoint != policy.endpoint) edited = edited.copy(modelCatalog = ModelCatalog(), modelValues = emptyMap(), discoveredModels = emptyList())
+            if (edited.endpoint != policy.endpoint) edited = edited.copy(modelCatalog = ModelCatalog(), modelValues = emptyMap(), discoveredModels = emptyList(),provider=if(ApiRouting.isOpenRouter(edited.endpoint))edited.provider else "",presets=if(ApiRouting.isOpenRouter(edited.endpoint))edited.presets else PromptPresets())
             edited.modelCatalog.validate()
             edited = edited.copy(modelValues = edited.modelValues.mapNotNull { (model, values) ->
                 ReasoningCapabilities.definition(edited.endpoint,model,edited.modelCatalog)?.let { model to it.filterValues(values) }
@@ -237,15 +244,15 @@ class AiStore internal constructor(private val context: Context) {
         val old = config
         var next = transform(old).copy(generation = old.generation + 1, candidateCount = 1, completion = false)
         // Capabilities and values belong to this exact endpoint, not just a model name.
-        if (next.endpoint != old.endpoint && next.selectedPolicyId == old.selectedPolicyId && !(old.policyVersion == 0 && next.policyVersion == 1)) next = next.copy(modelCatalog = ModelCatalog(), discoveredModels = emptyList(), modelValues = emptyMap(), modelCatalogUrl = "")
+        if (next.endpoint != old.endpoint && next.selectedPolicyId == old.selectedPolicyId && !(old.policyVersion == 0 && next.policyVersion == 1)) next = next.copy(modelCatalog = ModelCatalog(), discoveredModels = emptyList(), modelValues = emptyMap(), modelCatalogUrl = "",provider=if(ApiRouting.isOpenRouter(next.endpoint))next.provider else "",presets=if(ApiRouting.isOpenRouter(next.endpoint))next.presets else PromptPresets())
         next.modelCatalog.validate()
         next = next.copy(modelValues = next.modelValues.mapNotNull { (id, values) ->
             ReasoningCapabilities.definition(next.endpoint,id,next.modelCatalog)?.let { id to it.filterValues(values) }
         }.toMap())
         next.modelValues.values.forEach { ModelParameters.validateWire(it) }
         require(next.debounceMs in 50..2000 && next.timeoutMs in 1000..60000)
-        require(next.beforeLimit in 0..200 && next.afterLimit in 0..50 && next.targetLimit in 1..300)
-        if (next.style != "custom" && effective(next).styles.none { it.id == next.style }) next = next.copy(style = "original")
+        require(next.targetLimit in 1..300)
+        next.presets.validate()
         require(next.policies.map { it.id }.distinct().size == next.policies.size)
         if (next.policies.isNotEmpty()) {
             val name = next.policies.first { it.id == next.selectedPolicyId }.name

@@ -1,0 +1,179 @@
+[
+  {
+    "id": 1,
+    "input": "hanbaowang haocih",
+    "chinese": true,
+    "traditional": false,
+    "expected": [
+      "汉堡王好吃"
+    ]
+  },
+  {
+    "id": 2,
+    "input": "nihso",
+    "chinese": true,
+    "traditional": false,
+    "expected": [
+      "你好"
+    ]
+  },
+  {
+    "id": 3,
+    "input": "nihaoo",
+    "chinese": true,
+    "traditional": false,
+    "expected": [
+      "你好"
+    ]
+  },
+  {
+    "id": 4,
+    "input": "xiexie n",
+    "chinese": true,
+    "traditional": false,
+    "expected": [
+      "谢谢你"
+    ]
+  },
+  {
+    "id": 5,
+    "input": "wo jintian you meeting",
+    "chinese": true,
+    "traditional": false,
+    "expected": [
+      "我今天有 meeting"
+    ]
+  },
+  {
+    "id": 6,
+    "input": "jintianxiaban yihouwoxianghexiaowangyiquchi huoguo danshimingtianshangwuhaoyouhuiyi suoyiwomenjuedingzaodianchifanranhouhuijiaxiuxi",
+    "chinese": true,
+    "traditional": false,
+    "expected": [
+      "今天下班以后我想和小王一起去吃火锅，但是明天上午还有会议，所以我们决定早点吃饭然后回家休息。"
+    ]
+  },
+  {
+    "id": 7,
+    "input": "qingbangwoba zhefenbaogaobaocundaobendiyingpan limian budeleteshanchuyuanlaidewenjian dengwomingtianshangwuquerenyihouzai tongzhidaijia",
+    "chinese": true,
+    "traditional": false,
+    "expected": [
+      "请帮我把这份报告保存到本地硬盘里面，不要删除原来的文件，等我明天上午确认以后再通知大家。"
+    ]
+  },
+  {
+    "id": 8,
+    "input": "I wnated to recieve teh package.",
+    "chinese": false,
+    "traditional": false,
+    "expected": [
+      "I wanted to receive the package."
+    ]
+  },
+  {
+    "id": 9,
+    "input": "See ypu tomorrow.",
+    "chinese": false,
+    "traditional": false,
+    "expected": [
+      "See you tomorrow."
+    ]
+  },
+  {
+    "id": 10,
+    "input": "Pleasse sendd the fiile.",
+    "chinese": false,
+    "traditional": false,
+    "expected": [
+      "Please send the file."
+    ]
+  },
+  {
+    "id": 11,
+    "input": "I have a meting tomorow.",
+    "chinese": false,
+    "traditional": false,
+    "expected": [
+      "I have a meeting tomorrow."
+    ]
+  },
+  {
+    "id": 12,
+    "input": "我 tomorrow 有 meeting",
+    "chinese": false,
+    "traditional": false,
+    "expected": [
+      "I have a meeting tomorrow."
+    ]
+  },
+  {
+    "id": 13,
+    "input": "I wnated to recieve the updated report before the meeting tomorrow, but please keep the original file and do not delete any of the comments.",
+    "chinese": false,
+    "traditional": false,
+    "expected": [
+      "I wanted to receive the updated report before the meeting tomorrow, but please keep the original file and do not delete any of the comments."
+    ]
+  },
+  {
+    "id": 14,
+    "input": "Please chek the keyboard settings after the update and make sure that selecting the first word does not remove the rest of the sentence.",
+    "chinese": false,
+    "traditional": false,
+    "expected": [
+      "Please check the keyboard settings after the update and make sure that selecting the first word does not remove the rest of the sentence."
+    ]
+  },
+  {
+    "id": 15,
+    "input": "订单号 AB-2048",
+    "chinese": true,
+    "traditional": false,
+    "expected": [
+      "订单号 AB-2048"
+    ]
+  },
+  {
+    "id": 16,
+    "input": "I owe you $20, not $200.",
+    "chinese": false,
+    "traditional": false,
+    "expected": [
+      "I owe you $20, not $200."
+    ]
+  },
+  {
+    "id": 17,
+    "input": "颜 笑死",
+    "chinese": true,
+    "traditional": false,
+    "kaomoji": true,
+    "expected": []
+  },
+  {
+    "id": 18,
+    "input": "表情 伤心",
+    "chinese": true,
+    "traditional": false,
+    "kaomoji": true,
+    "expected": []
+  },
+  {
+    "id": 19,
+    "input": "yanbiaoqing xiaosi",
+    "chinese": true,
+    "traditional": false,
+    "kaomoji": true,
+    "expected": []
+  },
+  {
+    "id": 20,
+    "input": "woxianghekafe",
+    "chinese": true,
+    "traditional": true,
+    "expected": [
+      "我想喝咖啡"
+    ]
+  }
+]

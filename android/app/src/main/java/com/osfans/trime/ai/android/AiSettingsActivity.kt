@@ -57,7 +57,6 @@ class AiSettingsActivity : AppCompatActivity() {
     }
     private fun renderMain() {
         val c = store.config
-        val pack = store.effective(c)
         label("AI 云端候选", 25f)
         status = label("当前 Policy：${c.policies.first { it.id == c.selectedPolicyId }.name}")
         button("一键测速（最多 5 组）") { startActivity(Intent(this, BenchmarkActivity::class.java)) }
@@ -72,29 +71,15 @@ class AiSettingsActivity : AppCompatActivity() {
         toggle("空格分词（中文键盘）", c.wordSegmentation) { value -> save { it.copy(wordSegmentation = value) } }
         label("开启时，拼音保留在键盘候选区；空格只标记词组边界，点击候选后才上屏。英文键盘仍正常输入空格。")
         toggle("停手自动请求", c.automatic) { value -> save { it.copy(automatic = value) } }
-        toggle("发送有限前后文", c.contextEnabled) { value -> save { it.copy(contextEnabled = value) } }
         label("AI 仅返回一个最佳候选，不生成额外补全。")
         val debounce = field("停手等待（毫秒，50–2000）", c.debounceMs.toString(), numeric = true)
         val timeout = field("请求超时（秒，1–60）", (c.timeoutMs / 1000).toString(), numeric = true)
-        val before = field("发送前文上限（字符，0–200）", c.beforeLimit.toString(), numeric = true)
-        val after = field("发送后文上限（字符，0–50）", c.afterLimit.toString(), numeric = true)
         val target = field("当前输入上限（字符，1–300）", c.targetLimit.toString(), numeric = true)
         button("保存触发与长度设置") { work {
-            val values = listOf(debounce, timeout, before, after, target).map { it.text.toString().toInt() }
+            val values = listOf(debounce, timeout, target).map { it.text.toString().toInt() }
             withContext(Dispatchers.IO) { store.update { it.copy(debounceMs = values[0].toLong(), timeoutMs = values[1] * 1000,
-                beforeLimit = values[2], afterLimit = values[3], targetLimit = values[4]) } }
+                targetLimit = values[2]) } }
             report("已保存触发与长度设置")
-        } }
-        label("表达风格", 20f)
-        button("当前：${if (c.style == "custom") "自定义" else pack.styles.firstOrNull { it.id == c.style }?.name ?: "原样"} · 切换") {
-            AlertDialog.Builder(this).setTitle("表达风格").setItems((pack.styles.map { it.name } + "自定义").toTypedArray()) { _, index ->
-                save { it.copy(style = if (index == pack.styles.size) "custom" else pack.styles[index].id) }
-            }.show()
-        }
-        val custom = field("自定义风格指令", c.customStyle, multiline = true)
-        button("保存自定义风格") { work {
-            val text = custom.text.toString(); require(text.isNotBlank() && text.length <= 8192)
-            withContext(Dispatchers.IO) { store.update { it.copy(customStyle = text, style = "custom") } }; render()
         } }
         label("键盘", 20f)
         label("空格左侧的中/EN 切换中文与英文；候选栏的简/繁同时控制本地和 AI 汉字。")
@@ -155,16 +140,40 @@ class AiSettingsActivity : AppCompatActivity() {
         label("连接与模型", 20f)
         label("接口：${c.endpoint}\n模型：${c.model}${if (ApiRouting.isOpenRouter(c.endpoint)) "\n供应商：${c.provider.ifBlank { "自动路由" }}" else ""}\nKey：${if (store.credentialsFor(c).hasCredential()) "已加密保存" else "尚未配置"}")
         button("测试当前 Policy 延迟") { testPolicyLatency(id) }
-        button("一键测速（OpenAI + OpenRouter）") { startActivity(Intent(this, BenchmarkActivity::class.java).putExtra("policy", id)) }
+        button("一键测速（OpenAI / OpenRouter / Gemini）") { startActivity(Intent(this, BenchmarkActivity::class.java).putExtra("policy", id)) }
         button("验证身份并配置连接 / 密钥") { verify { editConnection(id) } }
         button("模型与参数（速度 / 推理强度）") { startActivity(Intent(this, ModelSettingsActivity::class.java).putExtra("policy", id)) }
         button("验证身份并清除本 Policy 密钥") { verify { work {
             withContext(Dispatchers.IO) { store.credentialsForPolicy(id).clear(); if (store.config.selectedPolicyId == id) store.update { it.copy(enabled = false) } }
             render(); report("本 Policy 密钥已清除")
         } } }
+        if(ApiRouting.isOpenRouter(c.endpoint)) {
+            label("OpenRouter Preset",20f)
+            label("关闭时发送本地完整提示词；打开时使用 OpenRouter 后台提示词。")
+            val presetSwitch=Switch(this).apply {
+                text="使用 OpenRouter Preset";isChecked=c.presets.enabled
+                setOnCheckedChangeListener { _, on -> work {
+                    withContext(Dispatchers.IO) { store.updatePolicyConfig(id) { it.copy(presets=it.presets.withDefaults().copy(enabled=on)) } }
+                    render()
+                } }
+            }
+            page.addView(presetSwitch)
+            if(c.presets.enabled) {
+                val defaults=c.presets.withDefaults()
+                val simplified=field("简体 Preset",defaults.chinese)
+                val traditional=field("繁体 Preset",defaults.traditional)
+                val englishPreset=field("英文 Preset",defaults.english)
+                button("保存 Preset") { work {
+                    val presets=PromptPresets(simplified.text.toString().trim(),traditional.text.toString().trim(),englishPreset.text.toString().trim(),enabled=true).withDefaults()
+                    presets.validate()
+                    withContext(Dispatchers.IO) { store.updatePolicyConfig(id) { it.copy(presets=presets) } }
+                    render(); report("Preset 已保存")
+                } }
+            }
+        }
         label("提示词", 20f)
-        label("版本 ${pack.version}。本 Policy 的修改独立保存；繁简与风格自动填入短提示词。旧版长规则不再拼接。")
-        button("编辑提示词（风格 / 中英短提示词）") {
+        label("版本 ${pack.version}。本 Policy 的修改独立保存；繁简随键盘切换，模型只输出一个纯文本候选。")
+        button("编辑中英短提示词") {
             val edit = EditText(this).apply { setText(Json { prettyPrint = true; encodeDefaults = true }.encodeToString(pack)); minLines = 10; maxLines = 18; inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE; isSaveEnabled = false }
             val dialog = AlertDialog.Builder(this).setTitle("${policy.name} · 提示词").setView(ScrollView(this).apply { addView(edit) }).setPositiveButton("保存", null).setNegativeButton("取消", null).create()
             dialog.setOnShowListener { dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { work {
@@ -180,16 +189,17 @@ class AiSettingsActivity : AppCompatActivity() {
         val output = label("")
         button("填入 100 字符长输入测试样例") { sample.setText("jintianwomenyilaitaolunzhongwenheyingwenshurufadecuowenjiuzhenggongnengxiwangkeyigengkuaisu".repeat(2).take(100)) }
         label("测试使用本 Policy 的实际模型、参数、提供商和超时设置；填入样例后点击发送。")
-        button("预览最终系统提示词") {
+        button("预览实际请求（不含 Key）") { work {
             val current = store.configForPolicy(id)
-            output.text = store.prompt(current, chinese.isChecked) + "\n\n" + Protocol.encode(AiInput(sample.text.toString())) + "\n\n" + ApiRouting.wire(current.endpoint, store.parameters(current), current.provider)
-        }
+            val request=AiRequest(RequestStamp(0,0,0,0,0),AiInput(sample.text.toString()),store.prompt(current,chinese.isChecked),false)
+            output.text=ChatCompletionsClient().payload(current.model,request,store.parameters(current),current.endpoint,current.provider,store.preset(current,chinese.isChecked)).toString()
+        } }
         button("连接测试 / 发送此样例") { work {
             val current = store.configForPolicy(id)
             val key = withContext(Dispatchers.IO) { store.credentialsFor(current).read(current.endpoint) } ?: error("Missing key")
             val request = AiRequest(RequestStamp(0, 0, current.generation, 0, current.generation), AiInput(sample.text.toString()), store.prompt(current, chinese.isChecked), current.completion, current.candidateCount)
             val start = android.os.SystemClock.elapsedRealtime()
-            val result = ChatCompletionsClient().request(current.endpoint, key, current.model, request, current.timeoutMs, store.parameters(current), current.provider)
+            val result = ChatCompletionsClient().request(current.endpoint, key, current.model, request, current.timeoutMs, store.parameters(current), current.provider, store.preset(current, chinese.isChecked))
             output.text = "${android.os.SystemClock.elapsedRealtime() - start} ms\n" + result.candidates.joinToString("\n\n") + if (result.completion.isNotBlank()) "\n补全：${result.completion}" else ""
             report("测试完成 · ${current.model}")
         } }
@@ -211,8 +221,8 @@ class AiSettingsActivity : AppCompatActivity() {
                 val key=withContext(Dispatchers.IO) { store.credentialsFor(c).read(c.endpoint) } ?: error("请先为 $name 保存 Key")
                 val request=AiRequest(RequestStamp(0,0,c.generation,0,c.generation),AiInput("nihao"),store.prompt(c,true),c.completion,c.candidateCount)
                 val sent=android.os.SystemClock.elapsedRealtime()
-                val result=ChatCompletionsClient().request(c.endpoint,key,c.model,request,c.timeoutMs,store.parameters(c),c.provider)
-                val message="$name · ${android.os.SystemClock.elapsedRealtime()-sent} ms（完整候选返回）\n${result.candidates.firstOrNull().orEmpty()}"
+                val result=ChatCompletionsClient().request(c.endpoint,key,c.model,request,c.timeoutMs,store.parameters(c),c.provider,store.preset(c,true))
+                val message="$name · ${c.model} · ${store.policyParameterSummary(c.policies.first { it.id==id })}\n${android.os.SystemClock.elapsedRealtime()-sent} ms（完整候选返回）\n${result.candidates.firstOrNull().orEmpty()}\n${result.usage?.summary().orEmpty()}"
                 report(message);source?.text=message
             } catch(e:CancellationException) { throw e
             } catch(e:Exception) {
@@ -235,7 +245,7 @@ class AiSettingsActivity : AppCompatActivity() {
                 container.addView(this)
             }
         }
-        val endpoint = input("完整 HTTPS Chat Completions 地址", c.endpoint)
+        val endpoint = input("完整 HTTPS API 地址（Responses / Chat / Interactions）", c.endpoint)
         val key = input("新 API Key（同域名留空保留）", "", true)
         val dialog = AlertDialog.Builder(this).setTitle("连接配置").setView(ScrollView(this).apply { addView(container) }).setPositiveButton("保存", null).setNegativeButton("取消", null).create()
         dialog.setOnShowListener { dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { work {
@@ -277,7 +287,7 @@ class AiSettingsActivity : AppCompatActivity() {
         try { action() } catch (e: CancellationException) { throw e } catch (e: Exception) {
             report(when (e) {
                 is ApiHttpException -> "API HTTP ${e.status}，请检查模型、参数及 Key"
-                is java.io.InterruptedIOException, is ApiProviderException, is ApiTruncatedException, is ApiResponseException -> (e as? ApiTimeoutException)?.phase?.label ?: AiFailure.from(e).label
+                is ApiPresetException, is java.io.InterruptedIOException, is ApiProviderException, is ApiTruncatedException, is ApiResponseException -> (e as? ApiTimeoutException)?.phase?.label ?: AiFailure.from(e).label
                 is java.io.IOException -> "网络或文件访问失败"
                 else -> "未保存：请检查地址、数字范围及内容格式"
             })

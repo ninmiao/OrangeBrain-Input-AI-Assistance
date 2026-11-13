@@ -28,7 +28,7 @@ inline std::wstring unhex(const std::string& s) {
 class AiPipe {
  public:
   struct Work { DWORD session;uint64_t revision;std::string input;bool chinese,traditional; };
-  struct Result { DWORD session;uint64_t revision;std::vector<std::wstring> candidates;bool segmentation=true,enterOriginal=true,spaceOriginal=false; };
+  struct Result { DWORD session;uint64_t revision;std::vector<std::wstring> candidates;bool segmentation=true,enterOriginal=true,spaceOriginal=false;std::wstring error; };
   AiPipe():thread([this]{run();}) {}
   ~AiPipe() {
     { std::lock_guard<std::mutex> lock(mutex);stop=true;if(pipe!=INVALID_HANDLE_VALUE)CancelIoEx(pipe,nullptr); }
@@ -89,7 +89,10 @@ class AiPipe {
             std::istringstream header(line);std::string field;std::vector<std::string> fields;
             while(std::getline(header,field,'\t'))fields.push_back(field);
             if(fields.size()>=5){r.enterOriginal=fields[3]=="1";r.spaceOriginal=fields[4]=="1";}
-            while(std::getline(stream,line)&&r.candidates.size()<1) { auto v=unhex(line);if(!v.empty())r.candidates.push_back(v); }
+            while(std::getline(stream,line)) {
+              if(line.rfind("E\t",0)==0)r.error=unhex(line.substr(2));
+              else if(r.candidates.empty()){auto v=unhex(line);if(!v.empty())r.candidates.push_back(v);}
+            }
             result=std::move(r);
           }
         }

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.view.KeyEvent
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
+import com.osfans.trime.ai.LanguageRules
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.daemon.RimeDaemon
@@ -33,27 +34,27 @@ class AiRedesignTest {
             assertEquals("legacy-test-key", store.credentials.read(legacy.endpoint))
             assertEquals("low", store.parameters()["reasoning_effort"]!!.content)
             assertEquals("priority", store.parameters()["service_tier"]!!.content)
-            assertEquals(2, store.config.policies.size)
+            assertEquals(3, store.config.policies.size)
             assertEquals("wafer/us", store.configForPolicy("openrouter").provider)
             assertFalse(store.credentialsForPolicy("openrouter").hasCredential())
             second = store.addPolicy("Independent")
             assertFalse(store.credentialsForPolicy(second).hasCredential())
             store.credentialsForPolicy(second).save(legacy.endpoint, "other-test-key")
-            store.updatePolicyConfig(second) { it.copy(localOverride = store.builtin.copy(base_prompt = "Independent prompt")) }
+            store.updatePolicyConfig(second) { it.copy(localOverride = store.builtin.copy(keyboard_language_rules = LanguageRules(chinese="Independent prompt"))) }
             assertEquals("default", store.config.selectedPolicyId)
-            assertNotEquals("Independent prompt", store.effective().base_prompt)
+            assertNotEquals("Independent prompt", store.effective().keyboard_language_rules.chinese)
             val generation = store.config.generation
             store.selectPolicy(second)
             assertTrue(store.config.generation > generation)
             assertEquals("other-test-key", store.credentials.read(legacy.endpoint))
-            assertEquals("Independent prompt", store.effective().base_prompt)
+            assertEquals("Independent prompt", store.effective().keyboard_language_rules.chinese)
             val reload = AiStore(context)
             assertEquals(second, reload.config.selectedPolicyId)
             reload.selectPolicy("default")
             assertEquals("legacy-test-key", reload.credentials.read(legacy.endpoint))
-            assertNotEquals("Independent prompt", reload.effective().base_prompt)
+            assertNotEquals("Independent prompt", reload.effective().keyboard_language_rules.chinese)
             reload.deletePolicy(second)
-            assertEquals(2, reload.config.policies.size)
+            assertEquals(3, reload.config.policies.size)
             assertEquals("legacy-test-key", reload.credentials.read(legacy.endpoint))
             assertFalse(File(folder, "ai-config.json").readText().contains("test-key"))
         } finally {
@@ -115,7 +116,7 @@ class AiRedesignTest {
             assertTrue(store.prompt(store.config, true).contains("简体汉字"))
             assertTrue("輸入法" in candidates(true))
             assertTrue(store.prompt(store.config, true).contains("繁体汉字"))
-            assertTrue(store.prompt(store.config, false).contains("优先按英文纠错"))
+            assertTrue(store.prompt(store.config, false).contains("修正英文"))
             assertTrue("输入法" in candidates(false))
         } finally {
             session.runOnReady { clearComposition(); setRuntimeOption("traditionalization", false) }

@@ -75,6 +75,7 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
 
  private:
   void _ZephyrRefresh(WeaselSessionId id);
+  bool _ZephyrChoose(WeaselSessionId id, size_t index);
   bool _ZephyrRespond(WeaselSessionId id,EatLine eat);
   BOOL _ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,EatLine eat);
   std::map<DWORD,zephyr::Composition> m_zephyr;

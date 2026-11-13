@@ -30,15 +30,15 @@ class AiBenchmarkTest {
     @Test fun mixedPagePersistsBothApisAndRequiresSeparateKeysBeforeSending() {
         val ins=InstrumentationRegistry.getInstrumentation();val context=ins.targetContext
         val device=UiDevice.getInstance(ins);val store=AiStore.get(context);val old=store.config
-        val saved=BenchmarkStore(context,"mixed-v2");val previous=saved.read()
+        val saved=BenchmarkStore(context,"mixed-v3");val previous=saved.read()
         var activity:android.app.Activity?=null
         try {
             saved.save(BenchmarkConfig())
             activity=ins.startActivitySync(Intent(context,BenchmarkActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-            assertTrue(device.wait(Until.hasObject(By.textContains("OpenAI + OpenRouter")),10000))
+            assertTrue(device.wait(Until.hasObject(By.textContains("OpenAI / OpenRouter / Gemini")),10000))
             device.findObject(By.desc("一键开始测速")).click()
             assertTrue(device.wait(Until.hasObject(By.textContains("尚未配置 Key")),5000))
-            assertEquals(setOf("openai","openrouter"),saved.read().entries.map{it.api}.toSet())
+            assertEquals(setOf("openai","openrouter","gemini"),saved.read().entries.map{it.api}.toSet())
             assertEquals(old.selectedPolicyId,store.config.selectedPolicyId)
             assertTrue(device.findObject(By.desc("一键开始测速")).isEnabled)
         } finally { ins.runOnMainSync { activity?.finish() };saved.save(previous) }

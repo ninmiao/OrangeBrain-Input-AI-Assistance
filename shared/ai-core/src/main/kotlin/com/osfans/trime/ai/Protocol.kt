@@ -2,30 +2,31 @@
 package com.osfans.trime.ai
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 @Serializable
-data class AiInput(val input: String, val before: String = "", val after: String = "")
+data class AiInput(val input: String)
 
 @Serializable
-data class AiResult(val candidates: List<String>, val completion: String)
+data class TokenUsage(val input: Int? = null, val output: Int? = null, val reasoning: Int? = null, val cached: Int? = null) {
+    fun summary() = "tokens · in ${input ?: "–"} · out ${output ?: "–"} · think ${reasoning ?: "–"} · cached ${cached ?: "–"}"
+}
+
+// The list is an internal candidate-bar type. Model-generated content is plain text.
+@Serializable
+data class AiResult(val candidates: List<String>, val completion: String = "", val usage: TokenUsage? = null)
 
 object Protocol {
-    private val json = Json { encodeDefaults = true }
     fun encode(input: AiInput): String {
-        require(input.input.isNotBlank())
-        require(input.input.length <= 300 && input.before.length <= 200 && input.after.length <= 50)
-        return json.encodeToString(input)
+        require(input.input.isNotBlank() && input.input.length <= 300)
+        return input.input
     }
 
-    fun decode(text: String, completionEnabled: Boolean, candidateCount: Int = 1): AiResult {
-        require(candidateCount in 1..5)
+    fun decode(text: String, completionEnabled: Boolean = false, candidateCount: Int = 1): AiResult {
         require(text.toByteArray(Charsets.UTF_8).size <= 32768) { "Response too large" }
-        val result = json.decodeFromString<AiResult>(text)
-        require(result.candidates.size <= 5)
-        require(result.candidates.all { it.isNotBlank() && it.length <= 2000 })
-        require(result.completion.length <= 2000)
-        return result.copy(candidates = result.candidates.distinctBy { it.trim() }.take(1), completion = "")
+        // Preserve quotes, punctuation, newlines and JSON-like text that the user actually typed.
+        val candidate = text.trim()
+        require(candidate.isNotBlank() && candidate.length <= 2000)
+        require(candidate.none { it == '\u0000' })
+        return AiResult(listOf(candidate))
     }
 }

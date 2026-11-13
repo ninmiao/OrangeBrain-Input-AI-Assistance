@@ -21,7 +21,7 @@ class LiveKaomojiTest {
         val cases=listOf(true to "颜表情 笑死",true to "yanbiaoqing xiaosi",false to "kaomoji laughing",true to "颜表情 伤心")
         for ((index,pair) in cases.withIndex()) {
             val (chinese,raw)=pair
-            val request=AiRequest(RequestStamp(0,index.toLong(),0,0,0),AiInput(raw),store.builtin.compose("original",chinese,false),false)
+            val request=AiRequest(RequestStamp(0,index.toLong(),0,0,0),AiInput(raw),store.builtin.compose(chinese),false)
             val start=android.os.SystemClock.elapsedRealtime()
             val result=ChatCompletionsClient().request(ApiRouting.OPENROUTER,key,ApiRouting.DEEPSEEK,request,10000,
                 mapOf("reasoning_effort" to JsonPrimitive("none"),"service_tier" to JsonPrimitive("default")),ApiRouting.WAFER)

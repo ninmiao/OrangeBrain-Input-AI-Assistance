@@ -34,6 +34,35 @@ class ModelSelectionTest {
         val window=edt { SettingsWindow(store,fetch,confirm).also { it.addNotify() } }
         try { block(window,store) } finally { edt { window.dispose() };dir.toFile().deleteRecursively() }
     }
+    @Test fun presetControlsAreOptInAndPersistPerPolicy() {
+        fixture({ _,_ -> error("No network expected") }) { window,store ->
+            edt {
+                val toggle=find<JCheckBox>(window,"preset-enabled")
+                val options=find<JPanel>(window,"preset-options")
+                assertFalse(toggle.isVisible);assertFalse(options.isVisible)
+                find<JTextField>(window,"api-endpoint").text=ApiRouting.OPENROUTER
+            }
+            waitFor { find<JCheckBox>(window,"preset-enabled").isVisible }
+            edt {
+                val toggle=find<JCheckBox>(window,"preset-enabled")
+                assertFalse(toggle.isSelected);assertFalse(find<JPanel>(window,"preset-options").isVisible)
+                toggle.doClick();assertTrue(find<JPanel>(window,"preset-options").isVisible)
+                assertEquals("@preset/zephyr-en",find<JTextField>(window,"preset-english").text)
+                find<JButton>(window,"save-policy").doClick()
+                assertTrue(store.load().active().presets.enabled)
+                toggle.doClick();find<JButton>(window,"save-policy").doClick()
+                assertFalse(store.load().active().presets.enabled)
+                assertEquals("",store.load().active().presets.selected(true,false))
+                assertFalse(find<JPanel>(window,"preset-options").isVisible)
+            }
+        }
+    }
+    @Test fun presetFailureWireIsNotACandidate() {
+        val wire=Wire.response(Configuration(),null,AiFailure.PRESET.label)
+        val lines=wire.lines();assertTrue(lines[1].startsWith("E\t"))
+        assertEquals(AiFailure.PRESET.label,Wire.unhex(lines[1].substring(2)))
+        assertEquals(2,lines.count { it.isNotEmpty() })
+    }
     @Test fun editableChoicesPreserveTypedModelAndAllowSelection() = edt {
         val picker=EditableModelSelector();picker.text="custom-unlisted"
         picker.setOptions(listOf("server-b","server-a","server-a"))
@@ -72,7 +101,7 @@ class ModelSelectionTest {
                     val scroll=tabs.getComponentAt(i) as JScrollPane
                     assertTrue(scroll.verticalScrollBar.isVisible)
                     val panel=scroll.viewport.view as JPanel
-                    panel.components.forEach { component ->
+                    panel.components.filter { it.isVisible }.forEach { component ->
                         assertTrue(component.height>=component.preferredSize.height,"Tab $i clipped a control vertically")
                     }
                     val last=panel.components.last()
@@ -178,6 +207,16 @@ class ModelSelectionTest {
             edt { find<JButton>(w,"refresh-models").doClick() }
             waitFor { find<JButton>(w,"refresh-models").isEnabled }
             assertEquals(1,calls.get())
+        }
+    }
+    @Test fun savingPolicyDoesNotResetCustomizedBenchmarkModels() {
+        fixture({ _,_ -> error("No network expected") }) { w,_ ->
+            edt {
+                val model=find<JTextField>(w,"benchmark-model-0")
+                model.text="my-custom-benchmark-model"
+                find<JButton>(w,"save-policy").doClick()
+                assertEquals("my-custom-benchmark-model",model.text)
+            }
         }
     }
     @Test fun lateResponseCannotReplaceAnotherPolicyList() {
