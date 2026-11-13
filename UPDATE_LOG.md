@@ -6,8 +6,8 @@
 
 | 项目 | 当前状态 |
 | --- | --- |
-| Windows 本地安装包 | 1.6.1，`dist/Zephyr-Input-Windows-1.6.1-Setup-x64.exe`，已构建并覆盖安装，未推送 |
-| Android 本地安装包 | 1.5.1 ARM64，`dist/Zephyr-Input-1.5.1-arm64-v8a-demo.apk`，已构建；模拟器调试版已安装，未更新 S26 |
+| Windows 本地安装包 | 1.6.1，`dist/Zephyr-Input-Windows-1.6.1-Setup-x64.exe`，已构建、覆盖安装并推送 GitHub |
+| Android 本地安装包 | 1.5.1 ARM64，`dist/Zephyr-Input-1.5.1-arm64-v8a-demo.apk`，已构建并推送 GitHub；模拟器调试版已安装，未更新 S26 |
 | 源码提示词 | 4.0.0 / revision 12，中文与英文各一条短规则，纯文本单候选，无前后文和风格 |
 | 安装包提示词 | Windows 1.6.1 / Android 1.5.1 均包含 revision 12；电脑已安装 1.6.1 |
 | LLM 接入 | OpenAI、OpenRouter、Google Gemini 在线 API；OpenRouter Preset 开关默认关闭 |
@@ -23,12 +23,16 @@
 
 ## 待发布
 
+暂无。
+
+## 2026-11-13 · 本轮发布
+
 ### 2026-11-13 · 发布整理与 GitHub 同步
 
 - 整理本轮待提交的分段选词、长输入语料、Gemini 原生 API、纯文本单候选、Preset 开关、Policy 测速修复和双语使用文档。
 - dist 仅包含 Windows 1.6.1 Setup 和 Android 1.5.1 ARM64 APK；替换 Git 中旧安装包。SDK、JDK、构建缓存、运行日志和旧包归档均由忽略规则排除。
 - 保留全部 464693 条本地生成语料，SHA256 与原记录一致；只提交生成工具和人工回归集。提交前检查文件清单、凭据、本地文档链接和差异格式。
-- 应用使用上一轮已通过回归的安装包，本次整理不改应用行为、不重新调用模型。提交准备完成，推送状态待核对远端后追加。
+- 应用使用上一轮已通过回归的安装包，本次整理不改应用行为、不重新调用模型。主更新已以 `e7be311d` 推送至 `ninmiao/Zephyr-Input` 的 `main`，包含上述全部本轮源码、文档与最新版安装包。此前条目中的“未推送”描述保留为当时状态，本条记录为后续同步结果。
 
 
 ### 2026-11-13 · README：Gemini 与 Preset 使用说明
