@@ -6,8 +6,8 @@
 
 | 项目 | 当前状态 |
 | --- | --- |
-| Windows 本地安装包 | 1.6.3，`dist/Zephyr-Input-Windows-1.6.3-Setup-x64.exe`，已构建并覆盖安装，本轮未推送 |
-| Android 本地安装包 | 1.5.3 ARM64，`dist/Zephyr-Input-1.5.3-arm64-v8a-demo.apk`，已构建，本轮未推送；模拟器调试版已安装，未更新 S26 |
+| Windows 本地安装包 | 1.6.3，`dist/Zephyr-Input-Windows-1.6.3-Setup-x64.exe`，已构建、覆盖安装并推送 GitHub |
+| Android 本地安装包 | 1.5.3 ARM64，`dist/Zephyr-Input-1.5.3-arm64-v8a-demo.apk`，已构建并推送 GitHub；模拟器调试版已安装，未更新 S26 |
 | 源码提示词 | 4.0.1 / revision 13，中文与英文各一条短规则，纯文本单候选，无前后文和风格 |
 | 安装包提示词 | Windows 1.6.3 / Android 1.5.3 均包含 revision 13；电脑已安装 1.6.3 |
 | LLM 接入 | OpenAI、OpenRouter、Google Gemini 在线 API；OpenRouter Preset 开关默认关闭 |
@@ -23,12 +23,16 @@
 
 ## 待发布
 
+暂无。
+
+## 2026-11-13 · 严格输出与长输入修复发布
+
 ### 2026-11-13 · 长输入修复与严格输出版本上传整理
 
 - 本次上传包含 Windows 旧请求取消修复、双端长输入默认测速、提示词 4.0.1 / revision 13、Preset 模板和相关使用文档。
 - dist 仅保留 Windows 1.6.3 Setup 和 Android 1.5.3 ARM64 APK，替换仓库中的上一版安装包；本机旧包归档、SDK/JDK、缓存与日志保持忽略。
 - 上传前核对待提交内容、凭据模式、包内提示词、本地 README 链接和差异格式；464693 条本地生成语料保留且 SHA256 未变。复用上一轮已验证的安装包，本次不修改应用逻辑。
-- 提交准备完成；远端同步结果在成功推送后追加。
+- 主更新已以 `26fa01e6` 推送到 `ninmiao/Zephyr-Input` 的 `main`。此前条目中的未推送状态保留为当时记录，本条为后续同步结果。
 
 
 ### 2026-11-13 · Windows 1.6.3 / Android 1.5.3 · 严格候选正文输出
