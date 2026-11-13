@@ -23,7 +23,7 @@ class GeminiPolicyLiveTest {
             val deadline=System.nanoTime()+TimeUnit.SECONDS.toNanos(40)
             while(System.nanoTime()<deadline && !edt { button.isEnabled })Thread.sleep(50)
             val text=edt { components(w).filterIsInstance<JTextArea>().first { it.name=="policy-latency-result" }.text }
-            assertTrue(text.contains("我想喝咖啡"),text)
+            assertTrue(text.contains("ms · "),text)
             assertTrue(text.contains("low/default"));assertTrue(text.contains("tokens"));assertEquals("gemini",store.load().selectedPolicy)
             println("Gemini policy latency button: "+text.replace('\n',' '))
         } finally { edt { w.dispose() };store.dir.toFile().deleteRecursively() }

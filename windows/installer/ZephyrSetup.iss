@@ -2,7 +2,7 @@
   #error Image required
 #endif
 #ifndef Version
-  #define Version "1.6.1"
+  #define Version "1.6.3"
 #endif
 [Setup]
 AppId={{EBA0B59B-4AD5-46C9-9F26-1C517208A753}

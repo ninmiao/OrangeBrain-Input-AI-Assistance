@@ -45,7 +45,7 @@ data class BenchmarkEntry(val model: String = "gpt-6-luna", val reasoning: Strin
 }
 
 @Serializable
-data class BenchmarkConfig(val entries: List<BenchmarkEntry> = BenchmarkEntry.defaults(), val sample: String = "wojintianyoumeeting", val chinese: Boolean = true, val timeoutMs: Int = 10000) {
+data class BenchmarkConfig(val entries: List<BenchmarkEntry> = BenchmarkEntry.defaults(), val sample: String = LatencySamples.chinese, val chinese: Boolean = true, val timeoutMs: Int = 10000) {
     fun validate(): BenchmarkConfig {
         require(entries.size in 1..5) { "一次请选择 1–5 组配置" }
         entries.forEach { it.validate() }

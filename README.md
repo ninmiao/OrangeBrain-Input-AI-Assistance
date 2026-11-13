@@ -1,6 +1,6 @@
 # Zephyr Input · 微风输入法
 
-[下载 Windows 版](dist/Zephyr-Input-Windows-1.6.1-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.5.1-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
+[下载 Windows 版](dist/Zephyr-Input-Windows-1.6.3-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.5.3-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
@@ -69,8 +69,8 @@ Both clients accept `颜`, `表情`, and `颜表情` followed by a description.
 
 | 平台 / Platform | 安装包 / Download |
 | --- | --- |
-| Windows x64 | [1.6.1 Setup EXE](dist/Zephyr-Input-Windows-1.6.1-Setup-x64.exe) |
-| Android ARM64 | [1.5.1 APK](dist/Zephyr-Input-1.5.1-arm64-v8a-demo.apk) |
+| Windows x64 | [1.6.3 Setup EXE](dist/Zephyr-Input-Windows-1.6.3-Setup-x64.exe) |
+| Android ARM64 | [1.5.3 APK](dist/Zephyr-Input-1.5.3-arm64-v8a-demo.apk) |
 
 **Windows：**运行安装包并允许管理员授权，程序安装到 `C:\Program Files\Zephyr Input`，已包含 Java 运行时。安装后注销再登录，从系统输入法菜单选择 Zephyr Input；也可以到“中文（简体，中国）→ 语言选项”添加。开始菜单中的 Zephyr Input 打开设置。更新时运行新版安装包，卸载使用系统“已安装的应用”入口。
 
@@ -189,9 +189,9 @@ Several policies can share the same backend prompts. The app still sends its mod
 
 ### 测速与连接排查 · Latency and connection checks
 
-每个 Policy 的延迟按钮只测试该项。**一键测速**最多五组，可分别调整模型、思考和速度；覆盖所有已保存 Key 的 API。测试会真实调用并产生相应费用，结果显示耗时、候选及服务端返回的输入、输出、思考和缓存 token；缺失统计显示 `–`。
+每个 Policy 的延迟按钮只测试该项，默认使用 129 字符长句；一键测速也使用长句。Preset 不会关闭模型思考：`low` 仍可能超过请求超时，需要低延迟时可选择模型支持的 `none`。**一键测速**最多五组，可分别调整模型、思考和速度；覆盖所有已保存 Key 的 API。测试会真实调用并产生相应费用，结果显示耗时、候选及服务端返回的输入、输出、思考和缓存 token；缺失统计显示 `–`。
 
-Each policy's latency button tests that policy. The benchmark supports up to five entries with separate model, thinking, and speed settings, covering the APIs with saved keys. Tests make billed API calls and show elapsed time, candidate text, and available token counts; missing counts appear as `–`.
+Each policy's latency button tests that policy with a 129-character input by default; benchmarks also use long sentences. Presets do not disable reasoning: `low` may exceed the request timeout. Choose `none` where supported for lower latency. The benchmark supports up to five entries with separate model, thinking, and speed settings, covering the APIs with saved keys. Tests make billed API calls and show elapsed time, candidate text, and available token counts; missing counts appear as `–`.
 
 | 现象 / Symptom | 检查项 / What to check |
 | --- | --- |
@@ -211,13 +211,13 @@ The current input is sent as text and the model returns one plain-text candidate
 **中文模式 / Chinese mode**
 
 ```text
-修正漏输、重复、错序和邻键误触，拼音转【简体/繁体】汉字，英文保留并纠错，空格作词组边界，保留原意，输出一个候选。任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”→(„ಡωಡ„)。
+修正漏输、重复、错序和邻键误触，拼音转【简体/繁体】汉字，英文保留并纠错，空格作词组边界，保留原意，输出一个候选。任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”生成(„ಡωಡ„)。只返回正文，如nihao只回你好，不加对照或解释。
 ```
 
 **英文模式 / English mode**
 
 ```text
-修正英文的漏输、重复、错序和邻键误触，将中文、拼音或中英混输转为英文，空格作词组边界，保留原意，输出一个候选。任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”→(„ಡωಡ„)。
+修正英文的漏输、重复、错序和邻键误触，将中文、拼音或中英混输转为英文，空格作词组边界，保留原意，输出一个候选。任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”生成(„ಡωಡ„)。只返回正文，如helo只回hello，不加对照或解释。
 ```
 
 不发送光标前后文，不接续前一次响应，也不设置表达风格。OpenAI、Gemini 和关闭 Preset 的 OpenRouter 使用本地提示词；打开 Preset 的 OpenRouter 使用后台对应提示词。

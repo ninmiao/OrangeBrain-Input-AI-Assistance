@@ -149,6 +149,7 @@ class AiSettingsActivity : AppCompatActivity() {
         } } }
         if(ApiRouting.isOpenRouter(c.endpoint)) {
             label("OpenRouter Preset",20f)
+            label("Preset 不会关闭思考；low 仍可能较慢，需要无思考时请在模型参数中选择 none。")
             label("关闭时发送本地完整提示词；打开时使用 OpenRouter 后台提示词。")
             val presetSwitch=Switch(this).apply {
                 text="使用 OpenRouter Preset";isChecked=c.presets.enabled
@@ -185,9 +186,9 @@ class AiSettingsActivity : AppCompatActivity() {
         button("恢复本 Policy 内置提示词") { work { withContext(Dispatchers.IO) { store.updatePolicyConfig(id) { it.copy(active = null, localOverride = null) } }; render() } }
         label("样例与预览", 20f)
         val chinese = Switch(this).apply { text = "中文键盘（关闭为英文）"; isChecked = true }; page.addView(chinese)
-        val sample = field("输入样例", "wojintianyoumeeting", multiline = true)
+        val sample = field("输入样例", LatencySamples.chinese, multiline = true)
         val output = label("")
-        button("填入 100 字符长输入测试样例") { sample.setText("jintianwomenyilaitaolunzhongwenheyingwenshurufadecuowenjiuzhenggongnengxiwangkeyigengkuaisu".repeat(2).take(100)) }
+        button("填入长输入测试样例") { sample.setText(if(chinese.isChecked) LatencySamples.chinese else LatencySamples.english) }
         label("测试使用本 Policy 的实际模型、参数、提供商和超时设置；填入样例后点击发送。")
         button("预览实际请求（不含 Key）") { work {
             val current = store.configForPolicy(id)
@@ -219,7 +220,7 @@ class AiSettingsActivity : AppCompatActivity() {
             report("正在测试 $name…（一次请求）")
             try {
                 val key=withContext(Dispatchers.IO) { store.credentialsFor(c).read(c.endpoint) } ?: error("请先为 $name 保存 Key")
-                val request=AiRequest(RequestStamp(0,0,c.generation,0,c.generation),AiInput("nihao"),store.prompt(c,true),c.completion,c.candidateCount)
+                val request=AiRequest(RequestStamp(0,0,c.generation,0,c.generation),AiInput(LatencySamples.chinese),store.prompt(c,true),c.completion,c.candidateCount)
                 val sent=android.os.SystemClock.elapsedRealtime()
                 val result=ChatCompletionsClient().request(c.endpoint,key,c.model,request,c.timeoutMs,store.parameters(c),c.provider,store.preset(c,true))
                 val message="$name · ${c.model} · ${store.policyParameterSummary(c.policies.first { it.id==id })}\n${android.os.SystemClock.elapsedRealtime()-sent} ms（完整候选返回）\n${result.candidates.firstOrNull().orEmpty()}\n${result.usage?.summary().orEmpty()}"

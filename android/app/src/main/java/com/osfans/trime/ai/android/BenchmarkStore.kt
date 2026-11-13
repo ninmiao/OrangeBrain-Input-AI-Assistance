@@ -17,7 +17,7 @@ class BenchmarkStore(context: Context, policyId: String) {
     @Synchronized fun read(defaults: BenchmarkConfig = BenchmarkConfig()): BenchmarkConfig = runCatching {
         file.openRead().use { stream ->
             require(stream.channel.size() <= 32768)
-            json.decodeFromString<BenchmarkConfig>(stream.readBytes().toString(Charsets.UTF_8)).validate()
+            json.decodeFromString<BenchmarkConfig>(stream.readBytes().toString(Charsets.UTF_8)).let { it.copy(sample=com.osfans.trime.ai.LatencySamples.migrate(it.sample)) }.validate()
         }
     }.getOrElse { defaults }
     @Synchronized fun save(config: BenchmarkConfig) {

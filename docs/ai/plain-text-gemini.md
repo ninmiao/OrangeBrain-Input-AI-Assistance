@@ -1,6 +1,6 @@
 # 纯文本候选与 Gemini 接入
 
-日期：2026-11-13。Windows 1.6.0、Android 1.5.0，提示词 4.0.0 / revision 12。
+日期：2026-11-13。Windows 1.6.3、Android 1.5.3，提示词 4.0.1 / revision 13。
 
 ## 请求协议
 

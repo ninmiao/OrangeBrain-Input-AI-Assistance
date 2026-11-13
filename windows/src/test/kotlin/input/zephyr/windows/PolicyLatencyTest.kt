@@ -25,7 +25,7 @@ class PolicyLatencyTest {
         val w=edt { SettingsWindow(store,measurePolicy={ config,p,raw ->
             assertEquals("one",config.selectedPolicy);assertEquals("two",p.id)
             assertEquals("gpt-6.1-terra",p.model);assertEquals("high",p.reasoning);assertEquals("priority",p.speed)
-            assertEquals("fixture-two",store.key(p.id,p.endpoint));assertEquals("woxianghekafe",raw.input)
+            assertEquals("fixture-two",store.key(p.id,p.endpoint));assertEquals(LatencySamples.chinese,raw.input);assertTrue(raw.input.length>100)
             started.countDown();assertTrue(release.await(5,TimeUnit.SECONDS))
             AiResult(listOf("我想喝咖啡"),usage=TokenUsage(90,7,10,0))
         }).also { it.addNotify() } }

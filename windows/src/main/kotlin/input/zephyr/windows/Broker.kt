@@ -7,6 +7,8 @@ import com.sun.jna.ptr.*
 import com.sun.jna.win32.StdCallLibrary
 import com.sun.jna.platform.win32.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import java.util.concurrent.Executors
 import java.util.concurrent.Semaphore
 
@@ -31,13 +33,14 @@ class AiService(private val store:ConfigurationStore) {
         val request=AiRequest(RequestStamp(0,0,0,0,0),AiInput(raw.input),Prompts.compose(config,policy,raw.chinese,raw.traditional),config.completion,config.candidateCount)
         return ChatCompletionsClient().request(policy.endpoint,key,policy.model,request,config.timeoutMs,policy.parameters(),policy.provider,policy.presets.selected(raw.chinese,raw.traditional))
     }
-    fun handle(bytes:ByteArray):ByteArray {
+    fun handle(bytes:ByteArray):ByteArray = runBlocking { handleSuspending(bytes) }
+    suspend fun handleSuspending(bytes:ByteArray):ByteArray {
         val raw=Wire.decode(bytes.toString(Charsets.UTF_8));val config=store.load()
-        var presetError:String?=null
-        val result=if(config.enabled && raw.input.isNotBlank()) runCatching { runBlocking { request(config,config.active(),raw) } }
+        var failure:String?=null
+        val result=if(config.enabled && raw.input.isNotBlank()) runCatching { request(config,config.active(),raw) }
             .onSuccess { runCatching { store.recordRequestStatus("OK") } }
-            .onFailure { error -> if(error is ApiPresetException)presetError=AiFailure.PRESET.label;runCatching { store.recordRequestStatus(if(error is ApiHttpException) "HTTP ${error.status}" else error.javaClass.simpleName) } }.getOrNull() else null
-        return Wire.response(config,result,presetError).toByteArray(Charsets.UTF_8)
+            .onFailure { error -> if(error is CancellationException)throw error;failure=(error as? ApiTimeoutException)?.phase?.label ?: (error as? Exception)?.let { AiFailure.from(it).label };runCatching { store.recordRequestStatus(if(error is ApiHttpException) "HTTP ${error.status}" else error.javaClass.simpleName) } }.getOrNull() else null
+        return Wire.response(config,result,failure).toByteArray(Charsets.UTF_8)
     }
 }
 private interface CancelApi:StdCallLibrary {
@@ -68,15 +71,21 @@ class PipeBroker(private val store:ConfigurationStore) {
                 val connected=k.ConnectNamedPipe(pipe,null) || k.GetLastError()==535
                 if(!connected) { k.CloseHandle(pipe);slots.release();continue }
                 pool.submit {
-                    val deadline=deadlines.schedule({ CancelApi.api.CancelIoEx(pipe,null) },70,java.util.concurrent.TimeUnit.SECONDS)
+                    val job=Job()
+                    val deadline=deadlines.schedule({ job.cancel();CancelApi.api.CancelIoEx(pipe,null) },70,java.util.concurrent.TimeUnit.SECONDS)
                     try {
                         val input=ByteArray(4096);val read=IntByReference()
                         if(k.ReadFile(pipe,input,input.size,read,null)) {
-                            val response=runCatching { service.handle(input.copyOf(read.value)) }.getOrElse { "Z1\t1\t200\n".toByteArray() }
+                            val response=try { runBlocking(job) {
+                                whileClientConnected({ k.PeekNamedPipe(pipe,null,0,null,null,null) }) {
+                                    service.handleSuspending(input.copyOf(read.value))
+                                }
+                            } } catch(_:CancellationException) { return@submit }
+                            catch(_:Exception) { "Z1\t1\t200\n".toByteArray() }
                             val written=IntByReference();k.WriteFile(pipe,response,response.size,written,null)
                             k.FlushFileBuffers(pipe) // Bounded by the connection deadline.
                         }
-                    } finally { deadline.cancel(false);k.DisconnectNamedPipe(pipe);k.CloseHandle(pipe);slots.release() }
+                    } finally { job.cancel();deadline.cancel(false);k.DisconnectNamedPipe(pipe);k.CloseHandle(pipe);slots.release() }
                 }
             }
         } finally { k.LocalFree(descriptor.value);pool.shutdownNow() }

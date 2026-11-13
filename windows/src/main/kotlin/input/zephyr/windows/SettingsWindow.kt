@@ -83,6 +83,7 @@ class SettingsWindow(private val store:ConfigurationStore,
         row(presetOptions,"繁体 / Traditional Preset",presetTraditional)
         row(presetOptions,"英文 / English Preset",presetEnglish)
         presetOptions.add(JLabel("@preset/name · 保存 Policy 后生效；关闭后发送本地完整提示词。"))
+        presetOptions.add(JLabel("Preset 不会关闭思考；low 仍会思考，模型支持时选 none 可减少等待。"))
         p.add(presetOptions)
         p.add(JLabel("Chinese policy instructions / 中文附加提示词"));p.add(JScrollPane(chinese))
         p.add(JLabel("English policy instructions / 英文附加提示词"));p.add(JScrollPane(english))
@@ -136,7 +137,7 @@ class SettingsWindow(private val store:ConfigurationStore,
             require(rows.map { ApiRouting.api(it.endpoint) }.toSet().containsAll(snapshot.policies.filter { store.hasKey(it.id) }.map { ApiRouting.api(it.endpoint) }.toSet())) { "Include each configured API / 请包含每个已配置的 API" }
             background(run) {
                 val lines=rows.map { item -> runCatching {
-                    val t=System.nanoTime();val result=runBlocking { measurePolicy(snapshot,item,Wire.Request(false,false,"I wnated to recieve teh package")) }
+                    val t=System.nanoTime();val result=runBlocking { measurePolicy(snapshot,item,Wire.Request(false,false,LatencySamples.english)) }
                     "${item.name} · ${item.model} · ${item.reasoning}/${item.speed}: ${(System.nanoTime()-t)/1_000_000} ms\n${result.candidates.joinToString(" / ")}\n${result.usage?.summary().orEmpty()}"
                 }.getOrElse { "${item.model}: ${safeError(it)}" } }
                 SwingUtilities.invokeLater { output.text=lines.joinToString("\n\n") };"Benchmark finished"
@@ -335,7 +336,7 @@ class SettingsWindow(private val store:ConfigurationStore,
         testScope.launch {
             val start=System.nanoTime()
             val outcome=try {
-                val result=measurePolicy(snapshot,selected,Wire.Request(true,false,"woxianghekafe"))
+                val result=measurePolicy(snapshot,selected,Wire.Request(true,false,LatencySamples.chinese))
                 require(result.candidates.size==1 && result.candidates.single().isNotBlank()) { "Empty candidate" }
                 "$heading\n${(System.nanoTime()-start)/1_000_000} ms · ${result.candidates.single()}\n${result.usage?.summary().orEmpty()}"
             } catch(e:CancellationException) { throw e }

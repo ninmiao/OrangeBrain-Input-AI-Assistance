@@ -11,7 +11,7 @@ class CandidateCountTest {
     }
     @Test fun currentOverridesKeepTheirOwnLanguageRules() {
         val custom=pack().copy(keyboard_language_rules=LanguageRules("CUSTOM ZH","CUSTOM EN"))
-        assertEquals("CUSTOM ZH"+PromptPackage.KAOMOJI_RULE,custom.compose(true))
-        assertEquals("CUSTOM EN"+PromptPackage.KAOMOJI_RULE,custom.compose(false))
+        assertEquals("CUSTOM ZH"+PromptPackage.KAOMOJI_RULE+PromptPackage.OUTPUT_RULE,custom.compose(true))
+        assertEquals("CUSTOM EN"+PromptPackage.KAOMOJI_RULE+PromptPackage.ENGLISH_OUTPUT_RULE,custom.compose(false))
     }
 }
