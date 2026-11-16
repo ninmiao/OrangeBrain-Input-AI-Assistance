@@ -11,9 +11,9 @@
 - 当前版本验证说明、测试使用的模型配置示例和参考数据。
 - README、PRIVACY、LICENSE、AUTHORS 以及第三方组件原有许可证。
 
-SDK、JDK、模拟器、VS/Boost 缓存、生成语料、截图、测试日志、编译输出、私钥和用户凭据不进入源码仓库。按项目发布要求，`dist/` 例外跟踪两个当前安装包：Android 1.5.0 ARM64 APK 和 Windows 1.6.0 Setup x64 EXE；旧版本及解压目录已清理。升级时必须同步更新 `.gitignore` 的精确允许清单；其他 APK/ZIP/EXE 仍被忽略。
+SDK、JDK、模拟器、VS/Boost 缓存、生成语料、截图、测试日志、编译输出、私钥和用户凭据不进入源码仓库。按项目发布要求，`dist/` 例外跟踪两个当前安装包：Android 1.6.1 ARM64 APK 和 Windows 1.7.1 Setup x64 EXE；旧版本及解压目录已清理。升级时必须同步更新 `.gitignore` 的精确允许清单；其他 APK/ZIP/EXE 仍被忽略。
 
-本项目仍有约五千个源码/资源文件，主要来自 Weasel、librime、OpenCC 等原生依赖及词库；它们不是开发工具缓存，不应仅为降低文件数而移除。源码体积较大的部分是必要词库。
+本项目仍有约五千个源码/资源文件，主要来自 Weasel、librime、OpenCC 等原生依赖及词库；它们不是开发工具缓存，不应仅为降低文件数而移除。源码体积较大的部分是必要词库。万象与雾凇原始字词表、全拼规则、署名和许可证应一同提交；`.gram` 模型、下载缓存和编译词库保留在本地忽略目录。
 
 ## 发布前检查
 
@@ -23,9 +23,9 @@ SDK、JDK、模拟器、VS/Boost 缓存、生成语料、截图、测试日志�
 
 ## 构建与发布附件
 
-Windows 1.6.0 修复前缀候选选择后丢失剩余输入的问题，Android 1.5.0 保留 Rime 分段选择并将已选汉字用于 AI 请求。两个包均包含提示词 3.1.1。
+Windows 1.7.1 与 Android 1.6.1 均内置万象、雾凇词表，可分别从官方 GitHub 更新；约 407 MB 的万象语法模型单独下载。Android 同时新增常驻剪贴板入口。两个包均包含提示词 4.0.1 / revision 13。
 
-环境与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。Windows 先使用 `windows/scripts/package.ps1` 生成 app-image，再使用 `build-installer.ps1` 生成包含完整运行时的 Setup EXE，只发布这个安装器；Android 发布 ARM64 demo APK。当前版本为 Windows 1.6.0 / Android 1.5.0，结果见 [Windows 验证](windows/model-picker-1.5.1.md) 和 [Android 验证](ai/number-row-providers-1.4.0.md)。
+环境与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。Windows 先使用 `windows/scripts/package.ps1` 生成 app-image，再使用 `build-installer.ps1` 生成包含完整运行时的 Setup EXE，只发布这个安装器；Android 发布 ARM64 demo APK。当前版本为 Windows 1.7.1 / Android 1.6.1，结果见 [双词表与模型验证](rime/wanxiang-updates.md) 和根目录 [更新日志](../UPDATE_LOG.md)。
 
 新库仍需保留项目及第三方源码许可证、版权和来源信息。不将手机或 Windows 用户数据放入项目；不将本地加密凭据作为“安全文件”发布。
 

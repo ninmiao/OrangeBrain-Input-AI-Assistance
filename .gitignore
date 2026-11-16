@@ -194,8 +194,8 @@ secrets.properties
 # User-requested release artifacts: only the two current packages belong in Git.
 !/dist/
 /dist/*
-!/dist/Zephyr-Input-1.5.3-arm64-v8a-demo.apk
-!/dist/Zephyr-Input-Windows-1.6.3-Setup-x64.exe
+!/dist/Zephyr-Input-1.6.1-arm64-v8a-demo.apk
+!/dist/Zephyr-Input-Windows-1.7.1-Setup-x64.exe
 !/docs/ai/number-row-providers-1.4.0.md
 !/docs/windows/installer-providers-1.5.0.md
 
@@ -221,3 +221,17 @@ secrets.properties
 !/docs/images/windows-input.png
 
 !/docs/ai/plain-text-gemini.md
+
+# Downloaded local language models never belong in the repository.
+*.gram
+**/.zephyr-wanxiang/
+
+# Retain Wanxiang feasibility findings; large downloaded models stay outside Git.
+!/docs/research/
+/docs/research/*
+!/docs/research/wanxiang-assessment.md
+!/docs/research/wanxiang-results-2026-11-16.json
+
+!/docs/rime/
+/docs/rime/*
+!/docs/rime/wanxiang-updates.md

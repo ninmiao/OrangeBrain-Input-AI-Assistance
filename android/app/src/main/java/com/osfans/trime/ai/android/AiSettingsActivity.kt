@@ -59,6 +59,7 @@ class AiSettingsActivity : AppCompatActivity() {
         val c = store.config
         label("AI 云端候选", 25f)
         status = label("当前 Policy：${c.policies.first { it.id == c.selectedPolicyId }.name}")
+        button("词库与语法模型（万象 / 雾凇）") { startActivity(Intent(this, com.osfans.trime.rime.android.WanxiangActivity::class.java)) }
         button("一键测速（最多 5 组）") { startActivity(Intent(this, BenchmarkActivity::class.java)) }
         label("开启后发送当前输入；候选仅在点击后上屏。密码及隐私字段不请求。")
         toggle("启用 AI", c.enabled) { enabled ->

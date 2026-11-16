@@ -1,5 +1,15 @@
-config_version: "1.0"
+config_version: "1.2"
 schema_list:
+  - schema: zephyr_wanxiang
   - schema: rime_ai_simp
 menu:
   page_size: 7
+
+# Zephyr handles editor shortcuts; retain the sections imported by Rime schemas.
+key_binder: {}
+recognizer: {}
+punctuator: {}
+ascii_composer:
+  switch_key:
+    Shift_L: noop
+    Shift_R: noop

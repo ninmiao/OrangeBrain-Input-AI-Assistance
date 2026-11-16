@@ -45,7 +45,7 @@ python windows/scripts/prepare-deps.py
 
 标准 VS 安装通过 vcvars 使用 ATL；此机额外的 `.tools/windows-atl` 是本机提取的微软开发依赖缓存，不属于项目源码，也不要求其他开发者复制。原生脚本使用可用的 VS 安装路径，不固定当前用户名。
 
-`package.ps1` 从已提交的 OpenCC 源词表生成 Windows 文本词典，不依赖 Android 的历史构建产物。它运行 JVM 测试、打包自包含 Java 运行时、两个位数的 TSF DLL、x64 输入服务和词库。输出目录必须是新目录，避免覆盖正在运行的包。安装包不包含用户配置、API Key、测试证书或几十万条生成语料。`build-installer.ps1` 将 app-image 包装为单个 `dist/Zephyr-Input-Windows-1.6.3-Setup-x64.exe`；安装器源码位于 `windows/installer/`。EXE 尚未进行产品代码签名。
+`package.ps1` 从已提交的 OpenCC 源词表生成 Windows 文本词典，不依赖 Android 的历史构建产物。它运行 JVM 测试、打包自包含 Java 运行时、两个位数的 TSF DLL、x64 输入服务和词库。输出目录必须是新目录，避免覆盖正在运行的包。安装包不包含用户配置、API Key、测试证书或几十万条生成语料。`build-installer.ps1` 将 app-image 包装为单个 `dist/Zephyr-Input-Windows-1.7.1-Setup-x64.exe`；安装器源码位于 `windows/installer/`。EXE 尚未进行产品代码签名。
 
 管理员 PowerShell 中可执行 `windows/scripts/test-installer.ps1 -Setup <Setup完整路径>`，它实际执行更新、重复覆盖、卸载和重装，检查注册项、程序文件及配置/凭据哈希。该脚本会暂时中断本机输入法，适合专用验证环境，不作为普通单元测试执行。最终恢复当前版本，原始报告保存在 `.tools/installer-validation.json`。
 
@@ -69,3 +69,7 @@ python -m unittest discover -s tests/corpus -p test_corpus.py
 
 
 `windows/tests/tsf_ui_host.cpp` 是标准 Win32 Edit、RichEdit、密码框的交互测试宿主，使用真实注册的 TSF，仅在自己的进程激活 Profile。它不通过 SendInput 模拟输入、不修改系统默认输入法。使用 `./windows/scripts/build-test-host.ps1 -Platform x64` 构建（也支持 x86）。程序位于 `windows/build/ui-host-x64/tsf_ui_host.exe`，可供人工或经授权的电脑操作工具操作。真实逐键输入请使用键盘，不要用粘贴代替。
+
+## 万象资源更新
+
+两端共享更新器和小型 HTTP/ZIP 测试；万象与雾凇原始词表随安装包分发并纳入源码；只有大型 `.gram`、下载缓存和编译产物不加入安装包或 Git。Windows 打包会额外编译 `ZephyrDataDeploy.exe`，需要 Visual Studio C++ Build Tools；数据更新本身不需要 UAC。详见 [万象下载、许可和测试](rime/wanxiang-updates.md)。

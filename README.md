@@ -1,12 +1,12 @@
 # Zephyr Input · 微风输入法
 
-[下载 Windows 版](dist/Zephyr-Input-Windows-1.6.3-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.5.3-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
+[下载 Windows 版](dist/Zephyr-Input-Windows-1.7.1-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.6.1-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
 **目前还是原型，请谨慎使用。** 虽然我已经在日常使用，但还有不少地方要打磨。已精简提示词和候选输出，但长输入和模型思考的 token 消耗仍可能比较大，建议先用小型模型试试。我用 Luna 和 Qwen3.8 27B 测下来效果还不错。
 
-Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 Android** 两个版本。离线用雾凇词库，联网后调用 **在线 LLM API**，通过提示词补足词库匹配：修正漏输、重复、错序和邻键误触，处理长拼音和中英文混输，也可以按描述生成颜表情。
+Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 Android** 两个版本。自带万象和雾凇两套离线词表，默认使用万象，支持从 GitHub 一键更新及单独下载万象语法模型；联网后调用 **在线 LLM API**，通过提示词补足词库匹配：修正漏输、重复、错序和邻键误触，处理长拼音和中英文混输，也可以按描述生成颜表情。
 
 中文模式下，拼音转汉字，英语保留并纠错；英文模式下，优先纠正英语，把中文、拼音或混输转成英文。两种模式都有候选区，每次请求返回一个 AI 候选，由你选中上屏。
 
@@ -20,7 +20,7 @@ I built Zephyr for my own daily typing: fast pinyin input, clear privacy control
 
 **This is still a prototype; please use it with care.** I use it daily, but there is plenty left to improve. Prompts and output are now shorter, but long input and model reasoning can still use plenty of tokens. Start with a smaller model; Luna and Qwen3.8 27B have worked fairly well in my own testing.
 
-**Zephyr Input** is a **Rime-based pinyin keyboard for Windows and Android**. It uses Rime Ice dictionaries offline and calls **online LLM APIs** for missing letters, repeated characters, swapped letters, nearby-key mistakes, long pinyin, and mixed Chinese–English input. It can also turn a short description into a kaomoji.
+**Zephyr Input** is a **Rime-based pinyin keyboard for Windows and Android**. It bundles Wanxiang (the default) and Rime Ice dictionaries for offline typing, updates them from GitHub, offers a separate grammar-model download, and calls **online LLM APIs** for missing letters, repeated characters, swapped letters, nearby-key mistakes, long pinyin, and mixed Chinese–English input. It can also turn a short description into a kaomoji.
 
 Chinese mode converts pinyin to Chinese while keeping and correcting English. English mode corrects English and translates Chinese, pinyin, or mixed input into English. Both modes show candidates; each AI request returns one suggestion for you to select.
 
@@ -69,8 +69,8 @@ Both clients accept `颜`, `表情`, and `颜表情` followed by a description.
 
 | 平台 / Platform | 安装包 / Download |
 | --- | --- |
-| Windows x64 | [1.6.3 Setup EXE](dist/Zephyr-Input-Windows-1.6.3-Setup-x64.exe) |
-| Android ARM64 | [1.5.3 APK](dist/Zephyr-Input-1.5.3-arm64-v8a-demo.apk) |
+| Windows x64 | [1.7.1 Setup EXE](dist/Zephyr-Input-Windows-1.7.1-Setup-x64.exe) |
+| Android ARM64 | [1.6.1 APK](dist/Zephyr-Input-1.6.1-arm64-v8a-demo.apk) |
 
 **Windows：**运行安装包并允许管理员授权，程序安装到 `C:\Program Files\Zephyr Input`，已包含 Java 运行时。安装后注销再登录，从系统输入法菜单选择 Zephyr Input；也可以到“中文（简体，中国）→ 语言选项”添加。开始菜单中的 Zephyr Input 打开设置。更新时运行新版安装包，卸载使用系统“已安装的应用”入口。
 
@@ -79,6 +79,24 @@ Both clients accept `颜`, `表情`, and `颜表情` followed by a description.
 **Windows:** run Setup and approve UAC. Java is included. Sign out and back in, select Zephyr Input from the system input-method menu, and open settings from the Start menu. Run a newer installer to update; uninstall through Windows Settings.
 
 **Android:** install the APK, open the app, and follow the keyboard setup. Let the initial dictionary deployment finish. Cloud settings are under **AI 辅助 / AI assistance**.
+
+## 本地词库 · Offline dictionary
+
+**Windows：Settings → Dictionary / 词库。Android：设置 → 词库与语法模型。** 安装包自带万象和雾凇词表，新安装默认万象；选择词库后点 **应用选择（离线）** 即可切换。已有用户的词库选择保留。
+
+- **更新万象词表**：从万象官方 GitHub 更新，压缩包约 26 MB。
+- **更新雾凇词表**：从雾凇官方 GitHub 更新，压缩包约 15 MB。
+- **下载 / 更新万象语法模型**：单独下载约 **407 MB** 的模型，不占安装包体积。模型开关默认开启，下载完成后生效；下载前仅使用词表。
+
+词表与语法模型搭配使用：选择万象时可启用模型增强排序，选择雾凇时自动停用万象模型，切回万象恢复开关。更新词表不会顺带下载模型，也不会更改当前词库选择。下载支持暂停续传，首次部署需几分钟，建议预留 1.5 GB 空间。旧用户学习词库保留，Windows 词库更新无需管理员权限。[详细说明](docs/rime/wanxiang-updates.md)
+
+Open **Dictionary** in Windows Settings or **词库与语法模型** on Android. Both dictionaries are bundled; new installations use Wanxiang. Select a dictionary and click **Apply selection offline**. Existing selections and learned words are retained. Separate buttons update Wanxiang (~26 MB) and Rime Ice (~15 MB) from their official GitHub releases without downloading a model or changing the selected dictionary.
+
+The **407 MB Wanxiang grammar model** is a separate download. Its switch defaults to on and takes effect once downloaded. It improves local ranking when Wanxiang is selected, stays inactive with Rime Ice, and resumes when you switch back. Downloads support resume; allow a few minutes and about 1.5 GB of free space for deployment. Windows dictionary updates need no UAC. This is a local statistical model; online LLM assistance remains separate.
+
+**Android 剪贴板：**点击候选栏左侧的剪贴板图标，选择当前复制内容或已有历史即可粘贴。即使关闭历史记录，也可以粘贴当前内容。
+
+**Android clipboard:** tap the clipboard icon at the left of the candidate bar to paste the current clip or an existing history entry. Current-clip paste also works with history disabled.
 
 ## 配置 API 和模型 · API and model setup
 
@@ -263,6 +281,7 @@ Thanks to the authors and maintainers of Rime, Trime, Weasel, and the dictionari
 | [Rime / librime](https://github.com/rime/librime) | 两端离线输入引擎 / Offline input engine | BSD-3-Clause · [LICENSE](android/app/src/main/jni/librime/LICENSE) |
 | [同文 / Trime](https://github.com/osfans/trime) | Android 输入法前端与项目基础 / Android IME foundation | GPL-3.0-or-later · 保留原始源码署名 / Original source headers retained · [LICENSE](LICENSE) |
 | [小狼毫 / Weasel](https://github.com/rime/weasel) | Windows TSF 前端与输入服务 / Windows TSF frontend and service | GPL-3.0-or-later · [LICENSE](windows/native/LICENSE.txt) · 上游快照 / Snapshot: `f96ed24a8a535961b6ffc7160d98851a69cee4f8` |
+| [万象拼音 / Wanxiang](https://github.com/amzxyz/rime-wanxiang) · [语法模型 / Grammar](https://github.com/amzxyz/rime-wanxiang-data) | 内置字词表与全拼规则，可下载的本地语法模型 / Bundled dictionaries and pinyin rules; downloadable local grammar | CC BY 4.0 · [完整许可 / License](shared/ai-core/src/main/resources/rime/wanxiang-CC-BY-4.0.txt) · [接入说明 / Integration](docs/rime/wanxiang-updates.md) |
 | [雾凇拼音 / Rime Ice](https://github.com/iDvel/rime-ice) | 简体拼音词库与方案规则 / Simplified Chinese dictionaries and spelling rules | GPL-3.0-only（上游声明 / upstream declaration）· [LICENSE](android/app/src/main/assets/shared/licenses/rime-ice/LICENSE.txt) · [来源与快照 / NOTICE](android/app/src/main/assets/shared/licenses/rime-ice/NOTICE.txt) |
 | [OpenCC](https://github.com/BYVoid/OpenCC) | 简繁转换 / Simplified–traditional conversion | Apache-2.0 · [LICENSE](android/app/src/main/jni/OpenCC/LICENSE) |
 | [Boost](https://www.boost.org/) | 原生 C++ 依赖 / Native C++ dependencies | BSL-1.0 · [LICENSE](android/app/src/main/jni/boost/LICENSE_1_0.txt) |
@@ -271,7 +290,7 @@ Thanks to the authors and maintainers of Rime, Trime, Weasel, and the dictionari
 | [JNA](https://github.com/java-native-access/jna) | Windows 原生 API 互操作 / Windows native API access | Apache-2.0 / LGPL-2.1-or-later 双许可，本项目选用 Apache-2.0 / Apache-2.0 option used |
 | [OpenJDK](https://openjdk.org/) | Windows 内置 Java 运行时与 Swing / Bundled Windows runtime and Swing UI | GPLv2 with Classpath Exception · 运行时法律声明随安装包提供 / Runtime legal notices included in the package |
 
-雾凇词库快照为 `99662ba01e3affa6a0f009174ca530b887bac3b6`，词表来源署名保留在各文件头中。接入范围和修改见 [NOTICE](android/app/src/main/assets/shared/licenses/rime-ice/NOTICE.txt)。其他组件及依赖详见 [Windows 组件说明](windows/THIRD-PARTY.md)、[Android 依赖](gradle/libs.versions.toml) 和各组件的 LICENSE 文件。
+雾凇内置词表来自官方 `nightly` 的 `cn_dicts.zip`（SHA-256 `2e682bf965577b113eebf69ab6f5a936d16e8b4a9ca2117e212ad34361cbc453`），词表来源署名保留在各文件头中。接入范围和修改见 [NOTICE](android/app/src/main/assets/shared/licenses/rime-ice/NOTICE.txt)。其他组件及依赖详见 [Windows 组件说明](windows/THIRD-PARTY.md)、[Android 依赖](gradle/libs.versions.toml) 和各组件的 LICENSE 文件。
 
 The Rime Ice snapshot is `99662ba01e3affa6a0f009174ca530b887bac3b6`; dictionary headers retain their original source credits. See the [integration notice](android/app/src/main/assets/shared/licenses/rime-ice/NOTICE.txt), [Windows component notes](windows/THIRD-PARTY.md), and [Android dependencies](gradle/libs.versions.toml) for details.
 

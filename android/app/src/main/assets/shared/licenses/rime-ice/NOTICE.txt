@@ -1,7 +1,4 @@
-Rime Ice dictionary snapshot
-Source: https://github.com/iDvel/rime-ice
-Commit: 99662ba01e3affa6a0f009174ca530b887bac3b6
-License: GPL-3.0-only (upstream declaration); original word-source attribution retained in every dictionary header.
-Included: rime_ice.dict.yaml and cn_dicts/8105, base, ext, tencent, others, copied without modification.
-Local integration: rime_ai_simp.schema.yaml is an adapted full-pinyin scheme using these dictionaries and upstream spelling rules. It is not the full upstream Lua/emoji/reverse-lookup feature bundle.
-Original Rime and Trime licenses remain applicable to their respective components.
+Rime Ice · iDvel and contributors
+Source: https://github.com/iDvel/rime-ice/releases/tag/nightly
+cn_dicts.zip / SHA256 2e682bf965577b113eebf69ab6f5a936d16e8b4a9ca2117e212ad34361cbc453
+GPL-3.0-only. Original word-source attribution retained in all dictionary headers. Included: 8105, base, ext, tencent, others. Zephyr adapts the full-pinyin schema and file paths; user_dict remains rime_ice.

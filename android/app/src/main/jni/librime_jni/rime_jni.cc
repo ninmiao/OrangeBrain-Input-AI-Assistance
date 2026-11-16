@@ -251,6 +251,12 @@ Java_com_osfans_trime_core_Rime_exitRime(JNIEnv *env, jclass /* thiz */) {
   Rime::Instance().exit();
 }
 
+// Wait on the serialized Rime dispatcher before testing a newly downloaded schema.
+extern "C" JNIEXPORT void JNICALL
+Java_com_osfans_trime_core_Rime_joinRimeMaintenance(JNIEnv *, jclass) {
+  rime_get_api()->join_maintenance_thread();
+}
+
 // deployment
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_osfans_trime_core_Rime_deployRimeSchemaFile(JNIEnv *env,

@@ -8,6 +8,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -59,6 +61,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
                 android:resource="@xml/provider_paths" />
         </provider>
 
+        <service android:name=".rime.android.WanxiangDownloadService" android:exported="false" android:foregroundServiceType="dataSync" />
+        <activity android:name=".rime.android.WanxiangActivity" android:exported="false" android:label="万象词库" />
         <activity android:name=".ai.android.BenchmarkActivity" android:exported="false" android:label="一键测速" />
         <activity android:name=".ai.android.ModelSettingsActivity" android:exported="false" android:label="模型与参数" />
         <activity android:name=".ai.android.AiSettingsActivity" android:exported="false" android:label="@string/trime_app_name" />

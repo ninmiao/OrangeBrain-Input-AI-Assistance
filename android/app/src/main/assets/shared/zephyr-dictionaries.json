@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "grammar": true,
+  "dictionary": {
+    "version": "v18.1.13",
+    "asset": {
+      "name": "rime-wanxiang-base.zip",
+      "url": "https://github.com/amzxyz/rime-wanxiang/releases/download/v18.1.13/rime-wanxiang-base.zip",
+      "size": 26197573,
+      "sha256": "2a94c48aa51eab2de20b4fdc89e065c05c828875b2bb3336a680f7c140ef088d"
+    }
+  },
+  "iceDictionary": {
+    "version": "nightly",
+    "asset": {
+      "name": "cn_dicts.zip",
+      "url": "https://github.com/iDvel/rime-ice/releases/download/nightly/cn_dicts.zip",
+      "size": 14705151,
+      "sha256": "2e682bf965577b113eebf69ab6f5a936d16e8b4a9ca2117e212ad34361cbc453"
+    }
+  }
+}

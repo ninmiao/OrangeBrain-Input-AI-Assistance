@@ -1,0 +1,4 @@
+Wanxiang · amzxyz and contributors
+Source: https://github.com/amzxyz/rime-wanxiang
+v18.1.13 / SHA256 2a94c48aa51eab2de20b4fdc89e065c05c828875b2bb3336a680f7c140ef088d
+CC BY 4.0. Seven core dictionaries and full-pinyin algebra retained without content changes. Zephyr adapts schema and reference paths. Grammar is downloaded separately.

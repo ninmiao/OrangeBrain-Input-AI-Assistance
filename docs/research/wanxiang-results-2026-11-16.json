@@ -1,0 +1,4561 @@
+{
+  "date": "2026-11-16",
+  "status": "isolated Windows engine study; not integrated into app releases",
+  "engine_version": "1.17.0",
+  "engine_sha256": "86b4c7357d4c6d293ce5589b234d8859ca2ac30923a03bedfa3926eeaf97fb0b",
+  "wanxiang_version": "v18.1.13",
+  "wanxiang_commit": "9704d41ee6e52bac3f66618a267826d360aa64ee",
+  "base_zip_sha256": "2a94c48aa51eab2de20b4fdc89e065c05c828875b2bb3336a680f7c140ef088d",
+  "grammar_sha256": "d4f64356231764ff27b79c9b0db79cd9d665013464cf5544e2fbd9a71e0f1c5a",
+  "grammar_bytes": 407160876,
+  "notes": [
+    "60 records = 30 selected comparisons + 30 Chinese rows from existing gold set; duplicates retained.",
+    "11 inputs longer than 50 characters; maximum length 149.",
+    "Main user dictionaries disabled; isolated user directory; no cloud API calls.",
+    "Spaces replaced with apostrophes, matching current Windows adapter.",
+    "Top 1/top 7 exact full-result match ignores whitespace and Unicode punctuation.",
+    "set_input + get_context per prefix, single run per schema, not UI latency or Android measurements.",
+    "All Base dependencies and default config deployed before final run; no new ERROR log in final run.",
+    "Grammar-less adaptation is a Zephyr design, not upstream Lite or full Wanxiang.",
+    "Prefixes end at UTF-8 codepoint boundaries; performance metadata is from the final complete run."
+  ],
+  "results": {
+    "rime_ai_simp": {
+      "groups": {
+        "all": {
+          "n": 60,
+          "top1": 21,
+          "top7": 24
+        },
+        "clean": {
+          "n": 15,
+          "top1": 11,
+          "top7": 11
+        },
+        "abbrev": {
+          "n": 2,
+          "top1": 2,
+          "top7": 2
+        },
+        "transpose": {
+          "n": 3,
+          "top1": 0,
+          "top7": 1
+        },
+        "neighbor": {
+          "n": 1,
+          "top1": 0,
+          "top7": 0
+        },
+        "repeat": {
+          "n": 1,
+          "top1": 0,
+          "top7": 1
+        },
+        "omission": {
+          "n": 2,
+          "top1": 0,
+          "top7": 0
+        },
+        "mixed": {
+          "n": 3,
+          "top1": 0,
+          "top7": 0
+        },
+        "long": {
+          "n": 3,
+          "top1": 2,
+          "top7": 2
+        },
+        "existing_gold": {
+          "n": 30,
+          "top1": 6,
+          "top7": 7
+        }
+      },
+      "special": [
+        [
+          "PARTIAL",
+          "1",
+          "0",
+          "xianzaishurufahouxuanyouwenti",
+          "现在shu ru fa hou xuan you wen ti",
+          "输入法候选有问题",
+          "输入法",
+          "输入",
+          "书",
+          "数",
+          "术",
+          "树"
+        ],
+        [
+          "TRADITIONAL",
+          "軟件",
+          "阮籍",
+          "軟",
+          "阮",
+          "堧",
+          "瓀",
+          "朊"
+        ]
+      ],
+      "rows": [
+        {
+          "category": "clean",
+          "input": "nihao",
+          "expected": "你好",
+          "candidates": [
+            "你好",
+            "拟好",
+            "你",
+            "尼",
+            "泥",
+            "逆",
+            "拟"
+          ],
+          "final_ms": 0.07,
+          "max_prefix_ms": 0.208,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "woxianghekafei",
+          "expected": "我想喝咖啡",
+          "candidates": [
+            "我想喝咖啡",
+            "我想喝",
+            "我想",
+            "我向",
+            "我像",
+            "我乡",
+            "我系"
+          ],
+          "final_ms": 0.1612,
+          "max_prefix_ms": 1.9367,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "hanbaowanghaochi",
+          "expected": "汉堡王好吃",
+          "candidates": [
+            "汉堡王好吃",
+            "汉堡王",
+            "汉堡",
+            "含苞",
+            "憨包",
+            "喊吧",
+            "旱魃"
+          ],
+          "final_ms": 0.2124,
+          "max_prefix_ms": 2.6386,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "jintiantianqihenhao",
+          "expected": "今天天气很好",
+          "candidates": [
+            "今天天气很好",
+            "今天天气",
+            "今天",
+            "金田",
+            "浸提",
+            "近体",
+            "进"
+          ],
+          "final_ms": 0.1361,
+          "max_prefix_ms": 0.2345,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "shuohaojianfeiyouchileliangwanfan",
+          "expected": "说好减肥又吃了两碗饭",
+          "candidates": [
+            "说好减肥有吃了两碗饭",
+            "说好",
+            "说",
+            "烁",
+            "硕",
+            "朔",
+            "铄"
+          ],
+          "final_ms": 0.3994,
+          "max_prefix_ms": 2.3582,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "clean",
+          "input": "wozhuzailiwu",
+          "expected": "我住在里屋",
+          "candidates": [
+            "我住在礼物",
+            "我住在",
+            "握住",
+            "我主",
+            "我住",
+            "窝主",
+            "我"
+          ],
+          "final_ms": 0.1352,
+          "max_prefix_ms": 0.758,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "clean",
+          "input": "chulejiudian",
+          "expected": "出了酒店",
+          "candidates": [
+            "出了酒店",
+            "除了",
+            "出了",
+            "处了",
+            "出",
+            "处",
+            "楚"
+          ],
+          "final_ms": 0.0963,
+          "max_prefix_ms": 0.3002,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "geixinrenjieshao",
+          "expected": "给新人介绍",
+          "candidates": [
+            "给信任介绍",
+            "给"
+          ],
+          "final_ms": 0.1412,
+          "max_prefix_ms": 1.0695,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "clean",
+          "input": "duojiabing",
+          "expected": "多加冰",
+          "candidates": [
+            "多加冰",
+            "多家",
+            "多加",
+            "多架",
+            "多价",
+            "多级",
+            "多极"
+          ],
+          "final_ms": 0.0755,
+          "max_prefix_ms": 0.1,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "jian'ge'jidan",
+          "expected": "煎个鸡蛋",
+          "candidates": [
+            "间隔鸡蛋",
+            "间隔",
+            "建个",
+            "剪个",
+            "剑阁",
+            "见",
+            "间"
+          ],
+          "final_ms": 0.1167,
+          "max_prefix_ms": 0.7813,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "clean",
+          "input": "xianzaishurufahouxuanyouwenti",
+          "expected": "现在输入法候选有问题",
+          "candidates": [
+            "现在输入法候选有问题",
+            "现在",
+            "先在",
+            "陷在",
+            "贤哉",
+            "先",
+            "现"
+          ],
+          "final_ms": 0.2787,
+          "max_prefix_ms": 2.216,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "ruanjian",
+          "expected": "软件",
+          "candidates": [
+            "软件",
+            "阮籍",
+            "软",
+            "阮",
+            "堧",
+            "瓀",
+            "朊"
+          ],
+          "final_ms": 0.0688,
+          "max_prefix_ms": 0.0863,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "shujuku",
+          "expected": "数据库",
+          "candidates": [
+            "数据库",
+            "数据",
+            "书局",
+            "数句",
+            "书",
+            "数",
+            "术"
+          ],
+          "final_ms": 0.0771,
+          "max_prefix_ms": 0.2522,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "lvse",
+          "expected": "绿色",
+          "candidates": [
+            "绿色",
+            "滤色",
+            "绿",
+            "律",
+            "率",
+            "旅",
+            "吕"
+          ],
+          "final_ms": 0.057,
+          "max_prefix_ms": 0.0795,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "abbrev",
+          "input": "rgzn",
+          "expected": "人工智能",
+          "candidates": [
+            "人工智能",
+            "弱冠之年",
+            "人过中年",
+            "人工智能大模型",
+            "人工智能行业",
+            "人工智能会代替",
+            "人工智能会替代"
+          ],
+          "final_ms": 0.4748,
+          "max_prefix_ms": 0.4748,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "abbrev",
+          "input": "shuruf",
+          "expected": "输入法",
+          "candidates": [
+            "输入法",
+            "输入",
+            "书",
+            "数",
+            "术",
+            "树",
+            "属"
+          ],
+          "final_ms": 0.1316,
+          "max_prefix_ms": 0.2563,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "transpose",
+          "input": "nihoa",
+          "expected": "你好",
+          "candidates": [
+            "你会哦啊",
+            "你会",
+            "你回",
+            "你还",
+            "你好",
+            "你和",
+            "你很"
+          ],
+          "final_ms": 0.1374,
+          "max_prefix_ms": 0.1374,
+          "top1": false,
+          "top7": true
+        },
+        {
+          "category": "transpose",
+          "input": "zhogn'guo",
+          "expected": "中国",
+          "candidates": [
+            "中欧跟你过",
+            "中欧",
+            "种藕",
+            "这",
+            "中",
+            "只",
+            "知"
+          ],
+          "final_ms": 2.0329,
+          "max_prefix_ms": 2.0329,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "clean",
+          "input": "shurufa'houxuanyou'wenti",
+          "expected": "输入法候选有问题",
+          "candidates": [
+            "输入法候选有问题",
+            "输入法",
+            "输入",
+            "书",
+            "数",
+            "术",
+            "树"
+          ],
+          "final_ms": 0.3203,
+          "max_prefix_ms": 1.3793,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "transpose",
+          "input": "woxiangchi'hanabo",
+          "expected": "我想吃汉堡",
+          "candidates": [
+            "我想痴汉阿伯",
+            "我想吃",
+            "我想",
+            "我向",
+            "我像",
+            "我乡",
+            "我系"
+          ],
+          "final_ms": 0.1952,
+          "max_prefix_ms": 1.159,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "neighbor",
+          "input": "nihso",
+          "expected": "你好",
+          "candidates": [
+            "你还是哦",
+            "你还是",
+            "你会说",
+            "逆函数",
+            "倪海杉",
+            "你好骚",
+            "你好色"
+          ],
+          "final_ms": 0.8999,
+          "max_prefix_ms": 0.8999,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "repeat",
+          "input": "nihaoo",
+          "expected": "你好",
+          "candidates": [
+            "你好哦",
+            "你好",
+            "拟好",
+            "你",
+            "尼",
+            "泥",
+            "逆"
+          ],
+          "final_ms": 0.0818,
+          "max_prefix_ms": 0.1257,
+          "top1": false,
+          "top7": true
+        },
+        {
+          "category": "omission",
+          "input": "xianzaishurufahouxuanyouenti",
+          "expected": "现在输入法候选有问题",
+          "candidates": [
+            "现在输入法候选有恩提",
+            "现在",
+            "先在",
+            "陷在",
+            "贤哉",
+            "先",
+            "现"
+          ],
+          "final_ms": 0.2888,
+          "max_prefix_ms": 2.0127,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "omission",
+          "input": "wo'yao'chi'huo'gu",
+          "expected": "我要吃火锅",
+          "candidates": [
+            "我要吃或古",
+            "我要吃",
+            "我要",
+            "窝腰",
+            "我呀",
+            "我",
+            "握"
+          ],
+          "final_ms": 0.1482,
+          "max_prefix_ms": 0.3902,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "mixed",
+          "input": "wo'jintian'you'meeting",
+          "expected": "我今天有meeting",
+          "candidates": [
+            "我今天有么饿听",
+            "我今天",
+            "握紧",
+            "我今",
+            "我进",
+            "沃金",
+            "我"
+          ],
+          "final_ms": 0.2032,
+          "max_prefix_ms": 1.0531,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "mixed",
+          "input": "mingtian'9'dian'kaihui",
+          "expected": "明天9点开会",
+          "candidates": [
+            "点开会",
+            "点开",
+            "点",
+            "电",
+            "店",
+            "殿",
+            "典"
+          ],
+          "final_ms": 0.1027,
+          "max_prefix_ms": 0.1608,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "mixed",
+          "input": "qing'fasong'API'key",
+          "expected": "请发送APIkey",
+          "candidates": [
+            "请发送API可以",
+            "请发送",
+            "请发",
+            "轻罚",
+            "青发",
+            "清风",
+            "轻抚"
+          ],
+          "final_ms": 1.4358,
+          "max_prefix_ms": 1.4358,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "long",
+          "input": "mingtianzaoshangwomenyaohexiangmuzuyiqitaolunxinbanbendejinduqingbaxiangguandewenjianzhenglihaofageiwo",
+          "expected": "明天早上我们要和项目组一起讨论新版本的进度请把相关的文件整理好发给我",
+          "candidates": [
+            "明天早上我们要和项目组一起讨论新版本的进度请把相关的文件整理好发给我",
+            "明天早上",
+            "明天",
+            "命题",
+            "明体",
+            "明",
+            "名"
+          ],
+          "final_ms": 1.248,
+          "max_prefix_ms": 13.696,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "long",
+          "input": "jintianwanshangwoxiangchihuoguodanshiyoudianpapangsuoyijuedingxianchiyipanqingcaizaihedianreshui",
+          "expected": "今天晚上我想吃火锅但是有点怕胖所以决定先吃一盘青菜再喝点热水",
+          "candidates": [
+            "今天晚上我想吃火锅但是有点怕旁所以决定先吃一盘青菜在喝点热水",
+            "今天晚上",
+            "今天玩",
+            "今天",
+            "金田",
+            "浸提",
+            "近体"
+          ],
+          "final_ms": 1.0127,
+          "max_prefix_ms": 10.4049,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "long",
+          "input": "wozhunbeizhoumohepengyouyiqiquchihuoguochiwanhouzaidaofujindegongyuansanburan'houliaoliao'zuijin'de'gongzuo",
+          "expected": "我准备周末和朋友一起去吃火锅吃完后再到附近的公园散步然后聊聊最近的工作",
+          "candidates": [
+            "我准备周末和朋友一起去吃火锅吃完后再到附近的公园散步然后聊聊最近的工作",
+            "我准备",
+            "我",
+            "握",
+            "窝",
+            "卧",
+            "沃"
+          ],
+          "final_ms": 0.9509,
+          "max_prefix_ms": 8.7842,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_regression",
+          "input": "fanfaxisizhazheng",
+          "expected": "反法西斯战争",
+          "candidates": [
+            "反法西斯扎挣",
+            "反法西斯",
+            "犯法",
+            "翻",
+            "反",
+            "饭",
+            "烦"
+          ],
+          "final_ms": 0.1697,
+          "max_prefix_ms": 1.9203,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_regression",
+          "input": "zhe'shen'em'yi'si",
+          "expected": "这是什么意思|这什么意思",
+          "candidates": [
+            "这身嗯没意思",
+            "这身",
+            "折射",
+            "这事儿",
+            "专合社",
+            "这是儿",
+            "这是"
+          ],
+          "final_ms": 3.3129,
+          "max_prefix_ms": 3.4374,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_boundary",
+          "input": "hanbaowang'haochi",
+          "expected": "汉堡王好吃",
+          "candidates": [
+            "汉堡王好吃",
+            "汉堡王",
+            "汉堡",
+            "含苞",
+            "憨包",
+            "喊吧",
+            "旱魃"
+          ],
+          "final_ms": 0.1961,
+          "max_prefix_ms": 2.4737,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_transpose",
+          "input": "hanbaowang'haocih",
+          "expected": "汉堡王好吃",
+          "candidates": [
+            "汉堡王好伺候",
+            "汉堡王",
+            "汉堡",
+            "含苞",
+            "核安保",
+            "憨包",
+            "喊吧"
+          ],
+          "final_ms": 2.2094,
+          "max_prefix_ms": 2.2094,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_neighbor",
+          "input": "nihso",
+          "expected": "你好",
+          "candidates": [
+            "你还是哦",
+            "你还是",
+            "你会说",
+            "逆函数",
+            "倪海杉",
+            "你好骚",
+            "你好色"
+          ],
+          "final_ms": 0.8713,
+          "max_prefix_ms": 0.8713,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_repeat",
+          "input": "nihaoo",
+          "expected": "你好",
+          "candidates": [
+            "你好哦",
+            "你好",
+            "拟好",
+            "你",
+            "尼",
+            "泥",
+            "逆"
+          ],
+          "final_ms": 0.0875,
+          "max_prefix_ms": 0.0875,
+          "top1": false,
+          "top7": true
+        },
+        {
+          "category": "gold_omission",
+          "input": "xiexie'n",
+          "expected": "谢谢你",
+          "candidates": [
+            "谢谢你",
+            "谢谢您",
+            "谢谢侬",
+            "谢谢",
+            "写写",
+            "写些",
+            "斜斜"
+          ],
+          "final_ms": 0.0793,
+          "max_prefix_ms": 0.0793,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_transpose",
+          "input": "woxiangchi'hanabo",
+          "expected": "我想吃汉堡",
+          "candidates": [
+            "我想痴汉阿伯",
+            "我想吃",
+            "我想",
+            "我向",
+            "我像",
+            "我乡",
+            "我系"
+          ],
+          "final_ms": 0.1894,
+          "max_prefix_ms": 1.0688,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_clean",
+          "input": "jintiantianqihenhao",
+          "expected": "今天天气很好",
+          "candidates": [
+            "今天天气很好",
+            "今天天气",
+            "今天",
+            "金田",
+            "浸提",
+            "近体",
+            "进"
+          ],
+          "final_ms": 0.1292,
+          "max_prefix_ms": 0.3516,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_clean",
+          "input": "mingtianjian",
+          "expected": "明天见",
+          "candidates": [
+            "明天见",
+            "明天",
+            "命题",
+            "明体",
+            "明",
+            "名",
+            "命"
+          ],
+          "final_ms": 0.0913,
+          "max_prefix_ms": 0.1293,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_mixed",
+          "input": "wo'jintian'you'meeting",
+          "expected": "我今天有 meeting",
+          "candidates": [
+            "我今天有么饿听",
+            "我今天",
+            "握紧",
+            "我今",
+            "我进",
+            "沃金",
+            "我"
+          ],
+          "final_ms": 0.19,
+          "max_prefix_ms": 0.9515,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_mixed",
+          "input": "qing'bangwo'review'daima",
+          "expected": "请帮我 review 代码",
+          "candidates": [
+            "请帮我热",
+            "请帮我",
+            "请帮",
+            "青帮",
+            "请",
+            "轻",
+            "清"
+          ],
+          "final_ms": 0.1037,
+          "max_prefix_ms": 1.7915,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_mixed",
+          "input": "zhege'API'henkuai",
+          "expected": "这个 API 很快",
+          "candidates": [
+            "这个API很快",
+            "这个",
+            "这歌",
+            "这",
+            "着",
+            "者",
+            "折"
+          ],
+          "final_ms": 0.1288,
+          "max_prefix_ms": 2.1159,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_preserve",
+          "input": "I'have'a'meeting'tomorrow.",
+          "expected": "I have a meeting tomorrow.",
+          "candidates": [],
+          "final_ms": 0.005,
+          "max_prefix_ms": 0.038,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "不要删除文件",
+          "expected": "不要删除文件",
+          "candidates": [],
+          "final_ms": 0.0024,
+          "max_prefix_ms": 0.0034,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "https://example.com/a?b=1",
+          "expected": "https://example.com/a?b=1",
+          "candidates": [],
+          "final_ms": 0.0031,
+          "max_prefix_ms": 1.9013,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "订单号'AB-2048",
+          "expected": "订单号 AB-2048",
+          "candidates": [],
+          "final_ms": 0.002,
+          "max_prefix_ms": 0.0217,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_clean",
+          "input": "wobuxiangqu",
+          "expected": "我不想去",
+          "candidates": [
+            "我不想去",
+            "我不想去了",
+            "我不想去学校",
+            "我不想",
+            "我补习",
+            "我不",
+            "我部"
+          ],
+          "final_ms": 0.0972,
+          "max_prefix_ms": 0.1282,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_omission",
+          "input": "women'mingtan'jian",
+          "expected": "我们明天见",
+          "candidates": [
+            "我们明探监",
+            "我们",
+            "我",
+            "握",
+            "窝",
+            "卧",
+            "沃"
+          ],
+          "final_ms": 0.1381,
+          "max_prefix_ms": 1.5629,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_repeat",
+          "input": "qing'denggg'yixia",
+          "expected": "请等一下",
+          "candidates": [
+            "请等更改一下",
+            "请等",
+            "青灯",
+            "䞍等",
+            "轻的",
+            "清的",
+            "氢的"
+          ],
+          "final_ms": 2.5508,
+          "max_prefix_ms": 2.6274,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_neighbor",
+          "input": "woxiang'he'kafeu",
+          "expected": "我想喝咖啡",
+          "candidates": [
+            "我想喝咖啡嗯",
+            "我想喝",
+            "我先干活",
+            "我想",
+            "我向",
+            "我像",
+            "我乡"
+          ],
+          "final_ms": 1.3636,
+          "max_prefix_ms": 1.4487,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_transpose",
+          "input": "jintian'xaiyu'le",
+          "expected": "今天下雨了",
+          "candidates": [
+            "尽天下爱娱乐",
+            "尽天下",
+            "金天蝎",
+            "今天",
+            "金田",
+            "浸提",
+            "近体"
+          ],
+          "final_ms": 0.7526,
+          "max_prefix_ms": 0.7526,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "jintianxiaban'yihouwoxianghexiaowangyiquchi'huoguo'danshimingtianshangwuhaoyouhuiyi'suoyiwomenjuedingzaodianchifanranhouhuijiaxiuxi",
+          "expected": "今天下班以后我想和小王一起去吃火锅，但是明天上午还有会议，所以我们决定早点吃饭然后回家休息。",
+          "candidates": [
+            "今天下班以后我想核销网易去吃火锅但是明天上午好友会议所以我们决定早点吃饭然后回家休息",
+            "今天下班",
+            "尽天下",
+            "今天",
+            "金田",
+            "浸提",
+            "近体"
+          ],
+          "final_ms": 1.3284,
+          "max_prefix_ms": 10.5666,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "qingbangwoba'zhefenbaogaobaocundaobendiyingpan'limian'budeleteshanchuyuanlaidewenjian'dengwomingtianshangwuquerenyihouzai'tongzhidaijia",
+          "expected": "请帮我把这份报告保存到本地硬盘里面，不要删除原来的文件，等我明天上午确认以后再通知大家。",
+          "candidates": [
+            "请帮我把这分报告保存到本地硬盘里面不得了特删除原来的文件等我明天上午确认以后再通知代价",
+            "请帮我",
+            "请帮",
+            "青帮",
+            "请",
+            "轻",
+            "清"
+          ],
+          "final_ms": 2.3551,
+          "max_prefix_ms": 24.9083,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "womendayueshiyidianbandao'huochezhan'ruguodangtiianxiayuqingtiqianshifenzhongchumen'bingjidezhedaishenfenzhengshoujihechongdianqi",
+          "expected": "我们大约十一点半到火车站，如果当天下雨请提前十分钟出门，并记得携带身份证、手机和充电器。",
+          "candidates": [
+            "我们大约十一点半到火车站如果当提",
+            "我们",
+            "我",
+            "握",
+            "窝",
+            "卧",
+            "沃"
+          ],
+          "final_ms": 0.4537,
+          "max_prefix_ms": 6.0461,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "zhegezhoumowozhunbeizaijiazuofan'xianquchaoshimaidian'shucaijidanhemiantiao'ranhouyaoqingpengyouyiquchiwanfan'chifanhaiyaoxiewanbaogao",
+          "expected": "这个周末我准备在家做饭，先去超市买点蔬菜、鸡蛋和面条，然后邀请朋友一起吃晚饭，吃完饭还要写完报告。",
+          "candidates": [
+            "这个周末我准备在家做饭先去超市卖点蔬菜鸡蛋盒面条然后邀请朋友一曲吃完饭吃饭还要写完报告",
+            "这个周末",
+            "这个",
+            "这歌",
+            "这",
+            "着",
+            "者"
+          ],
+          "final_ms": 1.1171,
+          "max_prefix_ms": 12.178,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "xiacigengxinshuqingbaoliuyonghuyouyidepeizhiheciiku'xiufuxuanzhiqianbanyicihouhoushubanfenshuruquanshibuzhijianledewenti",
+          "expected": "下次更新时请保留用户已有的配置和词库，修复选择前半个词后后半段输入全部不见了的问题。",
+          "candidates": [
+            "下次更新抒情保留用户有益的配置贺词",
+            "下次更新",
+            "下次",
+            "瑕疵",
+            "下",
+            "吓",
+            "夏"
+          ],
+          "final_ms": 0.4316,
+          "max_prefix_ms": 3.3869,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "wojinntianxiawusandianyouyigezhongyaodehuiyi'xuyaohexiangmutuanduiyiquetaolunxiayizhoudekaifajihua'bingzaixiabanqianbajieguofasonggeidaijia",
+          "expected": "我今天下午三点有一个重要的会议，需要和项目团队一起讨论下一周的开发计划，并在下班前把结果发送给大家。",
+          "candidates": [
+            "握紧那天下午三点有一个重要的回忆需要喝项目团队乙炔讨论下一周的开发计划并在下班钱吧结果发送给代价",
+            "我今年",
+            "握紧",
+            "我今",
+            "我进",
+            "沃金",
+            "我既"
+          ],
+          "final_ms": 11.5286,
+          "max_prefix_ms": 11.5286,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "wohepengyoushuohaojintianzhichiyidian'dongxi'jieguoxianchileliangwanfan'youdianleyifenzhajihehuoguo'xianzaizhixiangzhidaomingtiandewancanhaichishenme",
+          "expected": "我和朋友说好今天只吃一点东西，结果先吃了两碗饭，又点了一份炸鸡和火锅，现在只想知道明天的晚餐还吃什么。",
+          "candidates": [
+            "我和朋友说耗尽添置吃一点东西结果先吃了两碗饭有点了一份炸鸡和火锅现在只想知道明天的晚餐还吃什么",
+            "我和",
+            "我喝",
+            "我",
+            "握",
+            "窝",
+            "卧"
+          ],
+          "final_ms": 1.6447,
+          "max_prefix_ms": 13.5231,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "ruoguodangqianzhengzaishiyongdepolicybeishanchu'yinggaixianrangyonghuquerenshifouqiehuandaolingyigebaocundepeizhi'ranhouzaijixushuru",
+          "expected": "如果当前正在使用的策略被删除，应该先让用户确认是否切换到另一个保存的配置，然后再继续输入。",
+          "candidates": [
+            "弱国当前正在使用的坡李村已被删除应该先让用户确认是否切换到另一个保存的配置然后再继续输入",
+            "弱国",
+            "若果",
+            "若",
+            "弱",
+            "偌",
+            "箬"
+          ],
+          "final_ms": 14.2678,
+          "max_prefix_ms": 15.8861,
+          "top1": false,
+          "top7": false
+        }
+      ],
+      "performance": {
+        "prefix_states": 2100,
+        "p50_ms": 0.4643,
+        "p95_ms": 11.1199,
+        "max_ms": 24.9083,
+        "working_mib": 48,
+        "peak_mib": 57.0938
+      }
+    },
+    "zephyr_wanxiang_nogram": {
+      "groups": {
+        "all": {
+          "n": 60,
+          "top1": 26,
+          "top7": 28
+        },
+        "clean": {
+          "n": 15,
+          "top1": 13,
+          "top7": 13
+        },
+        "abbrev": {
+          "n": 2,
+          "top1": 2,
+          "top7": 2
+        },
+        "transpose": {
+          "n": 3,
+          "top1": 2,
+          "top7": 2
+        },
+        "neighbor": {
+          "n": 1,
+          "top1": 0,
+          "top7": 0
+        },
+        "repeat": {
+          "n": 1,
+          "top1": 0,
+          "top7": 1
+        },
+        "omission": {
+          "n": 2,
+          "top1": 0,
+          "top7": 0
+        },
+        "mixed": {
+          "n": 3,
+          "top1": 0,
+          "top7": 0
+        },
+        "long": {
+          "n": 3,
+          "top1": 2,
+          "top7": 2
+        },
+        "existing_gold": {
+          "n": 30,
+          "top1": 7,
+          "top7": 8
+        }
+      },
+      "special": [
+        [
+          "PARTIAL",
+          "1",
+          "0",
+          "xianzaishurufahouxuanyouwenti",
+          "现在shu ru fa hou xuan you wen ti",
+          "输入法候选有问题",
+          "输入法",
+          "输入",
+          "数",
+          "书",
+          "术",
+          "属"
+        ],
+        [
+          "TRADITIONAL",
+          "軟件",
+          "軟鍵",
+          "軟堅",
+          "軟劍",
+          "軟基",
+          "阮籍",
+          "軟"
+        ]
+      ],
+      "rows": [
+        {
+          "category": "clean",
+          "input": "nihao",
+          "expected": "你好",
+          "candidates": [
+            "你好",
+            "你号",
+            "拟好",
+            "你",
+            "泥",
+            "拟",
+            "腻"
+          ],
+          "final_ms": 0.1352,
+          "max_prefix_ms": 0.3349,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "woxianghekafei",
+          "expected": "我想喝咖啡",
+          "candidates": [
+            "我想喝咖啡",
+            "我想喝",
+            "我想和",
+            "我想",
+            "我乡",
+            "我向",
+            "我像"
+          ],
+          "final_ms": 0.5553,
+          "max_prefix_ms": 6.136,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "hanbaowanghaochi",
+          "expected": "汉堡王好吃",
+          "candidates": [
+            "汉堡王好吃",
+            "汉堡王",
+            "汉堡",
+            "含苞",
+            "旱魃",
+            "喊吧",
+            "焊疤"
+          ],
+          "final_ms": 0.8208,
+          "max_prefix_ms": 11.0858,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "jintiantianqihenhao",
+          "expected": "今天天气很好",
+          "candidates": [
+            "今天天气很好",
+            "今天天气",
+            "今天",
+            "津田",
+            "金田",
+            "金天",
+            "锦田"
+          ],
+          "final_ms": 0.6372,
+          "max_prefix_ms": 3.3277,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "shuohaojianfeiyouchileliangwanfan",
+          "expected": "说好减肥又吃了两碗饭",
+          "candidates": [
+            "说好减肥又吃了两碗饭",
+            "说好",
+            "说",
+            "硕",
+            "朔",
+            "烁",
+            "数"
+          ],
+          "final_ms": 1.1749,
+          "max_prefix_ms": 8.6862,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "wozhuzailiwu",
+          "expected": "我住在里屋",
+          "candidates": [
+            "我住在礼物",
+            "我住在",
+            "我主宰",
+            "握住",
+            "我主",
+            "我住",
+            "我"
+          ],
+          "final_ms": 0.5962,
+          "max_prefix_ms": 2.733,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "clean",
+          "input": "chulejiudian",
+          "expected": "出了酒店",
+          "candidates": [
+            "出了酒店",
+            "除了",
+            "出了",
+            "触乐",
+            "出",
+            "处",
+            "除"
+          ],
+          "final_ms": 0.2777,
+          "max_prefix_ms": 1.1984,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "geixinrenjieshao",
+          "expected": "给新人介绍",
+          "candidates": [
+            "给信任介绍",
+            "给",
+            "給"
+          ],
+          "final_ms": 0.4962,
+          "max_prefix_ms": 3.7927,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "clean",
+          "input": "duojiabing",
+          "expected": "多加冰",
+          "candidates": [
+            "多加冰",
+            "多家",
+            "多加",
+            "多价",
+            "多架",
+            "多级",
+            "多吉"
+          ],
+          "final_ms": 0.211,
+          "max_prefix_ms": 0.318,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "jian'ge'jidan",
+          "expected": "煎个鸡蛋",
+          "candidates": [
+            "煎个鸡蛋",
+            "见个",
+            "间隔",
+            "建个",
+            "煎个",
+            "剪个",
+            "剑阁"
+          ],
+          "final_ms": 0.244,
+          "max_prefix_ms": 2.7817,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "xianzaishurufahouxuanyouwenti",
+          "expected": "现在输入法候选有问题",
+          "candidates": [
+            "现在输入法候选有问题",
+            "现在",
+            "先在",
+            "陷在",
+            "现宰",
+            "线载",
+            "限载"
+          ],
+          "final_ms": 1.163,
+          "max_prefix_ms": 7.9895,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "ruanjian",
+          "expected": "软件",
+          "candidates": [
+            "软件",
+            "软键",
+            "软坚",
+            "软剑",
+            "软基",
+            "阮籍",
+            "软"
+          ],
+          "final_ms": 0.2077,
+          "max_prefix_ms": 0.2077,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "shujuku",
+          "expected": "数据库",
+          "candidates": [
+            "数据库",
+            "数据",
+            "书局",
+            "书据",
+            "数句",
+            "数",
+            "书"
+          ],
+          "final_ms": 0.2159,
+          "max_prefix_ms": 0.9833,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "lvse",
+          "expected": "绿色",
+          "candidates": [
+            "绿色",
+            "滤色",
+            "率",
+            "旅",
+            "律",
+            "虑",
+            "绿"
+          ],
+          "final_ms": 0.1268,
+          "max_prefix_ms": 0.1701,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "abbrev",
+          "input": "rgzn",
+          "expected": "人工智能",
+          "candidates": [
+            "人工智能",
+            "人过中年",
+            "弱冠之年",
+            "人工智能类",
+            "人工智能能",
+            "人工智能史",
+            "人工智能安全"
+          ],
+          "final_ms": 1.2334,
+          "max_prefix_ms": 1.2334,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "abbrev",
+          "input": "shuruf",
+          "expected": "输入法",
+          "candidates": [
+            "输入法",
+            "输入",
+            "数",
+            "书",
+            "似乎",
+            "术",
+            "属"
+          ],
+          "final_ms": 0.4094,
+          "max_prefix_ms": 0.9636,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "transpose",
+          "input": "nihoa",
+          "expected": "你好",
+          "candidates": [
+            "你好",
+            "你号",
+            "拟好",
+            "你",
+            "泥",
+            "拟",
+            "腻"
+          ],
+          "final_ms": 0.1123,
+          "max_prefix_ms": 0.4652,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "transpose",
+          "input": "zhogn'guo",
+          "expected": "中国",
+          "candidates": [
+            "中国",
+            "种过",
+            "重过",
+            "种果",
+            "中过",
+            "中果",
+            "中古"
+          ],
+          "final_ms": 0.2215,
+          "max_prefix_ms": 3.9764,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "shurufa'houxuanyou'wenti",
+          "expected": "输入法候选有问题",
+          "candidates": [
+            "输入法候选有问题",
+            "输入法",
+            "输入",
+            "数",
+            "书",
+            "术",
+            "属"
+          ],
+          "final_ms": 0.8168,
+          "max_prefix_ms": 4.3518,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "transpose",
+          "input": "woxiangchi'hanabo",
+          "expected": "我想吃汉堡",
+          "candidates": [
+            "我想痴汉阿波",
+            "我想吃",
+            "我想",
+            "我乡",
+            "我向",
+            "我像",
+            "我洗"
+          ],
+          "final_ms": 0.6293,
+          "max_prefix_ms": 3.8639,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "neighbor",
+          "input": "nihso",
+          "expected": "你好",
+          "candidates": [
+            "你还是哦",
+            "你还是",
+            "你会说",
+            "你会是",
+            "你何时",
+            "你挥手",
+            "你好是"
+          ],
+          "final_ms": 3.3479,
+          "max_prefix_ms": 3.3479,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "repeat",
+          "input": "nihaoo",
+          "expected": "你好",
+          "candidates": [
+            "你好哦",
+            "你好",
+            "你号",
+            "拟好",
+            "你",
+            "泥",
+            "拟"
+          ],
+          "final_ms": 0.1948,
+          "max_prefix_ms": 0.2488,
+          "top1": false,
+          "top7": true
+        },
+        {
+          "category": "omission",
+          "input": "xianzaishurufahouxuanyouenti",
+          "expected": "现在输入法候选有问题",
+          "candidates": [
+            "现在输入法候选有恩提",
+            "现在",
+            "先在",
+            "陷在",
+            "现宰",
+            "线载",
+            "限载"
+          ],
+          "final_ms": 1.0295,
+          "max_prefix_ms": 6.745,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "omission",
+          "input": "wo'yao'chi'huo'gu",
+          "expected": "我要吃火锅",
+          "candidates": [
+            "我要吃货股",
+            "我要吃",
+            "我要",
+            "窝腰",
+            "我呀",
+            "我",
+            "握"
+          ],
+          "final_ms": 0.4654,
+          "max_prefix_ms": 1.5113,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "mixed",
+          "input": "wo'jintian'you'meeting",
+          "expected": "我今天有meeting",
+          "candidates": [
+            "我今天有么额挺",
+            "我今天",
+            "我进",
+            "握紧",
+            "我今",
+            "沃金",
+            "我"
+          ],
+          "final_ms": 0.6807,
+          "max_prefix_ms": 3.411,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "mixed",
+          "input": "mingtian'9'dian'kaihui",
+          "expected": "明天9点开会",
+          "candidates": [
+            "点开会",
+            "点开",
+            "点",
+            "电",
+            "店",
+            "典",
+            "殿"
+          ],
+          "final_ms": 0.2556,
+          "max_prefix_ms": 0.3837,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "mixed",
+          "input": "qing'fasong'API'key",
+          "expected": "请发送APIkey",
+          "candidates": [
+            "请发送",
+            "氢阀",
+            "请发",
+            "青发",
+            "请",
+            "情",
+            "清"
+          ],
+          "final_ms": 0.2791,
+          "max_prefix_ms": 3.6736,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "long",
+          "input": "mingtianzaoshangwomenyaohexiangmuzuyiqitaolunxinbanbendejinduqingbaxiangguandewenjianzhenglihaofageiwo",
+          "expected": "明天早上我们要和项目组一起讨论新版本的进度请把相关的文件整理好发给我",
+          "candidates": [
+            "明天早上我们要和项目组一起讨论新版本的进度请把相关的文件整理好发给我",
+            "明天早上",
+            "明天",
+            "命题",
+            "明体",
+            "名",
+            "明"
+          ],
+          "final_ms": 4.6155,
+          "max_prefix_ms": 46.3396,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "long",
+          "input": "jintianwanshangwoxiangchihuoguodanshiyoudianpapangsuoyijuedingxianchiyipanqingcaizaihedianreshui",
+          "expected": "今天晚上我想吃火锅但是有点怕胖所以决定先吃一盘青菜再喝点热水",
+          "candidates": [
+            "今天晚上我想吃火锅但是有点怕旁所以决定先吃一盘青菜在喝点热水",
+            "今天晚上",
+            "今天玩",
+            "今天",
+            "津田",
+            "金田",
+            "金天"
+          ],
+          "final_ms": 3.4824,
+          "max_prefix_ms": 33.984,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "long",
+          "input": "wozhunbeizhoumohepengyouyiqiquchihuoguochiwanhouzaidaofujindegongyuansanburan'houliaoliao'zuijin'de'gongzuo",
+          "expected": "我准备周末和朋友一起去吃火锅吃完后再到附近的公园散步然后聊聊最近的工作",
+          "candidates": [
+            "我准备周末和朋友一起去吃火锅吃完后再到附近的公园散步然后聊聊最近的工作",
+            "我准备",
+            "我",
+            "握",
+            "沃",
+            "卧",
+            "窝"
+          ],
+          "final_ms": 3.6198,
+          "max_prefix_ms": 29.7359,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_regression",
+          "input": "fanfaxisizhazheng",
+          "expected": "反法西斯战争",
+          "candidates": [
+            "反法西斯炸正",
+            "反法西斯",
+            "犯法",
+            "泛发",
+            "反",
+            "返",
+            "饭"
+          ],
+          "final_ms": 0.5609,
+          "max_prefix_ms": 7.8245,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_regression",
+          "input": "zhe'shen'em'yi'si",
+          "expected": "这是什么意思|这什么意思",
+          "candidates": [
+            "这是很饿吗意思",
+            "这身",
+            "这是很",
+            "折射",
+            "专合社",
+            "这是",
+            "这时"
+          ],
+          "final_ms": 10.5192,
+          "max_prefix_ms": 11.0752,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_boundary",
+          "input": "hanbaowang'haochi",
+          "expected": "汉堡王好吃",
+          "candidates": [
+            "汉堡王好吃",
+            "汉堡王",
+            "汉堡",
+            "含苞",
+            "旱魃",
+            "喊吧",
+            "焊疤"
+          ],
+          "final_ms": 0.6717,
+          "max_prefix_ms": 9.7003,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_transpose",
+          "input": "hanbaowang'haocih",
+          "expected": "汉堡王好吃",
+          "candidates": [
+            "汉堡王好吃",
+            "汉堡王",
+            "汉堡",
+            "含苞",
+            "旱魃",
+            "喊吧",
+            "焊疤"
+          ],
+          "final_ms": 0.5025,
+          "max_prefix_ms": 8.2874,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_neighbor",
+          "input": "nihso",
+          "expected": "你好",
+          "candidates": [
+            "你还是哦",
+            "你还是",
+            "你会说",
+            "你会是",
+            "你何时",
+            "你挥手",
+            "你好是"
+          ],
+          "final_ms": 2.9623,
+          "max_prefix_ms": 2.9623,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_repeat",
+          "input": "nihaoo",
+          "expected": "你好",
+          "candidates": [
+            "你好哦",
+            "你好",
+            "你号",
+            "拟好",
+            "你",
+            "泥",
+            "拟"
+          ],
+          "final_ms": 0.1867,
+          "max_prefix_ms": 0.1867,
+          "top1": false,
+          "top7": true
+        },
+        {
+          "category": "gold_omission",
+          "input": "xiexie'n",
+          "expected": "谢谢你",
+          "candidates": [
+            "谢谢你",
+            "谢谢您",
+            "谢谢侬",
+            "谢谢",
+            "写写",
+            "歇歇",
+            "写些"
+          ],
+          "final_ms": 0.1791,
+          "max_prefix_ms": 0.1791,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_transpose",
+          "input": "woxiangchi'hanabo",
+          "expected": "我想吃汉堡",
+          "candidates": [
+            "我想痴汉阿波",
+            "我想吃",
+            "我想",
+            "我乡",
+            "我向",
+            "我像",
+            "我洗"
+          ],
+          "final_ms": 0.5834,
+          "max_prefix_ms": 3.4843,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_clean",
+          "input": "jintiantianqihenhao",
+          "expected": "今天天气很好",
+          "candidates": [
+            "今天天气很好",
+            "今天天气",
+            "今天",
+            "津田",
+            "金田",
+            "金天",
+            "锦田"
+          ],
+          "final_ms": 0.6595,
+          "max_prefix_ms": 2.9471,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_clean",
+          "input": "mingtianjian",
+          "expected": "明天见",
+          "candidates": [
+            "明天见",
+            "明天",
+            "命题",
+            "明体",
+            "名",
+            "明",
+            "命"
+          ],
+          "final_ms": 0.2511,
+          "max_prefix_ms": 0.3867,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_mixed",
+          "input": "wo'jintian'you'meeting",
+          "expected": "我今天有 meeting",
+          "candidates": [
+            "我今天有么额挺",
+            "我今天",
+            "我进",
+            "握紧",
+            "我今",
+            "沃金",
+            "我"
+          ],
+          "final_ms": 0.5629,
+          "max_prefix_ms": 3.1234,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_mixed",
+          "input": "qing'bangwo'review'daima",
+          "expected": "请帮我 review 代码",
+          "candidates": [
+            "请帮我热",
+            "请帮我",
+            "请帮",
+            "青帮",
+            "青棒",
+            "请",
+            "情"
+          ],
+          "final_ms": 0.2955,
+          "max_prefix_ms": 7.5869,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_mixed",
+          "input": "zhege'API'henkuai",
+          "expected": "这个 API 很快",
+          "candidates": [
+            "这个",
+            "这歌",
+            "这哥",
+            "这",
+            "者",
+            "着",
+            "折"
+          ],
+          "final_ms": 0.1566,
+          "max_prefix_ms": 2.1147,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "I'have'a'meeting'tomorrow.",
+          "expected": "I have a meeting tomorrow.",
+          "candidates": [],
+          "final_ms": 0.0041,
+          "max_prefix_ms": 0.0062,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "不要删除文件",
+          "expected": "不要删除文件",
+          "candidates": [],
+          "final_ms": 0.0023,
+          "max_prefix_ms": 0.0031,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "https://example.com/a?b=1",
+          "expected": "https://example.com/a?b=1",
+          "candidates": [],
+          "final_ms": 0.0029,
+          "max_prefix_ms": 8.5273,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "订单号'AB-2048",
+          "expected": "订单号 AB-2048",
+          "candidates": [],
+          "final_ms": 0.002,
+          "max_prefix_ms": 0.0113,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_clean",
+          "input": "wobuxiangqu",
+          "expected": "我不想去",
+          "candidates": [
+            "我不想去",
+            "我不想",
+            "我不像",
+            "我不向",
+            "我不洗",
+            "我补习",
+            "我不惜"
+          ],
+          "final_ms": 0.236,
+          "max_prefix_ms": 0.4758,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_omission",
+          "input": "women'mingtan'jian",
+          "expected": "我们明天见",
+          "candidates": [
+            "我们明探监",
+            "我们明",
+            "我们名",
+            "我们",
+            "我",
+            "握",
+            "沃"
+          ],
+          "final_ms": 0.4336,
+          "max_prefix_ms": 6.2921,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_repeat",
+          "input": "qing'denggg'yixia",
+          "expected": "请等一下",
+          "candidates": [
+            "请等感概一下",
+            "请等",
+            "青灯",
+            "轻的",
+            "清的",
+            "氢的",
+            "秦国的"
+          ],
+          "final_ms": 9.2706,
+          "max_prefix_ms": 12.8206,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_neighbor",
+          "input": "woxiang'he'kafeu",
+          "expected": "我想喝咖啡",
+          "candidates": [
+            "我想喝咖啡嗯",
+            "我想喝",
+            "我想和",
+            "我想回",
+            "我想还",
+            "我想好",
+            "我想换"
+          ],
+          "final_ms": 5.2424,
+          "max_prefix_ms": 5.2424,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_transpose",
+          "input": "jintian'xaiyu'le",
+          "expected": "今天下雨了",
+          "candidates": [
+            "今天下雨了",
+            "今天下",
+            "尽天下",
+            "金天下",
+            "今天",
+            "津田",
+            "金田"
+          ],
+          "final_ms": 0.5071,
+          "max_prefix_ms": 2.3413,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_long_input",
+          "input": "jintianxiaban'yihouwoxianghexiaowangyiquchi'huoguo'danshimingtianshangwuhaoyouhuiyi'suoyiwomenjuedingzaodianchifanranhouhuijiaxiuxi",
+          "expected": "今天下班以后我想和小王一起去吃火锅，但是明天上午还有会议，所以我们决定早点吃饭然后回家休息。",
+          "candidates": [
+            "今天下班以后我想喝小王一去吃火锅但是明天上午好有会议所以我们决定早点吃饭然后回家休息",
+            "今天下班",
+            "今天下",
+            "尽天下",
+            "金天下",
+            "金天喜",
+            "金田系"
+          ],
+          "final_ms": 5.3752,
+          "max_prefix_ms": 37.4531,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "qingbangwoba'zhefenbaogaobaocundaobendiyingpan'limian'budeleteshanchuyuanlaidewenjian'dengwomingtianshangwuquerenyihouzai'tongzhidaijia",
+          "expected": "请帮我把这份报告保存到本地硬盘里面，不要删除原来的文件，等我明天上午确认以后再通知大家。",
+          "candidates": [
+            "请帮我把这份报告保存到本地硬盘里免不得了特删除原来的文件等我明天上午确认以后再通知代价",
+            "请帮我",
+            "请帮",
+            "青帮",
+            "青棒",
+            "请",
+            "情"
+          ],
+          "final_ms": 3.9307,
+          "max_prefix_ms": 61.2358,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "womendayueshiyidianbandao'huochezhan'ruguodangtiianxiayuqingtiqianshifenzhongchumen'bingjidezhedaishenfenzhengshoujihechongdianqi",
+          "expected": "我们大约十一点半到火车站，如果当天下雨请提前十分钟出门，并记得携带身份证、手机和充电器。",
+          "candidates": [
+            "我们大约十一点半到火车站如果当提",
+            "我们打",
+            "我们搭",
+            "我们大",
+            "我们答",
+            "我们",
+            "我"
+          ],
+          "final_ms": 1.8456,
+          "max_prefix_ms": 19.9621,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "zhegezhoumowozhunbeizaijiazuofan'xianquchaoshimaidian'shucaijidanhemiantiao'ranhouyaoqingpengyouyiquchiwanfan'chifanhaiyaoxiewanbaogao",
+          "expected": "这个周末我准备在家做饭，先去超市买点蔬菜、鸡蛋和面条，然后邀请朋友一起吃晚饭，吃完饭还要写完报告。",
+          "candidates": [
+            "这个周末我准备在家坐返现去超市买点蔬菜鸡蛋盒面条然后邀请朋友一去吃完饭吃饭还要写完报告",
+            "这个周末",
+            "这个周",
+            "这个",
+            "这歌",
+            "这哥",
+            "这"
+          ],
+          "final_ms": 4.0757,
+          "max_prefix_ms": 41.2299,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "xiacigengxinshuqingbaoliuyonghuyouyidepeizhiheciiku'xiufuxuanzhiqianbanyicihouhoushubanfenshuruquanshibuzhijianledewenti",
+          "expected": "下次更新时请保留用户已有的配置和词库，修复选择前半个词后后半段输入全部不见了的问题。",
+          "candidates": [
+            "下次更新抒情保留用户有益的配置贺词",
+            "下次",
+            "瑕疵",
+            "下",
+            "夏",
+            "虾",
+            "瞎"
+          ],
+          "final_ms": 1.528,
+          "max_prefix_ms": 11.3387,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "wojinntianxiawusandianyouyigezhongyaodehuiyi'xuyaohexiangmutuanduiyiquetaolunxiayizhoudekaifajihua'bingzaixiabanqianbajieguofasonggeidaijia",
+          "expected": "我今天下午三点有一个重要的会议，需要和项目团队一起讨论下一周的开发计划，并在下班前把结果发送给大家。",
+          "candidates": [
+            "我今年天下午三点有一个重要的回忆需要和项目团队乙炔讨论下一周的开发计划并在下班前把结果发送给代价",
+            "我今年",
+            "我近年",
+            "我进",
+            "握紧",
+            "我今",
+            "我几年"
+          ],
+          "final_ms": 35.5512,
+          "max_prefix_ms": 37.8072,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "wohepengyoushuohaojintianzhichiyidian'dongxi'jieguoxianchileliangwanfan'youdianleyifenzhajihehuoguo'xianzaizhixiangzhidaomingtiandewancanhaichishenme",
+          "expected": "我和朋友说好今天只吃一点东西，结果先吃了两碗饭，又点了一份炸鸡和火锅，现在只想知道明天的晚餐还吃什么。",
+          "candidates": [
+            "我和朋友说耗尽天之炽一点东西结果先吃了两碗饭有点了一份炸鸡和火锅现在只想知道明天的晚餐还吃什么",
+            "我和",
+            "我喝",
+            "我",
+            "握",
+            "沃",
+            "卧"
+          ],
+          "final_ms": 5.5205,
+          "max_prefix_ms": 44.7784,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "ruoguodangqianzhengzaishiyongdepolicybeishanchu'yinggaixianrangyonghuquerenshifouqiehuandaolingyigebaocundepeizhi'ranhouzaijixushuru",
+          "expected": "如果当前正在使用的策略被删除，应该先让用户确认是否切换到另一个保存的配置，然后再继续输入。",
+          "candidates": [
+            "若果当前正在使用的魄力从已被删除应该先让用户确认是否切换到另一个保存的配置然后再继续输入",
+            "若果",
+            "弱国",
+            "若",
+            "弱",
+            "偌",
+            "叒"
+          ],
+          "final_ms": 53.957,
+          "max_prefix_ms": 61.2871,
+          "top1": false,
+          "top7": false
+        }
+      ],
+      "performance": {
+        "prefix_states": 2100,
+        "p50_ms": 1.6368,
+        "p95_ms": 37.8072,
+        "max_ms": 61.2871,
+        "working_mib": 58.5,
+        "peak_mib": 63.1484
+      }
+    },
+    "zephyr_wanxiang": {
+      "groups": {
+        "all": {
+          "n": 60,
+          "top1": 25,
+          "top7": 27
+        },
+        "clean": {
+          "n": 15,
+          "top1": 12,
+          "top7": 12
+        },
+        "abbrev": {
+          "n": 2,
+          "top1": 2,
+          "top7": 2
+        },
+        "transpose": {
+          "n": 3,
+          "top1": 2,
+          "top7": 2
+        },
+        "neighbor": {
+          "n": 1,
+          "top1": 0,
+          "top7": 0
+        },
+        "repeat": {
+          "n": 1,
+          "top1": 0,
+          "top7": 1
+        },
+        "omission": {
+          "n": 2,
+          "top1": 0,
+          "top7": 0
+        },
+        "mixed": {
+          "n": 3,
+          "top1": 0,
+          "top7": 0
+        },
+        "long": {
+          "n": 3,
+          "top1": 2,
+          "top7": 2
+        },
+        "existing_gold": {
+          "n": 30,
+          "top1": 7,
+          "top7": 8
+        }
+      },
+      "special": [
+        [
+          "PARTIAL",
+          "1",
+          "0",
+          "xianzaishurufahouxuanyouwenti",
+          "现在shu ru fa hou xuan you wen ti",
+          "输入法后悬有问题",
+          "输入法",
+          "输入",
+          "数",
+          "书",
+          "术",
+          "属"
+        ],
+        [
+          "TRADITIONAL",
+          "軟件",
+          "軟鍵",
+          "軟堅",
+          "軟劍",
+          "軟基",
+          "阮籍",
+          "軟"
+        ]
+      ],
+      "rows": [
+        {
+          "category": "clean",
+          "input": "nihao",
+          "expected": "你好",
+          "candidates": [
+            "你好",
+            "你号",
+            "拟好",
+            "你",
+            "泥",
+            "拟",
+            "腻"
+          ],
+          "final_ms": 0.1388,
+          "max_prefix_ms": 0.3263,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "woxianghekafei",
+          "expected": "我想喝咖啡",
+          "candidates": [
+            "我想喝咖啡",
+            "我想喝",
+            "我想和",
+            "我想",
+            "我乡",
+            "我向",
+            "我像"
+          ],
+          "final_ms": 0.6332,
+          "max_prefix_ms": 7.4479,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "hanbaowanghaochi",
+          "expected": "汉堡王好吃",
+          "candidates": [
+            "汉堡王好吃",
+            "汉堡王",
+            "汉堡",
+            "含苞",
+            "旱魃",
+            "喊吧",
+            "焊疤"
+          ],
+          "final_ms": 0.9128,
+          "max_prefix_ms": 11.051,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "jintiantianqihenhao",
+          "expected": "今天天气很好",
+          "candidates": [
+            "今天天气很好",
+            "今天天气",
+            "今天",
+            "津田",
+            "金田",
+            "金天",
+            "锦田"
+          ],
+          "final_ms": 0.7883,
+          "max_prefix_ms": 4.1466,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "shuohaojianfeiyouchileliangwanfan",
+          "expected": "说好减肥又吃了两碗饭",
+          "candidates": [
+            "说好减肥有吃了两碗饭",
+            "说好",
+            "说",
+            "硕",
+            "朔",
+            "烁",
+            "数"
+          ],
+          "final_ms": 1.3154,
+          "max_prefix_ms": 10.1076,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "clean",
+          "input": "wozhuzailiwu",
+          "expected": "我住在里屋",
+          "candidates": [
+            "我住在里屋",
+            "我住在",
+            "我主宰",
+            "握住",
+            "我主",
+            "我住",
+            "我"
+          ],
+          "final_ms": 0.5814,
+          "max_prefix_ms": 3.6155,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "chulejiudian",
+          "expected": "出了酒店",
+          "candidates": [
+            "出了酒店",
+            "除了",
+            "出了",
+            "触乐",
+            "出",
+            "处",
+            "除"
+          ],
+          "final_ms": 0.3223,
+          "max_prefix_ms": 0.9376,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "geixinrenjieshao",
+          "expected": "给新人介绍",
+          "candidates": [
+            "给新人介绍",
+            "给",
+            "給"
+          ],
+          "final_ms": 0.6976,
+          "max_prefix_ms": 4.259,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "duojiabing",
+          "expected": "多加冰",
+          "candidates": [
+            "多加冰",
+            "多家",
+            "多加",
+            "多价",
+            "多架",
+            "多级",
+            "多吉"
+          ],
+          "final_ms": 0.2153,
+          "max_prefix_ms": 0.6109,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "jian'ge'jidan",
+          "expected": "煎个鸡蛋",
+          "candidates": [
+            "煎个鸡蛋",
+            "见个",
+            "间隔",
+            "建个",
+            "煎个",
+            "剪个",
+            "剑阁"
+          ],
+          "final_ms": 0.2388,
+          "max_prefix_ms": 2.9902,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "xianzaishurufahouxuanyouwenti",
+          "expected": "现在输入法候选有问题",
+          "candidates": [
+            "现在输入法后悬有问题",
+            "现在",
+            "先在",
+            "陷在",
+            "现宰",
+            "线载",
+            "限载"
+          ],
+          "final_ms": 1.2888,
+          "max_prefix_ms": 8.0204,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "clean",
+          "input": "ruanjian",
+          "expected": "软件",
+          "candidates": [
+            "软件",
+            "软键",
+            "软坚",
+            "软剑",
+            "软基",
+            "阮籍",
+            "软"
+          ],
+          "final_ms": 0.2128,
+          "max_prefix_ms": 0.2128,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "shujuku",
+          "expected": "数据库",
+          "candidates": [
+            "数据库",
+            "数据",
+            "书局",
+            "书据",
+            "数句",
+            "数",
+            "书"
+          ],
+          "final_ms": 0.1895,
+          "max_prefix_ms": 0.9994,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "lvse",
+          "expected": "绿色",
+          "candidates": [
+            "绿色",
+            "滤色",
+            "率",
+            "旅",
+            "律",
+            "虑",
+            "绿"
+          ],
+          "final_ms": 0.148,
+          "max_prefix_ms": 0.1648,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "abbrev",
+          "input": "rgzn",
+          "expected": "人工智能",
+          "candidates": [
+            "人工智能",
+            "人过中年",
+            "弱冠之年",
+            "人工智能类",
+            "人工智能能",
+            "人工智能史",
+            "人工智能安全"
+          ],
+          "final_ms": 1.2359,
+          "max_prefix_ms": 1.2359,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "abbrev",
+          "input": "shuruf",
+          "expected": "输入法",
+          "candidates": [
+            "输入法",
+            "输入",
+            "数",
+            "书",
+            "似乎",
+            "术",
+            "属"
+          ],
+          "final_ms": 0.4089,
+          "max_prefix_ms": 0.9705,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "transpose",
+          "input": "nihoa",
+          "expected": "你好",
+          "candidates": [
+            "你好",
+            "你号",
+            "拟好",
+            "你",
+            "泥",
+            "拟",
+            "腻"
+          ],
+          "final_ms": 0.1092,
+          "max_prefix_ms": 0.5469,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "transpose",
+          "input": "zhogn'guo",
+          "expected": "中国",
+          "candidates": [
+            "中国",
+            "种过",
+            "重过",
+            "种果",
+            "中过",
+            "中果",
+            "中古"
+          ],
+          "final_ms": 0.2525,
+          "max_prefix_ms": 4.9301,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "shurufa'houxuanyou'wenti",
+          "expected": "输入法候选有问题",
+          "candidates": [
+            "输入法后悬有问题",
+            "输入法",
+            "输入",
+            "数",
+            "书",
+            "术",
+            "属"
+          ],
+          "final_ms": 1.6504,
+          "max_prefix_ms": 6.6089,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "transpose",
+          "input": "woxiangchi'hanabo",
+          "expected": "我想吃汉堡",
+          "candidates": [
+            "我想吃哈那波",
+            "我想吃",
+            "我想",
+            "我乡",
+            "我向",
+            "我像",
+            "我洗"
+          ],
+          "final_ms": 0.8213,
+          "max_prefix_ms": 4.1056,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "neighbor",
+          "input": "nihso",
+          "expected": "你好",
+          "candidates": [
+            "你会说哦",
+            "你还是",
+            "你会说",
+            "你会是",
+            "你何时",
+            "你挥手",
+            "你好是"
+          ],
+          "final_ms": 3.3667,
+          "max_prefix_ms": 3.3667,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "repeat",
+          "input": "nihaoo",
+          "expected": "你好",
+          "candidates": [
+            "你好哦",
+            "你好",
+            "你号",
+            "拟好",
+            "你",
+            "泥",
+            "拟"
+          ],
+          "final_ms": 0.2216,
+          "max_prefix_ms": 0.2216,
+          "top1": false,
+          "top7": true
+        },
+        {
+          "category": "omission",
+          "input": "xianzaishurufahouxuanyouenti",
+          "expected": "现在输入法候选有问题",
+          "candidates": [
+            "现在输入法后悬有恩提",
+            "现在",
+            "先在",
+            "陷在",
+            "现宰",
+            "线载",
+            "限载"
+          ],
+          "final_ms": 1.1366,
+          "max_prefix_ms": 7.5257,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "omission",
+          "input": "wo'yao'chi'huo'gu",
+          "expected": "我要吃火锅",
+          "candidates": [
+            "我要吃货股",
+            "我要吃",
+            "我要",
+            "窝腰",
+            "我呀",
+            "我",
+            "握"
+          ],
+          "final_ms": 0.5405,
+          "max_prefix_ms": 1.7673,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "mixed",
+          "input": "wo'jintian'you'meeting",
+          "expected": "我今天有meeting",
+          "candidates": [
+            "我今天有么额挺",
+            "我今天",
+            "我进",
+            "握紧",
+            "我今",
+            "沃金",
+            "我"
+          ],
+          "final_ms": 0.7372,
+          "max_prefix_ms": 3.7118,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "mixed",
+          "input": "mingtian'9'dian'kaihui",
+          "expected": "明天9点开会",
+          "candidates": [
+            "点开会",
+            "点开",
+            "点",
+            "电",
+            "店",
+            "典",
+            "殿"
+          ],
+          "final_ms": 0.397,
+          "max_prefix_ms": 0.5013,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "mixed",
+          "input": "qing'fasong'API'key",
+          "expected": "请发送APIkey",
+          "candidates": [
+            "请发送",
+            "氢阀",
+            "请发",
+            "青发",
+            "请",
+            "情",
+            "清"
+          ],
+          "final_ms": 0.2192,
+          "max_prefix_ms": 4.3573,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "long",
+          "input": "mingtianzaoshangwomenyaohexiangmuzuyiqitaolunxinbanbendejinduqingbaxiangguandewenjianzhenglihaofageiwo",
+          "expected": "明天早上我们要和项目组一起讨论新版本的进度请把相关的文件整理好发给我",
+          "candidates": [
+            "明天早上我们要和项目组一起讨论新版本的金都请把相关的文件整理好发给我",
+            "明天早上",
+            "明天",
+            "命题",
+            "明体",
+            "名",
+            "明"
+          ],
+          "final_ms": 5.2757,
+          "max_prefix_ms": 54.1363,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "long",
+          "input": "jintianwanshangwoxiangchihuoguodanshiyoudianpapangsuoyijuedingxianchiyipanqingcaizaihedianreshui",
+          "expected": "今天晚上我想吃火锅但是有点怕胖所以决定先吃一盘青菜再喝点热水",
+          "candidates": [
+            "今天晚上我想吃火锅但是有点怕胖所以决定先吃一盘青菜再喝点热水",
+            "今天晚上",
+            "今天玩",
+            "今天",
+            "津田",
+            "金田",
+            "金天"
+          ],
+          "final_ms": 3.5813,
+          "max_prefix_ms": 36.0702,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "long",
+          "input": "wozhunbeizhoumohepengyouyiqiquchihuoguochiwanhouzaidaofujindegongyuansanburan'houliaoliao'zuijin'de'gongzuo",
+          "expected": "我准备周末和朋友一起去吃火锅吃完后再到附近的公园散步然后聊聊最近的工作",
+          "candidates": [
+            "我准备周末和朋友一起去吃火锅吃完后再到附近的公园散步然后聊聊最近的工作",
+            "我准备",
+            "我",
+            "握",
+            "沃",
+            "卧",
+            "窝"
+          ],
+          "final_ms": 3.5495,
+          "max_prefix_ms": 30.536,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_regression",
+          "input": "fanfaxisizhazheng",
+          "expected": "反法西斯战争",
+          "candidates": [
+            "反法西斯炸正",
+            "反法西斯",
+            "犯法",
+            "泛发",
+            "反",
+            "返",
+            "饭"
+          ],
+          "final_ms": 0.574,
+          "max_prefix_ms": 7.783,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_regression",
+          "input": "zhe'shen'em'yi'si",
+          "expected": "这是什么意思|这什么意思",
+          "candidates": [
+            "这是和你恶魔意思",
+            "这身",
+            "这是很",
+            "折射",
+            "专合社",
+            "这是",
+            "这时"
+          ],
+          "final_ms": 11.1445,
+          "max_prefix_ms": 11.1925,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_boundary",
+          "input": "hanbaowang'haochi",
+          "expected": "汉堡王好吃",
+          "candidates": [
+            "汉堡王好吃",
+            "汉堡王",
+            "汉堡",
+            "含苞",
+            "旱魃",
+            "喊吧",
+            "焊疤"
+          ],
+          "final_ms": 0.665,
+          "max_prefix_ms": 9.8455,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_transpose",
+          "input": "hanbaowang'haocih",
+          "expected": "汉堡王好吃",
+          "candidates": [
+            "汉堡王好吃",
+            "汉堡王",
+            "汉堡",
+            "含苞",
+            "旱魃",
+            "喊吧",
+            "焊疤"
+          ],
+          "final_ms": 0.587,
+          "max_prefix_ms": 8.3174,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_neighbor",
+          "input": "nihso",
+          "expected": "你好",
+          "candidates": [
+            "你会说哦",
+            "你还是",
+            "你会说",
+            "你会是",
+            "你何时",
+            "你挥手",
+            "你好是"
+          ],
+          "final_ms": 2.7343,
+          "max_prefix_ms": 2.7343,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_repeat",
+          "input": "nihaoo",
+          "expected": "你好",
+          "candidates": [
+            "你好哦",
+            "你好",
+            "你号",
+            "拟好",
+            "你",
+            "泥",
+            "拟"
+          ],
+          "final_ms": 0.2078,
+          "max_prefix_ms": 0.2078,
+          "top1": false,
+          "top7": true
+        },
+        {
+          "category": "gold_omission",
+          "input": "xiexie'n",
+          "expected": "谢谢你",
+          "candidates": [
+            "谢谢你",
+            "谢谢您",
+            "谢谢侬",
+            "谢谢",
+            "写写",
+            "歇歇",
+            "写些"
+          ],
+          "final_ms": 0.1781,
+          "max_prefix_ms": 0.1981,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_transpose",
+          "input": "woxiangchi'hanabo",
+          "expected": "我想吃汉堡",
+          "candidates": [
+            "我想吃哈那波",
+            "我想吃",
+            "我想",
+            "我乡",
+            "我向",
+            "我像",
+            "我洗"
+          ],
+          "final_ms": 0.6626,
+          "max_prefix_ms": 3.7788,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_clean",
+          "input": "jintiantianqihenhao",
+          "expected": "今天天气很好",
+          "candidates": [
+            "今天天气很好",
+            "今天天气",
+            "今天",
+            "津田",
+            "金田",
+            "金天",
+            "锦田"
+          ],
+          "final_ms": 0.7063,
+          "max_prefix_ms": 3.4427,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_clean",
+          "input": "mingtianjian",
+          "expected": "明天见",
+          "candidates": [
+            "明天见",
+            "明天",
+            "命题",
+            "明体",
+            "名",
+            "明",
+            "命"
+          ],
+          "final_ms": 0.2413,
+          "max_prefix_ms": 0.4966,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_mixed",
+          "input": "wo'jintian'you'meeting",
+          "expected": "我今天有 meeting",
+          "candidates": [
+            "我今天有么额挺",
+            "我今天",
+            "我进",
+            "握紧",
+            "我今",
+            "沃金",
+            "我"
+          ],
+          "final_ms": 0.6293,
+          "max_prefix_ms": 3.436,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_mixed",
+          "input": "qing'bangwo'review'daima",
+          "expected": "请帮我 review 代码",
+          "candidates": [
+            "请帮我热",
+            "请帮我",
+            "请帮",
+            "青帮",
+            "青棒",
+            "请",
+            "情"
+          ],
+          "final_ms": 0.2932,
+          "max_prefix_ms": 7.2467,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_mixed",
+          "input": "zhege'API'henkuai",
+          "expected": "这个 API 很快",
+          "candidates": [
+            "这个",
+            "这歌",
+            "这哥",
+            "这",
+            "者",
+            "着",
+            "折"
+          ],
+          "final_ms": 0.1504,
+          "max_prefix_ms": 2.3279,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "I'have'a'meeting'tomorrow.",
+          "expected": "I have a meeting tomorrow.",
+          "candidates": [],
+          "final_ms": 0.0041,
+          "max_prefix_ms": 0.0061,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "不要删除文件",
+          "expected": "不要删除文件",
+          "candidates": [],
+          "final_ms": 0.0022,
+          "max_prefix_ms": 0.0029,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "https://example.com/a?b=1",
+          "expected": "https://example.com/a?b=1",
+          "candidates": [],
+          "final_ms": 0.003,
+          "max_prefix_ms": 8.1026,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "订单号'AB-2048",
+          "expected": "订单号 AB-2048",
+          "candidates": [],
+          "final_ms": 0.002,
+          "max_prefix_ms": 0.0052,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_clean",
+          "input": "wobuxiangqu",
+          "expected": "我不想去",
+          "candidates": [
+            "我不想去",
+            "我不想",
+            "我不像",
+            "我不向",
+            "我不洗",
+            "我补习",
+            "我不惜"
+          ],
+          "final_ms": 0.2397,
+          "max_prefix_ms": 0.3528,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_omission",
+          "input": "women'mingtan'jian",
+          "expected": "我们明天见",
+          "candidates": [
+            "我们明探监",
+            "我们明",
+            "我们名",
+            "我们",
+            "我",
+            "握",
+            "沃"
+          ],
+          "final_ms": 0.4939,
+          "max_prefix_ms": 6.2809,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_repeat",
+          "input": "qing'denggg'yixia",
+          "expected": "请等一下",
+          "candidates": [
+            "轻的能够广告以下",
+            "请等",
+            "青灯",
+            "轻的",
+            "清的",
+            "氢的",
+            "秦国的"
+          ],
+          "final_ms": 9.2358,
+          "max_prefix_ms": 10.0677,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_neighbor",
+          "input": "woxiang'he'kafeu",
+          "expected": "我想喝咖啡",
+          "candidates": [
+            "我想喝咖啡嗯",
+            "我想喝",
+            "我想和",
+            "我想回",
+            "我想还",
+            "我想好",
+            "我想换"
+          ],
+          "final_ms": 5.1001,
+          "max_prefix_ms": 5.6689,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_transpose",
+          "input": "jintian'xaiyu'le",
+          "expected": "今天下雨了",
+          "candidates": [
+            "今天下雨了",
+            "今天下",
+            "尽天下",
+            "金天下",
+            "今天",
+            "津田",
+            "金田"
+          ],
+          "final_ms": 0.6252,
+          "max_prefix_ms": 2.6353,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_long_input",
+          "input": "jintianxiaban'yihouwoxianghexiaowangyiquchi'huoguo'danshimingtianshangwuhaoyouhuiyi'suoyiwomenjuedingzaodianchifanranhouhuijiaxiuxi",
+          "expected": "今天下班以后我想和小王一起去吃火锅，但是明天上午还有会议，所以我们决定早点吃饭然后回家休息。",
+          "candidates": [
+            "今天下班以后我想和小王一去吃火锅但是明天上午好友回忆所以我们决定早点吃饭然后回家休息",
+            "今天下班",
+            "今天下",
+            "尽天下",
+            "金天下",
+            "金天喜",
+            "金田系"
+          ],
+          "final_ms": 5.0756,
+          "max_prefix_ms": 37.8135,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "qingbangwoba'zhefenbaogaobaocundaobendiyingpan'limian'budeleteshanchuyuanlaidewenjian'dengwomingtianshangwuquerenyihouzai'tongzhidaijia",
+          "expected": "请帮我把这份报告保存到本地硬盘里面，不要删除原来的文件，等我明天上午确认以后再通知大家。",
+          "candidates": [
+            "请帮我把这份报告保存到本地硬盘里面不得了特删除原来的文件等我明天上午确认以后再通知代驾",
+            "请帮我",
+            "请帮",
+            "青帮",
+            "青棒",
+            "请",
+            "情"
+          ],
+          "final_ms": 4.7208,
+          "max_prefix_ms": 65.4009,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "womendayueshiyidianbandao'huochezhan'ruguodangtiianxiayuqingtiqianshifenzhongchumen'bingjidezhedaishenfenzhengshoujihechongdianqi",
+          "expected": "我们大约十一点半到火车站，如果当天下雨请提前十分钟出门，并记得携带身份证、手机和充电器。",
+          "candidates": [
+            "我们大约十一点半到火车站如果当提",
+            "我们打",
+            "我们搭",
+            "我们大",
+            "我们答",
+            "我们",
+            "我"
+          ],
+          "final_ms": 1.8592,
+          "max_prefix_ms": 20.1621,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "zhegezhoumowozhunbeizaijiazuofan'xianquchaoshimaidian'shucaijidanhemiantiao'ranhouyaoqingpengyouyiquchiwanfan'chifanhaiyaoxiewanbaogao",
+          "expected": "这个周末我准备在家做饭，先去超市买点蔬菜、鸡蛋和面条，然后邀请朋友一起吃晚饭，吃完饭还要写完报告。",
+          "candidates": [
+            "这个周末我准备在家做饭先去超市买点蔬菜鸡蛋和面条然后邀请朋友一去吃完饭吃饭还要写完报告",
+            "这个周末",
+            "这个周",
+            "这个",
+            "这歌",
+            "这哥",
+            "这"
+          ],
+          "final_ms": 5.1398,
+          "max_prefix_ms": 43.7179,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "xiacigengxinshuqingbaoliuyonghuyouyidepeizhiheciiku'xiufuxuanzhiqianbanyicihouhoushubanfenshuruquanshibuzhijianledewenti",
+          "expected": "下次更新时请保留用户已有的配置和词库，修复选择前半个词后后半段输入全部不见了的问题。",
+          "candidates": [
+            "下次更新数请保留用户有益的配置和次",
+            "下次",
+            "瑕疵",
+            "下",
+            "夏",
+            "虾",
+            "瞎"
+          ],
+          "final_ms": 1.6178,
+          "max_prefix_ms": 12.5372,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "wojinntianxiawusandianyouyigezhongyaodehuiyi'xuyaohexiangmutuanduiyiquetaolunxiayizhoudekaifajihua'bingzaixiabanqianbajieguofasonggeidaijia",
+          "expected": "我今天下午三点有一个重要的会议，需要和项目团队一起讨论下一周的开发计划，并在下班前把结果发送给大家。",
+          "candidates": [
+            "我今年天下无三点有一个重要的会议需要和项目团队以却讨论下一最后的开发计划并在下班前把结果发送给的爱家",
+            "我今年",
+            "我近年",
+            "我进",
+            "握紧",
+            "我今",
+            "我几年"
+          ],
+          "final_ms": 40.8947,
+          "max_prefix_ms": 47.8544,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "wohepengyoushuohaojintianzhichiyidian'dongxi'jieguoxianchileliangwanfan'youdianleyifenzhajihehuoguo'xianzaizhixiangzhidaomingtiandewancanhaichishenme",
+          "expected": "我和朋友说好今天只吃一点东西，结果先吃了两碗饭，又点了一份炸鸡和火锅，现在只想知道明天的晚餐还吃什么。",
+          "candidates": [
+            "我和朋友说好今天支持一点东西结果西安吃了两碗饭又点了一份炸鸡和火锅现在只想知道明天的晚餐还吃什么",
+            "我和",
+            "我喝",
+            "我",
+            "握",
+            "沃",
+            "卧"
+          ],
+          "final_ms": 7.0322,
+          "max_prefix_ms": 50.0435,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "ruoguodangqianzhengzaishiyongdepolicybeishanchu'yinggaixianrangyonghuquerenshifouqiehuandaolingyigebaocundepeizhi'ranhouzaijixushuru",
+          "expected": "如果当前正在使用的策略被删除，应该先让用户确认是否切换到另一个保存的配置，然后再继续输入。",
+          "candidates": [
+            "若果蛋糕前者能够在使用过的魄力才有被删除应该先让用户确认是否切换到另一个保存的配置然后再继续输入",
+            "若果",
+            "弱国",
+            "若",
+            "弱",
+            "偌",
+            "叒"
+          ],
+          "final_ms": 56.7091,
+          "max_prefix_ms": 57.7208,
+          "top1": false,
+          "top7": false
+        }
+      ],
+      "performance": {
+        "prefix_states": 2100,
+        "p50_ms": 1.914,
+        "p95_ms": 41.7691,
+        "max_ms": 65.4009,
+        "working_mib": 188.742,
+        "peak_mib": 193.09
+      }
+    },
+    "wanxiang": {
+      "groups": {
+        "all": {
+          "n": 60,
+          "top1": 25,
+          "top7": 27
+        },
+        "clean": {
+          "n": 15,
+          "top1": 12,
+          "top7": 12
+        },
+        "abbrev": {
+          "n": 2,
+          "top1": 2,
+          "top7": 2
+        },
+        "transpose": {
+          "n": 3,
+          "top1": 2,
+          "top7": 2
+        },
+        "neighbor": {
+          "n": 1,
+          "top1": 0,
+          "top7": 0
+        },
+        "repeat": {
+          "n": 1,
+          "top1": 0,
+          "top7": 1
+        },
+        "omission": {
+          "n": 2,
+          "top1": 0,
+          "top7": 0
+        },
+        "mixed": {
+          "n": 3,
+          "top1": 0,
+          "top7": 0
+        },
+        "long": {
+          "n": 3,
+          "top1": 2,
+          "top7": 2
+        },
+        "existing_gold": {
+          "n": 30,
+          "top1": 7,
+          "top7": 8
+        }
+      },
+      "special": [
+        [
+          "PARTIAL",
+          "1",
+          "0",
+          "xianzaishurufahouxuanyouwenti",
+          "现在shu ru fa hou xuan you wen ti",
+          "输入法后悬有问题",
+          "输入法",
+          "输入",
+          "数",
+          "书",
+          "术",
+          "属"
+        ],
+        [
+          "TRADITIONAL",
+          "软件",
+          "软键",
+          "软坚",
+          "软剑",
+          "软基",
+          "阮籍",
+          "软"
+        ]
+      ],
+      "rows": [
+        {
+          "category": "clean",
+          "input": "nihao",
+          "expected": "你好",
+          "candidates": [
+            "你好",
+            "你号",
+            "拟好",
+            "你",
+            "泥",
+            "拟",
+            "腻"
+          ],
+          "final_ms": 1.265,
+          "max_prefix_ms": 2.8569,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "woxianghekafei",
+          "expected": "我想喝咖啡",
+          "candidates": [
+            "我想喝咖啡",
+            "我想喝",
+            "我想和",
+            "我想",
+            "我乡",
+            "我向",
+            "我像"
+          ],
+          "final_ms": 1.6364,
+          "max_prefix_ms": 8.2519,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "hanbaowanghaochi",
+          "expected": "汉堡王好吃",
+          "candidates": [
+            "汉堡王好吃",
+            "汉堡王",
+            "汉堡",
+            "含苞",
+            "旱魃",
+            "喊吧",
+            "焊疤"
+          ],
+          "final_ms": 3.2148,
+          "max_prefix_ms": 11.3474,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "jintiantianqihenhao",
+          "expected": "今天天气很好",
+          "candidates": [
+            "今天天气很好",
+            "今天天气",
+            "今天",
+            "11月16日",
+            "津田",
+            "金田",
+            "金天"
+          ],
+          "final_ms": 2.006,
+          "max_prefix_ms": 4.96,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "shuohaojianfeiyouchileliangwanfan",
+          "expected": "说好减肥又吃了两碗饭",
+          "candidates": [
+            "说好减肥有吃了两碗饭",
+            "说好",
+            "说",
+            "硕",
+            "朔",
+            "烁",
+            "数"
+          ],
+          "final_ms": 4.0896,
+          "max_prefix_ms": 11.2168,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "clean",
+          "input": "wozhuzailiwu",
+          "expected": "我住在里屋",
+          "candidates": [
+            "我住在里屋",
+            "我住在",
+            "我主宰",
+            "握住",
+            "我主",
+            "我住",
+            "我"
+          ],
+          "final_ms": 2.5907,
+          "max_prefix_ms": 4.5304,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "chulejiudian",
+          "expected": "出了酒店",
+          "candidates": [
+            "出了酒店",
+            "除了",
+            "出了",
+            "触乐",
+            "出",
+            "处",
+            "除"
+          ],
+          "final_ms": 1.7133,
+          "max_prefix_ms": 3.2892,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "geixinrenjieshao",
+          "expected": "给新人介绍",
+          "candidates": [
+            "给新人介绍",
+            "给",
+            "給"
+          ],
+          "final_ms": 1.0814,
+          "max_prefix_ms": 4.9509,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "duojiabing",
+          "expected": "多加冰",
+          "candidates": [
+            "多加冰",
+            "多家",
+            "多加",
+            "多价",
+            "多架",
+            "多级",
+            "多吉"
+          ],
+          "final_ms": 1.3162,
+          "max_prefix_ms": 3.2913,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "jian'ge'jidan",
+          "expected": "煎个鸡蛋",
+          "candidates": [
+            "煎个鸡蛋",
+            "见个",
+            "间隔",
+            "建个",
+            "煎个",
+            "剪个",
+            "剑阁"
+          ],
+          "final_ms": 2.9052,
+          "max_prefix_ms": 4.0402,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "xianzaishurufahouxuanyouwenti",
+          "expected": "现在输入法候选有问题",
+          "candidates": [
+            "现在输入法后悬有问题",
+            "现在",
+            "先在",
+            "陷在",
+            "现宰",
+            "线载",
+            "限载"
+          ],
+          "final_ms": 2.0989,
+          "max_prefix_ms": 10.0543,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "clean",
+          "input": "ruanjian",
+          "expected": "软件",
+          "candidates": [
+            "软件",
+            "软键",
+            "软坚",
+            "软剑",
+            "软基",
+            "阮籍",
+            "软"
+          ],
+          "final_ms": 1.2588,
+          "max_prefix_ms": 2.699,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "shujuku",
+          "expected": "数据库",
+          "candidates": [
+            "数据库",
+            "数据",
+            "书局",
+            "书据",
+            "数句",
+            "数",
+            "书"
+          ],
+          "final_ms": 1.3704,
+          "max_prefix_ms": 3.451,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "lvse",
+          "expected": "绿色",
+          "candidates": [
+            "绿色",
+            "滤色",
+            "率",
+            "旅",
+            "律",
+            "虑",
+            "绿"
+          ],
+          "final_ms": 1.3977,
+          "max_prefix_ms": 2.4537,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "abbrev",
+          "input": "rgzn",
+          "expected": "人工智能",
+          "candidates": [
+            "人工智能",
+            "人过中年",
+            "弱冠之年",
+            "人工智能类",
+            "人工智能能",
+            "人工智能史",
+            "人工智能安全"
+          ],
+          "final_ms": 3.0551,
+          "max_prefix_ms": 3.6431,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "abbrev",
+          "input": "shuruf",
+          "expected": "输入法",
+          "candidates": [
+            "输入法",
+            "输入",
+            "数",
+            "书",
+            "似乎",
+            "术",
+            "属"
+          ],
+          "final_ms": 3.2846,
+          "max_prefix_ms": 3.2846,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "transpose",
+          "input": "nihoa",
+          "expected": "你好",
+          "candidates": [
+            "你好",
+            "你号",
+            "拟好",
+            "你",
+            "泥",
+            "拟",
+            "腻"
+          ],
+          "final_ms": 1.4879,
+          "max_prefix_ms": 2.8627,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "transpose",
+          "input": "zhogn'guo",
+          "expected": "中国",
+          "candidates": [
+            "中国",
+            "种过",
+            "重过",
+            "种果",
+            "中过",
+            "中果",
+            "中古"
+          ],
+          "final_ms": 1.5195,
+          "max_prefix_ms": 5.6731,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "clean",
+          "input": "shurufa'houxuanyou'wenti",
+          "expected": "输入法候选有问题",
+          "candidates": [
+            "输入法后悬有问题",
+            "输入法",
+            "输入",
+            "数",
+            "书",
+            "术",
+            "属"
+          ],
+          "final_ms": 1.8119,
+          "max_prefix_ms": 6.1924,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "transpose",
+          "input": "woxiangchi'hanabo",
+          "expected": "我想吃汉堡",
+          "candidates": [
+            "我想吃哈那波",
+            "我想吃",
+            "我想",
+            "我乡",
+            "我向",
+            "我像",
+            "我洗"
+          ],
+          "final_ms": 1.9243,
+          "max_prefix_ms": 5.3729,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "neighbor",
+          "input": "nihso",
+          "expected": "你好",
+          "candidates": [
+            "你会说哦",
+            "你还是",
+            "你会说",
+            "你会是",
+            "你何时",
+            "你挥手",
+            "你好是"
+          ],
+          "final_ms": 6.1704,
+          "max_prefix_ms": 6.1704,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "repeat",
+          "input": "nihaoo",
+          "expected": "你好",
+          "candidates": [
+            "你好哦",
+            "你好",
+            "你号",
+            "拟好",
+            "你",
+            "泥",
+            "拟"
+          ],
+          "final_ms": 1.3034,
+          "max_prefix_ms": 2.3119,
+          "top1": false,
+          "top7": true
+        },
+        {
+          "category": "omission",
+          "input": "xianzaishurufahouxuanyouenti",
+          "expected": "现在输入法候选有问题",
+          "candidates": [
+            "现在输入法后悬有恩提",
+            "现在",
+            "先在",
+            "陷在",
+            "现宰",
+            "线载",
+            "限载"
+          ],
+          "final_ms": 2.5435,
+          "max_prefix_ms": 8.6178,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "omission",
+          "input": "wo'yao'chi'huo'gu",
+          "expected": "我要吃火锅",
+          "candidates": [
+            "我要吃货股",
+            "我要吃",
+            "我要",
+            "窝腰",
+            "我呀",
+            "我",
+            "握"
+          ],
+          "final_ms": 1.8517,
+          "max_prefix_ms": 5.9533,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "mixed",
+          "input": "wo'jintian'you'meeting",
+          "expected": "我今天有meeting",
+          "candidates": [
+            "我今天有么额挺",
+            "我今天",
+            "我进",
+            "握紧",
+            "我今",
+            "沃金",
+            "我"
+          ],
+          "final_ms": 5.9259,
+          "max_prefix_ms": 5.9259,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "mixed",
+          "input": "mingtian'9'dian'kaihui",
+          "expected": "明天9点开会",
+          "candidates": [
+            "点开会",
+            "点开",
+            "点",
+            "丶",
+            "电",
+            "店",
+            "典"
+          ],
+          "final_ms": 1.7094,
+          "max_prefix_ms": 4.8152,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "mixed",
+          "input": "qing'fasong'API'key",
+          "expected": "请发送APIkey",
+          "candidates": [
+            "请发送",
+            "氢阀",
+            "请发",
+            "青发",
+            "请",
+            "情",
+            "清"
+          ],
+          "final_ms": 1.3904,
+          "max_prefix_ms": 6.292,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "long",
+          "input": "mingtianzaoshangwomenyaohexiangmuzuyiqitaolunxinbanbendejinduqingbaxiangguandewenjianzhenglihaofageiwo",
+          "expected": "明天早上我们要和项目组一起讨论新版本的进度请把相关的文件整理好发给我",
+          "candidates": [
+            "明天早上我们要和项目组一起讨论新版本的金都请把相关的文件整理好发给我",
+            "明天早上",
+            "明天",
+            "11月17日",
+            "命题",
+            "明体",
+            "名"
+          ],
+          "final_ms": 5.9986,
+          "max_prefix_ms": 51.7761,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "long",
+          "input": "jintianwanshangwoxiangchihuoguodanshiyoudianpapangsuoyijuedingxianchiyipanqingcaizaihedianreshui",
+          "expected": "今天晚上我想吃火锅但是有点怕胖所以决定先吃一盘青菜再喝点热水",
+          "candidates": [
+            "今天晚上我想吃火锅但是有点怕胖所以决定先吃一盘青菜再喝点热水",
+            "今天晚上",
+            "今天玩",
+            "今天",
+            "11月16日",
+            "津田",
+            "金田"
+          ],
+          "final_ms": 5.365,
+          "max_prefix_ms": 38.4751,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "long",
+          "input": "wozhunbeizhoumohepengyouyiqiquchihuoguochiwanhouzaidaofujindegongyuansanburan'houliaoliao'zuijin'de'gongzuo",
+          "expected": "我准备周末和朋友一起去吃火锅吃完后再到附近的公园散步然后聊聊最近的工作",
+          "candidates": [
+            "我准备周末和朋友一起去吃火锅吃完后再到附近的公园散步然后聊聊最近的工作",
+            "我准备",
+            "我",
+            "握",
+            "沃",
+            "卧",
+            "窝"
+          ],
+          "final_ms": 7.4898,
+          "max_prefix_ms": 42.1136,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_regression",
+          "input": "fanfaxisizhazheng",
+          "expected": "反法西斯战争",
+          "candidates": [
+            "反法西斯炸正",
+            "反法西斯",
+            "犯法",
+            "泛发",
+            "反",
+            "返",
+            "饭"
+          ],
+          "final_ms": 1.7511,
+          "max_prefix_ms": 9.4054,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_regression",
+          "input": "zhe'shen'em'yi'si",
+          "expected": "这是什么意思|这什么意思",
+          "candidates": [
+            "这是和你恶魔意思",
+            "这身",
+            "这是很",
+            "折射",
+            "专合社",
+            "这是",
+            "这时"
+          ],
+          "final_ms": 12.1899,
+          "max_prefix_ms": 15.4865,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_boundary",
+          "input": "hanbaowang'haochi",
+          "expected": "汉堡王好吃",
+          "candidates": [
+            "汉堡王好吃",
+            "汉堡王",
+            "汉堡",
+            "含苞",
+            "旱魃",
+            "喊吧",
+            "焊疤"
+          ],
+          "final_ms": 1.8267,
+          "max_prefix_ms": 12.6873,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_transpose",
+          "input": "hanbaowang'haocih",
+          "expected": "汉堡王好吃",
+          "candidates": [
+            "汉堡王好吃",
+            "汉堡王",
+            "汉堡",
+            "含苞",
+            "旱魃",
+            "喊吧",
+            "焊疤"
+          ],
+          "final_ms": 3.9732,
+          "max_prefix_ms": 10.3817,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_neighbor",
+          "input": "nihso",
+          "expected": "你好",
+          "candidates": [
+            "你会说哦",
+            "你还是",
+            "你会说",
+            "你会是",
+            "你何时",
+            "你挥手",
+            "你好是"
+          ],
+          "final_ms": 7.736,
+          "max_prefix_ms": 7.736,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_repeat",
+          "input": "nihaoo",
+          "expected": "你好",
+          "candidates": [
+            "你好哦",
+            "你好",
+            "你号",
+            "拟好",
+            "你",
+            "泥",
+            "拟"
+          ],
+          "final_ms": 1.9481,
+          "max_prefix_ms": 1.9481,
+          "top1": false,
+          "top7": true
+        },
+        {
+          "category": "gold_omission",
+          "input": "xiexie'n",
+          "expected": "谢谢你",
+          "candidates": [
+            "谢谢你",
+            "谢谢您",
+            "谢谢侬",
+            "谢谢",
+            "写写",
+            "歇歇",
+            "写些"
+          ],
+          "final_ms": 1.4102,
+          "max_prefix_ms": 4.1769,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_transpose",
+          "input": "woxiangchi'hanabo",
+          "expected": "我想吃汉堡",
+          "candidates": [
+            "我想吃哈那波",
+            "我想吃",
+            "我想",
+            "我乡",
+            "我向",
+            "我像",
+            "我洗"
+          ],
+          "final_ms": 1.9206,
+          "max_prefix_ms": 5.2197,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_clean",
+          "input": "jintiantianqihenhao",
+          "expected": "今天天气很好",
+          "candidates": [
+            "今天天气很好",
+            "今天天气",
+            "今天",
+            "11月16日",
+            "津田",
+            "金田",
+            "金天"
+          ],
+          "final_ms": 3.1396,
+          "max_prefix_ms": 5.4437,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_clean",
+          "input": "mingtianjian",
+          "expected": "明天见",
+          "candidates": [
+            "明天见",
+            "明天",
+            "11月17日",
+            "命题",
+            "明体",
+            "名",
+            "明"
+          ],
+          "final_ms": 2.4681,
+          "max_prefix_ms": 2.9038,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_mixed",
+          "input": "wo'jintian'you'meeting",
+          "expected": "我今天有 meeting",
+          "candidates": [
+            "我今天有么额挺",
+            "我今天",
+            "我进",
+            "握紧",
+            "我今",
+            "沃金",
+            "我"
+          ],
+          "final_ms": 2.0264,
+          "max_prefix_ms": 6.307,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_mixed",
+          "input": "qing'bangwo'review'daima",
+          "expected": "请帮我 review 代码",
+          "candidates": [
+            "请帮我热",
+            "请帮我",
+            "请帮",
+            "青帮",
+            "青棒",
+            "请",
+            "情"
+          ],
+          "final_ms": 1.4333,
+          "max_prefix_ms": 8.7593,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_mixed",
+          "input": "zhege'API'henkuai",
+          "expected": "这个 API 很快",
+          "candidates": [
+            "这个",
+            "这歌",
+            "这哥",
+            "这",
+            "者",
+            "着",
+            "折"
+          ],
+          "final_ms": 1.2539,
+          "max_prefix_ms": 3.6047,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "I'have'a'meeting'tomorrow.",
+          "expected": "I have a meeting tomorrow.",
+          "candidates": [
+            "。"
+          ],
+          "final_ms": 0.2841,
+          "max_prefix_ms": 1.879,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "不要删除文件",
+          "expected": "不要删除文件",
+          "candidates": [],
+          "final_ms": 0.2253,
+          "max_prefix_ms": 1.2705,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "https://example.com/a?b=1",
+          "expected": "https://example.com/a?b=1",
+          "candidates": [],
+          "final_ms": 0.2141,
+          "max_prefix_ms": 9.7238,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_preserve",
+          "input": "订单号'AB-2048",
+          "expected": "订单号 AB-2048",
+          "candidates": [],
+          "final_ms": 0.1606,
+          "max_prefix_ms": 1.7241,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_clean",
+          "input": "wobuxiangqu",
+          "expected": "我不想去",
+          "candidates": [
+            "我不想去",
+            "我不想",
+            "我不像",
+            "我不向",
+            "我不洗",
+            "我补习",
+            "我不惜"
+          ],
+          "final_ms": 1.3017,
+          "max_prefix_ms": 2.4882,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_omission",
+          "input": "women'mingtan'jian",
+          "expected": "我们明天见",
+          "candidates": [
+            "我们明探监",
+            "我们明",
+            "我们名",
+            "我们",
+            "我",
+            "握",
+            "沃"
+          ],
+          "final_ms": 2.8645,
+          "max_prefix_ms": 7.2763,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_repeat",
+          "input": "qing'denggg'yixia",
+          "expected": "请等一下",
+          "candidates": [
+            "轻的能够广告以下",
+            "请等",
+            "青灯",
+            "轻的",
+            "清的",
+            "氢的",
+            "秦国的"
+          ],
+          "final_ms": 10.7645,
+          "max_prefix_ms": 12.5443,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_neighbor",
+          "input": "woxiang'he'kafeu",
+          "expected": "我想喝咖啡",
+          "candidates": [
+            "我想喝咖啡嗯",
+            "我想喝",
+            "我想和",
+            "我想回",
+            "我想还",
+            "我想好",
+            "我想换"
+          ],
+          "final_ms": 6.3894,
+          "max_prefix_ms": 7.2463,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_transpose",
+          "input": "jintian'xaiyu'le",
+          "expected": "今天下雨了",
+          "candidates": [
+            "今天下雨了",
+            "今天下",
+            "尽天下",
+            "金天下",
+            "今天",
+            "11月16日",
+            "津田"
+          ],
+          "final_ms": 1.6512,
+          "max_prefix_ms": 3.7247,
+          "top1": true,
+          "top7": true
+        },
+        {
+          "category": "gold_long_input",
+          "input": "jintianxiaban'yihouwoxianghexiaowangyiquchi'huoguo'danshimingtianshangwuhaoyouhuiyi'suoyiwomenjuedingzaodianchifanranhouhuijiaxiuxi",
+          "expected": "今天下班以后我想和小王一起去吃火锅，但是明天上午还有会议，所以我们决定早点吃饭然后回家休息。",
+          "candidates": [
+            "今天下班以后我想和小王一去吃火锅但是明天上午好友回忆所以我们决定早点吃饭然后回家休息",
+            "今天下班",
+            "今天下",
+            "尽天下",
+            "金天下",
+            "金天喜",
+            "金田系"
+          ],
+          "final_ms": 6.5227,
+          "max_prefix_ms": 47.1698,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "qingbangwoba'zhefenbaogaobaocundaobendiyingpan'limian'budeleteshanchuyuanlaidewenjian'dengwomingtianshangwuquerenyihouzai'tongzhidaijia",
+          "expected": "请帮我把这份报告保存到本地硬盘里面，不要删除原来的文件，等我明天上午确认以后再通知大家。",
+          "candidates": [
+            "请帮我把这份报告保存到本地硬盘里面不得了特删除原来的文件等我明天上午确认以后再通知代驾",
+            "请帮我",
+            "请帮",
+            "青帮",
+            "青棒",
+            "请",
+            "情"
+          ],
+          "final_ms": 6.9023,
+          "max_prefix_ms": 66.7458,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "womendayueshiyidianbandao'huochezhan'ruguodangtiianxiayuqingtiqianshifenzhongchumen'bingjidezhedaishenfenzhengshoujihechongdianqi",
+          "expected": "我们大约十一点半到火车站，如果当天下雨请提前十分钟出门，并记得携带身份证、手机和充电器。",
+          "candidates": [
+            "我们大约十一点半到火车站如果当提",
+            "我们打",
+            "我们搭",
+            "我们大",
+            "我们答",
+            "我们",
+            "我"
+          ],
+          "final_ms": 3.1291,
+          "max_prefix_ms": 21.7089,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "zhegezhoumowozhunbeizaijiazuofan'xianquchaoshimaidian'shucaijidanhemiantiao'ranhouyaoqingpengyouyiquchiwanfan'chifanhaiyaoxiewanbaogao",
+          "expected": "这个周末我准备在家做饭，先去超市买点蔬菜、鸡蛋和面条，然后邀请朋友一起吃晚饭，吃完饭还要写完报告。",
+          "candidates": [
+            "这个周末我准备在家做饭先去超市买点蔬菜鸡蛋和面条然后邀请朋友一去吃完饭吃饭还要写完报告",
+            "这个周末",
+            "这个周",
+            "这个",
+            "这歌",
+            "这哥",
+            "这"
+          ],
+          "final_ms": 5.9594,
+          "max_prefix_ms": 48.4787,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "xiacigengxinshuqingbaoliuyonghuyouyidepeizhiheciiku'xiufuxuanzhiqianbanyicihouhoushubanfenshuruquanshibuzhijianledewenti",
+          "expected": "下次更新时请保留用户已有的配置和词库，修复选择前半个词后后半段输入全部不见了的问题。",
+          "candidates": [
+            "下次更新数请保留用户有益的配置和次",
+            "下次",
+            "瑕疵",
+            "下",
+            "夏",
+            "虾",
+            "瞎"
+          ],
+          "final_ms": 6.2691,
+          "max_prefix_ms": 17.9955,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "wojinntianxiawusandianyouyigezhongyaodehuiyi'xuyaohexiangmutuanduiyiquetaolunxiayizhoudekaifajihua'bingzaixiabanqianbajieguofasonggeidaijia",
+          "expected": "我今天下午三点有一个重要的会议，需要和项目团队一起讨论下一周的开发计划，并在下班前把结果发送给大家。",
+          "candidates": [
+            "我今年天下无三点有一个重要的会议需要和项目团队以却讨论下一最后的开发计划并在下班前把结果发送给的爱家",
+            "我今年",
+            "我近年",
+            "我进",
+            "握紧",
+            "我今",
+            "我几年"
+          ],
+          "final_ms": 42.6531,
+          "max_prefix_ms": 47.02,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "wohepengyoushuohaojintianzhichiyidian'dongxi'jieguoxianchileliangwanfan'youdianleyifenzhajihehuoguo'xianzaizhixiangzhidaomingtiandewancanhaichishenme",
+          "expected": "我和朋友说好今天只吃一点东西，结果先吃了两碗饭，又点了一份炸鸡和火锅，现在只想知道明天的晚餐还吃什么。",
+          "candidates": [
+            "我和朋友说好今天支持一点东西结果西安吃了两碗饭又点了一份炸鸡和火锅现在只想知道明天的晚餐还吃什么",
+            "我和",
+            "我喝",
+            "我",
+            "握",
+            "沃",
+            "卧"
+          ],
+          "final_ms": 8.1832,
+          "max_prefix_ms": 52.0888,
+          "top1": false,
+          "top7": false
+        },
+        {
+          "category": "gold_long_input",
+          "input": "ruoguodangqianzhengzaishiyongdepolicybeishanchu'yinggaixianrangyonghuquerenshifouqiehuandaolingyigebaocundepeizhi'ranhouzaijixushuru",
+          "expected": "如果当前正在使用的策略被删除，应该先让用户确认是否切换到另一个保存的配置，然后再继续输入。",
+          "candidates": [
+            "若果蛋糕前者能够在使用过的魄力才有被删除应该先让用户确认是否切换到另一个保存的配置然后再继续输入",
+            "若果",
+            "弱国",
+            "若",
+            "弱",
+            "偌",
+            "叒"
+          ],
+          "final_ms": 58.2927,
+          "max_prefix_ms": 65.5212,
+          "top1": false,
+          "top7": false
+        }
+      ],
+      "performance": {
+        "prefix_states": 2100,
+        "p50_ms": 4.0094,
+        "p95_ms": 44.4729,
+        "max_ms": 66.7458,
+        "working_mib": 262.789,
+        "peak_mib": 262.789
+      }
+    }
+  }
+}

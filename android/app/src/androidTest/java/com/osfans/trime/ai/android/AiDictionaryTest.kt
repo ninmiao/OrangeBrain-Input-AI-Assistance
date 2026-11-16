@@ -46,7 +46,7 @@ class AiDictionaryTest {
             }
             assertTrue("New simplified dictionary did not deploy",selected)
             assertEquals("rime_ai_simp",session.runOnReady { selectedSchemaId() })
-            assertEquals("rime_ai_simp",session.runOnReady { selectedSchemata().first().id })
+            assertTrue(session.runOnReady { selectedSchemata().any {it.id=="rime_ai_simp"} })
             session.runOnReady { setRuntimeOption("ascii_mode",false); setRuntimeOption("traditionalization",false) }
             val cases = linkedMapOf("ruanjian" to "软件","fazhan" to "发展","houmian" to "后面",
                 "shujuku" to "数据库","shurufa" to "输入法","rengongzhineng" to "人工智能",

@@ -12,9 +12,15 @@ internal object DefaultSchemaInstaller {
             - schema: luna_pinyin
             - schema: luna_pinyin_simp
     """
+    const val ICE = """
+        patch:
+          schema_list:
+            - schema: rime_ai_simp
+    """
     const val CURRENT = """
         patch:
           schema_list:
+            - schema: zephyr_wanxiang
             - schema: rime_ai_simp
     """
     private fun normalized(text: String) = text.lineSequence().map { it.trim() }.filter { it.isNotEmpty() }.joinToString("\n")

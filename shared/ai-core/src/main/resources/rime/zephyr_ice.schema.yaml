@@ -1,0 +1,81 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Zephyr Input simplified full-pinyin schema using the unmodified rime-ice dictionaries.
+# Spelling rules adapted from https://github.com/iDvel/rime-ice (see bundled NOTICE).
+schema:
+  schema_id: rime_ai_simp
+  name: 雾凇拼音
+  version: '@@VERSION@@'
+  author: [Zephyr Input, Dvel]
+  description: |
+    雾凇简体词库 + Zephyr Input 全拼方案，默认直接输出简体。
+    使用原始字表、基础、扩展、腾讯和杂项词库；不包含雾凇的 Lua 扩展功能包。
+    https://github.com/iDvel/rime-ice
+
+switches:
+  - name: ascii_mode
+    reset: 0
+    states: [中文, English]
+  - name: traditionalization
+    reset: 0
+    states: [简体, 繁體]
+  - name: full_shape
+    reset: 0
+    states: [半角, 全角]
+  - name: ascii_punct
+    states: [中文标点, 英文标点]
+
+engine:
+  processors: [ascii_composer, recognizer, key_binder, speller, punctuator, selector, navigator, express_editor]
+  segmentors: [ascii_segmentor, matcher, abc_segmentor, punct_segmentor, fallback_segmentor]
+  translators: [punct_translator, table_translator@custom_phrase, script_translator]
+  filters: [simplifier@traditionalization, uniquifier]
+
+traditionalization:
+  option_name: traditionalization
+  opencc_config: s2t.json
+  tips: none
+  inherit_comment: false
+
+speller:
+  alphabet: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA
+  delimiter: " '"
+  algebra:
+    - erase/^hm$/
+    - erase/^m$/
+    - erase/^n$/
+    - erase/^ng$/
+    - abbrev/^([a-z]).+$/$1/
+    - abbrev/^([zcs]h).+$/$1/
+    - derive/^([nl])ve$/$1ue/
+    - derive/^([jqxy])u/$1v/
+    - derive/^([nl])ue$/$1ve/
+    - derive/^([jqxy])v/$1u/
+
+translator:
+  dictionary: @@DICT@@
+  prism: @@DICT@@
+  user_dict: rime_ice
+  enable_user_dict: true
+  enable_word_completion: true
+  spelling_hints: 8
+  preedit_format:
+    - xform/([jqxy])v/$1u/
+    - xform/([nl])ue/$1ve/
+
+custom_phrase:
+  dictionary: ''
+  user_dict: custom_phrase
+  db_class: stabledb
+  enable_completion: false
+  enable_sentence: false
+  initial_quality: 99
+
+punctuator:
+  import_preset: default
+key_binder:
+  import_preset: default
+recognizer:
+  import_preset: default
+
+__patch:
+  - rime_ai_simp.custom:/patch?

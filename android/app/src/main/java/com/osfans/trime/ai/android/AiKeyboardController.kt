@@ -40,6 +40,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     private var candidateHeightDp = 28
     private var state: AiState = AiState.Idle
     private var captureJob: Job? = null
+    private val clipboard = KeyboardClipboard(service,scope)
     private val client = ChatCompletionsClient()
     private val coordinator = AiRequestCoordinator(scope, { request ->
         val config = store.config
@@ -92,6 +93,12 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             isHorizontalFadingEdgeEnabled = true; setFadingEdgeLength(dp(12))
             addView(content, FrameLayout.LayoutParams(-2, -1))
         }
+        root.addView(ImageButton(context).apply {
+            contentDescription="剪贴板";setImageResource(com.osfans.trime.R.drawable.ic_clipboard_24)
+            imageTintList=android.content.res.ColorStateList.valueOf(0xff525966.toInt())
+            background=android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(0x24525966),null,android.graphics.drawable.ColorDrawable(android.graphics.Color.WHITE))
+            setPadding(dp(8),dp(3),dp(8),dp(3));setOnClickListener {openClipboard()}
+        },LinearLayout.LayoutParams(dp(36),dp(candidateHeightDp)))
         root.addView(candidateScroll, LinearLayout.LayoutParams(0, dp(candidateHeightDp), 1f))
         root.addView(View(context).apply { setBackgroundColor(0x309098a0) }, LinearLayout.LayoutParams(dp(1), dp(14)))
         root.addView(scriptButton, LinearLayout.LayoutParams(dp(48), dp(candidateHeightDp)))
@@ -100,6 +107,23 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         return root
     }
 
+    private fun openClipboard() {
+        val expected=session;val connection=service.currentInputConnection ?: return
+        clipboard.open({active && session==expected && connection===service.currentInputConnection}) { text ->
+            suppress=true;directEligible=false;captureJob?.cancel();coordinator.invalidate();revision++
+            applying=true
+            service.postRimeJob {
+                try {
+                    if(rawInputCached.isNotEmpty())commitComposition()
+                    withContext(Dispatchers.Main.immediate) {
+                        if(active && session==expected && connection===service.currentInputConnection) {
+                            connection.finishComposingText();connection.commitText(text,1)
+                        }
+                    }
+                } finally {withContext(Dispatchers.Main.immediate) {applying=false;target=null;revision++}}
+            }
+        }
+    }
     private fun openSettings() { service.startActivity(Intent(service, AiSettingsActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
     private fun render() {
         val c = store.config
@@ -163,7 +187,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         render()
     }
 
-    fun finish() { active = false; session++; revision++; captureJob?.cancel(); coordinator.invalidate(); target = null }
+    fun finish() { clipboard.close();active = false; session++; revision++; captureJob?.cancel(); coordinator.invalidate(); target = null }
     fun destroy() { finish(); configJob.cancel() }
     private fun syncScript() {
         val traditional = store.config.traditional

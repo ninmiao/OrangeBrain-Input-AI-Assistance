@@ -4,6 +4,7 @@
 config_version: '0.41'
 
 schema_list:
+  - schema: zephyr_wanxiang
   - schema: rime_ai_simp
 
 switcher:

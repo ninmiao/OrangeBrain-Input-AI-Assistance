@@ -51,6 +51,7 @@ class SettingsWindow(private val store:ConfigurationStore,
     private val latencyResults=mutableMapOf<String,String>()
     private val testingPolicies=mutableSetOf<String>()
     private val testScope=CoroutineScope(SupervisorJob()+Dispatchers.IO)
+    private val wanxiang=WanxiangPanel()
     private val status=JLabel("Ready · API keys are encrypted for your Windows account").apply { name="status" }
     init {
         defaultCloseOperation=DISPOSE_ON_CLOSE;minimumSize=Dimension(600,420);size=Dimension(920,800);setLocationRelativeTo(null)
@@ -69,6 +70,7 @@ class SettingsWindow(private val store:ConfigurationStore,
         settings.add(JLabel("←→ / Home / End: edit pending input. Space follows the options above."))
         val save=JButton("Save settings / 保存设置");save.addActionListener { attempt { saveGlobal();store.save(config);refreshCurrentPolicy();status.text="Settings saved" } };settings.add(save)
         tabs.addTab("Input / 输入",settingsScroll(settings))
+        tabs.addTab("Dictionary / 词库",JScrollPane(wanxiang).apply { verticalScrollBar.unitIncrement=24 })
         val p=column()
         row(p,"Name / 名称",name);row(p,"API endpoint / 完整接口地址",endpoint);row(p,"Model / 模型（可选或输入）",model)
         updateModels.addActionListener { refreshModels() };p.add(updateModels)
@@ -283,7 +285,7 @@ class SettingsWindow(private val store:ConfigurationStore,
             }
         }.apply { isDaemon=true;start() }
     }
-    override fun dispose() { testScope.cancel();modelGeneration++;providerGeneration++;providerTimer.stop();super.dispose() }
+    override fun dispose() { if(!wanxiang.close())return;testScope.cancel();modelGeneration++;providerGeneration++;providerTimer.stop();super.dispose() }
     private fun refreshReasoningLater() { providerTimer.restart(); SwingUtilities.invokeLater { refreshReasoning(reasoning.selectedItem?.toString() ?: "omit") } }
     private fun refreshReasoning(value:String) { reasoning.removeAllItems();ReasoningCapabilities.options(endpoint.text.trim(),model.text.trim(),policy.effectiveCatalog(endpoint.text.trim())).forEach { reasoning.addItem(it.value) };reasoning.selectedItem=if((0 until reasoning.itemCount).any { reasoning.getItemAt(it)==value })value else "omit" }
     private fun providerId():String {

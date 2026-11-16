@@ -33,6 +33,7 @@ This repository is not uniformly licensed under a single license. Preserve every
 | --- | --- | --- |
 | Trime-derived Android code / 同文 Android 基础 | GPL-3.0-or-later | Original source headers and [GPL text](LICENSE) |
 | Weasel-derived Windows code / 小狼毫 Windows 基础 | GPL-3.0-or-later | [Windows native license](windows/native/LICENSE.txt), source headers and [component notes](windows/THIRD-PARTY.md) |
+| Wanxiang dictionaries, pinyin rules and grammar / 万象数据与语法模型 | CC BY 4.0 | [Full license](shared/ai-core/src/main/resources/rime/wanxiang-CC-BY-4.0.txt), [source, attribution and changes](docs/rime/wanxiang-updates.md); downloaded data retains upstream headers |
 | Rime Ice dictionaries / 雾凇词库 | GPL-3.0-only, per the vendored upstream declaration | [NOTICE](android/app/src/main/assets/shared/licenses/rime-ice/NOTICE.txt), [LICENSE](android/app/src/main/assets/shared/licenses/rime-ice/LICENSE.txt), dictionary headers |
 | librime | BSD-3-Clause | [LICENSE](android/app/src/main/jni/librime/LICENSE) |
 | OpenCC | Apache-2.0 | [LICENSE](android/app/src/main/jni/OpenCC/LICENSE) |

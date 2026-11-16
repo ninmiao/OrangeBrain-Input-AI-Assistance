@@ -79,6 +79,7 @@ class Rime :
     override suspend fun deploy() = withRimeContext {
         exitRime()
         startRime(true)
+        joinRimeMaintenance()
     }
 
     override suspend fun syncUserData(): Boolean = withRimeContext {
@@ -344,6 +345,9 @@ class Rime :
 
         @JvmStatic
         external fun exitRime()
+
+        @JvmStatic
+        external fun joinRimeMaintenance()
 
         @JvmStatic
         external fun deployRimeSchemaFile(schemaFile: String): Boolean

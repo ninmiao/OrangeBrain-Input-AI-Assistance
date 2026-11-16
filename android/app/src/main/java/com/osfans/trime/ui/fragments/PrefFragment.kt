@@ -36,6 +36,10 @@ class PrefFragment : PaddingPreferenceFragment() {
                 startActivity(android.content.Intent(requireContext(), com.osfans.trime.ai.android.AiSettingsActivity::class.java))
                 true
             }
+            get<Preference>("pref_wanxiang")?.setOnPreferenceClickListener {
+                startActivity(android.content.Intent(requireContext(), com.osfans.trime.rime.android.WanxiangActivity::class.java))
+                true
+            }
             get<Preference>("pref_schemata")?.setOnPreferenceClickListener {
                 findNavController().navigate(R.id.action_prefFragment_to_schemaListFragment)
                 true

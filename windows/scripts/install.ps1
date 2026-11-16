@@ -41,7 +41,7 @@ foreach($view in @([Microsoft.Win32.RegistryView]::Registry64,[Microsoft.Win32.R
 if($LASTEXITCODE){throw "x64 registration failed: $LASTEXITCODE"}
 & "$env:WINDIR/SysWOW64/regsvr32.exe" /s (Join-Path $target $dlls['x86'])
 if($LASTEXITCODE){throw "x86 registration failed: $LASTEXITCODE"}
-$state=@{version='1.6.3';x64=$dlls['x64'];x86=$dlls['x86']}
+$state=@{version='1.7.1';x64=$dlls['x64'];x86=$dlls['x86']}
 [IO.File]::WriteAllText((Join-Path $target 'installation.json'),($state | ConvertTo-Json),[Text.UTF8Encoding]::new($false))
 $startup=Join-Path ([Environment]::GetFolderPath('CommonStartup')) 'Zephyr Input.lnk'
 $shell=New-Object -ComObject WScript.Shell

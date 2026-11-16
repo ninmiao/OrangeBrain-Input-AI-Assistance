@@ -27,8 +27,8 @@ android {
         minSdk = 23
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         targetSdk = 35
-        versionCode = 20261201
-        versionName = "1.5.3"
+        versionCode = 20261203
+        versionName = "1.6.1"
 
         multiDexEnabled = true
         setProperty("archivesBaseName", "Zephyr-Input-${versionName}")

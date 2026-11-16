@@ -139,6 +139,7 @@ object ClipboardHelper :
             return
         }
         val clip = clipboardManager.primaryClip ?: return
+        if (Build.VERSION.SDK_INT >= 24 && clip.description.extras?.getBoolean("android.content.extra.IS_SENSITIVE", false) == true) return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val timestamp = clip.description.timestamp
             if (timestamp == lastClipTimestamp) return

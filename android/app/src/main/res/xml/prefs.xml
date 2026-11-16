@@ -15,6 +15,11 @@ SPDX-License-Identifier: GPL-3.0-or-later
         android:summary="@string/ai_settings_summary"
         app:icon="@drawable/ic_baseline_tune_24" />
 
+    <Preference android:key="pref_wanxiang"
+        android:title="词库与语法模型"
+        android:summary="万象 / 雾凇切换、词表更新、语法模型下载"
+        app:icon="@drawable/ic_pref_schema" />
+
     <Preference android:key="pref_schemata"
         android:title="@string/schemata"
         app:icon="@drawable/ic_pref_schema" />
