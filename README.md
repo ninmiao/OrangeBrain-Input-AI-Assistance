@@ -8,7 +8,7 @@
 
 Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 Android** 两个版本。自带万象和雾凇两套离线词表，默认使用万象，支持从 GitHub 一键更新及单独下载万象语法模型；联网后调用 **在线 LLM API**，通过提示词补足词库匹配：修正漏输、重复、错序和邻键误触，处理长拼音和中英文混输，也可以按描述生成颜表情。
 
-中文模式下，拼音转汉字，英语保留并纠错；英文模式下，优先纠正英语，把中文、拼音或混输转成英文。两种模式都有候选区，每次请求返回一个 AI 候选，由你选中上屏。
+在线 AI 的中文模式将拼音转为汉字，英语保留并纠错；英文模式优先纠正英语，把中文、拼音或混输转成英文。两种模式都有候选区，每次请求返回一个 AI 候选，由你选中上屏。
 
 云端支持 **OpenAI、OpenRouter 和 Google Gemini**。可以把接口、Key、模型和参数保存成多个 Policy 随时切换；OpenRouter 还支持供应商路由和后台 Preset 提示词。纠错能有多强、等待有多短，取决于模型的能力，以及你的钱包（笑）。
 
@@ -22,9 +22,31 @@ I built Zephyr for my own daily typing: fast pinyin input, clear privacy control
 
 **Zephyr Input** is a **Rime-based pinyin keyboard for Windows and Android**. It bundles Wanxiang (the default) and Rime Ice dictionaries for offline typing, updates them from GitHub, offers a separate grammar-model download, and calls **online LLM APIs** for missing letters, repeated characters, swapped letters, nearby-key mistakes, long pinyin, and mixed Chinese–English input. It can also turn a short description into a kaomoji.
 
-Chinese mode converts pinyin to Chinese while keeping and correcting English. English mode corrects English and translates Chinese, pinyin, or mixed input into English. Both modes show candidates; each AI request returns one suggestion for you to select.
+For online AI, Chinese mode converts pinyin to Chinese while keeping and correcting English. English mode corrects English and translates Chinese, pinyin, or mixed input into English. Both modes show candidates; each AI request returns one suggestion for you to select.
 
 Cloud assistance supports **OpenAI, OpenRouter, and Google Gemini**, with separate policies for keys, models, and parameters. OpenRouter also supports provider routing and server-side prompt presets. The quality depends on the model—and your wallet. **LLM features require an internet connection: models run on remote services accessed through OpenAI, OpenRouter, or Google Gemini, not locally on your phone or computer.** Offline typing uses Rime and local dictionaries. Cloud AI sends your current input to your chosen API service. Keys are encrypted on your device.
+
+## 词表、本地模型与在线 AI · Dictionaries, local model, and online AI
+
+Zephyr 的本地输入和在线 AI 可以配合使用，分别配置。**不填 API Key 也能离线打字；下载万象语法模型后，增强的本地候选排序也能离线使用。**
+
+| 功能 | 负责什么 | 在哪里运行 | 如何获得与更新 | 联网、Key 与 token |
+| --- | --- | --- | --- | --- |
+| **本地词表：万象 / 雾凇** | 提供字词、拼音和词频，供 Rime 匹配本地候选 | 手机或电脑本机 | 两套都内置；各有 GitHub 更新按钮 | 打字可离线；更新需联网；无需 Key，不消耗 API token |
+| **本地万象语法模型** | 用词语搭配的统计信息改善万象候选排序 | 手机或电脑本机，由 Rime 加载 | 约 **407 MB**，单独下载与更新，安装包不内置 | 下载后可离线；无需 Key，不消耗 API token |
+| **在线 AI API** | 通过 LLM 进一步纠错、处理中英混输和生成颜表情，另给一个 AI 候选 | OpenAI、OpenRouter 或 Google Gemini 的远程服务端 | 在 Policy 中配置 Key、在线模型和参数 | 请求时需联网，当前输入发送给所选 API，按服务商规则消耗额度与 token |
+
+**万象语法模型是本地 n-gram 统计模型，不是本地 LLM，也不调用在线 AI API。** 词表负责“有哪些字词、怎样读”，语法模型帮助判断“这些词怎样搭配更合适”。当前这份模型只在万象方案中启用；云端 AI 可以与任一本地词表配合，也可以关闭。关闭云端 AI 后，本地词表和已下载的语法模型照常工作。
+
+Local typing and online AI are configured separately and can work together. **Offline typing needs no API key. Once downloaded, the Wanxiang grammar model also works offline.**
+
+| Feature | What it does | Runs on | Installation and updates | Network, key, and tokens |
+| --- | --- | --- | --- | --- |
+| **Local dictionaries: Wanxiang / Rime Ice** | Supply words, pinyin readings, and frequencies for Rime candidates | Your phone or computer | Both are bundled; each has its own GitHub update button | Offline typing; internet for updates; no key or API tokens |
+| **Local Wanxiang grammar model** | Uses word-collocation statistics to improve Wanxiang candidate ranking | Your device, loaded by Rime | A separate **~407 MB** download and update; excluded from the installer | Works offline after download; no key or API tokens |
+| **Online AI APIs** | Use an LLM for further correction, mixed-language input, and kaomoji; return one additional AI candidate | Remote services accessed through OpenAI, OpenRouter, or Google Gemini | Configure a key, remote model, and parameters in a policy | Requests need internet and send the current input to the selected API; provider usage and token charges apply |
+
+**The Wanxiang grammar model is a local n-gram statistical model, not a local LLM or an online API call.** Dictionaries supply words and readings; the grammar model helps rank word combinations. This integration loads it only with Wanxiang. Online AI can work alongside either dictionary or be switched off; local dictionaries and the downloaded grammar model continue to work.
 
 ## 输入与 AI 纠错 · AI-assisted typing
 
@@ -80,27 +102,43 @@ Both clients accept `颜`, `表情`, and `颜表情` followed by a description.
 
 **Android:** install the APK, open the app, and follow the keyboard setup. Let the initial dictionary deployment finish. Cloud settings are under **AI 辅助 / AI assistance**.
 
-## 本地词库 · Offline dictionary
+## 切换与更新词表、本地模型 · Switching and updating local data
 
-**Windows：Settings → Dictionary / 词库。Android：设置 → 词库与语法模型。** 安装包自带万象和雾凇词表，新安装默认万象；选择词库后点 **应用选择（离线）** 即可切换。已有用户的词库选择保留。
+Windows 打开 **Settings → Dictionary / 词库**；Android 打开 **设置 → 词库与语法模型**，AI 辅助页也有入口。
 
-- **更新万象词表**：从万象官方 GitHub 更新，压缩包约 26 MB。
-- **更新雾凇词表**：从雾凇官方 GitHub 更新，压缩包约 15 MB。
-- **下载 / 更新万象语法模型**：单独下载约 **407 MB** 的模型，不占安装包体积。模型开关默认开启，下载完成后生效；下载前仅使用词表。
+1. **选择词表：**在列表中选择万象或雾凇，点击 **应用选择（离线）**。新安装默认万象；升级保留已有选择。两套词表均已内置，第一次使用不需要下载。
+2. **更新词表：**点击 **更新万象词表** 或 **更新雾凇词表**，分别检查对应官方 GitHub 发布，下载后校验并重新部署。当前压缩包约为万象 26 MB、雾凇 15 MB，实际大小以发布信息为准。更新某套词表会保留当前选择，也不会顺带下载大模型。
+3. **下载或更新本地模型：**选择万象并应用，点击 **下载 / 更新万象语法模型**。约 407 MB 的文件单独从 GitHub 下载；**模型开关默认开启，但下载完成后才生效**。未下载时，仍可用万象词表正常输入。
+4. **切换模型开关：**在万象下修改开关后点击 **应用选择（离线）**。切到雾凇时停用万象模型，下载文件和开关偏好保留；切回万象时恢复。关闭后重新开启，无需重复下载已有文件。
 
-词表与语法模型搭配使用：选择万象时可启用模型增强排序，选择雾凇时自动停用万象模型，切回万象恢复开关。更新词表不会顺带下载模型，也不会更改当前词库选择。下载支持暂停续传，首次部署需几分钟，建议预留 1.5 GB 空间。旧用户学习词库保留，Windows 词库更新无需管理员权限。[详细说明](docs/rime/wanxiang-updates.md)
+日后仍用这三个更新按钮检查新数据，无需重装输入法。更新器按文件摘要识别版本，GitHub 的 `LTS` 或 `nightly` 标签没变也能识别内容更新。下载由你点击开始，支持暂停续传；Android 会显示后台进度通知。首次编译词表可能需要几分钟，建议预留约 1.5 GB 空间。原有用户学习词库保留，Windows 的词表和模型更新无需 UAC。[来源、许可与更新细节](docs/rime/wanxiang-updates.md)
 
-Open **Dictionary** in Windows Settings or **词库与语法模型** on Android. Both dictionaries are bundled; new installations use Wanxiang. Select a dictionary and click **Apply selection offline**. Existing selections and learned words are retained. Separate buttons update Wanxiang (~26 MB) and Rime Ice (~15 MB) from their official GitHub releases without downloading a model or changing the selected dictionary.
+Open **Settings → Dictionary** on Windows, or **设置 → 词库与语法模型** on Android (also linked from AI assistance).
 
-The **407 MB Wanxiang grammar model** is a separate download. Its switch defaults to on and takes effect once downloaded. It improves local ranking when Wanxiang is selected, stays inactive with Rime Ice, and resumes when you switch back. Downloads support resume; allow a few minutes and about 1.5 GB of free space for deployment. Windows dictionary updates need no UAC. This is a local statistical model; online LLM assistance remains separate.
+1. **Choose a dictionary:** select Wanxiang or Rime Ice and click **Apply selection offline**. Both are bundled. New installations use Wanxiang; upgrades retain the existing choice.
+2. **Update dictionaries:** use **Update Wanxiang dictionary** or **Update Rime Ice dictionary** to check each official GitHub release, download, verify, and redeploy. Current archives are about 26 MB and 15 MB respectively; sizes may change. Each update keeps your selected dictionary and does not download a grammar model.
+3. **Download or update the local model:** select and apply Wanxiang, then click **Download / update grammar model**. The ~407 MB model is downloaded separately from GitHub. **Its switch defaults to on but takes effect only after download.** Wanxiang typing works with its dictionary before then.
+4. **Toggle the model:** change the switch under Wanxiang and **Apply selection offline**. Selecting Rime Ice deactivates the Wanxiang model while keeping its file and preference. Switching back restores the preference; re-enabling a downloaded model needs no new download.
 
-**Android 剪贴板：**点击候选栏左侧的剪贴板图标，选择当前复制内容或已有历史即可粘贴。即使关闭历史记录，也可以粘贴当前内容。
+Use the same three update buttons for later data updates without reinstalling the app. File digests detect changes even when GitHub reuses an `LTS` or `nightly` tag. Downloads start when you click and support pause/resume; Android shows a background progress notification. Initial dictionary compilation can take a few minutes; allow about 1.5 GB of free space. Learned words are retained, and Windows dictionary/model updates need no UAC. [Sources, licenses, and update details](docs/rime/wanxiang-updates.md)
 
-**Android clipboard:** tap the clipboard icon at the left of the candidate bar to paste the current clip or an existing history entry. Current-clip paste also works with history disabled.
+## 新版功能 · What's new
 
-## 配置 API 和模型 · API and model setup
+**Windows 1.7.1 / Android 1.6.1** 加入两套内置词表的独立更新和离线切换、单独下载的万象语法模型及切换时的模型适配。状态页显示所选词表、已安装数据版本和模型状态；部署后核对实际配置。
+
+Android 还在候选栏左侧增加常驻 **剪贴板** 图标：选择当前复制内容或已有历史即可粘贴。即使关闭历史记录、或在输入法启动前复制，也可读取当前文字；粘贴前会正常提交已有拼音。
+
+**Windows 1.7.1 / Android 1.6.1** add separate updates and offline switching for the two bundled dictionaries, an independent Wanxiang grammar-model download, and model activation that follows the selected dictionary. The status page shows the selected dictionary, installed data versions, and model state; deployment checks the resulting configuration.
+
+Android also adds a permanent **clipboard** icon at the left of the candidate bar. Tap it to paste the current clip or an existing history entry. Current text is available with history off or when copied before the IME started; pending pinyin is committed before pasting.
+
+## 配置在线 AI API 和模型 · Online AI API and model setup
+
+这里配置的是**远程 LLM**。**更新模型列表**只获取可选的在线模型 ID；选择模型是在告诉 API 使用哪一个，不会下载模型权重，也不会更新本地词表或万象语法模型。
 
 两端均内置 OpenAI、OpenRouter、Gemini 三个独立 Policy。一个 **Policy** 保存一套接口、Key、模型、参数和提示词配置。先配好一套并测试延迟，再按需复制或切换。
+
+This section configures **remote LLMs**. **Update models** refreshes the list of available remote model IDs. Selecting one tells the API which model to use; it downloads no weights and changes neither the local dictionaries nor the Wanxiang grammar model.
 
 Both clients include separate OpenAI, OpenRouter, and Gemini policies. A **policy** holds an endpoint, key, model, parameters, and prompt settings. Configure one, test its latency, then copy or switch policies as needed.
 
@@ -292,7 +330,7 @@ Thanks to the authors and maintainers of Rime, Trime, Weasel, and the dictionari
 
 雾凇内置词表来自官方 `nightly` 的 `cn_dicts.zip`（SHA-256 `2e682bf965577b113eebf69ab6f5a936d16e8b4a9ca2117e212ad34361cbc453`），词表来源署名保留在各文件头中。接入范围和修改见 [NOTICE](android/app/src/main/assets/shared/licenses/rime-ice/NOTICE.txt)。其他组件及依赖详见 [Windows 组件说明](windows/THIRD-PARTY.md)、[Android 依赖](gradle/libs.versions.toml) 和各组件的 LICENSE 文件。
 
-The Rime Ice snapshot is `99662ba01e3affa6a0f009174ca530b887bac3b6`; dictionary headers retain their original source credits. See the [integration notice](android/app/src/main/assets/shared/licenses/rime-ice/NOTICE.txt), [Windows component notes](windows/THIRD-PARTY.md), and [Android dependencies](gradle/libs.versions.toml) for details.
+The bundled Rime Ice tables come from the official `nightly` release’s `cn_dicts.zip` (SHA-256 `2e682bf965577b113eebf69ab6f5a936d16e8b4a9ca2117e212ad34361cbc453`); dictionary headers retain their original source credits. See the [integration notice](android/app/src/main/assets/shared/licenses/rime-ice/NOTICE.txt), [Windows component notes](windows/THIRD-PARTY.md), and [Android dependencies](gradle/libs.versions.toml) for details.
 
 ## 许可证 · License
 
