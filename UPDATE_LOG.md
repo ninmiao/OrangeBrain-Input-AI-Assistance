@@ -6,8 +6,8 @@
 
 | 项目 | 当前状态 |
 | --- | --- |
-| Windows 本地安装包 | 1.7.1，`dist/Zephyr-Input-Windows-1.7.1-Setup-x64.exe`，已构建并覆盖安装到本机，未推送新版 |
-| Android 本地安装包 | 1.6.1 ARM64，`dist/Zephyr-Input-1.6.1-arm64-v8a-demo.apk`，已构建；模拟器调试版已安装，未更新 S26，未推送新版 |
+| Windows 本地安装包 | 1.7.1，`dist/Zephyr-Input-Windows-1.7.1-Setup-x64.exe`，已构建并覆盖安装到本机，已推送 GitHub |
+| Android 本地安装包 | 1.6.1 ARM64，`dist/Zephyr-Input-1.6.1-arm64-v8a-demo.apk`，已构建；模拟器调试版已安装，未更新 S26，已推送 GitHub |
 | 源码提示词 | 4.0.1 / revision 13，中文与英文各一条短规则，纯文本单候选，无前后文和风格 |
 | 安装包提示词 | Windows 1.7.1 / Android 1.6.1 均包含 revision 13；本次未改提示词 |
 | LLM 接入 | OpenAI、OpenRouter、Google Gemini 在线 API；OpenRouter Preset 开关默认关闭 |
@@ -22,6 +22,13 @@
 - 不记录 Key、设备密码、个人输入内容或其他凭据。
 
 ## 待发布
+
+### 2026-11-16 · Windows 1.7.1 / Android 1.6.1 已推送 GitHub
+
+- 功能、双词表、文档和当前两份安装包已提交并推送至 `ninmiao/Zephyr-Input` 的 `main`，功能提交为 `5f0b81a6`。推送后已核对远端提交与本地一致。
+- 发布检查通过：5181 份源码/资源文件；无误跟踪的忽略文件、无缺少的必需文件、无凭据特征、无超过 GitHub 100 MiB 上限的文件。额外检查 APK 与 Windows JAR 内容未发现凭据；两份原始 CC BY 4.0 许可保留上游末尾空行。
+- 测试、安装和语料保留结果见下方记录。源码和安装包未作新的功能改动；本条单独记录已完成的推送状态。
+
 
 ### 2026-11-16 · 1.7.1 / 1.6.1 发布核对
 
