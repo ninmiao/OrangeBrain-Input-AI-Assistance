@@ -69,25 +69,37 @@ class TransportRegressionTest {
         assertEquals(RequestPhase.RECEIVING,(error as ApiTimeoutException).phase)
         assertTrue((System.nanoTime()-start)/1_000_000<2500)
     }
-    @Test fun retryExpandsBudgetOnceAndKeepsContext() = fixture {server,client,_ ->
+    @Test fun truncationDoesNotCreateAdditionalRequests() = fixture {server,client,_ ->
         server.enqueue(MockResponse().setBody("""{"choices":[{"finish_reason":"length","message":{"content":"[\"未结束"}}]}"""))
-        server.enqueue(MockResponse().setBody(envelope()))
-        val input=request.copy(input=AiInput("nihao","前文","后文"),outputTokenBudget=1)
-        assertEquals(listOf("你好"),client.request(server.url("/v1/chat/completions").toString(),"test","model",input,4000).candidates)
-        val first=kotlinx.serialization.json.Json.parseToJsonElement(server.takeRequest().body.readUtf8()).jsonObject
-        val second=kotlinx.serialization.json.Json.parseToJsonElement(server.takeRequest().body.readUtf8()).jsonObject
-        assertTrue(second.getValue("max_completion_tokens").jsonPrimitive.int>first.getValue("max_completion_tokens").jsonPrimitive.int)
-        assertEquals(first["messages"],second["messages"])
+        assertFailsWith<ApiTruncatedException>{client.request(server.url("/v1/chat/completions").toString(),"test","model",request,4000)}
+        assertEquals(1,server.requestCount)
     }
     @Test fun completeCandidateFromTruncationAvoidsSecondRequest() = fixture {server,client,_ ->
         server.enqueue(MockResponse().setBody("""{"choices":[{"finish_reason":"length","message":{"content":"[\"完整\",\"未结束"}}]}"""))
         val result=client.request(server.url("/v1/chat/completions").toString(),"test","model",request,2000)
         assertEquals(listOf("完整"),result.candidates);assertTrue(result.recovered);assertEquals(1,server.requestCount)
     }
+    @Test fun streamedCorrectionPrecedesAssistantInOneRequest() = fixture {server,client,_ ->
+        fun event(text:String)="data: "+buildJsonObject { putJsonArray("choices") { add(buildJsonObject {put("index",0);putJsonObject("delta"){put("content",text)}}) } }+"\n\n"
+        val first=event("[\"你好🍜\"")+":"+" ".repeat(4096)+"\n\n"
+        val body=first+event(",\"吃面吧\"]")+"data: [DONE]\n\n"
+        server.enqueue(MockResponse().setHeader("Content-Type","text/event-stream").setBody(body).throttleBody(first.toByteArray().size.toLong(),1200,TimeUnit.MILLISECONDS))
+        val partial=CompletableDeferred<AiResult>()
+        val task=CoroutineScope(currentCoroutineContext()).async { client.request(server.url("/v1/chat/completions").toString(),"test","model",request.copy(assistantEnabled=true,onPartial={partial.complete(it)}),5000) }
+        val value=withTimeout(1000){partial.await()}
+        assertEquals(listOf("你好🍜"),value.candidates);assertTrue(value.streaming);assertFalse(task.isCompleted)
+        assertEquals(listOf("你好🍜","吃面吧"),task.await().candidates);assertEquals(1,server.requestCount)
+    }
+    @Test fun timeoutKeepsCompleteStreamedCorrection() = fixture {server,client,_ ->
+        val first="data: "+buildJsonObject { putJsonArray("choices") {add(buildJsonObject {putJsonObject("delta"){put("content","[\"完整\"")}})} }+"\n\n:"+" ".repeat(4096)+"\n\n"
+        server.enqueue(MockResponse().setBody(first+"data: [DONE]\n\n").throttleBody(first.toByteArray().size.toLong(),3,TimeUnit.SECONDS))
+        val result=client.request(server.url("/v1/chat/completions").toString(),"test","model",request.copy(assistantEnabled=true),1000)
+        assertEquals(listOf("完整"),result.candidates);assertFalse(result.streaming);assertTrue(result.recovered);assertEquals(1,server.requestCount)
+    }
     @Test fun secondTruncationDoesNotLoop() = fixture {server,client,_ ->
         repeat(2){server.enqueue(MockResponse().setBody("""{"choices":[{"finish_reason":"length","message":{"content":"[\"未结束"}}]}"""))}
         assertFailsWith<ApiTruncatedException>{client.request(server.url("/v1/chat/completions").toString(),"test","model",request,4000)}
-        assertEquals(2,server.requestCount)
+        assertEquals(1,server.requestCount)
     }
 
 }

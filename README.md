@@ -1,6 +1,6 @@
 # Zephyr Input · 微风输入法
 
-[下载 Windows 版](dist/Zephyr-Input-Windows-1.10.1-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.8.1-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
+[下载 Windows 版](dist/Zephyr-Input-Windows-1.12.1-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.10.1-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
@@ -29,11 +29,11 @@ Cloud assistance supports **OpenAI, OpenRouter, and Google Gemini**, with separa
 
 ## Quickstart · 快速开始
 
-1. **Windows：**[下载安装器](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-Windows-1.10.1-Setup-x64.exe)，运行并允许 UAC，注销再登录后选择 **Zephyr Input**。开始菜单打开设置。
-2. **Android：**[下载 APK](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-1.8.1-arm64-v8a-demo.apk)，安装后按应用引导启用键盘，等待首次词库部署完成。
+1. **Windows：**[下载安装器](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-Windows-1.12.1-Setup-x64.exe)，运行并允许 UAC，注销再登录后选择 **Zephyr Input**。开始菜单打开设置。
+2. **Android：**[下载 APK](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-1.10.1-arm64-v8a-demo.apk)，安装后按应用引导启用键盘，等待首次词库部署完成。
 3. **先离线打字也可以。** 要用在线 AI，在 **方案 / Policy**（Android 为 **AI 辅助**）填对应平台的 API Key、选择模型并启用 AI；Windows 点击右上角 **保存并生效**。停顿后选择 AI 候选上屏。
 
-**Windows:** [download Setup](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-Windows-1.10.1-Setup-x64.exe), approve UAC, sign out/in and select Zephyr Input; open settings from Start. **Android:** [install the APK](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-1.8.1-arm64-v8a-demo.apk), enable the keyboard and let dictionaries deploy. Offline typing works immediately. For online AI, add your service's key and model in **Policy / AI assistance**, enable AI, and click **Save** on Windows; pause typing and select a suggestion.
+**Windows:** [download Setup](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-Windows-1.12.1-Setup-x64.exe), approve UAC, sign out/in and select Zephyr Input; open settings from Start. **Android:** [install the APK](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-1.10.1-arm64-v8a-demo.apk), enable the keyboard and let dictionaries deploy. Offline typing works immediately. For online AI, add your service's key and model in **Policy / AI assistance**, enable AI, and click **Save** on Windows; pause typing and select a suggestion.
 
 ## 词表、本地模型与在线 AI · Local data and online AI
 
@@ -84,9 +84,13 @@ Real emulator capture: for `woyaochihuogu`, online AI suggests “我要吃火�
 
 ### AI 助手 · Assistant
 
-默认开启 **纠错＋AI 助手**：第一项是保留原意的纠错，第二项根据输入意图给出可直接上屏的内容。需要回答、找词或续写时直接输入，选择“助手”候选即可。只想纠错，在 AI 开关旁关闭助手；Windows 修改后点击 **保存并生效**。
+候选栏显示 AI 当前状态，关闭、等待、请求、生成及断线可区分；Windows 设置页可查看后台与最近请求，并一键重启服务（保留配置和 Key，取消未上屏文字）。Android 点击 AI 小圆点查看状态，设置页可重置请求。
 
-**Correction + assistant** is on by default: the first candidate corrects your input; the second offers something ready to insert. Type a question, a term description or an unfinished sentence, then select the assistant candidate. For correction only, turn off the assistant beside Cloud AI; save the change on Windows.
+The candidate area shows AI request status. Windows settings show background services and the last request, with a restart button that preserves settings and keys but cancels uncommitted text. On Android, tap the AI dot for details or reset requests in settings.
+
+默认开启 **纠错＋AI 助手**，单次请求流式返回，完整纠错先显示，助手随后补到第二位：第一项是保留原意的纠错，第二项根据输入意图给出可直接上屏的内容。需要回答、找词或续写时直接输入，选择“助手”候选即可。只想纠错，在 AI 开关旁关闭助手；Windows 修改后点击 **保存并生效**。
+
+**Correction + assistant** is on by default. One streaming request shows the complete correction first, then fills the assistant slot: the first candidate corrects your input; the second offers something ready to insert. Type a question, a term description or an unfinished sentence, then select the assistant candidate. For correction only, turn off the assistant beside Cloud AI; save the change on Windows.
 
 | 当前输入 / Input | 前文 / Context | 助手候选示例 / Assistant example |
 | --- | --- | --- |

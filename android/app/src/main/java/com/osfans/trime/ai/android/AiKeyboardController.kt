@@ -84,7 +84,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         }
         val content = LinearLayout(context).apply { gravity = android.view.Gravity.CENTER_VERTICAL }
         label = TextView(context).apply { setPadding(dp(8), 0, dp(8), 0); textSize = 12f }
-        content.addView(label)
+        root.addView(label,LinearLayout.LayoutParams(-2,dp(candidateHeightDp)))
         candidateRow = LinearLayout(context)
         content.addView(candidateRow, LinearLayout.LayoutParams(-2, -1))
         candidateScroll = HorizontalScrollView(context).apply {
@@ -129,19 +129,32 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         val c = store.config
         scriptButton?.text = if (c.traditional) "繁" else "简"
         scriptButton?.contentDescription = if (c.traditional) "繁体输出，点击切换简体" else "简体输出，点击切换繁体"
-        label?.text = "AI · " + when {
+        val indicator = when {
             sensitive -> "隐私字段"
             !c.enabled -> "关闭"
             state is AiState.Loading -> "请求中…"
             state is AiState.Failed -> (state as AiState.Failed).detail
-            else -> "就绪"
+            ready?.result?.streamError?.isNotEmpty() == true -> "部分返回"
+            ready?.result?.streaming == true -> "生成中…"
+            ready != null -> "已返回"
+            else -> "待请求"
         }
-        if (renderedCandidates !== ready) {
+        label?.text = "● AI"
+        label?.contentDescription = "AI 状态：$indicator"
+        label?.setTextColor(when {
+            state is AiState.Failed || ready?.result?.streamError?.isNotEmpty()==true -> 0xffb3261e.toInt()
+            state is AiState.Loading || ready?.result?.streaming==true -> 0xff986500.toInt()
+            ready!=null -> 0xff267348.toInt()
+            else -> 0xff626872.toInt()
+        })
+        label?.setOnClickListener { android.widget.Toast.makeText(service,"AI：$indicator",android.widget.Toast.LENGTH_SHORT).show() }
+        AiRuntimeStatus.state.value=indicator
+        if (renderedCandidates?.request?.stamp != ready?.request?.stamp) {
             candidateScroll?.scrollTo(0, 0)
             renderedCandidates = ready
         }
         candidateRow?.removeAllViews()
-        label?.visibility = if (ready == null) View.VISIBLE else View.GONE
+        label?.visibility = View.VISIBLE
         ready?.let { result ->
             fun add(text: String, completion: Boolean, role: String = "") {
                 candidateRow?.addView(Button(panel!!.context).apply {
@@ -169,6 +182,13 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
                 })
             }
             result.result.candidates.forEachIndexed { index, text -> add(text, false, if (store.config.assistantEnabled) (if (index == 0) "纠错" else "助手") else "") }
+            if (store.config.assistantEnabled && result.result.candidates.size == 1) {
+                candidateRow?.addView(android.widget.TextView(panel!!.context).apply {
+                    text = if (result.result.streaming) "助手：生成中…" else "助手：未完成"
+                    textSize = candidateTextSize;setTextColor(0xff777777.toInt());gravity=android.view.Gravity.CENTER
+                    setPadding(12,0,12,0);layoutParams=LinearLayout.LayoutParams(-2,-1)
+                })
+            }
             if (result.result.completion.isNotBlank()) add(result.result.completion, true)
         }
     }
@@ -270,7 +290,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
 
     private fun adopt(result: AiState.Ready, text: String) {
         val snapshot = target ?: return
-        if (ready != result || !valid(result, snapshot)) { coordinator.invalidate(); return }
+        if (ready?.request?.stamp != result.request.stamp || !valid(result, snapshot)) { coordinator.invalidate(); return }
         val connection = service.currentInputConnection ?: return
         if (snapshot.composing) {
             service.postRimeJob {

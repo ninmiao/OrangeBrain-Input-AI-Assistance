@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$Image,[string]$Version='1.10.1',[string]$Compiler)
+param([Parameter(Mandatory=$true)][string]$Image,[string]$Version='1.12.1',[string]$Compiler)
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $Image=(Resolve-Path -LiteralPath $Image).Path

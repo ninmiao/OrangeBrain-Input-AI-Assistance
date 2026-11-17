@@ -60,6 +60,20 @@ class CoreTest {
         advanceUntilIdle()
         assertEquals(0, calls)
     }
+    @Test fun streamUpdatesAreRejectedAfterInputChanges() = runTest {
+        val ready=mutableListOf<AiState.Ready>()
+        var callback:((AiResult)->Unit)?=null
+        val coordinator=AiRequestCoordinator(this,{ req ->
+            callback=req.onPartial
+            req.onPartial?.invoke(AiResult(listOf("first"),streaming=true))
+            delay(1000)
+            AiResult(listOf("first","second"))
+        },{if(it is AiState.Ready)ready.add(it)})
+        coordinator.submit(request(),true,false)
+        advanceTimeBy(201);runCurrent();assertEquals(listOf("first"),ready.single().result.candidates)
+        coordinator.invalidate();callback?.invoke(AiResult(listOf("stale","answer")))
+        advanceUntilIdle();assertEquals(1,ready.size)
+    }
 
     @Test fun eachSnapshotDimensionInvalidatesInFlightResult() = runTest {
         val base = request()

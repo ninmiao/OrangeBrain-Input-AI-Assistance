@@ -330,16 +330,17 @@ J payload(const J& arg) {
   } else if (responses(e)) {
     out["input"] = text;
     out["instructions"] = instructions;
-    out["stream"] = false;
+    out["stream"] = request.value("streaming", true);
     out["store"] = false;
     out.update(parameters);
   } else {
     out["messages"] =
         J::array({J{{"role", "system"}, {"content", instructions}},
                   J{{"role", "user"}, {"content", text}}});
-    out["stream"] = false;
+    out["stream"] = request.value("streaming", true);
     out.update(parameters);
   }
+  out["stream"] = request.value("streaming", true);
   return out;
 }
 J envelope(const J& a) {
@@ -666,6 +667,7 @@ J providersDecode(const J& a) {
   return out;
 }
 
+#include "stream.inc"
 J dispatch(const J& q) {
   auto op = q.at("op").get<std::string>();
   auto a = q.value("args", J::object());
@@ -713,6 +715,7 @@ J dispatch(const J& q) {
     return decode(a.at("text").get<std::string>(), a.value("truncated", false), a.value("assistantEnabled", false));
   if (op == "payload") return payload(a);
   if (op == "envelope") return envelope(a);
+  if (op == "stream") return streamDecode(a);
   if (op == "prompt" && a.value("assistantEnabled", false))
     return assistantPrompt(a.value("chinese", true), a.value("traditional", false), a.value("custom", std::string()));
   if (op == "prompt")

@@ -15,7 +15,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
 /** Stateless HTTPS adapters for OpenAI Responses, OpenRouter/chat and Gemini Interactions. Cancellation closes the underlying call, including body reads.
- * Reuses connections; does not redirect, log or change provider/model settings. Retries truncation once within the original deadline.
+ * Reuses connections; does not redirect, log or change provider/model settings. Publishes complete candidates from a single SSE request within the original deadline.
  */
 class ChatCompletionsClient internal constructor(private val http: OkHttpClient) {
     constructor() : this(sharedHttp)
@@ -30,16 +30,7 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
             putJsonObject("request") { put("input",Json.encodeToJsonElement(AiInput.serializer(),request.input));put("systemPrompt",request.systemPrompt);put("assistantEnabled",request.assistantEnabled);put("outputTokenBudget",request.outputTokenBudget) }
         }).jsonObject
     suspend fun request(endpoint:String,key:String,model:String,request:AiRequest,timeoutMs:Int=10000,parameters:Map<String,JsonPrimitive> = emptyMap(),provider:String=""):AiResult {
-        val deadline=System.nanoTime()+timeoutMs*1_000_000L
-        return try { send(endpoint,key,model,request,timeoutMs,parameters,provider) }
-        catch(e:ApiTruncatedException) {
-            val left=((deadline-System.nanoTime())/1_000_000).toInt()
-            if(left<1000)throw e
-            val old=parameters["max_completion_tokens"]?.intOrNull ?: parameters["max_tokens"]?.intOrNull ?: request.outputTokenBudget
-            val raised=NativeCore.invoke("retryBudget",buildJsonObject {put("budget",old);put("input",request.input.input);put("remainingMs",left)}).jsonPrimitive.int
-            if(raised<=old)throw e
-            send(endpoint,key,model,request.copy(outputTokenBudget=raised),left,parameters.filterKeys { it!="max_tokens" && it!="max_completion_tokens" },provider)
-        }
+        return send(endpoint,key,model,request,timeoutMs,parameters,provider)
     }
     private suspend fun send(endpoint: String, key: String, model: String, request: AiRequest, timeoutMs: Int = 10000, parameters: Map<String, JsonPrimitive> = emptyMap(), provider: String = ""): AiResult {
         val url = URI(endpoint)
@@ -67,6 +58,7 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
         val call = client.newCall(builder.build())
         // Coroutine deadline also covers a queued call. The cancellation hook below
         // cancels its socket/HTTP2 stream even while the body is still being read.
+        val latest = AtomicReference<AiResult?>(null)
         return try { withTimeoutOrNull(timeoutMs.toLong()) {
             suspendCancellableCoroutine { continuation ->
                 continuation.invokeOnCancellation { call.cancel() }
@@ -81,22 +73,40 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
                                     throw ApiHttpException(it.code)
                                 }
                                 val stream = it.body?.byteStream() ?: throw ApiResponseException()
-                                val output = java.io.ByteArrayOutputStream()
+                                var state:JsonElement = buildJsonObject {}
+                                var published:List<String>? = null
+                                val json=Json { ignoreUnknownKeys=true }
+                                fun feed(bytes:ByteArray,size:Int,finish:Boolean):AiResult? {
+                                    val hex=buildString(size*2) { for(i in 0 until size) { val b=bytes[i].toInt() and 255;append("0123456789abcdef"[b shr 4]);append("0123456789abcdef"[b and 15]) } }
+                                    val r=NativeCore.invoke("stream",buildJsonObject {
+                                        put("endpoint",endpoint);put("assistantEnabled",request.assistantEnabled)
+                                        put("state",state);put("chunkHex",hex);put("finish",finish)
+                                    }).jsonObject
+                                    state=r.getValue("state")
+                                    val value=r["result"]?.takeIf { it != JsonNull }?.let { json.decodeFromJsonElement(AiResult.serializer(),it) }
+                                    if(value!=null) {
+                                        latest.set(value)
+                                        if(value.candidates!=published && continuation.isActive) { published=value.candidates;request.onPartial?.invoke(value) }
+                                    }
+                                    return value
+                                }
                                 val buffer = ByteArray(4096)
-                                while (true) {
+                                while (continuation.isActive) {
                                     val size = stream.read(buffer)
                                     if (size < 0) break
-                                    if (output.size() + size > 65536) throw ApiResponseException()
-                                    output.write(buffer, 0, size)
+                                    feed(buffer,size,false)
                                 }
-                                decodeEnvelope(output.toByteArray(), request, endpoint)
+                                feed(buffer,0,true) ?: throw ApiResponseException()
                             }
                         }
-                        continuation.resumeWith(result)
+                        continuation.resumeWith(result.recoverCatching { error ->
+                            if(error is CancellationException)throw error
+                            latest.get()?.copy(streaming=false,streamError="interrupted",recovered=true) ?: throw error
+                        })
                     }
                 })
             }
-        } ?: throw ApiTimeoutException(phase.get())
+        } ?: latest.get()?.copy(streaming=false,streamError="timeout",recovered=true) ?: throw ApiTimeoutException(phase.get())
         } catch (cancelled:CancellationException) { throw cancelled
         } catch (timeout:InterruptedIOException) { throw ApiTimeoutException(phase.get()) }
     }

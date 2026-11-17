@@ -6,7 +6,7 @@ import kotlinx.serialization.json.*
 @Serializable data class TokenUsage(val input:Int?=null,val output:Int?=null,val reasoning:Int?=null,val cached:Int?=null) {
  fun summary()="tokens · in ${input ?: "–"} · out ${output ?: "–"} · think ${reasoning ?: "–"} · cached ${cached ?: "–"}"
 }
-@Serializable data class AiResult(val candidates:List<String>,val completion:String="",val usage:TokenUsage?=null,val recovered:Boolean=false)
+@Serializable data class AiResult(val candidates:List<String>,val completion:String="",val usage:TokenUsage?=null,val recovered:Boolean=false,val streaming:Boolean=false,val streamError:String="")
 object Protocol {
  private val json=Json { ignoreUnknownKeys=true;encodeDefaults=true }
  fun encode(input:AiInput)=NativeCore.invoke("encode",json.encodeToJsonElement(input)).jsonPrimitive.content

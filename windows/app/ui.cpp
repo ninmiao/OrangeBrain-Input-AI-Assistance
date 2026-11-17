@@ -35,6 +35,8 @@ enum Id {
   AFTER,
   BUDGET,
   ASSISTANT,
+  SERVICE_STATUS,
+  SERVICE_RESTART,
   NAME = 300,
   ENDPOINT,
   MODEL,
@@ -146,6 +148,26 @@ class App {
   bool apiBusy_ = false, dictBusy_ = false, dictCancelable_ = true;
   int px(int x) const { return MulDiv(x, dpi_, 96); }
   HWND control(int id) const { return controls_.at(id); }
+  void serviceState() {
+    auto dir=appDirectory();
+    bool broker=processRunning(dir/L"ZephyrBroker.exe"),server=processRunning(dir/L"ZephyrServer.exe");
+    std::string value=std::string(u8"AI 后台：")+(broker?u8"运行":u8"未运行")+u8" · 输入服务："+(server?u8"运行":u8"未运行");
+    value+=store_.load().value("enabled",false)?u8" · 已开启":u8" · 已关闭";
+    auto path=store_.directory()/L"last-request-status.json";
+    if(fs::exists(path)) {auto r=J::parse(readFile(path,4096),nullptr,false);if(r.is_object())value+=u8"\n最近请求："+r.value("state",std::string())+" · "+r.value("time",std::string());}
+    else value+=u8"\n尚未收到请求结果（运行不代表 API 已连通）";
+    if(utf8(text(control(SERVICE_STATUS)))!=value)text(control(SERVICE_STATUS),value);
+  }
+  void restartServices() {
+    EnableWindow(control(SERVICE_RESTART),FALSE);text(control(SERVICE_STATUS),L"正在重启服务…");
+    auto target=window_;auto dir=appDirectory();
+    workers_.emplace_back([target,dir] {
+      auto d=std::make_unique<Done>();d->kind=SERVICE_RESTART;
+      try {stopUserProcess(dir/L"ZephyrServer.exe");stopUserProcess(dir/L"ZephyrBroker.exe");zw::run(dir/L"ZephyrBroker.exe",{});}
+      catch(const std::exception& e){d->error=errorText(e);}
+      if(PostMessageW(target,JOB_DONE,0,reinterpret_cast<LPARAM>(d.get())))d.release();
+    });
+  }
   void status(const std::string& s) { text(control(STATUS), s); }
   void modified(int id = 0) {
     if (loading_) return;
@@ -388,9 +410,10 @@ class App {
     check(0, CONTEXT, L"参考前后文 / Surrounding text", 226);
     field(0, BEFORE, L"前文字符 / Before (0–500)", 266);
     field(0, AFTER, L"后文字符 / After (0–500)", 336);
+    column_ = 0;
+    button(0,SERVICE_RESTART,L"重启服务（取消未上屏文字）",346);
     column_ = -1;
-    label(0, L"数字选词 · Tab 选候选 · Ctrl+Enter 原文 · Esc 取消", 396);
-    label(0, L"修改后点击右上角保存；密码框不发送在线请求。", 424);
+    label(0,L"",396,48);controls_[SERVICE_STATUS]=pages_[0].items.back().window;
     column_ = 0;
     field(1, NAME, L"方案名称 / Policy name", 12);
     field(1, ENDPOINT, L"HTTPS 接口 / API endpoint", 82);
@@ -457,6 +480,7 @@ class App {
     status(u8"修改后请保存 / Save to apply changes");
     EnableWindow(control(SAVE), FALSE);
     layout();
+    serviceState();SetTimer(window_,10,2000,nullptr);
     if (smoke_) SetTimer(window_, 9, 300, nullptr);
   }
   void layout() {
@@ -825,6 +849,7 @@ class App {
   }
   void done(std::unique_ptr<Done> d) {
     if (closing_) return;
+    if(d->kind==SERVICE_RESTART) {EnableWindow(control(SERVICE_RESTART),TRUE);serviceState();status(d->error.empty()?u8"重启已发起 / Restart requested":d->error);return;}
     if(d->partial) { text(control(BENCH_RESULT),d->output); return; }
     if (d->kind >= DICT_REDEPLOY) {
       dictBusy_ = false;
@@ -945,6 +970,7 @@ class App {
   void command(int id, int notification) {
     if (loading_) return;
     if(id==SAVE) { save(false); return; }
+    if(id==SERVICE_RESTART) {restartServices();return;}
     if (id == POLICIES && notification == LBN_SELCHANGE) {
       int i=int(SendMessageW(control(POLICIES),LB_GETCURSEL,0,0));
       if(i>=0 && size_t(i)<config_["policies"].size()) {
@@ -1035,6 +1061,8 @@ class App {
       require(fs::absolute(store_.directory())!=fs::absolute(userDirectory()),"UI self-test requires an isolated data directory");
       for(auto& p:original["policies"]) require(!store_.hasKey(p["id"]),"UI self-test requires a directory without credentials");
       require(config_==original,"UI configuration mismatch");
+      serviceState();
+      require(IsWindow(control(SERVICE_RESTART)) && utf8(text(control(SERVICE_STATUS))).find(u8"AI 后台")!=std::string::npos,"Service indicator or restart button missing");
       checkValue(ASSISTANT,false);modified(ASSISTANT);
       require(dirty_ && store_.load()==original,"Assistant mode saved before Save");
       require(save(false) && !store_.load()["assistantEnabled"].get<bool>(),"Assistant mode not persisted");
@@ -1157,6 +1185,7 @@ class App {
         return 0;
       case WM_TIMER:
         KillTimer(window_, w);
+        if(w==10){serviceState();SetTimer(window_,10,2000,nullptr);return 0;}
         if (w == 4) {
           if(flash_>0) --flash_;
           if(flash_) SetTimer(window_,4,40,nullptr);

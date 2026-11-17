@@ -1,0 +1,404 @@
+{
+  "scope": "synthetic protocol and intent smoke tests; no exact-match score",
+  "models": [
+    {
+      "model": "gemini-3.8-flash",
+      "count": 6,
+      "complete_pairs": 6,
+      "results": [
+        {
+          "candidates": [
+            "今天下班以后我想和team一起去吃火锅，但是明天上午还有meeting，所以我们早点回家",
+            "今天下班以后我想和team一起去吃火锅，但是明天上午还有meeting，所以我们早点回家"
+          ],
+          "category": "mixed-correction",
+          "elapsed_ms": 3554,
+          "id": "parallel-zh-mixed",
+          "language": "zh",
+          "roleLatencyMs": {
+            "assistant": 3531,
+            "correction": 1749
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 261,
+            "output": 52,
+            "reasoning": 226
+          }
+        },
+        {
+          "candidates": [
+            "有个专业词汇o开头的骨科医生相关",
+            "orthopedist"
+          ],
+          "category": "term",
+          "elapsed_ms": 1341,
+          "id": "parallel-zh-term",
+          "language": "zh",
+          "roleLatencyMs": {
+            "assistant": 1212,
+            "correction": 1313
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 209,
+            "output": 18,
+            "reasoning": 0
+          }
+        },
+        {
+          "candidates": [
+            "颜表情笑死",
+            "ꉂ(ˊᗜˋ*)"
+          ],
+          "category": "kaomoji",
+          "elapsed_ms": 3820,
+          "id": "parallel-zh-kaomoji",
+          "language": "zh",
+          "roleLatencyMs": {
+            "assistant": 3803,
+            "correction": 1348
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 173,
+            "output": 14,
+            "reasoning": 241
+          }
+        },
+        {
+          "candidates": [
+            "I wanted to receive the updated report before our meeting tomorrow; please keep the original file and all 123 test results.",
+            "I wanted to receive the updated report before our meeting tomorrow; please keep the original file and all 123 test results."
+          ],
+          "category": "long-correction",
+          "elapsed_ms": 1630,
+          "id": "parallel-en-long",
+          "language": "en",
+          "roleLatencyMs": {
+            "assistant": 1609,
+            "correction": 1359
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 217,
+            "output": 54,
+            "reasoning": 109
+          }
+        },
+        {
+          "candidates": [
+            "Tomorrow at 3:00 PM, there is a meeting with the team. Please bring the latest report.",
+            "We have a team meeting tomorrow at 3:00 PM. Please bring the latest report."
+          ],
+          "category": "translation",
+          "elapsed_ms": 2672,
+          "id": "parallel-en-mixed",
+          "language": "en",
+          "roleLatencyMs": {
+            "assistant": 2655,
+            "correction": 1629
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 197,
+            "output": 45,
+            "reasoning": 181
+          }
+        },
+        {
+          "candidates": [
+            "1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144. This is...",
+            "the Fibonacci sequence"
+          ],
+          "category": "continuation",
+          "elapsed_ms": 1887,
+          "id": "parallel-en-sequence",
+          "language": "en",
+          "roleLatencyMs": {
+            "assistant": 1828,
+            "correction": 1853
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 205,
+            "output": 52,
+            "reasoning": 0
+          }
+        }
+      ]
+    },
+    {
+      "model": "gpt-6-luna",
+      "count": 6,
+      "complete_pairs": 6,
+      "results": [
+        {
+          "candidates": [
+            "今天下班以后我想和team一起去吃火锅，但是明天上午还有meeting，所以我们早点回家。",
+            "今天下班后我想和团队一起去吃火锅，不过明天上午还有会议，所以我们早点回去吧。"
+          ],
+          "category": "mixed-correction",
+          "elapsed_ms": 2340,
+          "id": "parallel-zh-mixed",
+          "language": "zh",
+          "roleLatencyMs": {
+            "assistant": 2153,
+            "correction": 2315
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 284,
+            "output": 67,
+            "reasoning": 259
+          }
+        },
+        {
+          "candidates": [
+            "有个专业词汇，O开头的，骨科医生相关。",
+            "orthopedist（骨科医生）；更正式或具体地说，orthopedic surgeon（骨科外科医生）。"
+          ],
+          "category": "term",
+          "elapsed_ms": 2475,
+          "id": "parallel-zh-term",
+          "language": "zh",
+          "roleLatencyMs": {
+            "assistant": 2428,
+            "correction": 2027
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 226,
+            "output": 57,
+            "reasoning": 302
+          }
+        },
+        {
+          "candidates": [
+            "颜表情消失",
+            "（≧∇≦）"
+          ],
+          "category": "kaomoji",
+          "elapsed_ms": 3063,
+          "id": "parallel-zh-kaomoji",
+          "language": "zh",
+          "roleLatencyMs": {
+            "assistant": 2439,
+            "correction": 3041
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 192,
+            "output": 29,
+            "reasoning": 401
+          }
+        },
+        {
+          "candidates": [
+            "I wanted to receive the updated report before our meeting tomorrow. Please keep the original file and all 123 test results.",
+            "I’d like to receive the updated report before our meeting tomorrow. Please keep the original file and include all 123 test results."
+          ],
+          "category": "long-correction",
+          "elapsed_ms": 1794,
+          "id": "parallel-en-long",
+          "language": "en",
+          "roleLatencyMs": {
+            "assistant": 1767,
+            "correction": 1159
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 228,
+            "output": 66,
+            "reasoning": 116
+          }
+        },
+        {
+          "candidates": [
+            "We have a team meeting tomorrow at 3 p.m. Please bring the latest report.",
+            "We have a team meeting tomorrow at 3 p.m. Please bring the latest report."
+          ],
+          "category": "translation",
+          "elapsed_ms": 2074,
+          "id": "parallel-en-mixed",
+          "language": "en",
+          "roleLatencyMs": {
+            "assistant": 1644,
+            "correction": 2053
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 212,
+            "output": 52,
+            "reasoning": 187
+          }
+        },
+        {
+          "candidates": [
+            "1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144. This is…",
+            "the Fibonacci sequence"
+          ],
+          "category": "continuation",
+          "elapsed_ms": 2085,
+          "id": "parallel-en-sequence",
+          "language": "en",
+          "roleLatencyMs": {
+            "assistant": 1316,
+            "correction": 2061
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 208,
+            "output": 57,
+            "reasoning": 217
+          }
+        }
+      ]
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "count": 6,
+      "complete_pairs": 6,
+      "results": [
+        {
+          "candidates": [
+            "今天下班以后我想和team一起去吃火锅，但是明天上午还有meeting，所以我们早点回家。",
+            "今天下班以后我想和team一起去吃火锅，但是明天上午还有meeting，所以我们早点回家。"
+          ],
+          "category": "mixed-correction",
+          "elapsed_ms": 4727,
+          "id": "parallel-zh-mixed",
+          "language": "zh",
+          "roleLatencyMs": {
+            "assistant": 4626,
+            "correction": 4704
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 284,
+            "output": 66,
+            "reasoning": 51
+          }
+        },
+        {
+          "candidates": [
+            "有个专业词汇，O开头的，骨科医生相关。",
+            "orthopedist（骨科医生）"
+          ],
+          "category": "term",
+          "elapsed_ms": 5263,
+          "id": "parallel-zh-term",
+          "language": "zh",
+          "roleLatencyMs": {
+            "assistant": 5064,
+            "correction": 5245
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 226,
+            "output": 40,
+            "reasoning": 83
+          }
+        },
+        {
+          "candidates": [
+            "让表情消失",
+            "(≧▽≦)哈哈哈"
+          ],
+          "category": "kaomoji",
+          "elapsed_ms": 9738,
+          "id": "parallel-zh-kaomoji",
+          "language": "zh",
+          "roleLatencyMs": {
+            "assistant": 8371,
+            "correction": 9719
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 192,
+            "output": 30,
+            "reasoning": 233
+          }
+        },
+        {
+          "candidates": [
+            "I wanted to receive the updated report before our meeting tomorrow. Please keep the original file and all 123 test results.",
+            "I wanted to receive the updated report before our meeting tomorrow. Please keep the original file and all 123 test results."
+          ],
+          "category": "long-correction",
+          "elapsed_ms": 1256,
+          "id": "parallel-en-long",
+          "language": "en",
+          "roleLatencyMs": {
+            "assistant": 1232,
+            "correction": 954
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 228,
+            "output": 62,
+            "reasoning": 11
+          }
+        },
+        {
+          "candidates": [
+            "We have a meeting with the team tomorrow at 3 p.m. Please bring the latest report.",
+            "We have a team meeting tomorrow at 3 p.m. Please bring the latest report."
+          ],
+          "category": "translation",
+          "elapsed_ms": 1283,
+          "id": "parallel-en-mixed",
+          "language": "en",
+          "roleLatencyMs": {
+            "assistant": 1124,
+            "correction": 1253
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 212,
+            "output": 54,
+            "reasoning": 56
+          }
+        },
+        {
+          "candidates": [
+            "This is 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144.",
+            "the Fibonacci sequence"
+          ],
+          "category": "continuation",
+          "elapsed_ms": 2182,
+          "id": "parallel-en-sequence",
+          "language": "en",
+          "roleLatencyMs": {
+            "assistant": 1183,
+            "correction": 2159
+          },
+          "success": true,
+          "usage": {
+            "cached": 0,
+            "input": 208,
+            "output": 57,
+            "reasoning": 68
+          }
+        }
+      ]
+    }
+  ]
+}

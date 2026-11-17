@@ -272,7 +272,8 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
 }
 
 void RimeWithWeaselHandler::CommitComposition(WeaselSessionId ipc_id) {
-  auto& z=m_zephyr[ipc_id];_ZephyrChoose(ipc_id,z.selected);_ZephyrRefresh(ipc_id);z.refreshPending=true;
+  auto& z=m_zephyr[ipc_id];if(z.selected<z.rimeIndices.size()&&z.rimeIndices[z.selected]==-2)return;
+  _ZephyrChoose(ipc_id,z.selected);_ZephyrRefresh(ipc_id);z.refreshPending=true;
 }
 
 void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
@@ -283,7 +284,8 @@ void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
 void RimeWithWeaselHandler::SelectCandidateOnCurrentPage(
     size_t index,
     WeaselSessionId ipc_id) {
-  auto& z=m_zephyr[ipc_id];_ZephyrChoose(ipc_id,z.page*5+index);_ZephyrRefresh(ipc_id);z.refreshPending=true;
+  auto& z=m_zephyr[ipc_id];auto slot=z.page*5+index;if(slot<z.rimeIndices.size()&&z.rimeIndices[slot]==-2)return;
+  _ZephyrChoose(ipc_id,slot);_ZephyrRefresh(ipc_id);z.refreshPending=true;
 }
 
 bool RimeWithWeaselHandler::HighlightCandidateOnCurrentPage(

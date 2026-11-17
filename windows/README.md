@@ -4,7 +4,7 @@ Windows 客户端完全使用 C++。标准 Win32 设置窗口、WinHTTP 网络�
 
 ## 安装与运行
 
-双击 `Zephyr-Input-Windows-1.9.1-Setup-x64.exe`，完成 Windows 管理员授权。安装程序自动定位 `%ProgramFiles%\Zephyr Input`，注册独立的 x64/x86 TSF 组件、开始菜单和登录启动项。运行新版 Setup 即可覆盖更新，保留当前用户的设置、Key 和词库。安装后注销再登录，从 Windows 输入法菜单选择 **Zephyr Input**。如未显示，在中文（简体，中国）的语言选项中添加 Zephyr Input。
+双击 `Zephyr-Input-Windows-1.12.1-Setup-x64.exe`，完成 Windows 管理员授权。安装程序自动定位 `%ProgramFiles%\Zephyr Input`，注册独立的 x64/x86 TSF 组件、开始菜单和登录启动项。运行新版 Setup 即可覆盖更新，保留当前用户的设置、Key 和词库。安装后注销再登录，从 Windows 输入法菜单选择 **Zephyr Input**。如未显示，在中文（简体，中国）的语言选项中添加 Zephyr Input。
 
 开始菜单 **Zephyr Input** 打开设置；`ZephyrSettings.exe` 也可直接运行。`start_service.bat` 启动当前用户的 AI Broker 和本地输入服务。从 Windows“设置 → 应用 → 已安装的应用 → Zephyr Input”卸载，或运行安装目录的 `unins*.exe（具体编号以系统卸载入口为准）`。卸载程序注销输入法、清理程序文件、开始菜单和启动项；被其他应用占用的旧 TSF DLL 在重启时删除。用户数据默认保留在 `%APPDATA%\ZephyrInput`，便于重装恢复。
 
@@ -38,7 +38,7 @@ Windows 客户端完全使用 C++。标准 Win32 设置窗口、WinHTTP 网络�
 
 ## AI 设置
 
-AI 默认关闭。在输入页启用后点击右上角“保存并生效”。所有参数及方案选择均手动保存；保存后短暂高亮，关闭未保存窗口会询问是否保存。内置三个独立 Policy：OpenAI `gpt-6.1-terra`（低思考、Fast 快速模式）、OpenRouter `deepseek/deepseek-v4-flash-0731`（`wafer/us`），OpenRouter 保持无思考、普通速度；Gemini `gemini-4-hydrogen` 使用 low、普通速度。模型支持下拉选择或直接输入 ID，点击“Update models / 更新模型列表”使用当前 Policy 的接口和 Key 获取可用模型；刷新不会更改当前模型，列表更新后点击保存。OpenRouter 同步接口返回的思考参数；列表按接口隔离，刷新失败保留已有内容。每个 Policy 可编辑接口、模型、路由、按模型适配的思考档位、速度和中英文附加提示词，并测试当前 Policy 延迟。测速有独立结果区，显示被测 Policy、模型、思考、速度、耗时、候选与 token；切换 Policy 后结果保留在原项，HTTP 错误显示状态码。未知模型默认省略思考参数。OpenRouter 模型可点击按钮拉取可用供应商，支持下拉选择、刷新和手填路由 ID；列表显示名称及真实路由 tag（例如 `wafer/us`），Policy 列表同步显示所选供应商。OpenAI 和 Gemini 不使用供应商参数。三个 API 均发送完整提示词，Preset 已移除。默认请求一个 JSON 数组候选，解析兼容多个完整候选。前后文默认开启，前 50 / 后 0 字，可调整；输出 token 预算为软预算，默认 256。复制 Policy 会复制其参数及已保存的加密凭据。
+AI 默认关闭。在输入页启用后点击右上角“保存并生效”。所有参数及方案选择均手动保存；保存后短暂高亮，关闭未保存窗口会询问是否保存。内置三个独立 Policy：OpenAI `gpt-6.1-terra`（低思考、Fast 快速模式）、OpenRouter `deepseek/deepseek-v4-flash-0731`（`wafer/us`），OpenRouter 保持无思考、普通速度；Gemini `gemini-4-hydrogen` 使用 low、普通速度。模型支持下拉选择或直接输入 ID，点击“Update models / 更新模型列表”使用当前 Policy 的接口和 Key 获取可用模型；刷新不会更改当前模型，列表更新后点击保存。OpenRouter 同步接口返回的思考参数；列表按接口隔离，刷新失败保留已有内容。每个 Policy 可编辑接口、模型、路由、按模型适配的思考档位、速度和中英文附加提示词，并测试当前 Policy 延迟。测速有独立结果区，显示被测 Policy、模型、思考、速度、耗时、候选与 token；切换 Policy 后结果保留在原项，HTTP 错误显示状态码。未知模型默认省略思考参数。OpenRouter 模型可点击按钮拉取可用供应商，支持下拉选择、刷新和手填路由 ID；列表显示名称及真实路由 tag（例如 `wafer/us`），Policy 列表同步显示所选供应商。OpenAI 和 Gemini 不使用供应商参数。三个 API 均发送完整提示词，Preset 已移除。默认单次流式请求返回纠错、助手两个 JSON 数组候选：纠错完整到达立即显示，助手随后填入第二位；可关闭助手，仅保留纠错。前后文默认开启，前 50 / 后 0 字，可调整；输出 token 预算为软预算，默认 256。复制 Policy 会复制其参数及已保存的加密凭据。
 
 每次一键测速从现有 Policy 勾选 1–5 项并点击运行，逐项追加全部成功或失败结果。使用各自的模型、Key 和参数，发送含前后文的长输入样例。它会发送实际请求并产生 API 用量。网络请求在独立后台进程执行，失败保留本地候选；默认读取前 50 / 后 0 字，可关闭上下文。
 

@@ -37,6 +37,9 @@ void CALLBACK callback(HINTERNET, DWORD_PTR context, DWORD status, LPVOID info,
   if (status == WINHTTP_CALLBACK_STATUS_REQUEST_ERROR) {
     s->error = static_cast<WINHTTP_ASYNC_RESULT*>(info)->dwError;
     s->ready = true;
+  } else if (status == WINHTTP_CALLBACK_STATUS_DATA_AVAILABLE) {
+    s->ready = true;
+    s->size = *static_cast<DWORD*>(info);
   } else if (status == WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE ||
              status == WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE ||
              status == WINHTTP_CALLBACK_STATUS_READ_COMPLETE) {
@@ -47,7 +50,7 @@ void CALLBACK callback(HINTERNET, DWORD_PTR context, DWORD status, LPVOID info,
 }
 HINTERNET session() {
   static Internet s(WinHttpOpen(
-      L"Zephyr-Input/1.10.1", WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
+      L"Zephyr-Input/1.12.1", WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
       WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, WINHTTP_FLAG_ASYNC));
   require(s.h != nullptr, "Cannot initialize WinHTTP");
   return s.h;
@@ -170,9 +173,16 @@ HttpResponse http(const HttpOptions& o) {
   if (o.receivedHeaders) o.receivedHeaders(response);
   size_t count = 0;
   for (;;) {
+    DWORD requested=DWORD(state->buffer.size());
+    if(o.lowLatency) {
+      start();
+      auto available=wait(WinHttpQueryDataAvailable(request.h,nullptr));
+      // ReadData otherwise tries to fill the large download buffer, delaying SSE.
+      requested=available ? std::min(available,requested) : 1;
+    }
     start();
     auto n = wait(WinHttpReadData(request.h, state->buffer.data(),
-                                  DWORD(state->buffer.size()), nullptr));
+                                  requested, nullptr));
     if (!n) break;
     count += n;
     require(count <= o.limit, "Response too large");

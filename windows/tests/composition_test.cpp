@@ -88,6 +88,15 @@ int main() {
     roles.adopt(roles.revision,{L"corrected",L"answer"},true);roles.choose(1);
     check(roles.commit==L"answer","assistant selection inserts only content");
   }
+  {
+    zephyr::Composition stream;stream.insert('x');stream.add(L"local",L"Rime",3);
+    stream.adopt(stream.revision,{L"corrected"},true,true);
+    check(stream.candidates.size()==3&&stream.rimeIndices[1]==-2,"assistant slot reserved");
+    stream.choose(1);check(stream.commit.empty()&&stream.input=="x","waiting is not commit text");
+    stream.selected=2;stream.adopt(stream.revision,{L"corrected",L"answer"},true,false);
+    check(stream.selected==2&&stream.candidates[2]==L"local"&&stream.rimeIndices[2]==3,"stream preserves selected local candidate");
+    stream.choose(0);check(stream.commit==L"corrected","correction can be committed independently");
+  }
   std::cout<<checks<<" native composition checks passed\n";return 0;
   } catch(const std::exception& e){std::cerr<<e.what()<<"\n";return 1;}
 }

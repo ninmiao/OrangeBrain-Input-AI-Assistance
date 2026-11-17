@@ -1,0 +1,101 @@
+[
+  {
+    "platform": "openai",
+    "model": "gpt-6.1-terra",
+    "timeoutMs": 10000,
+    "frames": [
+      {
+        "ms": 1787,
+        "streaming": true,
+        "candidates": [
+          "今天晚上想吃点清淡的，有没有什么简单的建议？"
+        ],
+        "error": ""
+      },
+      {
+        "ms": 1845,
+        "streaming": true,
+        "candidates": [
+          "今天晚上想吃点清淡的，有没有什么简单的建议？",
+          "可以做番茄鸡蛋面，清淡又简单。"
+        ],
+        "error": ""
+      },
+      {
+        "ms": 1946,
+        "streaming": false,
+        "candidates": [
+          "今天晚上想吃点清淡的，有没有什么简单的建议？",
+          "可以做番茄鸡蛋面，清淡又简单。"
+        ],
+        "error": ""
+      }
+    ]
+  },
+  {
+    "platform": "gemini",
+    "model": "gemini-3.8-flash",
+    "timeoutMs": 10000,
+    "frames": [
+      {
+        "ms": 1333,
+        "streaming": true,
+        "candidates": [
+          "今天晚上想吃点清淡的有没有什么简单的建议"
+        ],
+        "error": ""
+      },
+      {
+        "ms": 1597,
+        "streaming": true,
+        "candidates": [
+          "今天晚上想吃点清淡的有没有什么简单的建议",
+          "煮点皮蛋瘦肉粥，或者做个清汤蔬菜面、水煮虾拌时蔬，清淡又快手。"
+        ],
+        "error": ""
+      },
+      {
+        "ms": 1625,
+        "streaming": false,
+        "candidates": [
+          "今天晚上想吃点清淡的有没有什么简单的建议",
+          "煮点皮蛋瘦肉粥，或者做个清汤蔬菜面、水煮虾拌时蔬，清淡又快手。"
+        ],
+        "error": ""
+      }
+    ]
+  },
+  {
+    "platform": "openrouter",
+    "model": "qwen/qwen3.8-27b",
+    "timeoutMs": 10000,
+    "frames": [
+      {
+        "ms": 1218,
+        "streaming": true,
+        "candidates": [
+          "今天晚上想吃点清淡的，有没有什么健康的建议"
+        ],
+        "error": ""
+      },
+      {
+        "ms": 1500,
+        "streaming": true,
+        "candidates": [
+          "今天晚上想吃点清淡的，有没有什么健康的建议",
+          "可以试试番茄鸡蛋面、白灼虾配清炒时蔬，或者一碗紫菜豆腐汤加蒸蛋，清淡又营养。"
+        ],
+        "error": ""
+      },
+      {
+        "ms": 1529,
+        "streaming": false,
+        "candidates": [
+          "今天晚上想吃点清淡的，有没有什么健康的建议",
+          "可以试试番茄鸡蛋面、白灼虾配清炒时蔬，或者一碗紫菜豆腐汤加蒸蛋，清淡又营养。"
+        ],
+        "error": ""
+      }
+    ]
+  }
+]

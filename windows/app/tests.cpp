@@ -11,6 +11,7 @@
 #include "service.h"
 using namespace zw;
 int main(int argc, char** argv) {
+  if(argc==2 && std::string(argv[1])=="--lifetime-fixture"){Sleep(30000);return 0;}
   int checks = 0;
   auto check = [&](bool ok, const char* label) {
     if (!ok) throw std::runtime_error(label);
@@ -136,32 +137,21 @@ int main(int argc, char** argv) {
     check(gp.contains("system_instruction") && gp["store"] == false,
           "Gemini request");
     check(utf8(wide(u8"你好😀 café")) == u8"你好😀 café", "Unicode round trip");
-    int attempts = 0;
-    auto transport = [&](const HttpOptions& options) {
-      auto body = J::parse(options.body);
-      check(options.url == OPENAI, "Responses endpoint");
-      check(options.headers[0].second == "Bearer fixture-secret",
-            "Authorization header");
+    int attempts = 0,updates=0;
+    auto result = requestAi(store,c,p,raw,{}, {},[&](const HttpOptions& o) {
       attempts++;
-      if (attempts == 1)
-        return HttpResponse{200, R"({"status":"incomplete","output":[]})"};
-      return HttpResponse{
-          200,
-          R"({"status":"completed","output":[{"type":"message","content":[{"type":"output_text","text":"[\"你好\"]"}]}]})"};
-    };
-    auto result = requestAi(store, c, p, raw, {}, {}, transport);
-    check(attempts == 2 && result["candidates"][0] == u8"你好",
-          "One truncation retry");
-    attempts = 0;
-    rejects(
-        [&] {
-          requestAi(store, c, p, raw, {}, {}, [&](const HttpOptions&) {
-            attempts++;
-            return HttpResponse{200, R"({"status":"incomplete","output":[]})"};
-          });
-        },
-        "Repeated truncation bounded");
-    check(attempts == 2, "Retry at most once");
+      check(J::parse(o.body)["stream"]==true,"Streaming enabled");
+      auto send=[&](const J& e){auto bytes="data: "+e.dump()+"\n\n";o.consume(bytes.data(),bytes.size());};
+      send({{"type","response.output_text.delta"},{"delta",u8"[\"你好\""}});
+      check(updates==1,"Correction delivered before assistant");
+      send({{"type","response.output_text.delta"},{"delta",u8",\"你好呀\"]"}});
+      send({{"type","response.completed"},{"response",{{"usage",J::object()}}}});
+      return HttpResponse{200,""};
+    },[&](const J& r){updates++;check(r["candidates"].size()==updates,"Stable stream slots");});
+    check(attempts==1 && updates==2 && result["candidates"].size()==2,"One request both candidates");
+    rejects([&]{requestAi(store,c,p,raw,{}, {},[&](const HttpOptions&) {
+      return HttpResponse{200,R"({"status":"incomplete","output":[]})"};
+    });},"Truncated stream never silently doubles requests");
     attempts = 0;
     rejects(
         [&] {
@@ -232,6 +222,15 @@ int main(int argc, char** argv) {
       o.limit = 65536;
       o.connected = [] { return false; };
       rejects([&] { http(o); }, "Disconnected input client cancelled");
+      o.connected={};o.lowLatency=true;o.url=base+"/stream";o.timeoutMs=4000;
+      auto streamStart=Clock::now();std::string streamed;int firstMs=-1;
+      o.consume=[&](const char* data,size_t length) {
+        if(firstMs<0)firstMs=int(std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now()-streamStart).count());
+        streamed.append(data,length);
+      };
+      http(o);
+      check(firstMs>=0 && firstMs<1000,"WinHTTP does not wait to fill its buffer");
+      check(streamed=="data: first\n\ndata: second\n\n","All stream chunks received");
     }
     wchar_t zipEnv[32768];
     if (GetEnvironmentVariableW(L"ZEPHYR_TEST_ZIPS", zipEnv, 32768)) {
@@ -261,6 +260,15 @@ int main(int argc, char** argv) {
     }
     check(sha256(dir / L"settings.json").size() == 64,
           "SHA256 native implementation");
+    auto first=dir/L"one"/L"service-fixture.exe",second=dir/L"two"/L"service-fixture.exe";
+    fs::create_directories(first.parent_path());fs::create_directories(second.parent_path());
+    wchar_t current[32768];GetModuleFileNameW(nullptr,current,32768);
+    fs::copy_file(current,first);fs::copy_file(current,second);
+    run(first,{L"--lifetime-fixture"});run(second,{L"--lifetime-fixture"});
+    check(processRunning(first)&&processRunning(second),"Restart fixtures started");
+    stopUserProcess(first);
+    check(!processRunning(first)&&processRunning(second),"Restart targets exact path only");
+    stopUserProcess(second);check(!processRunning(second),"Restart waits for exit");
     std::cout << "PASS: " << checks << " Windows native checks\n";
     fs::remove_all(dir);
     return 0;

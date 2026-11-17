@@ -8,6 +8,7 @@ using J = nlohmann::ordered_json;
 int main() {
   try {
     int count = 0;
+#include "stream_test.inc"
     {
       auto r = J::parse(zephyr::invoke(
           R"CASE({"op": "decode", "args": {"text": "[\"你好\"", "truncated": true}})CASE"));

@@ -21,7 +21,11 @@ int main() {
       Sleep(100);
       if(client.ProcessKeyEvent(weasel::KeyEvent(0,0))) {
         if(!response())return 3;
-        if(!ctx.cinfo.comments.empty()&&ctx.cinfo.comments[0].str.rfind(L"AI",0)==0) {ready=true;break;}
+        if(!ctx.cinfo.comments.empty()&&ctx.cinfo.comments[0].str.rfind(L"AI",0)==0) {
+          bool waiting=ctx.cinfo.comments[0].str==L"AI 纠错" &&
+            (ctx.cinfo.candies.size()<2 || ctx.cinfo.candies[1].str==L"助手生成中…");
+          if(!waiting){ready=true;break;}
+        }
       }
     }
     if(!ready){std::cerr<<"Live AI candidate timeout, mode="<<language<<"\n";return 4;}
@@ -39,7 +43,7 @@ int main() {
     if(ctx.cinfo.comments[0].str==L"AI 纠错") {
       if(ctx.cinfo.candies.size()<2 || ctx.cinfo.comments[1].str!=L"AI 助手")return 8;
       auto assistant=ctx.cinfo.candies[1].str;
-      if(assistant.empty())return 9;
+      if(assistant.empty()||assistant==L"助手未完成")return 9;
       key('2');if(commit!=assistant||status.composing)return 10;
     } else {key(ibus::Tab);if(commit!=first||status.composing)return 7;}
   }

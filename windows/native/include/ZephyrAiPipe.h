@@ -28,14 +28,14 @@ inline std::wstring unhex(const std::string& s) {
 class AiPipe {
  public:
   struct Work { DWORD session;uint64_t revision;std::string input;bool chinese,traditional;std::string before,after; };
-  struct Result { DWORD session;uint64_t revision;std::vector<std::wstring> candidates;bool segmentation=true,enterOriginal=true,spaceOriginal=false;std::wstring error;bool assistantEnabled=false; };
-  AiPipe():thread([this]{run();}) {}
+  struct Result { DWORD session;uint64_t revision;std::vector<std::wstring> candidates;bool segmentation=true,enterOriginal=true,spaceOriginal=false;std::wstring error;bool assistantEnabled=false,streaming=false; };
+  explicit AiPipe(std::wstring testPipe={}):nameOverride(std::move(testPipe)),thread([this]{run();}) {}
   ~AiPipe() {
     { std::lock_guard<std::mutex> lock(mutex);stop=true;if(pipe!=INVALID_HANDLE_VALUE)CancelIoEx(pipe,nullptr); }
     cv.notify_all();thread.join();
   }
   void submit(Work work) {
-    { std::lock_guard<std::mutex> lock(mutex);pending=std::move(work);result.reset();++generation;
+    { std::lock_guard<std::mutex> lock(mutex);statusSession=work.session;statusRevision=work.revision;statusText=L"等待";pending=std::move(work);result.reset();++generation;
       if(pipe!=INVALID_HANDLE_VALUE)CancelIoEx(pipe,nullptr); }
     cv.notify_all();
   }
@@ -45,6 +45,19 @@ class AiPipe {
     if(result&&result->session==session)result.reset();
     ++generation;if(pipe!=INVALID_HANDLE_VALUE)CancelIoEx(pipe,nullptr);
   }
+  std::wstring status(DWORD session,uint64_t revision) {
+    std::lock_guard<std::mutex> lock(mutex);
+    if(GetTickCount64()-checkedAt>1000) {
+      checkedAt=GetTickCount64();wchar_t user[256];DWORD n=256;
+      if(GetUserNameW(user,&n)) {
+        auto name=nameOverride.empty()?L"\\\\.\\pipe\\ZephyrAI-"+std::wstring(user):nameOverride;
+        BOOL available=WaitNamedPipeW(name.c_str(),1);auto error=GetLastError();
+        missing=!available&&(error==ERROR_FILE_NOT_FOUND||error==ERROR_PATH_NOT_FOUND);
+      }
+    }
+    if(missing)return L"后台未连接";
+    return statusSession==session&&statusRevision==revision?statusText:L"待请求";
+  }
   std::optional<Result> take(DWORD session) {
     std::lock_guard<std::mutex> lock(mutex);
     if(!result||result->session!=session)return {};auto r=std::move(result);result.reset();return r;
@@ -52,6 +65,8 @@ class AiPipe {
  private:
   std::mutex mutex;std::condition_variable cv;bool stop=false;uint64_t generation=0;
   std::optional<Work> pending;std::optional<Result> result;HANDLE pipe=INVALID_HANDLE_VALUE;
+  DWORD statusSession=0;uint64_t statusRevision=0,checkedAt=0;bool missing=false;std::wstring statusText;
+  std::wstring nameOverride;
   std::thread thread;int debounce=200;
   void run() {
     while(true) {
@@ -64,21 +79,33 @@ class AiPipe {
       }
       wchar_t username[256];DWORD size=256;
       if(!GetUserNameW(username,&size))continue;
-      std::wstring name=L"\\\\.\\pipe\\ZephyrAI-"+std::wstring(username);
+      std::wstring name=nameOverride.empty()?L"\\\\.\\pipe\\ZephyrAI-"+std::wstring(username):nameOverride;
       HANDLE h=CreateFileW(name.c_str(),GENERIC_READ|GENERIC_WRITE,0,nullptr,OPEN_EXISTING,FILE_FLAG_OVERLAPPED,nullptr);
-      if(h==INVALID_HANDLE_VALUE)continue;
-      { std::lock_guard<std::mutex> lock(mutex);if(stop||token!=generation){CloseHandle(h);continue;}pipe=h; }
-      DWORD mode=PIPE_READMODE_MESSAGE;SetNamedPipeHandleState(h,&mode,nullptr,nullptr);
-      std::string payload="Z2\t"+std::string(w.chinese?"zh":"en")+"\t"+(w.traditional?"1":"0")+"\t"+hex(w.input)+"\t"+hex(w.before)+"\t"+hex(w.after);
-      char output[131072];DWORD bytes=0;OVERLAPPED ov{};ov.hEvent=CreateEventW(nullptr,TRUE,FALSE,nullptr);
-      BOOL ok=TransactNamedPipe(h,payload.data(),DWORD(payload.size()),output,sizeof(output),&bytes,&ov);
-      if(!ok&&GetLastError()==ERROR_IO_PENDING) {
-        if(WaitForSingleObject(ov.hEvent,65000)==WAIT_OBJECT_0)ok=GetOverlappedResult(h,&ov,&bytes,FALSE);
-        else { CancelIoEx(h,&ov);GetOverlappedResult(h,&ov,&bytes,TRUE); }
+      if(h==INVALID_HANDLE_VALUE) {
+        std::lock_guard<std::mutex> lock(mutex);if(token==generation)statusText=L"后台未连接";continue;
       }
-      {
-        std::lock_guard<std::mutex> lock(mutex);pipe=INVALID_HANDLE_VALUE;
-        if(ok&&token==generation&&!stop&&bytes<=sizeof(output)) {
+      { std::lock_guard<std::mutex> lock(mutex);if(stop||token!=generation){CloseHandle(h);continue;}pipe=h;statusText=L"请求中…"; }
+      DWORD mode=PIPE_READMODE_MESSAGE;SetNamedPipeHandleState(h,&mode,nullptr,nullptr);
+      std::string payload="Z4\t"+std::string(w.chinese?"zh":"en")+"\t"+(w.traditional?"1":"0")+"\t"+hex(w.input)+"\t"+hex(w.before)+"\t"+hex(w.after);
+      char output[131072];DWORD bytes=0;OVERLAPPED ov{};ov.hEvent=CreateEventW(nullptr,TRUE,FALSE,nullptr);
+      const auto deadline=GetTickCount64()+65000;
+      auto operation=[&](bool writing,void* buffer,DWORD length) {
+        std::unique_lock<std::mutex> ioLock(mutex);if(stop||token!=generation)return false;
+        ResetEvent(ov.hEvent);bytes=0;
+        BOOL ok=writing?WriteFile(h,buffer,length,&bytes,&ov):ReadFile(h,buffer,length,&bytes,&ov);
+        auto error=GetLastError();ioLock.unlock();
+        if(!ok&&error==ERROR_IO_PENDING) {
+          auto now=GetTickCount64();
+          if(now<deadline&&WaitForSingleObject(ov.hEvent,DWORD(deadline-now))==WAIT_OBJECT_0)
+            ok=GetOverlappedResult(h,&ov,&bytes,FALSE);
+          else {CancelIoEx(h,&ov);GetOverlappedResult(h,&ov,&bytes,TRUE);}
+        }
+        return ok!=0;
+      };
+      bool completed=false;
+      if(operation(true,payload.data(),DWORD(payload.size()))) while(operation(false,output,sizeof(output))) {
+        std::lock_guard<std::mutex> lock(mutex);
+        if(token!=generation||stop||bytes>sizeof(output))break;
           std::istringstream stream(std::string(output,bytes));std::string line;
           Result r{w.session,w.revision,{}};
           if(std::getline(stream,line)&&line.rfind("Z1\t",0)==0) {
@@ -94,10 +121,15 @@ class AiPipe {
               if(line.rfind("E\t",0)==0)r.error=unhex(line.substr(2));
               else if(r.candidates.size()<8){auto v=unhex(line);if(!v.empty())r.candidates.push_back(v);}
             }
-            result=std::move(r);
-          }
-        }
+            r.streaming=fields.size()>=7&&fields[6]=="1";
+            bool more=r.streaming;
+            statusText=!r.error.empty()?L"请求失败":more?(r.candidates.empty()?L"请求中…":L"助手生成中…"):
+              (r.candidates.empty()?L"无结果":r.assistantEnabled&&r.candidates.size()==1?L"助手未完成":L"✓ 已返回");
+            completed=!more;result=std::move(r);
+            if(!more)break;
+          } else break;
       }
+      {std::lock_guard<std::mutex> lock(mutex);pipe=INVALID_HANDLE_VALUE;if(!completed&&token==generation&&!stop)statusText=L"连接中断";}
       CloseHandle(ov.hEvent);CloseHandle(h);
     }
   }

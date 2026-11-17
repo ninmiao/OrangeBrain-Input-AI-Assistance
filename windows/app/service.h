@@ -16,10 +16,12 @@ J requestPayload(const J& config, const J& policy, const Input& input,
 J requestAi(const Store& store, const J& config, const J& policy,
             const Input& input, std::shared_ptr<Cancel> cancel = {},
             std::function<bool()> connected = {},
-            std::function<HttpResponse(const HttpOptions&)> transport = http);
+            std::function<HttpResponse(const HttpOptions&)> transport = http,
+            std::function<void(const J&)> partial = {});
 std::string handleRequest(const Store& store, const std::string& text,
                           std::shared_ptr<Cancel> cancel = {},
-                          std::function<bool()> connected = {});
+                          std::function<bool()> connected = {},
+                          std::function<void(const J&)> partial = {});
 void runBroker(const Store& store, bool startServer = true,
                const std::wstring& testPipe = {});
 void evaluate(const Store& store, const std::vector<std::wstring>& arguments);

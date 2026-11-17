@@ -15,7 +15,7 @@ data class RequestStamp(
     val apiGeneration: Long,
 )
 
-data class AiRequest(val stamp: RequestStamp, val input: AiInput, val systemPrompt: String, val completionEnabled: Boolean, val candidateCount: Int = 1, val outputTokenBudget:Int = 256, val assistantEnabled:Boolean = false)
+data class AiRequest(val stamp: RequestStamp, val input: AiInput, val systemPrompt: String, val completionEnabled: Boolean, val candidateCount: Int = 1, val outputTokenBudget:Int = 256, val assistantEnabled:Boolean = false, val onPartial:((AiResult)->Unit)? = null)
 
 sealed interface AiState {
     data object Idle : AiState
@@ -56,8 +56,14 @@ class AiRequestCoordinator(
             delay(debounceMs)
             if (token != generation) return@launch
             publish(AiState.Loading)
+            var finished=false
             try {
-                val result = transport(request)
+                val result = transport(request.copy(onPartial = { partial ->
+                    scope.launch {
+                        if (!finished && token == generation && current == request) publish(AiState.Ready(request, partial))
+                    }
+                }))
+                finished=true
                 if (token == generation && current == request) publish(AiState.Ready(request, result))
             } catch (cancelled: CancellationException) {
                 throw cancelled

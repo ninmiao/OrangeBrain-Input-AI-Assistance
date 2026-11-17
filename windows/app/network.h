@@ -24,6 +24,7 @@ struct HttpOptions {
   std::function<void(const HttpResponse&)> receivedHeaders;
   std::function<void(const char*, size_t)> consume;
   bool testLoopbackHttp = false;
+  bool lowLatency = false;
 };
 HttpResponse http(const HttpOptions& options);
 std::string urlEncode(const std::string& value);

@@ -1,6 +1,6 @@
 # Zephyr native AI core
 
-C++17 owns input/context encoding, prompt composition, provider payloads, reasoning/model capability rules, parameter validation, model/provider-list parsing, candidate parsing and token/retry-budget decisions. Android loads `libzephyr_core.so`; Windows statically links `core.cpp` into its native settings and broker executables; it has no JNI or JVM dependency.
+C++17 owns input/context encoding, prompt composition, provider payloads, reasoning/model capability rules, parameter validation, model/provider-list parsing, candidate parsing and token-budget decisions and incremental SSE decoding. Android loads `libzephyr_core.so`; Windows statically links `core.cpp` into its native settings and broker executables; it has no JNI or JVM dependency.
 
 `shared/ai-core` supplies Android JVM adapters and common resources. Android retains Kotlin UI and platform integration. Windows 1.9.0 uses native Win32 controls, asynchronous WinHTTP, DPAPI, and a C++ dictionary updater. Windows source and builds no longer use Kotlin, Gradle, JDK, or a bundled JVM. iOS is not implemented.
 
@@ -14,7 +14,11 @@ Output: `["correction","assistant"]` by default, or `["correction"]` with the as
 
 L defaults to 256 output tokens. The first request reserves `max(L, 4 × input code points + 32)` tokens. This conservative estimate is not an exact tokenizer and cannot guarantee arbitrary model output fits. A model-specific max token parameter, if configured, supplies L. Thinking models may spend this budget on reasoning too.
 
-If the provider explicitly reports length/incomplete, the parser retains only fully closed JSON strings in an otherwise valid array prefix. It never invents a missing quote, escape, emoji or sentence. With no complete candidate, one retry can raise the budget to `min(65536, max(2L, 8 × input code points + 256))`, using only the original deadline's remaining time. Malformed output and provider errors do not trigger this retry. Recovery cannot guarantee success during network or provider failures.
+OpenAI Responses, OpenRouter Chat Completions and Gemini Interactions use one streaming request. Only fully closed JSON strings become candidates. The correction appears as soon as complete; the assistant fills the second, reserved slot. Reasoning events never enter candidate text. Both clients cancel obsolete requests and reject late updates.
+
+The shared `stream` operation accepts raw chunks as hex plus bounded parser state. It handles split UTF-8, SSE events, JSON escapes and role order. Stream bytes are bounded to 1 MiB; visible text retains the 32 KiB limit. Compatible gateways returning ordinary JSON are parsed once at EOF, without sending another request.
+
+On truncation, timeout or a broken stream, an already complete correction remains usable. Incomplete strings are never displayed or repaired by adding a quote. There is no automatic truncation retry. If no complete candidate arrives, the client keeps local candidates and reports failure. Streaming advances display; it does not remove model thinking time or guarantee a faster server response.
 
 ## Build and tests
 

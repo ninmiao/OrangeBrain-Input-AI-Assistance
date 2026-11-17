@@ -43,6 +43,7 @@ bool RimeWithWeaselHandler::_ZephyrChoose(WeaselSessionId id,size_t index) {
 bool RimeWithWeaselHandler::_ZephyrRespond(WeaselSessionId id,EatLine eat) {
   if(!eat)return false;
   auto& z=m_zephyr[id];auto& session=get_session_status(id);
+  if(auto prefs=zephyr::currentKeyPreferences())z.aiStatus=prefs->aiEnabled?m_zephyr_ai.status(id,z.revision):L"关闭";
   weasel::CandidateInfo info;info.is_last_page=(z.page+1)*5>=z.candidates.size();
   info.currentPage=int(z.page);info.totalPages=int((z.candidates.size()+4)/5);info.highlighted=int(z.selected%5);
   for(size_t i=z.page*5;i<z.candidates.size()&&i<(z.page+1)*5;i++) {
@@ -59,7 +60,7 @@ bool RimeWithWeaselHandler::_ZephyrRespond(WeaselSessionId id,EatLine eat) {
     std::to_wstring(display.size())+L","+std::to_wstring(cursor)+L"\nctx.aux="+
     std::wstring(z.chinese?(z.traditional?L"繁":L"简"):L"EN")+
     (zephyr::shortcutLabel(z.languageShortcut).empty()?L"":L" · "+zephyr::shortcutLabel(z.languageShortcut)+(z.chinese?L" → EN":L" → 中"))+
-    (z.aiError.empty()?L"":L" · "+escape_string(z.aiError))+
+    L" · AI "+escape_string(z.aiStatus)+(z.aiError.empty()?L"":L" · "+escape_string(z.aiError))+
     L"\nctx.cand="+cs.str()+L"\nconfig.inline_preedit=0\n";
   auto style=session.style;style.inline_preedit=false;
   std::wstringstream ss;boost::archive::text_woarchive sa(ss);sa<<style;body+=L"style="+ss.str()+L"\n";
@@ -79,8 +80,13 @@ BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,E
   if(code==0) {
     if(!z.commit.empty()||z.refreshPending){z.refreshPending=false;_ZephyrRespond(id,eat);return TRUE;}
     auto result=m_zephyr_ai.take(id);
-    if(!result||result->revision!=z.revision||z.input.empty())return FALSE;
-    z.aiError=result->error;z.segmentation=result->segmentation;z.enterOriginal=result->enterOriginal;z.spaceOriginal=result->spaceOriginal;z.adopt(result->revision,result->candidates,result->assistantEnabled);_ZephyrRespond(id,eat);return TRUE;
+    if(!result||result->revision!=z.revision||z.input.empty()) {
+      auto current=m_zephyr_ai.status(id,z.revision);
+      if(auto prefs=zephyr::currentKeyPreferences())if(!prefs->aiEnabled)current=L"关闭";
+      if(!z.input.empty()&&current!=z.aiStatus){z.aiStatus=current;_ZephyrRespond(id,eat);return TRUE;}
+      return FALSE;
+    }
+    z.aiError=result->error;z.segmentation=result->segmentation;z.enterOriginal=result->enterOriginal;z.spaceOriginal=result->spaceOriginal;z.adopt(result->revision,result->candidates,result->assistantEnabled,result->streaming);_ZephyrRespond(id,eat);return TRUE;
   }
   bool ctrl=(key.mask&ibus::CONTROL_MASK)!=0,alt=(key.mask&ibus::MOD1_MASK)!=0;
   auto shortcut=z.shortcuts.process(code,key.mask,GetTickCount64(),z.languageShortcut,z.scriptShortcut);
@@ -93,6 +99,10 @@ BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,E
   // Modifier key-down is not a shortcut by itself. Keep pending text until
   // the actual chord arrives (Ctrl+Enter, Alt+digit, Ctrl+Shift+Space, etc.).
   if(code>=ibus::Shift_L && code<=ibus::Hyper_R) {_ZephyrRespond(id,eat);return FALSE;}
+  size_t requestedSlot=z.selected;
+  bool selecting=(code==ibus::Tab || (code==ibus::Return&&!z.enterOriginal) || (code==' '&&!z.segmentation&&!z.spaceOriginal));
+  if(!ctrl&&!(key.mask&ibus::SHIFT_MASK)&&code>='1'&&code<='5') {requestedSlot=z.page*5+size_t(code-'1');selecting=true;}
+  if(selecting && requestedSlot<z.rimeIndices.size() && z.rimeIndices[requestedSlot]==-2) {_ZephyrRespond(id,eat);return TRUE;}
   bool changed=false,handled=true;
   if(ctrl&&code==ibus::Return&&!z.input.empty()) {z.commit=u8tow(z.input);z.clear();changed=true;}
   else if(alt&&!ctrl&&!(key.mask&(ibus::SHIFT_MASK|ibus::SUPER_MASK))&&code>='1'&&code<='5'&&!z.input.empty()&&_ZephyrChoose(id,z.page*5+size_t(code-'1'))) {changed=true;}

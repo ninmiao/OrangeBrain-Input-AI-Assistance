@@ -15,6 +15,10 @@ class Handler(BaseHTTPRequestHandler):
         except (BrokenPipeError,ConnectionResetError,ConnectionAbortedError): pass
     def do_GET(self):
         try:
+            if self.path=='/stream':
+                self.send_response(200);self.send_header('Content-Type','text/event-stream');self.send_header('Connection','close');self.end_headers();self.close_connection=True
+                self.wfile.write(b'data: first\n\n');self.wfile.flush();time.sleep(1.5)
+                self.wfile.write(b'data: second\n\n');self.wfile.flush();return
             if self.path=='/slow': time.sleep(2)
             body=b'x'*65536 if self.path=='/huge' else b'fixture-ok'
             self.send_response(302 if self.path=='/redirect' else 200)
@@ -63,7 +67,7 @@ def main():
         try:
             raw='xianzaishurufahouxuanyouenti'
             request=('Z2\tzh\t0\t'+raw.encode().hex()+'\t'+ '前文 😀'.encode().hex()+'\t').encode()
-            assert call(request,.2).startswith('Z1\t1\t200\t1\t0\t1\n')
+            assert call(request,.2).startswith('Z1\t1\t200\t1\t0\t1\t0\n')
             for _ in range(12):assert call(request).startswith('Z1\t')
             assert '\nE\t' in call(b'Z2\tzh\t0\tbadhex\t\t')
             handles=[connect() for _ in range(4)]

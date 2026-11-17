@@ -18,7 +18,7 @@ Input decodeWire(const std::string& text) {
       start = i + 1;
     }
   require((fields.size() == 4 && fields[0] == "Z1") ||
-              (fields.size() == 6 && fields[0] == "Z2"),
+              (fields.size() == 6 && (fields[0] == "Z2" || fields[0] == "Z4")),
           "Invalid pipe version");
   require((fields[1] == "zh" || fields[1] == "en") &&
               (fields[2] == "0" || fields[2] == "1"),
@@ -41,7 +41,8 @@ std::string responseWire(const J& c, const J& result,
   std::string out = "Z1\t" + std::string(b("wordSegmentation")) + "\t" +
                     std::to_string(c.at("debounceMs").get<int>()) + "\t" +
                     b("enterOriginal") + "\t" + b("spaceOriginal") + "\t" +
-                      (c.value("assistantEnabled",true) ? "1" : "0") + "\n";
+                      (c.value("assistantEnabled",true) ? "1" : "0") + "\t" +
+                      (result.is_object() && result.value("streaming",false) ? "1" : "0") + "\n";
   if (!error.empty()) out += "E\t" + hex(error) + "\n";
   if (result.is_object())
     for (auto& s : result.value("candidates", J::array()))
@@ -97,52 +98,56 @@ J requestPayload(const J& c, const J& p, const Input& raw, int budget) {
 }
 J requestAi(const Store& store, const J& c, const J& p, const Input& raw,
             std::shared_ptr<Cancel> cancel, std::function<bool()> connected,
-            std::function<HttpResponse(const HttpOptions&)> transport) {
+            std::function<HttpResponse(const HttpOptions&)> transport,
+            std::function<void(const J&)> partial) {
   validateConfiguration(c);
   auto key = store.key(p.at("id"), p.at("endpoint"));
   require(!key.empty(), "No API key saved for this policy");
-  auto deadline =
-      Clock::now() + std::chrono::milliseconds(c.at("timeoutMs").get<int>());
   auto routing = core("routing", {{"endpoint", p.at("endpoint")}});
-  int budget = c.at("outputTokenBudget");
-  for (int attempt = 0;; attempt++) {
-    int left = int(std::chrono::duration_cast<std::chrono::milliseconds>(
-                       deadline - Clock::now())
-                       .count());
-    if (left <= 0) throw Error("timeout");
-    HttpOptions o;
-    o.url = routing.at("url");
-    o.method = "POST";
-    o.body = requestPayload(c, p, raw, budget).dump();
-    o.timeoutMs = left;
-    o.cancel = cancel;
-    o.connected = connected;
-    if (routing["api"] == "gemini")
-      o.headers = {{"x-goog-api-key", key}, {"Api-Revision", "2026-05-20"}};
-    else
-      o.headers = {{"Authorization", "Bearer " + key}};
-    auto response = transport(o);
-    if (response.status < 200 || response.status >= 300)
-      throw Error("HTTP", response.status);
-    try {
-      return core("envelope",
-                  {{"endpoint", p.at("endpoint")}, {"body", response.body}, {"assistantEnabled", c.value("assistantEnabled", true)}});
-    } catch (const Error& e) {
-      if (e.code != "truncated" || attempt) throw;
-      left = int(std::chrono::duration_cast<std::chrono::milliseconds>(
-                     deadline - Clock::now())
-                     .count());
-      int raised = core(
-          "retryBudget",
-          {{"budget", budget}, {"input", raw.input}, {"remainingMs", left}});
-      if (raised <= budget) throw;
-      budget = raised;
+  HttpOptions o;
+  o.url = routing.at("url"); o.method = "POST";
+  o.body = requestPayload(c, p, raw).dump();
+  o.timeoutMs = c.at("timeoutMs"); o.limit = 1048576; o.lowLatency=true;
+  o.cancel = cancel; o.connected = connected;
+  if (routing["api"] == "gemini")
+    o.headers = {{"x-goog-api-key", key}, {"Api-Revision", "2026-05-20"}};
+  else o.headers = {{"Authorization", "Bearer " + key}};
+  J state=J::object(), latest, published;
+  auto feed=[&](const std::string& bytes,bool finish) {
+    auto r=core("stream",{{"endpoint",p.at("endpoint")},{"assistantEnabled",c.value("assistantEnabled",true)},
+                          {"state",state},{"chunkHex",hex(bytes)},{"finish",finish}});
+    state=r.at("state");latest=r.at("result");
+    if(latest.is_object() && latest.at("candidates")!=published) {
+      if(cancel)cancel->check();
+      if(connected && !connected())throw Error("cancelled");
+      published=latest.at("candidates");
+      if(partial)partial(latest);
     }
+  };
+  o.receivedHeaders=[](const HttpResponse& r) {
+    if(r.status<200 || r.status>=300)throw Error("HTTP",r.status);
+  };
+  o.consume=[&](const char* bytes,size_t count){feed(std::string(bytes,count),false);};
+  try {
+    auto response=transport(o);
+    if(response.status<200 || response.status>=300)throw Error("HTTP",response.status);
+    // Injected test transports and compatible gateways may buffer a JSON body.
+    if(!response.body.empty())feed(response.body,false);
+    feed({},true);
+    return latest;
+  } catch(const Error& e) {
+    if(e.code=="cancelled" || !latest.is_object())throw;
+    if(cancel)cancel->check();
+    if(connected && !connected())throw Error("cancelled");
+    latest["streaming"]=false;latest["streamError"]=e.code;latest["recovered"]=true;
+    return latest;
   }
 }
+
 std::string handleRequest(const Store& store, const std::string& text,
                           std::shared_ptr<Cancel> cancel,
-                          std::function<bool()> connected) {
+                          std::function<bool()> connected,
+                          std::function<void(const J&)> partial) {
   auto input = decodeWire(text);
   auto config = store.load();
   J result;
@@ -150,8 +155,12 @@ std::string handleRequest(const Store& store, const std::string& text,
   if (config.at("enabled")) {
     try {
       result = requestAi(store, config, activePolicy(config), input, cancel,
-                         connected);
-      store.requestStatus("OK");
+                         connected, http, [&](const J& r) {
+                           if(partial && store.load()==config) {
+                             auto progress=r;progress["streaming"]=true;partial(progress);
+                           }
+                         });
+      store.requestStatus(result.value("streamError",std::string()).empty()?"OK":"partial: "+result.at("streamError").get<std::string>());
     } catch (const Error& e) {
       if (e.code == "cancelled") throw;
       failure = errorText(e);
@@ -284,7 +293,13 @@ void runBroker(const Store& store, bool startServer,
             std::string response;
             try {
               response =
-                  handleRequest(store, std::string(input, count), {}, alive);
+                  handleRequest(store, std::string(input, count), {}, alive,
+                    [&](const J& r) {
+                      if(std::string(input,2)!="Z4")return;
+                      auto message=responseWire(store.load(),r);DWORD written=0;
+                      if(!pipeOperation(pipe,true,message.data(),DWORD(message.size()),written))
+                        throw Error("cancelled");
+                    });
             } catch (const Error& e) {
               if (e.code == "cancelled") {
                 DisconnectNamedPipe(pipe);

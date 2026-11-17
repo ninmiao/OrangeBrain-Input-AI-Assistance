@@ -215,6 +215,20 @@ bool processRunning(const fs::path& exe) {
     } while (Process32NextW(snap, &e));
   return false;
 }
+void stopUserProcess(const fs::path& exe) {
+  DWORD session=0;ProcessIdToSessionId(GetCurrentProcessId(),&session);
+  Handle snap(CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS,0));PROCESSENTRY32W e{sizeof(e)};
+  if(Process32FirstW(snap,&e))do {
+    DWORD other=0;
+    if(_wcsicmp(e.szExeFile,exe.filename().c_str()) || !ProcessIdToSessionId(e.th32ProcessID,&other) || other!=session)continue;
+    Handle p(OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION|PROCESS_TERMINATE|SYNCHRONIZE,FALSE,e.th32ProcessID));
+    wchar_t path[32768];DWORD n=32768;
+    if(p.value && QueryFullProcessImageNameW(p,0,path,&n) && !_wcsicmp(path,exe.c_str())) {
+      require(TerminateProcess(p,0)!=0,"Cannot stop input service");
+      require(WaitForSingleObject(p,5000)==WAIT_OBJECT_0,"Input service did not stop");
+    }
+  }while(Process32NextW(snap,&e));
+}
 J core(const std::string& op, const J& args) {
   auto response =
       J::parse(zephyr::invoke(J{{"op", op}, {"args", args}}.dump()));

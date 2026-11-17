@@ -34,12 +34,14 @@ class AiSettingsActivity : AppCompatActivity() {
         val action = authenticated; authenticated = null
         if (it.resultCode == RESULT_OK) action?.invoke() else report("验证已取消")
     }
+    private var serviceStatusView:TextView?=null
     private fun dp(n: Int) = (n * resources.displayMetrics.density).toInt()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         title = "Zephyr Input"
+        lifecycleScope.launch { AiRuntimeStatus.state.collect { value -> serviceStatusView?.text="AI 状态：$value" } }
         setContentView(TextView(this).apply { text = "加载设置…" })
         lifecycleScope.launch { store = withContext(Dispatchers.IO) { AiStore.get(this@AiSettingsActivity) }; render() }
     }
@@ -59,6 +61,11 @@ class AiSettingsActivity : AppCompatActivity() {
     private fun renderMain() {
         val c = store.config
         label("AI 云端候选", 25f)
+        serviceStatusView=label("AI 状态：${if(c.enabled)AiRuntimeStatus.state.value else "关闭"}")
+        button("重置 AI 请求 / Reset AI") {
+            store.update { it };AiRuntimeStatus.state.value="已重置，待请求"
+            report("已取消旧请求并重新加载 AI 配置；无需重启键盘")
+        }
         status = label("当前 Policy：${c.policies.first { it.id == c.selectedPolicyId }.name}")
         button("词库与语法模型（万象 / 雾凇）") { startActivity(Intent(this, com.osfans.trime.rime.android.WanxiangActivity::class.java)) }
         button("一键测速（最多 5 组）") { startActivity(Intent(this, BenchmarkActivity::class.java)) }

@@ -1,0 +1,6 @@
+{"id":"parallel-zh-mixed","language":"zh","category":"mixed-correction","input":"jintianxiaban yihouwoxiangheteamyiqiquchi huoguo danshimingtianshangwuhaiyoumeeting suoyiwomenzaodianhuijia","before":"我们正在安排晚饭和明天的工作。","after":"大家觉得怎么样？","expected":[],"assistant_check":"简短相关建议，不要求补充信息"}
+{"id":"parallel-zh-term","language":"zh","category":"term","input":"yougezhuanyecihui o kaitoude 骨科医生相关","before":"我在写英文邮件。","expected":[],"assistant_check":"Orthopedist 或 orthopaedist"}
+{"id":"parallel-zh-kaomoji","language":"zh","category":"kaomoji","input":"yanbiaoqing xiaosi","expected":[],"assistant_check":"颜表情，无解释"}
+{"id":"parallel-en-long","language":"en","category":"long-correction","input":"I wnated to recieve teh updated report before our meeting tomorrow, please keep the original file and all 123 test results.","before":"The team is preparing the weekly review. ","after":" Thanks!","expected":[],"assistant_check":"简短可插入的英文，不追问"}
+{"id":"parallel-en-mixed","language":"en","category":"translation","input":"mingtianxiawusandian heteamkaihui please bring teh latest report","before":"We are planning tomorrow's work. ","expected":[],"assistant_check":"英文结果，不把助手回答当成输入纠正"}
+{"id":"parallel-en-sequence","language":"en","category":"continuation","input":"1 1 2 3 5 8 13 21 34 55 89 144 this is","expected":[],"assistant_check":"Fibonacci sequence 或正确续写"}

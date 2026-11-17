@@ -25,11 +25,23 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.send_error(401);return
         type(self).requests += 1
         payload=json.loads(self.rfile.read(int(self.headers['Content-Length'])))
-        if payload.get('model')=='assistant-test':
+        if payload.get('model') in ('assistant-test','assistant-stream-test'):
             system=payload.get('instructions',payload.get('system_instruction','')) or payload.get('messages',[{}])[0].get('content','')
             assert 'No requests for more info; Give your best result directly.' in system
             assert '默认一个候选' not in system
             values=['What should I eat?','Try a sandwich.'] if 'Both candidates use English only.' in system else ['吃什么？','吃碗面吧。']
+            if payload.get('model')=='assistant-stream-test':
+                assert payload.get('stream') is True
+                self.send_response(200);self.send_header('Content-Type','text/event-stream');self.send_header('Connection','close');self.end_headers();self.close_connection=True
+                def event(text):
+                    e={'choices':[{'index':0,'delta':{'content':text}}]}
+                    self.wfile.write(('data: '+json.dumps(e,ensure_ascii=False)+'\n\n').encode());self.wfile.flush()
+                try:
+                    event('['+json.dumps(values[0],ensure_ascii=False));time.sleep(2)
+                    event(','+json.dumps(values[1],ensure_ascii=False)+']')
+                    self.wfile.write(b'data: [DONE]\n\n');self.wfile.flush()
+                except (BrokenPipeError,ConnectionResetError,ssl.SSLError):pass
+                return
             if gemini:self.reply({'status':'completed','steps':[{'type':'model_output','content':[{'type':'text','text':values}]}]})
             elif self.path=='/v1/responses':self.reply({'status':'completed','output':[{'type':'message','content':[{'type':'output_text','text':values}]}]})
             else:self.reply({'choices':[{'message':{'content':values}}]})

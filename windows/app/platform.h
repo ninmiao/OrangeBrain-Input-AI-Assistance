@@ -39,6 +39,7 @@ std::wstring quote(const std::wstring& s);
 DWORD run(const fs::path& exe, const std::vector<std::wstring>& args,
           DWORD timeout = 0);
 bool processRunning(const fs::path& executable);
+void stopUserProcess(const fs::path& executable);
 J core(const std::string& op, const J& args = J::object());
 std::string errorText(const std::exception& error);
 struct Handle {
