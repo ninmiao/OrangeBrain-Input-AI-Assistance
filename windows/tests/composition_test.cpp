@@ -79,6 +79,15 @@ int main() {
     check(!pending.adopt(previous,{L"过期响应"}),"old response rejected after settings change");check(!pending.applyConfiguration(123),"same configuration does not restart");
     check(pending.applyConfiguration(124),"second configuration applies");check(pending.input=="a","configuration preserves pending input");
   }
+  {
+    zephyr::Composition roles;roles.insert('x');roles.add(L"local",L"Rime",0);
+    check(roles.adopt(roles.revision,{L"same",L"same"},true),"dual response adopted");
+    check(roles.candidates.size()==3&&roles.comments[0]!=roles.comments[1],"identical role candidates retained");
+    roles.applyConfiguration(1);
+    check(roles.candidates.size()==1&&roles.candidates[0]==L"local","both AI roles invalidated");
+    roles.adopt(roles.revision,{L"corrected",L"answer"},true);roles.choose(1);
+    check(roles.commit==L"answer","assistant selection inserts only content");
+  }
   std::cout<<checks<<" native composition checks passed\n";return 0;
   } catch(const std::exception& e){std::cerr<<e.what()<<"\n";return 1;}
 }

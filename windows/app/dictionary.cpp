@@ -44,7 +44,7 @@ bool allowed(const std::string& url) {
                       "releases.githubusercontent.com)/[^\\r\\n]*"));
 }
 HttpResponse github(HttpOptions options) {
-  options.headers.emplace_back("User-Agent", "Zephyr-Input/1.9.1");
+  options.headers.emplace_back("User-Agent", "Zephyr-Input/1.10.1");
   for (int i = 0; i < 6; i++) {
     require(allowed(options.url), "Unexpected GitHub download host");
     auto r = http(options);

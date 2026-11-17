@@ -27,7 +27,7 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
     fun payload(model:String,request:AiRequest,parameters:Map<String,JsonPrimitive> = emptyMap(),endpoint:String="",provider:String=""):JsonObject =
         NativeCore.invoke("payload",buildJsonObject {
             put("model",model);put("endpoint",endpoint);put("provider",provider);put("parameters",JsonObject(parameters))
-            putJsonObject("request") { put("input",Json.encodeToJsonElement(AiInput.serializer(),request.input));put("systemPrompt",request.systemPrompt);put("outputTokenBudget",request.outputTokenBudget) }
+            putJsonObject("request") { put("input",Json.encodeToJsonElement(AiInput.serializer(),request.input));put("systemPrompt",request.systemPrompt);put("assistantEnabled",request.assistantEnabled);put("outputTokenBudget",request.outputTokenBudget) }
         }).jsonObject
     suspend fun request(endpoint:String,key:String,model:String,request:AiRequest,timeoutMs:Int=10000,parameters:Map<String,JsonPrimitive> = emptyMap(),provider:String=""):AiResult {
         val deadline=System.nanoTime()+timeoutMs*1_000_000L
@@ -105,7 +105,7 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
     internal fun decodeEnvelope(bytes:ByteArray,request:AiRequest,endpoint:String=""):AiResult {
         if(bytes.size>65536)throw ApiResponseException()
         return try { Json { ignoreUnknownKeys=true }.decodeFromJsonElement(AiResult.serializer(),NativeCore.invoke("envelope",buildJsonObject {
-            put("endpoint",endpoint);put("body",bytes.toString(Charsets.UTF_8))
+            put("endpoint",endpoint);put("assistantEnabled",request.assistantEnabled);put("body",bytes.toString(Charsets.UTF_8))
         })) } catch(e:ApiTruncatedException) { throw e } catch(e:ApiProviderException) {throw e} catch(_:Exception) {throw ApiResponseException()}
     }
 }

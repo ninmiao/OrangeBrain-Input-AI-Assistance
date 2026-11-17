@@ -6,9 +6,9 @@ C++17 owns input/context encoding, prompt composition, provider payloads, reason
 
 ## Wire contract
 
-Input: `{"i":"nihao","b":"previous","a":"next"}`. `b` and `a` are omitted when empty. Context defaults to enabled, 50 code points before and 0 after; it excludes the current composition. Only `i` is transformed. There is no history chain or Preset reference.
+Input: `{"i":"nihao","b":"previous","a":"next"}`. `b` and `a` are omitted when empty. Context defaults to enabled, 50 code points before and 0 after; it excludes the current composition. The correction slot transforms `i`; the assistant slot infers intent using the available context. There is no history chain or Preset reference.
 
-Output: `["你好"]`, or ordered future multi-candidate output such as `["你好","您好"]`. Default prompts ask for one candidate. Up to 8 distinct strings are accepted, with a 32 KiB output text limit and 2,000 code points per string. The client rejects prose, code fences, objects, malformed JSON and recognizable thought markers. JSON nesting is bounded at the native boundary. A valid array cannot prove that a model followed the semantic instruction; it does prevent free-form reasoning from being treated as the response protocol.
+Output: `["correction","assistant"]` by default, or `["correction"]` with the assistant disabled. The `assistantEnabled` flag selects the prompt and preserves duplicate texts so role indices remain stable. Clients label the first item as correction and subsequent items as assistant. Up to 8 strings are accepted, with a 32 KiB output text limit and 2,000 code points per string. Assistant mode accepts one complete Markdown JSON fence around the entire array; prose before or after it is rejected. The client rejects objects, malformed JSON and recognizable thought markers. JSON nesting is bounded at the native boundary. A valid array cannot prove that a model followed the semantic instruction; it does prevent free-form reasoning from being treated as the response protocol.
 
 ## Soft token budget and truncation
 

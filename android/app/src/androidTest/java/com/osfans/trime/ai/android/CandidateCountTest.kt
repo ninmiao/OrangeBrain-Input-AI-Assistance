@@ -21,11 +21,11 @@ class CandidateCountTest {
         try {
             // Exercise loading an actual pre-upgrade saved configuration.
             File(ins.targetContext.noBackupFilesDir,"ai-config.json").writeText(
-                Json { encodeDefaults=true }.encodeToString(old.copy(candidateCount=5,completion=true)))
+                Json { encodeDefaults=true }.encodeToString(old.copy(candidateCount=5,completion=true,assistantEnabled=false)))
             val migrated=AiStore(ins.targetContext).config
             assertEquals(1,migrated.candidateCount);assertFalse(migrated.completion)
             assertEquals(old.policies,migrated.policies);assertEquals(old.selectedPolicyId,migrated.selectedPolicyId)
-            store.update { old.copy(candidateCount=5,completion=true) }
+            store.update { old.copy(candidateCount=5,completion=true,assistantEnabled=false) }
             assertEquals(1,store.config.candidateCount);assertFalse(store.config.completion)
             val first=store.addPolicy("Policy summary fast").also { ids+=it }
             val second=store.addPolicy("Policy summary normal").also { ids+=it }
@@ -36,7 +36,7 @@ class CandidateCountTest {
             store.updatePolicyConfig(second) { it.copy(modelValues=emptyMap()) }
             assertEquals("思考：服务端默认 · 速度：服务端默认",store.policyParameterSummary(store.config.policies.first { it.id==second }))
             settings=ins.startActivitySync(Intent(ins.targetContext,AiSettingsActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-            assertTrue(d.wait(Until.hasObject(By.text("AI 仅返回一个最佳候选，不生成额外补全。")),5000))
+            assertTrue(d.wait(Until.hasObject(By.text("仅纠错：返回一个最佳候选。")),5000))
             assertFalse(d.hasObject(By.textStartsWith("AI 候选数量")))
             assertFalse(d.hasObject(By.text("显示独立补全")))
             val selector=By.desc("选择 Policy Policy summary fast")
@@ -59,7 +59,7 @@ class CandidateCountTest {
             val endpoint="${TestNetwork.baseUrl}/v1/chat/completions"
             store.updatePolicyConfig(id) { it.copy(endpoint=endpoint,model="candidates-test") }
             store.credentialsForPolicy(id).save(endpoint,"emulator-test-key");store.selectPolicy(id)
-            store.update { it.copy(enabled=true,consent=true,automatic=true,wordSegmentation=true,traditional=false) }
+            store.update { it.copy(enabled=true,assistantEnabled=false,consent=true,automatic=true,wordSegmentation=true,traditional=false) }
             assertTrue(store.prompt(store.config,true).contains("一个完整候选"))
             // Rime deployment and cold IME creation can outlast the old 10-second UI wait.
             s.runOnReady { clearComposition();selectSchema("rime_ai_simp");setRuntimeOption("ascii_mode",false) }

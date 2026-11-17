@@ -52,7 +52,8 @@ Root: HKLM32; Subkey: "Software\ZephyrInput"; ValueType: string; ValueName: "Wea
 Name: "{commonprograms}\Zephyr Input"; Filename: "{app}\ZephyrSettings.exe"; WorkingDir: "{app}"
 Name: "{commonstartup}\Zephyr Input"; Filename: "{app}\ZephyrBroker.exe"; WorkingDir: "{app}"
 [Run]
-Filename: "{app}\ZephyrBroker.exe"; Flags: nowait runasoriginaluser skipifsilent
+; The keyboard needs the broker after silent upgrades too.
+Filename: "{app}\ZephyrBroker.exe"; Flags: nowait runasoriginaluser
 Filename: "{app}\ZephyrSettings.exe"; Description: "Open Zephyr Input settings"; Flags: postinstall nowait runasoriginaluser skipifsilent
 [UninstallDelete]
 Type: files; Name: "{app}\install.ps1"

@@ -63,7 +63,7 @@ def main():
         try:
             raw='xianzaishurufahouxuanyouenti'
             request=('Z2\tzh\t0\t'+raw.encode().hex()+'\t'+ '前文 😀'.encode().hex()+'\t').encode()
-            assert call(request,.2).startswith('Z1\t1\t200\t1\t0\n')
+            assert call(request,.2).startswith('Z1\t1\t200\t1\t0\t1\n')
             for _ in range(12):assert call(request).startswith('Z1\t')
             assert '\nE\t' in call(b'Z2\tzh\t0\tbadhex\t\t')
             handles=[connect() for _ in range(4)]

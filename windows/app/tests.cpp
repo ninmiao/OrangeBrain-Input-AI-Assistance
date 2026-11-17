@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
               int(raw.input.size()) * 4 + 32,
           "Soft budget full candidate reserve");
     check(payload["instructions"].get<std::string>().find(
-              u8"仅输出JSON字符串数组") != std::string::npos,
+              "No requests for more info; Give your best result directly.") != std::string::npos,
           "Strict output contract");
     c["contextEnabled"] = false;
     payload = requestPayload(c, p, raw);

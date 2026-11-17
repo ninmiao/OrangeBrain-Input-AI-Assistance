@@ -25,6 +25,16 @@ function Install-Check([string]$label) {
  $state=Get-Content -LiteralPath "$target/installation.json" -Raw | ConvertFrom-Json
  if($state.version -ne $expectedVersion){throw 'Wrong installed version'}
  $null=Get-Uninstaller
+ # A successful settings benchmark does not prove keyboard AI is available.
+ # Silent installation must bring up the real per-user broker pipe as well.
+ $deadline=[DateTime]::UtcNow.AddSeconds(15);$brokerReady=$false
+ do {
+  $probe=[IO.Pipes.NamedPipeClientStream]::new('.',('ZephyrAI-'+$env:USERNAME),[IO.Pipes.PipeDirection]::InOut)
+  try {$probe.Connect(500);$brokerReady=$true} catch {} finally {$probe.Dispose()}
+  if(!$brokerReady){Start-Sleep -Milliseconds 200}
+ } while(!$brokerReady -and [DateTime]::UtcNow -lt $deadline)
+ if(!$brokerReady){throw 'Installation completed but keyboard AI broker is not available'}
+ $checks.Add($label+'-broker-ready')
  foreach($arch in @('x64','x86')){if(!(Test-Path -LiteralPath (Join-Path $target $state.$arch))){throw 'TSF DLL missing'}}
  if([version]$expectedVersion -ge [version]'1.9.0') {
   foreach($old in @('runtime','app')){if(Test-Path -LiteralPath (Join-Path $target $old)){throw 'Old JVM program directory remains after upgrade'}}

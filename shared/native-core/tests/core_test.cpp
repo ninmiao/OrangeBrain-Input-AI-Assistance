@@ -208,6 +208,36 @@ int main() {
         throw std::runtime_error("failed response status was ignored");
       ++count;
     }
+    {
+      auto call=[](const char* op,J args){return J::parse(zephyr::invoke(J{{"op",op},{"args",args}}.dump()));};
+      for(bool zh:{true,false}) for(bool traditional:{true,false}) {
+        auto r=call("prompt",{{"assistantEnabled",true},{"chinese",zh},{"traditional",traditional}});
+        auto s=r.at("ok").get<std::string>();
+        if(s.find("No requests for more info; Give your best result directly.")==s.npos || s.find("Return only JSON [\"correction\",\"assistant\"]")==s.npos)
+          throw std::runtime_error("approved assistant prompt missing");
+        if(s.find(zh?(traditional?"Traditional Chinese":"Simplified Chinese"):"Both candidates use English only.")==s.npos)
+          throw std::runtime_error("assistant language contract");
+        ++count;
+      }
+      auto dual=call("decode",{{"text","[\"hello\",\"hello\"]"},{"assistantEnabled",true}});
+      if(dual.at("ok").at("candidates")!=J::array({"hello","hello"}))throw std::runtime_error("duplicate roles lost");
+      ++count;
+      for(auto s:{"[\"hello\",", "[\"hello\",\"par", "[\"hello\",\"partial\\u4"}) {
+        auto r=call("decode",{{"text",s},{"truncated",true},{"assistantEnabled",true}});
+        if(r.at("ok").at("candidates")!=J::array({"hello"}))throw std::runtime_error("first role lost on truncation");
+        ++count;
+      }
+      auto invalid=call("decode",{{"text","I think the answer is [\"hello\",\"hi\"]"},{"assistantEnabled",true}});
+      if(!invalid.contains("error"))throw std::runtime_error("reasoning leaked into candidate");
+      ++count;
+      auto fenced=call("decode",{{"text","```json\n[\"hello\",\"hi\"]\n```"},{"assistantEnabled",true}});
+      if(fenced.at("ok").at("candidates")!=J::array({"hello","hi"}))throw std::runtime_error("whole JSON fence not recovered");
+      ++count;
+      for(auto s:{"Explanation\n```json\n[\"hello\",\"hi\"]\n```", "```json\n[\"hello\",\"hi\"]\n```\nExplanation", "```json\n[\"hello\",\"hi\"]"}) {
+        if(!call("decode",{{"text",s},{"assistantEnabled",true}}).contains("error"))throw std::runtime_error("prose or partial fence accepted");
+        ++count;
+      }
+    }
     std::cout << count << " native truncation/format/envelope cases passed\n";
     return 0;
   } catch (const std::exception& e) {

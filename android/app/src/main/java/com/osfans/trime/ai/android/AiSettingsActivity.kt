@@ -70,10 +70,11 @@ class AiSettingsActivity : AppCompatActivity() {
                 .setNegativeButton("取消") { _, _ -> render() }.setOnCancelListener { render() }.show()
             else save { it.copy(enabled = enabled) }
         }
+        toggle("纠错＋AI 助手（关闭为仅纠错）", c.assistantEnabled) { value -> save { it.copy(assistantEnabled = value) } }
         toggle("空格分词（中文键盘）", c.wordSegmentation) { value -> save { it.copy(wordSegmentation = value) } }
         label("开启时，拼音保留在键盘候选区；空格只标记词组边界，点击候选后才上屏。英文键盘仍正常输入空格。")
         toggle("停手自动请求", c.automatic) { value -> save { it.copy(automatic = value) } }
-        label("AI 仅返回一个最佳候选，不生成额外补全。")
+        label(if (c.assistantEnabled) "第一项纠错，第二项按意图给出答案、建议或续写；点击后上屏。" else "仅纠错：返回一个最佳候选。")
         val debounce = field("停手等待（毫秒，50–2000）", c.debounceMs.toString(), numeric = true)
         val timeout = field("请求超时（秒，1–60）", (c.timeoutMs / 1000).toString(), numeric = true)
         val target = field("当前输入上限（字符，1–300）", c.targetLimit.toString(), numeric = true)
@@ -172,13 +173,13 @@ class AiSettingsActivity : AppCompatActivity() {
         label("测试使用本 Policy 的实际模型、参数、提供商和超时设置；填入样例后点击发送。")
         button("预览实际请求（不含 Key）") { work {
             val current = store.configForPolicy(id)
-            val request=AiRequest(RequestStamp(0,0,0,0,0),Protocol.context(sample.text.toString(),LatencySamples.before(chinese.isChecked),LatencySamples.after(chinese.isChecked),current.contextEnabled,current.beforeLength,current.afterLength),store.prompt(current,chinese.isChecked),false,outputTokenBudget=current.outputTokenBudget)
+            val request=AiRequest(RequestStamp(0,0,0,0,0),Protocol.context(sample.text.toString(),LatencySamples.before(chinese.isChecked),LatencySamples.after(chinese.isChecked),current.contextEnabled,current.beforeLength,current.afterLength),store.prompt(current,chinese.isChecked),false,outputTokenBudget=current.outputTokenBudget,assistantEnabled=current.assistantEnabled)
             output.text=ChatCompletionsClient().payload(current.model,request,store.parameters(current),current.endpoint,current.provider).toString()
         } }
         button("连接测试 / 发送此样例") { work {
             val current = store.configForPolicy(id)
             val key = withContext(Dispatchers.IO) { store.credentialsFor(current).read(current.endpoint) } ?: error("Missing key")
-            val request = AiRequest(RequestStamp(0, 0, current.generation, 0, current.generation), Protocol.context(sample.text.toString(),LatencySamples.before(chinese.isChecked),LatencySamples.after(chinese.isChecked),current.contextEnabled,current.beforeLength,current.afterLength), store.prompt(current, chinese.isChecked), current.completion, current.candidateCount,current.outputTokenBudget)
+            val request = AiRequest(RequestStamp(0, 0, current.generation, 0, current.generation), Protocol.context(sample.text.toString(),LatencySamples.before(chinese.isChecked),LatencySamples.after(chinese.isChecked),current.contextEnabled,current.beforeLength,current.afterLength), store.prompt(current, chinese.isChecked), current.completion, current.candidateCount,current.outputTokenBudget,current.assistantEnabled)
             val start = android.os.SystemClock.elapsedRealtime()
             val result = ChatCompletionsClient().request(current.endpoint, key, current.model, request, current.timeoutMs, store.parameters(current), current.provider)
             output.text = "${android.os.SystemClock.elapsedRealtime() - start} ms\n" + result.candidates.joinToString("\n\n") + if (result.completion.isNotBlank()) "\n补全：${result.completion}" else ""
@@ -200,7 +201,7 @@ class AiSettingsActivity : AppCompatActivity() {
             report("正在测试 $name…（一次请求）")
             try {
                 val key=withContext(Dispatchers.IO) { store.credentialsFor(c).read(c.endpoint) } ?: error("请先为 $name 保存 Key")
-                val request=AiRequest(RequestStamp(0,0,c.generation,0,c.generation),LatencySamples.input(true,c.contextEnabled,c.beforeLength,c.afterLength),store.prompt(c,true),c.completion,c.candidateCount,c.outputTokenBudget)
+                val request=AiRequest(RequestStamp(0,0,c.generation,0,c.generation),LatencySamples.input(true,c.contextEnabled,c.beforeLength,c.afterLength),store.prompt(c,true),c.completion,c.candidateCount,c.outputTokenBudget,c.assistantEnabled)
                 val sent=android.os.SystemClock.elapsedRealtime()
                 val result=ChatCompletionsClient().request(c.endpoint,key,c.model,request,c.timeoutMs,store.parameters(c),c.provider)
                 val message="$name · ${c.model} · ${store.policyParameterSummary(c.policies.first { it.id==id })}\n${android.os.SystemClock.elapsedRealtime()-sent} ms（完整候选返回）\n${result.candidates.firstOrNull().orEmpty()}\n${result.usage?.summary().orEmpty()}"

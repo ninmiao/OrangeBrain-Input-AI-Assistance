@@ -25,6 +25,15 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.send_error(401);return
         type(self).requests += 1
         payload=json.loads(self.rfile.read(int(self.headers['Content-Length'])))
+        if payload.get('model')=='assistant-test':
+            system=payload.get('instructions',payload.get('system_instruction','')) or payload.get('messages',[{}])[0].get('content','')
+            assert 'No requests for more info; Give your best result directly.' in system
+            assert '默认一个候选' not in system
+            values=['What should I eat?','Try a sandwich.'] if 'Both candidates use English only.' in system else ['吃什么？','吃碗面吧。']
+            if gemini:self.reply({'status':'completed','steps':[{'type':'model_output','content':[{'type':'text','text':values}]}]})
+            elif self.path=='/v1/responses':self.reply({'status':'completed','output':[{'type':'message','content':[{'type':'output_text','text':values}]}]})
+            else:self.reply({'choices':[{'message':{'content':values}}]})
+            return
         if gemini:
             assert self.headers.get('Authorization') is None
             assert payload['generation_config']['thinking_level']=='low' and payload['store'] is False
@@ -75,10 +84,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
         # Production model text uses the compact JSON array contract.
         for choice in value.get('choices',[]):
             message=choice.get('message',{})
-            if isinstance(message.get('content'),str):message['content']=json.dumps([message['content']],ensure_ascii=False,separators=(',',':'))
+            if isinstance(message.get('content'),(str,list)):message['content']=json.dumps(message['content'] if isinstance(message['content'],list) else [message['content']],ensure_ascii=False,separators=(',',':'))
         for step in value.get('steps',[])+value.get('output',[]):
             for part in step.get('content',[]):
-                if isinstance(part.get('text'),str):part['text']=json.dumps([part['text']],ensure_ascii=False,separators=(',',':'))
+                if isinstance(part.get('text'),(str,list)):part['text']=json.dumps(part['text'] if isinstance(part['text'],list) else [part['text']],ensure_ascii=False,separators=(',',':'))
         body=json.dumps(value,ensure_ascii=False).encode()
         self.send_response(200);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(body)));self.end_headers()
         if delay:time.sleep(delay)

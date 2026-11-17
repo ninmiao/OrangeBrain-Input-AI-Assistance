@@ -34,6 +34,7 @@ enum Id {
   BEFORE,
   AFTER,
   BUDGET,
+  ASSISTANT,
   NAME = 300,
   ENDPOINT,
   MODEL,
@@ -374,11 +375,12 @@ class App {
                                  window_, nullptr, instance_, this);
     column_ = 0;
     check(0, ENABLED, L"启用在线 AI / Cloud AI", 12);
-    check(0, ENTER_ORIGINAL, L"回车提交原文 / Enter: original", 48);
-    check(0, SPACE_ORIGINAL, L"空格提交原文 / Space: original", 84);
-    check(0, SEGMENTATION, L"空格分词 / Phrase boundaries", 120);
-    field(0, LANGUAGE, L"中英快捷键 / Language shortcut", 170, true, true);
-    field(0, SCRIPT, L"繁简快捷键 / Script shortcut", 240, true, true);
+    check(0, ASSISTANT, L"纠错＋助手 / Correction + assistant", 48);
+    check(0, ENTER_ORIGINAL, L"回车提交原文 / Enter: original", 84);
+    check(0, SPACE_ORIGINAL, L"空格提交原文 / Space: original", 120);
+    check(0, SEGMENTATION, L"空格分词 / Phrase boundaries", 156);
+    field(0, LANGUAGE, L"中英快捷键 / Language shortcut", 206, true, true);
+    field(0, SCRIPT, L"繁简快捷键 / Script shortcut", 276, true, true);
     column_ = 1;
     field(0, DEBOUNCE, L"停顿 / Debounce (50–2000 ms)", 12);
     field(0, TIMEOUT, L"总超时 / Timeout (1000–60000 ms)", 82);
@@ -542,7 +544,7 @@ class App {
                       {ENTER_ORIGINAL, "enterOriginal"},
                       {SPACE_ORIGINAL, "spaceOriginal"},
                       {SEGMENTATION, "wordSegmentation"},
-                      {CONTEXT, "contextEnabled"}})
+                      {CONTEXT, "contextEnabled"}, {ASSISTANT, "assistantEnabled"}})
       checkValue(pair.first, config_[pair.second]);
     for (auto pair : {std::pair<int, const char*>{DEBOUNCE, "debounceMs"},
                       {TIMEOUT, "timeoutMs"},
@@ -647,7 +649,7 @@ class App {
                         {ENTER_ORIGINAL, "enterOriginal"},
                         {SPACE_ORIGINAL, "spaceOriginal"},
                         {SEGMENTATION, "wordSegmentation"},
-                        {CONTEXT, "contextEnabled"}})
+                        {CONTEXT, "contextEnabled"}, {ASSISTANT, "assistantEnabled"}})
         next[pair.second] = checked(pair.first);
       for (auto pair : {std::pair<int, const char*>{DEBOUNCE, "debounceMs"},
                         {TIMEOUT, "timeoutMs"},
@@ -1019,7 +1021,7 @@ class App {
         return;
       }
     }
-    if ((id >= ENABLED && id <= BUDGET) || (id >= NAME && id <= SPEED) ||
+    if ((id >= ENABLED && id <= ASSISTANT) || (id >= NAME && id <= SPEED) ||
         id == CHINESE_PROMPT || id == ENGLISH_PROMPT) {
       if (notification == EN_CHANGE || notification == CBN_SELCHANGE ||
           notification == CBN_EDITCHANGE || notification == BN_CLICKED)
@@ -1033,6 +1035,12 @@ class App {
       require(fs::absolute(store_.directory())!=fs::absolute(userDirectory()),"UI self-test requires an isolated data directory");
       for(auto& p:original["policies"]) require(!store_.hasKey(p["id"]),"UI self-test requires a directory without credentials");
       require(config_==original,"UI configuration mismatch");
+      checkValue(ASSISTANT,false);modified(ASSISTANT);
+      require(dirty_ && store_.load()==original,"Assistant mode saved before Save");
+      require(save(false) && !store_.load()["assistantEnabled"].get<bool>(),"Assistant mode not persisted");
+      checkValue(ASSISTANT,true);modified(ASSISTANT);
+      require(save(false) && store_.load()["assistantEnabled"].get<bool>(),"Assistant mode not re-enabled");
+      config_=saved_=original;store_.save(original);reload();dirty_=false;
       require(GetClassLongPtrW(window_,GCLP_HICON)!=0,"Window logo missing");
       SetWindowPos(window_,nullptr,0,0,px(1000),px(740),SWP_NOMOVE|SWP_NOZORDER);
       layout();

@@ -4,9 +4,9 @@ import kotlinx.serialization.json.*
 @Serializable data class LanguageRules(val chinese:String="",val non_chinese:String="")
 @Serializable data class PromptPackage(val schema_version:Int=3,val package_id:String="zephyr-input",val version:String="5.0.0",val revision:Long=14,val response_schema_version:Int=3,val keyboard_language_rules:LanguageRules=LanguageRules()) {
  fun upgraded():PromptPackage=if(revision<14||response_schema_version<3)PromptPackage(package_id=package_id) else this
- fun compose(chinese:Boolean,traditional:Boolean=false):String {
+ fun compose(chinese:Boolean,traditional:Boolean=false,assistantEnabled:Boolean=false):String {
   val rules=upgraded().keyboard_language_rules
-  return NativeCore.invoke("prompt",buildJsonObject {put("chinese",chinese);put("traditional",traditional);put("custom",if(chinese)rules.chinese else rules.non_chinese)}).jsonPrimitive.content
+  return NativeCore.invoke("prompt",buildJsonObject {put("assistantEnabled",assistantEnabled);put("chinese",chinese);put("traditional",traditional);put("custom",if(chinese)rules.chinese else rules.non_chinese)}).jsonPrimitive.content
  }
  companion object {
   const val KAOMOJI_RULE="任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”生成(„ಡωಡ„)。"

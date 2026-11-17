@@ -38,12 +38,17 @@ struct Composition {
       candidates.push_back(text);comments.push_back(source);rimeIndices.push_back(rimeIndex);
     }
   }
-  bool adopt(uint64_t expected, const std::vector<std::wstring>& values) {
+  bool adopt(uint64_t expected, const std::vector<std::wstring>& values, bool assistant = false) {
     if(expected!=revision || input.empty()) return false;
     auto old=candidates, labels=comments;auto indices=rimeIndices;
     candidates.clear(); comments.clear(); rimeIndices.clear();
-    for(const auto& v:values) add(v,L"AI");
-    for(size_t i=0;i<old.size();++i) if(labels[i]!=L"AI") add(old[i],labels[i],indices[i]);
+    for(size_t i=0;i<values.size();++i) if(!values[i].empty()) {
+      if(!assistant) { add(values[i],L"AI"); continue; }
+      candidates.push_back(values[i]);
+      comments.push_back(assistant ? (i==0 ? L"AI 纠错" : L"AI 助手") : L"AI");
+      rimeIndices.push_back(-1);
+    }
+    for(size_t i=0;i<old.size();++i) if(labels[i].rfind(L"AI",0)!=0) add(old[i],labels[i],indices[i]);
     selected=page=0;return true;
   }
   bool applyConfiguration(uint64_t value) {

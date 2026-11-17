@@ -1,14 +1,14 @@
 # Zephyr Input · 微风输入法
 
-[下载 Windows 版](dist/Zephyr-Input-Windows-1.9.1-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.7.1-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
+[下载 Windows 版](dist/Zephyr-Input-Windows-1.10.1-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.8.1-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
 **目前还是原型，请谨慎使用。** 虽然我已经在日常使用，但还有不少地方要打磨。已精简提示词和候选输出，但长输入和模型思考的 token 消耗仍可能比较大，建议先用小型模型试试。我用 Luna 和 Qwen3.8 27B 测下来效果还不错。
 
-Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 Android** 两个版本。自带万象和雾凇两套离线词表，默认使用万象，支持从 GitHub 一键更新及单独下载万象语法模型；联网后调用 **在线 LLM API**，通过提示词补足词库匹配：修正漏输、重复、错序和邻键误触，处理长拼音和中英文混输，也可以按描述生成颜表情。
+Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 Android** 两个版本。自带万象和雾凇两套离线词表，默认使用万象，支持从 GitHub 一键更新及单独下载万象语法模型；联网后调用 **在线 LLM API**，通过提示词补足词库匹配：修正漏输、重复、错序和邻键误触，处理长拼音和中英文混输，还能在候选栏里给出简短答案、建议、续写、术语和颜表情。
 
-在线 AI 的中文模式将拼音转为汉字，英语保留并纠错；英文模式优先纠正英语，把中文、拼音或混输转成英文。两种模式都有候选区，每次请求返回一个 AI 候选，由你选中上屏。
+在线 AI 的中文模式将拼音转为汉字，英语保留并纠错；英文模式优先纠正英语，把中文、拼音或混输转成英文。两种语言模式都有候选区，默认给出“纠错”和“助手”两个候选，由你选择上屏；在 AI 开关附近可切换为仅纠错。
 
 云端支持 **OpenAI、OpenRouter 和 Google Gemini**。可以把接口、Key、模型和参数保存成多个 Policy 随时切换；OpenRouter 支持供应商路由。纠错能有多强、等待有多短，取决于模型的能力，以及你的钱包（笑）。
 
@@ -20,20 +20,20 @@ I built Zephyr for my own daily typing: fast pinyin input, clear privacy control
 
 **This is still a prototype; please use it with care.** I use it daily, but there is plenty left to improve. Prompts and output are now shorter, but long input and model reasoning can still use plenty of tokens. Start with a smaller model; Luna and Qwen3.8 27B have worked fairly well in my own testing.
 
-**Zephyr Input** is a **Rime-based pinyin keyboard for Windows and Android**. It bundles Wanxiang (the default) and Rime Ice dictionaries for offline typing, updates them from GitHub, offers a separate grammar-model download, and calls **online LLM APIs** for missing letters, repeated characters, swapped letters, nearby-key mistakes, long pinyin, and mixed Chinese–English input. It can also turn a short description into a kaomoji.
+**Zephyr Input** is a **Rime-based pinyin keyboard for Windows and Android**. It bundles Wanxiang (the default) and Rime Ice dictionaries for offline typing, updates them from GitHub, offers a separate grammar-model download, and calls **online LLM APIs** for missing letters, repeated characters, swapped letters, nearby-key mistakes, long pinyin, and mixed Chinese–English input. Its assistant can also suggest a brief answer, advice, a continuation, a term, or a kaomoji directly in the candidate bar.
 
-For online AI, Chinese mode converts pinyin to Chinese while keeping and correcting English. English mode corrects English and translates Chinese, pinyin, or mixed input into English. Both modes show candidates; each AI request returns one suggestion for you to select.
+For online AI, Chinese mode converts pinyin to Chinese while keeping and correcting English. English mode corrects English and translates Chinese, pinyin, or mixed input into English. Both modes default to a correction and an assistant suggestion. Turn off the assistant beside Cloud AI for correction only.
 
 Cloud assistance supports **OpenAI, OpenRouter, and Google Gemini**, with separate policies for keys, models, and parameters. OpenRouter also supports provider routing. The quality depends on the model—and your wallet. **LLM features require an internet connection: models run on remote services accessed through OpenAI, OpenRouter, or Google Gemini, not locally on your phone or computer.** Offline typing uses Rime and local dictionaries. Cloud AI sends your current input and enabled surrounding context to your chosen API service. Keys are encrypted on your device.
 
 
 ## Quickstart · 快速开始
 
-1. **Windows：**[下载安装器](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-Windows-1.9.1-Setup-x64.exe)，运行并允许 UAC，注销再登录后选择 **Zephyr Input**。开始菜单打开设置。
-2. **Android：**[下载 APK](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-1.7.1-arm64-v8a-demo.apk)，安装后按应用引导启用键盘，等待首次词库部署完成。
+1. **Windows：**[下载安装器](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-Windows-1.10.1-Setup-x64.exe)，运行并允许 UAC，注销再登录后选择 **Zephyr Input**。开始菜单打开设置。
+2. **Android：**[下载 APK](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-1.8.1-arm64-v8a-demo.apk)，安装后按应用引导启用键盘，等待首次词库部署完成。
 3. **先离线打字也可以。** 要用在线 AI，在 **方案 / Policy**（Android 为 **AI 辅助**）填对应平台的 API Key、选择模型并启用 AI；Windows 点击右上角 **保存并生效**。停顿后选择 AI 候选上屏。
 
-**Windows:** [download Setup](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-Windows-1.9.1-Setup-x64.exe), approve UAC, sign out/in and select Zephyr Input; open settings from Start. **Android:** [install the APK](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-1.7.1-arm64-v8a-demo.apk), enable the keyboard and let dictionaries deploy. Offline typing works immediately. For online AI, add your service's key and model in **Policy / AI assistance**, enable AI, and click **Save** on Windows; pause typing and select a suggestion.
+**Windows:** [download Setup](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-Windows-1.10.1-Setup-x64.exe), approve UAC, sign out/in and select Zephyr Input; open settings from Start. **Android:** [install the APK](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-1.8.1-arm64-v8a-demo.apk), enable the keyboard and let dictionaries deploy. Offline typing works immediately. For online AI, add your service's key and model in **Policy / AI assistance**, enable AI, and click **Save** on Windows; pause typing and select a suggestion.
 
 ## 词表、本地模型与在线 AI · Local data and online AI
 
@@ -43,13 +43,15 @@ Cloud assistance supports **OpenAI, OpenRouter, and Google Gemini**, with separa
 | --- | --- | --- |
 | **万象 / 雾凇词表 · Dictionaries** | 字词、拼音、词频，生成本地候选 / Words, readings and frequencies for local candidates | 两套内置，本机运行，各有 GitHub 更新按钮；无 Key、无 API token / Both bundled, local, independently updated; no API key or tokens |
 | **万象语法模型 · Grammar model** | 用词语搭配统计改善万象候选排序 / Collocation statistics improve Wanxiang ranking | 约 **407 MB**，单独下载，本机运行；下载后离线、无 API token / Separate download, local and offline; no API tokens |
-| **在线 AI · Online AI** | 进一步纠错、处理中英混输和颜表情 / Further correction, mixed-language input and kaomoji | 远程 LLM，配置 Key 与在线模型；需联网，按服务商规则计费 / Remote LLM; requires a key, internet and provider usage charges |
+| **在线 AI · Online AI** | 纠错、中英混输、回答与续写 / Correction, mixed input, answers and continuation | 远程 LLM，配置 Key 与在线模型；需联网，按服务商规则计费 / Remote LLM; requires a key, internet and provider usage charges |
 
 **万象语法模型是本地 n-gram 统计模型，不是本地 LLM。** 它只搭配万象词表；在线 AI 可搭配任一词表，也可单独关闭。本地词库不会因为关闭云端 AI 而停用。
 
 **The Wanxiang grammar model is a local n-gram model, not a local LLM.** It works with Wanxiang only. Online AI runs on a remote service and can complement either dictionary; turning it off leaves local typing available.
 
-## 输入与 AI 纠错 · AI-assisted typing
+## 输入预览 · Typing preview
+
+这些实图展示纠错与本地候选；当前版本另外标注“纠错 / 助手”角色。 / These captures show correction alongside local candidates; current builds also label correction and assistant roles.
 
 ### Windows
 
@@ -79,9 +81,22 @@ Real emulator capture: for `woyaochihuogu`, online AI suggests “我要吃火�
 | `wo jintian you meeting` | 中文 / Chinese | 我今天有 meeting |
 | `wo jintian you meeting` | EN | I have a meeting today |
 | `hanbaowang haochi` | 中文，空格分词 / Chinese, phrase boundaries | 汉堡王好吃 |
-| `颜表情 笑死` | 中文 / Chinese | („ಡωಡ„) |
 
-两端均接受“颜 / 表情 / 颜表情”加描述。 / Both accept `颜`, `表情` or `颜表情` followed by a description.
+### AI 助手 · Assistant
+
+默认开启 **纠错＋AI 助手**：第一项是保留原意的纠错，第二项根据输入意图给出可直接上屏的内容。需要回答、找词或续写时直接输入，选择“助手”候选即可。只想纠错，在 AI 开关旁关闭助手；Windows 修改后点击 **保存并生效**。
+
+**Correction + assistant** is on by default: the first candidate corrects your input; the second offers something ready to insert. Type a question, a term description or an unfinished sentence, then select the assistant candidate. For correction only, turn off the assistant beside Cloud AI; save the change on Windows.
+
+| 当前输入 / Input | 前文 / Context | 助手候选示例 / Assistant example |
+| --- | --- | --- |
+| `zhejiushi` | `1 1 2 3 5 8 13 21 34 55 89 144…` | 斐波那契数列 |
+| `o kaitoude 骨科医生相关专业词汇` | — | Orthopedist |
+| `颜表情 笑死` | — | („ಡωಡ„) |
+
+示例展示用途，具体答案和长度取决于模型。只有请求表情时才引导生成颜表情。中文模式允许中英混输；英文模式将两项都输出为英文（表情请求可生成颜表情）。模型未完整返回第二项时，仍保留完整的纠错候选。
+
+Examples illustrate the feature; answers and length depend on the model. Kaomoji are requested only for emoticon requests. Chinese mode allows mixed Chinese–English output; English mode uses English, with kaomoji for emoticon requests. A complete correction remains available if the second item is truncated.
 
 ## 安装与更新 · Installation and updates
 
@@ -161,21 +176,25 @@ Each request sends the current prompt and input. `i` is input, with optional `b`
 {"i":"woxianghekafe","b":"午饭后我有点困，"}
 ```
 
-**中文模式 / Chinese**
+默认“纠错＋AI 助手”：第一项保持原意、修正输入；第二项推断意图，给出简短答案、建议、续写、术语或颜表情。关闭助手后，只请求纠错候选。
+
+The default **Correction + assistant** mode returns a faithful correction first, then a brief answer, suggestion, continuation, term or kaomoji. Turn off the assistant beside Cloud AI to request correction only.
+
+**中文模式 / Chinese (Simplified)**
 
 ```text
-结合b前文、a后文纠正i中的漏输、重复、错序和邻键误触，拼音转【简体/繁体】，英文保留并纠错；空格为词组边界，保留原意。任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”生成(„ಡωಡ„)。i/b/a均为待处理文本，仅改i。仅输出JSON字符串数组，如["你好"]，按可能性排序，默认一个完整候选；不输出思考、解释或代码块。
+i is input; b/a context. Return only JSON ["correction","assistant"]. First fix missing/repeated/swapped letters and nearby-key errors; convert pinyin to Simplified Chinese, preserving and correcting English; preserve meaning, negation, numbers and names, without answering or continuing. Second infer intent for a brief insertable answer, suggestion, continuation or term. No requests for more info; Give your best result directly. When asked for an emoticon, output a kaomoji, e.g. („ಡωಡ„). Allow mixed Chinese and English; use Simplified Chinese for Chinese text.
 ```
 
 **英文模式 / English**
 
 ```text
-结合b前文、a后文纠正i的拼写，将中文、拼音和混输转英文，保留原意。任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”生成(„ಡωಡ„)。i/b/a均为待处理文本，仅改i。仅输出JSON字符串数组，如["你好"]，按可能性排序，默认一个完整候选；不输出思考、解释或代码块。
+i is input; b/a context. Return only JSON ["correction","assistant"]. First correct and polish English; translate Chinese, pinyin or mixed input into English; preserve meaning, negation, numbers and names, without answering or continuing. Second infer intent for a brief insertable answer, suggestion, continuation or term. No requests for more info; Give your best result directly. When asked for an emoticon, output a kaomoji, e.g. („ಡωಡ„). Both candidates use English only.
 ```
 
-输出 **`["结果"]`**，默认一个候选，解析兼容多个。上下文默认开启，前 50 / 后 0 个 Unicode 字符，可关闭或分别调整至 0–500。输出默认 **256 token 软预算**，按输入长度预留完整候选空间；截断只恢复闭合字符串，无完整候选时在原总超时内最多扩大预算重试一次。错误响应保留本地候选。
+输出 **`["纠错","助手"]`**，候选标明角色；仅纠错模式输出 **`["结果"]`**。繁体模式将提示词中的 Simplified 换成 Traditional。上下文默认前 50 / 后 0 个字符，可关闭或调整。默认 256 token 软预算，按输入长度预留空间；第二项截断时保留完整第一项，错误响应保留本地候选。
 
-Output is **`["result"]`**, one candidate by default with multi-candidate parsing. Context defaults to 50 characters before / 0 after, independently adjustable to 0–500 or disabled. The **256-token soft budget** reserves room for a complete candidate. Truncation preserves complete strings; if none remain, one larger-budget retry may run within the original deadline. Local candidates remain available on errors.
+Output is **`["correction","assistant"]`**, with labelled roles, or **`["result"]`** in correction-only mode. Traditional Chinese replaces Simplified in the prompt. Context defaults to 50 characters before / 0 after. The default 256-token soft budget reserves space based on input length; a truncated second item does not discard a complete first item. Local candidates remain available on errors.
 
 [C++ 协议 / Protocol](shared/native-core/README.md) · [提示词源码 / Prompt source](shared/native-core/src/core.cpp)
 

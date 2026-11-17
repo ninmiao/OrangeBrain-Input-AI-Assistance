@@ -40,7 +40,8 @@ std::string responseWire(const J& c, const J& result,
   auto b = [&](const char* key) { return c.at(key).get<bool>() ? "1" : "0"; };
   std::string out = "Z1\t" + std::string(b("wordSegmentation")) + "\t" +
                     std::to_string(c.at("debounceMs").get<int>()) + "\t" +
-                    b("enterOriginal") + "\t" + b("spaceOriginal") + "\n";
+                    b("enterOriginal") + "\t" + b("spaceOriginal") + "\t" +
+                      (c.value("assistantEnabled",true) ? "1" : "0") + "\n";
   if (!error.empty()) out += "E\t" + hex(error) + "\n";
   if (result.is_object())
     for (auto& s : result.value("candidates", J::array()))
@@ -71,7 +72,7 @@ J requestPayload(const J& c, const J& p, const Input& raw, int budget) {
                                   {"afterLimit", c.at("afterLength")}});
   context["input"] = raw.input;
   std::string prompt = core(
-      "prompt", {{"chinese", raw.chinese}, {"traditional", raw.traditional}});
+      "prompt", {{"chinese", raw.chinese}, {"traditional", raw.traditional}, {"assistantEnabled", c.value("assistantEnabled", true)}});
   auto custom = p.value(raw.chinese ? "chinesePrompt" : "englishPrompt", "");
   if (!custom.empty()) {
     auto pos = prompt.find(u8"仅输出JSON字符串数组");
@@ -90,6 +91,7 @@ J requestPayload(const J& c, const J& p, const Input& raw, int budget) {
        {"request",
         {{"input", context},
          {"systemPrompt", prompt},
+         {"assistantEnabled", c.value("assistantEnabled", true)},
          {"outputTokenBudget",
           budget < 0 ? c.at("outputTokenBudget").get<int>() : budget}}}});
 }
@@ -124,7 +126,7 @@ J requestAi(const Store& store, const J& c, const J& p, const Input& raw,
       throw Error("HTTP", response.status);
     try {
       return core("envelope",
-                  {{"endpoint", p.at("endpoint")}, {"body", response.body}});
+                  {{"endpoint", p.at("endpoint")}, {"body", response.body}, {"assistantEnabled", c.value("assistantEnabled", true)}});
     } catch (const Error& e) {
       if (e.code != "truncated" || attempt) throw;
       left = int(std::chrono::duration_cast<std::chrono::milliseconds>(

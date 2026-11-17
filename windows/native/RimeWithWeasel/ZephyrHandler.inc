@@ -80,7 +80,7 @@ BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,E
     if(!z.commit.empty()||z.refreshPending){z.refreshPending=false;_ZephyrRespond(id,eat);return TRUE;}
     auto result=m_zephyr_ai.take(id);
     if(!result||result->revision!=z.revision||z.input.empty())return FALSE;
-    z.aiError=result->error;z.segmentation=result->segmentation;z.enterOriginal=result->enterOriginal;z.spaceOriginal=result->spaceOriginal;z.adopt(result->revision,result->candidates);_ZephyrRespond(id,eat);return TRUE;
+    z.aiError=result->error;z.segmentation=result->segmentation;z.enterOriginal=result->enterOriginal;z.spaceOriginal=result->spaceOriginal;z.adopt(result->revision,result->candidates,result->assistantEnabled);_ZephyrRespond(id,eat);return TRUE;
   }
   bool ctrl=(key.mask&ibus::CONTROL_MASK)!=0,alt=(key.mask&ibus::MOD1_MASK)!=0;
   auto shortcut=z.shortcuts.process(code,key.mask,GetTickCount64(),z.languageShortcut,z.scriptShortcut);

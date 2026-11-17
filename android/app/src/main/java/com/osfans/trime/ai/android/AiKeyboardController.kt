@@ -143,11 +143,11 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         candidateRow?.removeAllViews()
         label?.visibility = if (ready == null) View.VISIBLE else View.GONE
         ready?.let { result ->
-            fun add(text: String, completion: Boolean) {
+            fun add(text: String, completion: Boolean, role: String = "") {
                 candidateRow?.addView(Button(panel!!.context).apply {
                     isAllCaps = false
-                    contentDescription = (if (completion) "AI 补全：" else "AI 候选：") + text
-                    this.text = (if (completion) "补全：" else "") + text.take(45) + if (text.length > 45) "…" else ""
+                    contentDescription = (if (completion) "AI 补全：" else if (role.isNotEmpty()) "AI $role：" else "AI 候选：") + text
+                    this.text = (if (completion) "补全：" else if (role.isNotEmpty()) "$role：" else "") + text.take(45) + if (text.length > 45) "…" else ""
                     textSize = candidateTextSize
                     setTextColor(0xff151515.toInt())
                     elevation = 0f; stateListAnimator = null
@@ -168,7 +168,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
                     }
                 })
             }
-            result.result.candidates.forEach { add(it, false) }
+            result.result.candidates.forEachIndexed { index, text -> add(text, false, if (store.config.assistantEnabled) (if (index == 0) "纠错" else "助手") else "") }
             if (result.result.completion.isNotBlank()) add(result.result.completion, true)
         }
     }
@@ -259,7 +259,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             target = capture(manual)
             val snapshot = target ?: return@launch
             val request = AiRequest(RequestStamp(session, revision, c.generation, keyboardGeneration, c.generation), snapshot.input,
-                store.prompt(c, chinese), c.completion, c.candidateCount,c.outputTokenBudget)
+                store.prompt(c, chinese), c.completion, c.candidateCount,c.outputTokenBudget,c.assistantEnabled)
             coordinator.submit(request, c.enabled, sensitive, c.debounceMs)
         }
     }

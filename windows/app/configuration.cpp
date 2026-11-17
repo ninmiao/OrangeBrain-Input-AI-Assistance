@@ -40,6 +40,7 @@ J defaultPolicy(const std::string& type) {
 J defaultConfiguration() {
   return J{{"settingsRevision", 2},
            {"enabled", false},
+           {"assistantEnabled", true},
            {"selectedPolicy", "openai"},
            {"candidateCount", 1},
            {"completion", false},
@@ -145,7 +146,7 @@ std::string origin(const std::string& e) {
 }
 void validateConfiguration(const J& c) {
   require(c.is_object(), "Invalid settings");
-  for (auto key : {"enabled", "enterOriginal", "spaceOriginal",
+  for (auto key : {"enabled", "assistantEnabled", "enterOriginal", "spaceOriginal",
                    "wordSegmentation", "contextEnabled"})
     require(c.at(key).is_boolean(), "Invalid switch");
   require(c.at("candidateCount") == 1 && c.at("completion") == false,

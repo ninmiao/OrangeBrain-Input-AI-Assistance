@@ -64,7 +64,7 @@ class BenchmarkActivity:AppCompatActivity() {
     output.append("\n${p.name} · ${p.model}…\n")
     try {
      val key=withContext(Dispatchers.IO){store.credentialsFor(c).read(c.endpoint)} ?: error("未配置 Key")
-     val request=AiRequest(RequestStamp(0,0,0,0,c.generation),input,store.prompt(c,zh),false,outputTokenBudget=c.outputTokenBudget)
+     val request=AiRequest(RequestStamp(0,0,0,0,c.generation),input,store.prompt(c,zh),false,outputTokenBudget=c.outputTokenBudget,assistantEnabled=c.assistantEnabled)
      val result=ChatCompletionsClient().request(c.endpoint,key,c.model,request,c.timeoutMs,store.parameters(c),c.provider)
      output.append("${android.os.SystemClock.elapsedRealtime()-started} ms · ${result.candidates.joinToString(" / ")}\n${result.usage?.summary().orEmpty()}\n")
     }catch(e:CancellationException){throw e}catch(e:Exception){output.append("${android.os.SystemClock.elapsedRealtime()-started} ms · ${AiFailure.from(e).label}\n")}

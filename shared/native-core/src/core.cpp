@@ -95,6 +95,14 @@ std::string prompt(bool zh, bool traditional, const std::string& custom) {
   if (s.find(output) == s.npos) s += output;
   return s;
 }
+std::string assistantPrompt(bool zh, bool traditional, const std::string& custom) {
+  std::string s = zh ? (traditional ?
+"i is input; b/a context. Return only JSON [\"correction\",\"assistant\"]. First fix missing/repeated/swapped letters and nearby-key errors; convert pinyin to Traditional Chinese, preserving and correcting English; preserve meaning, negation, numbers and names, without answering or continuing. Second infer intent for a brief insertable answer, suggestion, continuation or term. No requests for more info; Give your best result directly. When asked for an emoticon, output a kaomoji, e.g. („ಡωಡ„). Allow mixed Chinese and English; use Traditional Chinese for Chinese text." :
+"i is input; b/a context. Return only JSON [\"correction\",\"assistant\"]. First fix missing/repeated/swapped letters and nearby-key errors; convert pinyin to Simplified Chinese, preserving and correcting English; preserve meaning, negation, numbers and names, without answering or continuing. Second infer intent for a brief insertable answer, suggestion, continuation or term. No requests for more info; Give your best result directly. When asked for an emoticon, output a kaomoji, e.g. („ಡωಡ„). Allow mixed Chinese and English; use Simplified Chinese for Chinese text.") :
+"i is input; b/a context. Return only JSON [\"correction\",\"assistant\"]. First correct and polish English; translate Chinese, pinyin or mixed input into English; preserve meaning, negation, numbers and names, without answering or continuing. Second infer intent for a brief insertable answer, suggestion, continuation or term. No requests for more info; Give your best result directly. When asked for an emoticon, output a kaomoji, e.g. („ಡωಡ„). Both candidates use English only.";
+  if (!custom.empty()) s += "\n" + custom;
+  return s;
+}
 J encode(const J& i) {
   auto s = i.at("input").get<std::string>();
   check(!trim(s).empty() && chars(s) <= 300);
@@ -119,9 +127,17 @@ bool goodCandidate(const std::string& s) {
          lower.find("</think") == std::string::npos &&
          !starts(lower, "analysis:") && !starts(lower, "reasoning:");
 }
-J decode(std::string s, bool truncated) {
+J decode(std::string s, bool truncated, bool preserveRoles = false) {
   check(s.size() <= 32768, "response");
   s = trim(s);
+  // Some models wrap the otherwise valid JSON in one Markdown code fence.
+  // Unwrap only the whole response; never extract an array from prose/thoughts.
+  if (preserveRoles && (s.rfind("```json\n", 0) == 0 || s.rfind("```json\r\n", 0) == 0 ||
+                        s.rfind("```\n", 0) == 0 || s.rfind("```\r\n", 0) == 0)) {
+    auto start = s.find('\n') + 1;
+    if (s.size() >= start + 3 && s.compare(s.size() - 3, 3, "```") == 0)
+      s = trim(s.substr(start, s.size() - start - 3));
+  }
   check(!s.empty() && s[0] == '[', truncated ? "truncated" : "response");
   J list = J::array();
   size_t p = 1;
@@ -164,7 +180,7 @@ J decode(std::string s, bool truncated) {
     check(j.is_string(), "response");
     auto v = j.get<std::string>();
     check(goodCandidate(v), "response");
-    if (std::find(list.begin(), list.end(), v) == list.end()) list.push_back(v);
+    if (preserveRoles || std::find(list.begin(), list.end(), v) == list.end()) list.push_back(v);
     check(list.size() <= 8, "response");
     ws();
     if (p == s.size()) {
@@ -303,7 +319,7 @@ J payload(const J& arg) {
   v["max_completion_tokens"] = budget;
   std::string text = encode(request.at("input")).dump();
   auto instructions = request.at("systemPrompt").get<std::string>();
-  if (instructions.find(output) == instructions.npos) instructions += output;
+  if (!request.value("assistantEnabled", false) && instructions.find(output) == instructions.npos) instructions += output;
   J out = {{"model", model}};
   auto parameters = wire(e, v, arg.value("provider", std::string()));
   if (api(e) == "gemini") {
@@ -376,7 +392,7 @@ J envelope(const J& a) {
     check(c.is_string(), "response");
     text = c.get<std::string>();
   }
-  J result = decode(text, cut);
+  J result = decode(text, cut, a.value("assistantEnabled", false));
   if (e.contains("usage") && e["usage"].is_object()) {
     auto& u = e["usage"];
     J usage;
@@ -694,9 +710,11 @@ J dispatch(const J& q) {
   }
   if (op == "encode") return encode(a).dump();
   if (op == "decode")
-    return decode(a.at("text").get<std::string>(), a.value("truncated", false));
+    return decode(a.at("text").get<std::string>(), a.value("truncated", false), a.value("assistantEnabled", false));
   if (op == "payload") return payload(a);
   if (op == "envelope") return envelope(a);
+  if (op == "prompt" && a.value("assistantEnabled", false))
+    return assistantPrompt(a.value("chinese", true), a.value("traditional", false), a.value("custom", std::string()));
   if (op == "prompt")
     return prompt(a.value("chinese", true), a.value("traditional", false),
                   a.value("custom", std::string()));

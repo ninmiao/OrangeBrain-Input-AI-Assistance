@@ -55,6 +55,7 @@ object TerraDefaults {
 data class AiConfig(
     val generation: Long = 0,
     val enabled: Boolean = false,
+    val assistantEnabled: Boolean = true,
     val consent: Boolean = false,
     val automatic: Boolean = true,
     val wordSegmentation: Boolean = true,
@@ -145,7 +146,7 @@ class AiStore internal constructor(private val context: Context) {
     fun effective(c: AiConfig = config) = (c.localOverride ?: c.active?.pack ?: builtin).upgraded()
     fun prompt(c: AiConfig, chinese: Boolean): String {
         val pack = effective(c)
-        return pack.compose(chinese,c.traditional)
+        return pack.compose(chinese,c.traditional,c.assistantEnabled)
     }
 
     fun policyParameterSummary(policy: AiPolicy): String {
