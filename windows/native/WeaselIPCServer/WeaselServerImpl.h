@@ -74,6 +74,7 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
   DWORD OnHighlightCandidateOnCurrentPage(WEASEL_IPC_COMMAND uMsg,
                                           DWORD wParam,
                                           DWORD lParam);
+  DWORD OnTextContext(WEASEL_IPC_COMMAND uMsg,DWORD wParam,DWORD lParam);
   DWORD OnChangePage(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
 
  public:

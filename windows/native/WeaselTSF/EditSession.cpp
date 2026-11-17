@@ -2,6 +2,7 @@
 #include "WeaselTSF.h"
 #include "CandidateList.h"
 #include "ResponseParser.h"
+#include "ZephyrKeySettings.h"
 
 STDMETHODIMP WeaselTSF::DoEditSession(TfEditCookie ec) {
   com_ptr<ITfDocumentMgr> focused;
@@ -72,6 +73,33 @@ STDMETHODIMP WeaselTSF::DoEditSession(TfEditCookie ec) {
   if (!(_status.composing && _IsComposing())) {
     _UpdateUI(*context, _status);
   }
+
+  // Read under the existing TSF edit lock. Exclude the composition range, and
+  // never ask the editor for surrounding text while cloud/context is disabled.
+  try {
+    auto prefs=zephyr::currentKeyPreferences().value_or(zephyr::KeyPreferences{});
+    std::wstring before,after;
+    if(prefs.aiEnabled && prefs.contextEnabled && !_IsKeyboardDisabled()) {
+      com_ptr<ITfRange> anchor;
+      if(_pComposition)_pComposition->GetRange(&anchor);
+      if(!anchor) { TF_SELECTION selection{};ULONG fetched=0;
+        if(SUCCEEDED(_pEditSessionContext->GetSelection(ec,TF_DEFAULT_SELECTION,1,&selection,&fetched))&&fetched&&selection.range){selection.range->Clone(&anchor);selection.range->Release();}
+      }
+      if(anchor) {
+        auto read=[&](bool preceding,int count){std::wstring text;if(!count)return text;com_ptr<ITfRange> range;if(FAILED(anchor->Clone(&range)))return text;
+          if(FAILED(range->Collapse(ec,preceding?TF_ANCHOR_START:TF_ANCHOR_END)))return text;LONG moved=0;
+          HRESULT hr=preceding?range->ShiftStart(ec,-count*2,&moved,nullptr):range->ShiftEnd(ec,count*2,&moved,nullptr);
+          if(FAILED(hr))return text;wchar_t buf[1001]{};ULONG actual=0;
+          if(SUCCEEDED(range->GetText(ec,0,buf,1000,&actual)))text.assign(buf,actual);
+          // A shifted UTF-16 boundary can split an emoji; omit the isolated half.
+          if(!text.empty()&&text.front()>=0xdc00&&text.front()<=0xdfff)text.erase(text.begin());
+          if(!text.empty()&&text.back()>=0xd800&&text.back()<=0xdbff)text.pop_back();return text;
+        };
+        before=read(true,prefs.beforeLength);after=read(false,prefs.afterLength);
+      }
+    }
+    m_client.UpdateTextContext(before,after);
+  } catch(...) { /* Context is optional. Never unwind through the host editor. */ }
 
   _zephyrRefreshPending=false;
   return TRUE;

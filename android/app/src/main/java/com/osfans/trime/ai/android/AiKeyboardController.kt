@@ -46,7 +46,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         val config = store.config
         require(config.generation == request.stamp.apiGeneration)
         val key = withContext(Dispatchers.IO) { store.credentialsFor(config).read(config.endpoint) } ?: error("Missing credential")
-        client.request(config.endpoint, key, config.model, request, config.timeoutMs, store.parameters(config), config.provider, store.preset(config, chinese))
+        client.request(config.endpoint, key, config.model, request, config.timeoutMs, store.parameters(config), config.provider)
     }, { update -> state = update; ready = update as? AiState.Ready; render() })
     private val configJob = scope.launch {
         store.changes.collect { changed ->
@@ -93,14 +93,14 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             isHorizontalFadingEdgeEnabled = true; setFadingEdgeLength(dp(12))
             addView(content, FrameLayout.LayoutParams(-2, -1))
         }
+        root.addView(candidateScroll, LinearLayout.LayoutParams(0, dp(candidateHeightDp), 1f))
+        root.addView(View(context).apply { setBackgroundColor(0x309098a0) }, LinearLayout.LayoutParams(dp(1), dp(14)))
         root.addView(ImageButton(context).apply {
             contentDescription="剪贴板";setImageResource(com.osfans.trime.R.drawable.ic_clipboard_24)
             imageTintList=android.content.res.ColorStateList.valueOf(0xff525966.toInt())
             background=android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(0x24525966),null,android.graphics.drawable.ColorDrawable(android.graphics.Color.WHITE))
             setPadding(dp(8),dp(3),dp(8),dp(3));setOnClickListener {openClipboard()}
         },LinearLayout.LayoutParams(dp(36),dp(candidateHeightDp)))
-        root.addView(candidateScroll, LinearLayout.LayoutParams(0, dp(candidateHeightDp), 1f))
-        root.addView(View(context).apply { setBackgroundColor(0x309098a0) }, LinearLayout.LayoutParams(dp(1), dp(14)))
         root.addView(scriptButton, LinearLayout.LayoutParams(dp(48), dp(candidateHeightDp)))
         panel = root
         render()
@@ -225,7 +225,13 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             // Confirmed segments are part of this composition, not surrounding editor text.
             val preedit = rime.run { compositionCached.preedit }.orEmpty()
             val input = if (chinese && preedit.any { it in '\u3400'..'\u9fff' }) preedit else raw
-            return Target(AiInput(if(c.wordSegmentation && chinese) input.replace('\'', ' ') else input), true, 0, 0, 0, 0, 0, manual)
+            val textBefore=if(c.contextEnabled && c.beforeLength>0)connection.getTextBeforeCursor(c.beforeLength*2+maxOf(preedit.length,raw.length),0)?.toString().orEmpty() else ""
+            val suffix=listOf(preedit,raw).filter { it.isNotEmpty() }.firstOrNull { textBefore.endsWith(it) }
+            // Trime keeps a displayed preedit in the editor; never send it twice as context.
+            val before=if(suffix!=null) textBefore.removeSuffix(suffix) else textBefore
+            val after=if(c.contextEnabled && c.afterLength>0)connection.getTextAfterCursor(c.afterLength*2,0)?.toString().orEmpty() else ""
+            val snapshot=Protocol.context(if(c.wordSegmentation && chinese) input.replace('\'', ' ') else input,before,after,c.contextEnabled,c.beforeLength,c.afterLength)
+            return Target(snapshot, true, 0, 0, 0, 0, 0, manual)
         }
         if (!manual && !directEligible) return null
         val extracted = connection.getExtractedText(ExtractedTextRequest().apply { hintMaxChars = 2048 }, 0) ?: return null
@@ -240,7 +246,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         val start = range.start
         val input = range.original
         if (a != b && connection.getSelectedText(0)?.toString() != input) return null
-        return Target(AiInput(input), false, start, end, a, b, text.hashCode(), manual)
+        return Target(Protocol.context(input,text.substring(0,start),text.substring(end),c.contextEnabled,c.beforeLength,c.afterLength), false, start, end, a, b, text.hashCode(), manual)
     }
 
     private fun refresh(manual: Boolean) {
@@ -253,7 +259,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             target = capture(manual)
             val snapshot = target ?: return@launch
             val request = AiRequest(RequestStamp(session, revision, c.generation, keyboardGeneration, c.generation), snapshot.input,
-                store.prompt(c, chinese), c.completion, c.candidateCount)
+                store.prompt(c, chinese), c.completion, c.candidateCount,c.outputTokenBudget)
             coordinator.submit(request, c.enabled, sensitive, c.debounceMs)
         }
     }

@@ -1,6 +1,6 @@
 # Zephyr Input · 微风输入法
 
-[下载 Windows 版](dist/Zephyr-Input-Windows-1.7.1-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.6.1-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
+[下载 Windows 版](dist/Zephyr-Input-Windows-1.9.1-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.7.1-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
@@ -10,9 +10,9 @@ Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 And
 
 在线 AI 的中文模式将拼音转为汉字，英语保留并纠错；英文模式优先纠正英语，把中文、拼音或混输转成英文。两种模式都有候选区，每次请求返回一个 AI 候选，由你选中上屏。
 
-云端支持 **OpenAI、OpenRouter 和 Google Gemini**。可以把接口、Key、模型和参数保存成多个 Policy 随时切换；OpenRouter 还支持供应商路由和后台 Preset 提示词。纠错能有多强、等待有多短，取决于模型的能力，以及你的钱包（笑）。
+云端支持 **OpenAI、OpenRouter 和 Google Gemini**。可以把接口、Key、模型和参数保存成多个 Policy 随时切换；OpenRouter 支持供应商路由。纠错能有多强、等待有多短，取决于模型的能力，以及你的钱包（笑）。
 
-**LLM 功能需要联网，模型在 OpenAI、OpenRouter 或 Google Gemini 的远程服务端运行，不在手机或电脑本地运行。** 离线输入使用 Rime 和本地词库。开启云端 AI 后，当前输入会发送给所选 API 服务，Key 加密保存在设备上。
+**LLM 功能需要联网，模型在 OpenAI、OpenRouter 或 Google Gemini 的远程服务端运行，不在手机或电脑本地运行。** 离线输入使用 Rime 和本地词库。开启云端 AI 后，当前输入及已启用的前后文会发送给所选 API 服务，Key 加密保存在设备上。
 
 ### English
 
@@ -24,29 +24,30 @@ I built Zephyr for my own daily typing: fast pinyin input, clear privacy control
 
 For online AI, Chinese mode converts pinyin to Chinese while keeping and correcting English. English mode corrects English and translates Chinese, pinyin, or mixed input into English. Both modes show candidates; each AI request returns one suggestion for you to select.
 
-Cloud assistance supports **OpenAI, OpenRouter, and Google Gemini**, with separate policies for keys, models, and parameters. OpenRouter also supports provider routing and server-side prompt presets. The quality depends on the model—and your wallet. **LLM features require an internet connection: models run on remote services accessed through OpenAI, OpenRouter, or Google Gemini, not locally on your phone or computer.** Offline typing uses Rime and local dictionaries. Cloud AI sends your current input to your chosen API service. Keys are encrypted on your device.
+Cloud assistance supports **OpenAI, OpenRouter, and Google Gemini**, with separate policies for keys, models, and parameters. OpenRouter also supports provider routing. The quality depends on the model—and your wallet. **LLM features require an internet connection: models run on remote services accessed through OpenAI, OpenRouter, or Google Gemini, not locally on your phone or computer.** Offline typing uses Rime and local dictionaries. Cloud AI sends your current input and enabled surrounding context to your chosen API service. Keys are encrypted on your device.
 
-## 词表、本地模型与在线 AI · Dictionaries, local model, and online AI
 
-Zephyr 的本地输入和在线 AI 可以配合使用，分别配置。**不填 API Key 也能离线打字；下载万象语法模型后，增强的本地候选排序也能离线使用。**
+## Quickstart · 快速开始
 
-| 功能 | 负责什么 | 在哪里运行 | 如何获得与更新 | 联网、Key 与 token |
-| --- | --- | --- | --- | --- |
-| **本地词表：万象 / 雾凇** | 提供字词、拼音和词频，供 Rime 匹配本地候选 | 手机或电脑本机 | 两套都内置；各有 GitHub 更新按钮 | 打字可离线；更新需联网；无需 Key，不消耗 API token |
-| **本地万象语法模型** | 用词语搭配的统计信息改善万象候选排序 | 手机或电脑本机，由 Rime 加载 | 约 **407 MB**，单独下载与更新，安装包不内置 | 下载后可离线；无需 Key，不消耗 API token |
-| **在线 AI API** | 通过 LLM 进一步纠错、处理中英混输和生成颜表情，另给一个 AI 候选 | OpenAI、OpenRouter 或 Google Gemini 的远程服务端 | 在 Policy 中配置 Key、在线模型和参数 | 请求时需联网，当前输入发送给所选 API，按服务商规则消耗额度与 token |
+1. **Windows：**[下载安装器](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-Windows-1.9.1-Setup-x64.exe)，运行并允许 UAC，注销再登录后选择 **Zephyr Input**。开始菜单打开设置。
+2. **Android：**[下载 APK](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-1.7.1-arm64-v8a-demo.apk)，安装后按应用引导启用键盘，等待首次词库部署完成。
+3. **先离线打字也可以。** 要用在线 AI，在 **方案 / Policy**（Android 为 **AI 辅助**）填对应平台的 API Key、选择模型并启用 AI；Windows 点击右上角 **保存并生效**。停顿后选择 AI 候选上屏。
 
-**万象语法模型是本地 n-gram 统计模型，不是本地 LLM，也不调用在线 AI API。** 词表负责“有哪些字词、怎样读”，语法模型帮助判断“这些词怎样搭配更合适”。当前这份模型只在万象方案中启用；云端 AI 可以与任一本地词表配合，也可以关闭。关闭云端 AI 后，本地词表和已下载的语法模型照常工作。
+**Windows:** [download Setup](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-Windows-1.9.1-Setup-x64.exe), approve UAC, sign out/in and select Zephyr Input; open settings from Start. **Android:** [install the APK](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-1.7.1-arm64-v8a-demo.apk), enable the keyboard and let dictionaries deploy. Offline typing works immediately. For online AI, add your service's key and model in **Policy / AI assistance**, enable AI, and click **Save** on Windows; pause typing and select a suggestion.
 
-Local typing and online AI are configured separately and can work together. **Offline typing needs no API key. Once downloaded, the Wanxiang grammar model also works offline.**
+## 词表、本地模型与在线 AI · Local data and online AI
 
-| Feature | What it does | Runs on | Installation and updates | Network, key, and tokens |
-| --- | --- | --- | --- | --- |
-| **Local dictionaries: Wanxiang / Rime Ice** | Supply words, pinyin readings, and frequencies for Rime candidates | Your phone or computer | Both are bundled; each has its own GitHub update button | Offline typing; internet for updates; no key or API tokens |
-| **Local Wanxiang grammar model** | Uses word-collocation statistics to improve Wanxiang candidate ranking | Your device, loaded by Rime | A separate **~407 MB** download and update; excluded from the installer | Works offline after download; no key or API tokens |
-| **Online AI APIs** | Use an LLM for further correction, mixed-language input, and kaomoji; return one additional AI candidate | Remote services accessed through OpenAI, OpenRouter, or Google Gemini | Configure a key, remote model, and parameters in a policy | Requests need internet and send the current input to the selected API; provider usage and token charges apply |
+三者分别配置，可以配合使用。**不填 API Key 也能离线打字；下载后的万象语法模型同样离线工作。**
 
-**The Wanxiang grammar model is a local n-gram statistical model, not a local LLM or an online API call.** Dictionaries supply words and readings; the grammar model helps rank word combinations. This integration loads it only with Wanxiang. Online AI can work alongside either dictionary or be switched off; local dictionaries and the downloaded grammar model continue to work.
+| 功能 / Feature | 用途 / Role | 获取与运行 / Installation and runtime |
+| --- | --- | --- |
+| **万象 / 雾凇词表 · Dictionaries** | 字词、拼音、词频，生成本地候选 / Words, readings and frequencies for local candidates | 两套内置，本机运行，各有 GitHub 更新按钮；无 Key、无 API token / Both bundled, local, independently updated; no API key or tokens |
+| **万象语法模型 · Grammar model** | 用词语搭配统计改善万象候选排序 / Collocation statistics improve Wanxiang ranking | 约 **407 MB**，单独下载，本机运行；下载后离线、无 API token / Separate download, local and offline; no API tokens |
+| **在线 AI · Online AI** | 进一步纠错、处理中英混输和颜表情 / Further correction, mixed-language input and kaomoji | 远程 LLM，配置 Key 与在线模型；需联网，按服务商规则计费 / Remote LLM; requires a key, internet and provider usage charges |
+
+**万象语法模型是本地 n-gram 统计模型，不是本地 LLM。** 它只搭配万象词表；在线 AI 可搭配任一词表，也可单独关闭。本地词库不会因为关闭云端 AI 而停用。
+
+**The Wanxiang grammar model is a local n-gram model, not a local LLM.** It works with Wanxiang only. Online AI runs on a remote service and can complement either dictionary; turning it off leaves local typing available.
 
 ## 输入与 AI 纠错 · AI-assisted typing
 
@@ -54,259 +55,154 @@ Local typing and online AI are configured separately and can work together. **Of
 
 <img src="docs/images/windows-input.png" alt="Windows 实际输入：错序拼音 nihoa，AI 候选为你好，下面保留 Rime 本地候选" width="860">
 
-实际 TSF 输入窗口：`nihoa` 中的字母顺序打错后，在线 AI 给出“你好”。候选窗用 **AI** 和 **Rime** 标明来源，可直接选词上屏。
+`nihoa` → **你好**。**AI / Rime** 标明在线与本地候选来源。
 
-A real TSF input window: the online AI corrects the transposed pinyin `nihoa` to “你好” (hello). **AI** and **Rime** labels distinguish the online suggestion from local candidates.
+Real TSF input: online AI corrects `nihoa` to “你好” (hello), alongside local Rime candidates.
 
 ### Android
 
 <img src="docs/images/android-keyboard.png" alt="真实在线 AI 纠错：输入 woyaochihuogu，本地候选为我要吃货古，下方 AI 候选为我要吃火锅" width="360">
 
-Android 调试版模拟器实图：输入 `woyaochihuogu`，上方本地候选为“我要吃货古”，下方在线 LLM 给出“我要吃火锅”。点击 AI 候选即可上屏。
+模拟器实图：`woyaochihuogu`，本地“我要吃货古”，在线 AI“我要吃火锅”；点击候选上屏。
 
-Actual Android debug build in an emulator: for `woyaochihuogu`, the local candidate reads “我要吃货古”, while the online LLM suggests “我要吃火锅” (I want to eat hotpot). Tap the AI suggestion to commit it.
+Real emulator capture: for `woyaochihuogu`, online AI suggests “我要吃火锅” (I want hotpot). Tap to commit.
 
 ## 输入示例 · Examples
 
-下面展示想要的纠错和混输效果，具体措辞随输入内容和模型变化。
-
-These examples show the intended corrections. Wording varies with the input and model.
+候选示例，措辞随模型变化。 / Example suggestions; wording varies by model.
 
 | 输入 / Input | 模式 / Mode | 候选示例 / Example candidate |
 | --- | --- | --- |
 | `wo yao chi huo gu` | 中文 / Chinese | 我要吃火锅 |
 | `nihoa shijie` | 中文 / Chinese | 你好世界 |
 | `I wnated to recieve teh package` | EN | I wanted to receive the package |
-| `I reallly loce this` | EN | I really love this |
 | `wo jintian you meeting` | 中文 / Chinese | 我今天有 meeting |
 | `wo jintian you meeting` | EN | I have a meeting today |
 | `hanbaowang haochi` | 中文，空格分词 / Chinese, phrase boundaries | 汉堡王好吃 |
 | `颜表情 笑死` | 中文 / Chinese | („ಡωಡ„) |
 
-两端都可以用 `颜 笑死`、`表情 笑死` 或 `颜表情 笑死` 生成颜表情。
+两端均接受“颜 / 表情 / 颜表情”加描述。 / Both accept `颜`, `表情` or `颜表情` followed by a description.
 
-Both clients accept `颜`, `表情`, and `颜表情` followed by a description.
+## 安装与更新 · Installation and updates
 
-## 安装 · Installation
+Windows 支持 Windows 10/11 x64，含 32 位应用使用的 TSF 组件；本机验证使用 Windows 11。安装到 `C:\Program Files\Zephyr Input`。运行新版 Setup 覆盖更新，卸载从系统“已安装的应用”进入，用户设置、Key 和学习词库保留。Android 当前提供 ARM64 APK，安装后在系统输入法设置启用；首次部署词库需稍等。
 
-| 平台 / Platform | 安装包 / Download |
-| --- | --- |
-| Windows x64 | [1.7.1 Setup EXE](dist/Zephyr-Input-Windows-1.7.1-Setup-x64.exe) |
-| Android ARM64 | [1.6.1 APK](dist/Zephyr-Input-1.6.1-arm64-v8a-demo.apk) |
+Windows targets Windows 10/11 x64 and includes x86 TSF support for 32-bit apps; testing used Windows 11. Setup installs to Program Files. Run a newer Setup to update, or uninstall through Windows Settings; user settings, keys and learned words are retained. Android provides an ARM64 APK; enable it in system keyboard settings and allow the initial dictionary deployment to finish.
 
-**Windows：**运行安装包并允许管理员授权，程序安装到 `C:\Program Files\Zephyr Input`，已包含 Java 运行时。安装后注销再登录，从系统输入法菜单选择 Zephyr Input；也可以到“中文（简体，中国）→ 语言选项”添加。开始菜单中的 Zephyr Input 打开设置。更新时运行新版安装包，卸载使用系统“已安装的应用”入口。
+## 更新词表和本地模型 · Updating local data
 
-**Android：**安装 APK，打开应用，按引导启用并选择 Zephyr Input。首次启动会部署词库。API 配置在设置中的“AI 辅助”页面。
+Windows：**词库 / Dictionary**；Android：**设置 → 词库与语法模型**。
 
-**Windows:** run Setup and approve UAC. Java is included. Sign out and back in, select Zephyr Input from the system input-method menu, and open settings from the Start menu. Run a newer installer to update; uninstall through Windows Settings.
+1. **切换词表：**万象和雾凇均已内置，新安装默认万象，升级保留已有选择。Windows 选择后点击保存；Android 自动应用。
+2. **更新词表：**点击各自的 **更新万象词表 / 更新雾凇词表**，从官方 GitHub 下载、校验并部署；保留当前词表选择，不顺带下载语法模型。
+3. **下载或更新模型：**选择万象，点击 **下载 / 更新语法模型**。约 407 MB，安装包不内置；开关默认开启，下载完成后才生效，未下载时仍能正常输入。
+4. **开关与适配：**万象语法模型只在万象模式生效。切到雾凇会停用模型，保留下载文件及偏好；切回万象恢复。Windows 修改开关后保存。
 
-**Android:** install the APK, open the app, and follow the keyboard setup. Let the initial dictionary deployment finish. Cloud settings are under **AI 辅助 / AI assistance**.
+三个更新按钮可反复使用，无需重装输入法。摘要识别内容更新，`LTS` / `nightly` 标签不变也能更新；支持暂停续传，Android 有进度通知。首次部署可能需几分钟，建议预留约 1.5 GB 空间。学习词库保留，Windows 更新本地数据无需 UAC。
 
-## 切换与更新词表、本地模型 · Switching and updating local data
+Open **Dictionary** on Windows or **设置 → 词库与语法模型** on Android. Select either bundled dictionary (Wanxiang is the new-install default); click **Save** on Windows, while Android applies it automatically. Use each dictionary's update button to download, verify and deploy its official GitHub data without changing your selection or downloading the grammar model.
 
-Windows 打开 **Settings → Dictionary / 词库**；Android 打开 **设置 → 词库与语法模型**，AI 辅助页也有入口。
+For Wanxiang, **Download / update grammar model** fetches the separate ~407 MB file. Its switch defaults to on and takes effect after download; dictionary-only typing works beforehand. Rime Ice deactivates the model while retaining its file and preference; returning to Wanxiang restores them. Save switch changes on Windows.
 
-1. **选择词表：**在列表中选择万象或雾凇，点击 **应用选择（离线）**。新安装默认万象；升级保留已有选择。两套词表均已内置，第一次使用不需要下载。
-2. **更新词表：**点击 **更新万象词表** 或 **更新雾凇词表**，分别检查对应官方 GitHub 发布，下载后校验并重新部署。当前压缩包约为万象 26 MB、雾凇 15 MB，实际大小以发布信息为准。更新某套词表会保留当前选择，也不会顺带下载大模型。
-3. **下载或更新本地模型：**选择万象并应用，点击 **下载 / 更新万象语法模型**。约 407 MB 的文件单独从 GitHub 下载；**模型开关默认开启，但下载完成后才生效**。未下载时，仍可用万象词表正常输入。
-4. **切换模型开关：**在万象下修改开关后点击 **应用选择（离线）**。切到雾凇时停用万象模型，下载文件和开关偏好保留；切回万象时恢复。关闭后重新开启，无需重复下载已有文件。
+Updates use file digests, including when release tags stay unchanged, and support pause/resume. Android shows download progress. Initial deployment may take minutes; allow ~1.5 GB free space. Learned words are retained; Windows data updates need no UAC. [来源与许可 / Sources and licenses](docs/rime/wanxiang-updates.md).
 
-日后仍用这三个更新按钮检查新数据，无需重装输入法。更新器按文件摘要识别版本，GitHub 的 `LTS` 或 `nightly` 标签没变也能识别内容更新。下载由你点击开始，支持暂停续传；Android 会显示后台进度通知。首次编译词表可能需要几分钟，建议预留约 1.5 GB 空间。原有用户学习词库保留，Windows 的词表和模型更新无需 UAC。[来源、许可与更新细节](docs/rime/wanxiang-updates.md)
+## 配置在线 AI · Online AI setup
 
-Open **Settings → Dictionary** on Windows, or **设置 → 词库与语法模型** on Android (also linked from AI assistance).
+一个 **方案 / Policy** 保存接口、Key、模型、参数和附加提示词；可复制（含 Key）或删除。三家服务各用自己的 Key。**更新模型列表只刷新远程模型 ID，不下载模型权重，也不更新本地词表。**
 
-1. **Choose a dictionary:** select Wanxiang or Rime Ice and click **Apply selection offline**. Both are bundled. New installations use Wanxiang; upgrades retain the existing choice.
-2. **Update dictionaries:** use **Update Wanxiang dictionary** or **Update Rime Ice dictionary** to check each official GitHub release, download, verify, and redeploy. Current archives are about 26 MB and 15 MB respectively; sizes may change. Each update keeps your selected dictionary and does not download a grammar model.
-3. **Download or update the local model:** select and apply Wanxiang, then click **Download / update grammar model**. The ~407 MB model is downloaded separately from GitHub. **Its switch defaults to on but takes effect only after download.** Wanxiang typing works with its dictionary before then.
-4. **Toggle the model:** change the switch under Wanxiang and **Apply selection offline**. Selecting Rime Ice deactivates the Wanxiang model while keeping its file and preference. Switching back restores the preference; re-enabling a downloaded model needs no new download.
-
-Use the same three update buttons for later data updates without reinstalling the app. File digests detect changes even when GitHub reuses an `LTS` or `nightly` tag. Downloads start when you click and support pause/resume; Android shows a background progress notification. Initial dictionary compilation can take a few minutes; allow about 1.5 GB of free space. Learned words are retained, and Windows dictionary/model updates need no UAC. [Sources, licenses, and update details](docs/rime/wanxiang-updates.md)
-
-## 新版功能 · What's new
-
-**Windows 1.7.1 / Android 1.6.1** 加入两套内置词表的独立更新和离线切换、单独下载的万象语法模型及切换时的模型适配。状态页显示所选词表、已安装数据版本和模型状态；部署后核对实际配置。
-
-Android 还在候选栏左侧增加常驻 **剪贴板** 图标：选择当前复制内容或已有历史即可粘贴。即使关闭历史记录、或在输入法启动前复制，也可读取当前文字；粘贴前会正常提交已有拼音。
-
-**Windows 1.7.1 / Android 1.6.1** add separate updates and offline switching for the two bundled dictionaries, an independent Wanxiang grammar-model download, and model activation that follows the selected dictionary. The status page shows the selected dictionary, installed data versions, and model state; deployment checks the resulting configuration.
-
-Android also adds a permanent **clipboard** icon at the left of the candidate bar. Tap it to paste the current clip or an existing history entry. Current text is available with history off or when copied before the IME started; pending pinyin is committed before pasting.
-
-## 配置在线 AI API 和模型 · Online AI API and model setup
-
-这里配置的是**远程 LLM**。**更新模型列表**只获取可选的在线模型 ID；选择模型是在告诉 API 使用哪一个，不会下载模型权重，也不会更新本地词表或万象语法模型。
-
-两端均内置 OpenAI、OpenRouter、Gemini 三个独立 Policy。一个 **Policy** 保存一套接口、Key、模型、参数和提示词配置。先配好一套并测试延迟，再按需复制或切换。
-
-This section configures **remote LLMs**. **Update models** refreshes the list of available remote model IDs. Selecting one tells the API which model to use; it downloads no weights and changes neither the local dictionaries nor the Wanxiang grammar model.
-
-Both clients include separate OpenAI, OpenRouter, and Gemini policies. A **policy** holds an endpoint, key, model, parameters, and prompt settings. Configure one, test its latency, then copy or switch policies as needed.
+A **policy** holds an endpoint, key, model, parameters and extra instructions; it can be copied with its key or deleted. Each service needs its own key. **Update models refreshes remote model IDs, not local model weights or dictionaries.**
 
 | 配置 / Setting | OpenAI | OpenRouter | Google Gemini |
 | --- | --- | --- | --- |
-| 创建 Key / Create a key | [OpenAI](https://platform.openai.com/api-keys) | [OpenRouter](https://openrouter.ai/settings/keys) | [Google AI Studio](https://aistudio.google.com/apikey) |
-| 完整接口地址 / Full endpoint | `https://api.openai.com/v1/responses` | `https://openrouter.ai/api/v1/chat/completions` | `https://generativelanguage.googleapis.com/v1beta/interactions` |
-| 客户端默认模型 / App default model | `gpt-6.1-terra` | `deepseek/deepseek-v4-flash-0731` | `gemini-4-hydrogen` |
-| 默认思考 / Default thinking | `low` | `none` | `low` |
-| 默认速度 / Default speed | `priority`（快速 / Fast） | `default`（普通 / Normal） | `default`（普通 / Normal） |
-| 默认供应商 / Default provider | 不使用 / Not used | `wafer/us`，可改 Auto / Can use Auto | 不使用 / Not used |
-| OpenRouter Preset | 不使用 / Not used | 可选，默认关闭 / Optional, off by default | 不使用 / Not used |
+| 创建 Key / Get a key | [OpenAI](https://platform.openai.com/api-keys) | [OpenRouter](https://openrouter.ai/settings/keys) | [Google AI Studio](https://aistudio.google.com/apikey) |
+| 完整接口 / Full endpoint | `https://api.openai.com/v1/responses` | `https://openrouter.ai/api/v1/chat/completions` | `https://generativelanguage.googleapis.com/v1beta/interactions` |
+| 初始模型 / Initial model | `gpt-6.1-terra` | `deepseek/deepseek-v4-flash-0731` | `gemini-4-hydrogen` |
+| 思考 / Thinking | `low` | `none` | `low` |
+| 速度 / Speed | `priority`（快速 / Fast） | `default` | `default` |
+| 供应商 / Provider | — | `wafer/us`，留空自动 / blank for Auto | — |
 
-这是客户端的初始配置。三家平台各用自己的 Key；模型列表可更新，也可手填完整 ID。模型和思考选项以该 Key 实际可调用的项目为准。`omit` 表示不发送思考参数，由服务端决定；它与“无思考”不是同一个选项。
+以上为客户端初始值；请更新模型列表或填写你的 Key 可调用的完整 ID。思考强度按模型适配：`omit` 不发送该参数，交给服务端；`none` 才是请求无思考，`low` 仍可能消耗思考 token。OpenRouter 的供应商在模型参数中选择或手填。
 
-These are the app's initial settings. Each service needs its own key. Refresh the model list or enter a full model ID available to your key. `omit` leaves the reasoning parameter out of the request; it does not mean reasoning is disabled.
+These are app defaults; refresh models or enter an ID available to your key. Thinking options follow the model: `omit` leaves the parameter to the server, `none` requests no reasoning, and `low` can still use reasoning tokens. OpenRouter provider routing is a model parameter, selectable or editable.
 
-### Windows：配置并应用 Policy · Configure and apply
+### Windows
 
-1. 从开始菜单打开 **Zephyr Input**，在顶部列表选择要编辑的 Policy。
-2. 在 **Policies / 策略** 页填写完整接口地址和 Key，点击顶部 **Save policy / 保存 Policy**。
-3. 点击 **Update models / 更新模型列表**，选择或输入模型，调整思考和速度，再保存。OpenRouter 的供应商可选 Auto，也可刷新列表后选择具体路由。
-4. 点击 **Test latency / 测试当前 Policy**，确认结果区出现候选和耗时。
-5. 点击顶部 **Apply policy / 应用此 Policy**；绿色“正在使用”标记表示当前实际使用的配置。选中列表里的另一项只会进入编辑。
-6. 到 **Input / 输入** 页开启 **Enable cloud AI / 启用云端 AI**，点击 **Save settings / 保存设置**。
+顶部选择方案，在 **方案 / Policy** 页填写接口与 Key，选择模型、思考、速度及供应商，点击右上角 **保存并生效**。在 **输入 / Input** 页启用在线 AI 后也要保存。修改和方案选择保存后才生效；字段短暂高亮，Key 加密保存后清空，留空表示保留原 Key。附加提示词在独立的 **提示词 / Prompts** 页。
 
-Open **Zephyr Input** from Start, select a policy in the top list, and enter its endpoint and key under **Policies**. **Save policy**, refresh or enter the model, check its parameters, save again, and run **Test latency**. Click **Apply policy** to activate it; the active row is green. Enable cloud AI under **Input** and **Save settings**. Selecting another row only changes which policy you are editing.
+Select a policy at the top, enter its endpoint and key under **Policy**, choose the model and parameters, then click **Save**. Enable cloud AI under **Input** and save. Draft edits and policy selection apply only after saving; fields briefly highlight. The key field clears after encrypted storage; leaving it blank keeps the saved key. Extra instructions have their own **Prompts** tab.
 
-Key 保存后输入框会清空；同一接口下留空保存会保留原 Key。顶部可删除 Policy，策略页可复制 Policy 连同 Key 一起调整。
+### Android
 
-The key field clears after saving. Leaving it blank keeps the saved key for that endpoint. You can delete a policy from the top controls or copy a policy together with its key in the Policies page.
+**AI 辅助 → 编辑 Policy → 验证身份并配置连接 / 密钥**，保存接口和 Key；在 **模型与参数** 更新或填写模型，选择思考、速度及供应商。返回列表勾选方案并启用 AI；开启“停手自动请求”后，停顿时请求候选。
 
-### Android：配置并选用 Policy · Configure and select
+Open **AI assistance → edit policy**, authenticate and save the endpoint/key. Under **Model and parameters**, refresh or enter a model and choose thinking, speed and provider. Select the policy and enable AI; automatic requests run after a typing pause when enabled.
 
-1. 打开应用的 **AI 辅助**，找到要使用的 Policy，点击 **编辑**。
-2. 点击 **验证身份并配置连接 / 密钥**，完成锁屏验证，保存完整接口地址和对应平台的 Key。
-3. 打开 **模型与参数（速度 / 推理强度）**，更新列表或填写模型 ID，设置思考、速度；OpenRouter 的供应商也在这里选择。
-4. 点击 **测试当前 Policy 延迟**，确认能返回候选。
-5. 返回 Policy 列表，勾选该项并开启 **启用 AI**。开启“停手自动请求”后，键盘会在停顿时请求 AI 候选。
+### Gemini 与测速 · Gemini and benchmarks
 
-Open **AI assistance**, edit a policy, authenticate with your device screen lock, and save the endpoint and key. Under **Model and parameters**, choose the model and its thinking/speed settings; OpenRouter provider routing is on this page too. Test the policy's latency, return to the list, select it, and enable AI. Automatic requests run after you pause typing when that option is enabled.
+Gemini 使用原生 **Interactions** 接口，选择内置 Gemini 方案并保存 AI Studio Key 即可；它没有供应商路由。Key 所属项目决定权限、配额和计费。
 
-### 使用 Google Gemini · Using Google Gemini
+Gemini uses the native **Interactions** API: choose its built-in policy and save an AI Studio key. There is no provider routing; the key's project supplies permissions, quota and billing.
 
-在 [Google AI Studio](https://aistudio.google.com/apikey) 创建 Gemini API Key。Key 关联的 Google Cloud 项目决定可用权限、配额和计费。[Google Key 使用说明](https://aistudio.google.com/docs/api-key)
+每个方案可单独测试延迟；**一键测速**勾选 1–5 个已有方案，一次运行逐项追加全部结果（含失败），使用各自保存的模型、参数和 Key。样例为含前后文的长句，显示耗时、候选及可用的 token 统计，测试会产生 API 用量。Windows 先保存修改再测试。
 
-Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/apikey). Its Google Cloud project supplies the permissions, quota, and billing setup. [Google's key guide](https://aistudio.google.com/docs/api-key)
+Test one policy or check **1–5 existing policies** and run them together. Each uses its saved configuration; results, including failures, are appended separately. Long samples include context and show latency, candidates and available token counts. Tests consume API usage; save Windows edits first.
 
-选中内置的 **Gemini · Hydrogen** Policy，按上面的平台步骤保存 Key，检查以下配置，然后测试并应用：
+连接失败先检查 Key 平台与额度、完整模型 ID 和支持的参数；固定供应商失败可刷新或改 Auto。长句超时可用测速确认模型耗时，再调整模型、思考或总超时。
 
-Choose the built-in **Gemini · Hydrogen** policy, save your key using the steps above, check these settings, then test and activate it:
+For failures, check service/key, credit, model ID and supported parameters. Refresh a failed provider route or try Auto. For long-input timeouts, benchmark first, then adjust model, thinking or the total deadline.
 
-```text
-Endpoint: https://generativelanguage.googleapis.com/v1beta/interactions
-Model:    gemini-4-hydrogen
-Thinking: low
-Speed:    default
+### LLM 提示词 · Prompts
+
+每次请求发送当前提示词与输入；`i` 是输入，`b` / `a` 是前后文，空字段省略。例如：
+
+Each request sends the current prompt and input. `i` is input, with optional `b` / `a` context:
+
+```json
+{"i":"woxianghekafe","b":"午饭后我有点困，"}
 ```
 
-Zephyr 使用 Gemini 原生 Interactions 接口，Key 填在密钥栏，地址填写完整的 `/v1beta/interactions`。该 Policy 无供应商和 Preset 设置；应用每次发送本地完整提示词与当前输入，不接续上一次输入。Hydrogen 的 `low` 仍可能消耗思考 token，可在 Policy 测速结果里查看。
-
-Zephyr uses the native Gemini Interactions API. Put the key in the key field and use the full `/v1beta/interactions` endpoint. This policy has no provider routing or Preset controls. Each request sends the complete local prompt and current input independently. Hydrogen's `low` setting can still use reasoning tokens, shown in policy latency results.
-
-### OpenRouter Preset：把提示词放在后台 · Store prompts on OpenRouter
-
-**Preset 是 OpenRouter Policy 中的可选开关，默认关闭。** 普通输入不需要配置 Preset，直接使用内置提示词即可。
-
-**Preset is an optional switch in each OpenRouter policy, off by default.** You can use the built-in prompts without setting up any presets.
-
-| 开关 / Switch | 请求内容 / What the app sends | 提示词来源 / Prompt source |
-| --- | --- | --- |
-| 关闭 / Off | 完整本地提示词 + 当前输入 / Full local prompt + current input | 本地内置或该 Policy 的自定义提示词 / Built-in or policy-customized local prompt |
-| 开启 / On | 对应 Preset 引用 + 当前输入 / Selected preset reference + current input | OpenRouter 后台 / OpenRouter backend |
-
-**先配置后台 / Set up the backend first**
-
-1. 登录该 Policy 的 Key 所属账号及工作区，打开 [OpenRouter Presets](https://openrouter.ai/settings/presets)。
-2. 按下表创建三个 Preset，把 [配置模板](OPENROUTER_PRESETS.md) 里的对应 System Prompt 复制进去，保存并启用。
-3. 回到客户端，打开该 OpenRouter Policy 的 **使用 OpenRouter Preset**，此时显示三个可编辑字段。默认值如下；后台用了其他 slug，就改成后台实际的完整引用。
-
-Sign in to the account/workspace that owns your policy's key. Create the three presets in [OpenRouter Presets](https://openrouter.ai/settings/presets), copy their System Prompts from the [setup template](OPENROUTER_PRESETS.md), and save/activate them. Turn on **Use OpenRouter Preset** in the app to reveal the three editable references. Change the defaults if your backend uses different slugs.
-
-| 输入模式 / Input mode | 后台 slug / Backend slug | 客户端默认引用 / App default reference |
-| --- | --- | --- |
-| 中文、简体 / Chinese, simplified | `zephyr-zh-hans` | `@preset/zephyr-zh-hans` |
-| 中文、繁体 / Chinese, traditional | `zephyr-zh-hant` | `@preset/zephyr-zh-hant` |
-| 英文 / English | `zephyr-en` | `@preset/zephyr-en` |
-
-**保存并使用 / Save and use**
-
-- **Windows：**打开开关、编辑引用后，点击顶部 **保存 Policy**，再 **应用此 Policy**。
-- **Android：**开关即时保存；修改引用后点击 **保存 Preset**，返回列表勾选该 Policy。
-- 键盘切换中英或繁简后，应用自动选择对应引用，每次只用其中一个。
-
-On **Windows**, save the policy after changing the switch or references, then apply it. On **Android**, the switch saves immediately; use **Save Preset** after editing references, then select the policy in the list. Keyboard language/script changes select the matching reference automatically; each request uses one preset.
-
-**出现“你的 Key 没有设置可用的 Preset，请关闭 Preset 功能后重试。”时：**在这个 Policy 中关闭 Preset；Windows 再保存 Policy，即可恢复完整本地提示词请求。想继续使用后台提示词，再检查 Key 所属工作区、三个 slug 及启用状态，修正后重新开启。默认引用只是预填名称，应用不会替你的账号创建 Preset。
-
-If you see **“Your Key has no available Preset; disable Preset and retry”** (shown in Chinese), switch Preset off for that policy and save on Windows to resume full local prompts. To use it again, check the key's workspace, preset slugs, and active versions before re-enabling it. Prefilled references do not create presets in your account.
-
-同一组后台提示词可以供多个 Policy 使用。模型、思考、速度和供应商继续由客户端设置覆盖；使用 Preset 时，本地提示词修改不会参与请求。修改后台提示词后，后续请求使用新配置。**Preset 减少客户端上传文本，模型处理的提示词仍计入 token 费用。** [OpenRouter Preset 说明](https://openrouter.ai/docs/guides/features/presets)
-
-Several policies can share the same backend prompts. The app still sends its model, thinking, speed, and provider settings as overrides. Local prompt edits are unused while Preset is on; edit the backend prompt for subsequent requests. **Presets reduce client upload text; model prompt tokens are still billed.** [OpenRouter Preset guide](https://openrouter.ai/docs/guides/features/presets)
-
-### 测速与连接排查 · Latency and connection checks
-
-每个 Policy 的延迟按钮只测试该项，默认使用 129 字符长句；一键测速也使用长句。Preset 不会关闭模型思考：`low` 仍可能超过请求超时，需要低延迟时可选择模型支持的 `none`。**一键测速**最多五组，可分别调整模型、思考和速度；覆盖所有已保存 Key 的 API。测试会真实调用并产生相应费用，结果显示耗时、候选及服务端返回的输入、输出、思考和缓存 token；缺失统计显示 `–`。
-
-Each policy's latency button tests that policy with a 129-character input by default; benchmarks also use long sentences. Presets do not disable reasoning: `low` may exceed the request timeout. Choose `none` where supported for lower latency. The benchmark supports up to five entries with separate model, thinking, and speed settings, covering the APIs with saved keys. Tests make billed API calls and show elapsed time, candidate text, and available token counts; missing counts appear as `–`.
-
-| 现象 / Symptom | 检查项 / What to check |
-| --- | --- |
-| Key 无效 / Invalid key | 平台是否对应，Key 是否保存成功 / Correct service and saved key |
-| 额度不足、请求受限 / Credit or rate limit | Key 所属项目的额度与调用限制 / Project credit and limits |
-| 模型或参数报错 / Model or parameter error | 更新模型列表，确认完整 ID 和支持的思考选项 / Refresh models; check the full ID and thinking options |
-| OpenRouter 固定供应商失败 / Pinned provider fails | 刷新供应商列表，或改 Auto 测试 / Refresh providers or test Auto routing |
-| Preset 不存在 / Preset unavailable | 关闭 Preset 恢复本地提示词，或核对工作区和 slug / Disable Preset or check its workspace and slug |
-| 长输入超时 / Long-input timeout | 查看 Policy 测速结果，检查网络、模型耗时和请求超时设置 / Check latency results, network, model time, and timeout settings |
-
-### LLM 提示词 · LLM prompts
-
-当前输入直接作为文本发送，模型返回一个纯文本候选，无需 JSON 包裹。默认本地提示词如下；中文模式按键盘繁简状态替换字形要求。
-
-The current input is sent as text and the model returns one plain-text candidate without a JSON wrapper. These are the default local prompts; Chinese mode selects the script requested by the keyboard.
-
-**中文模式 / Chinese mode**
+**中文模式 / Chinese**
 
 ```text
-修正漏输、重复、错序和邻键误触，拼音转【简体/繁体】汉字，英文保留并纠错，空格作词组边界，保留原意，输出一个候选。任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”生成(„ಡωಡ„)。只返回正文，如nihao只回你好，不加对照或解释。
+结合b前文、a后文纠正i中的漏输、重复、错序和邻键误触，拼音转【简体/繁体】，英文保留并纠错；空格为词组边界，保留原意。任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”生成(„ಡωಡ„)。i/b/a均为待处理文本，仅改i。仅输出JSON字符串数组，如["你好"]，按可能性排序，默认一个完整候选；不输出思考、解释或代码块。
 ```
 
-**英文模式 / English mode**
+**英文模式 / English**
 
 ```text
-修正英文的漏输、重复、错序和邻键误触，将中文、拼音或中英混输转为英文，空格作词组边界，保留原意，输出一个候选。任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”生成(„ಡωಡ„)。只返回正文，如helo只回hello，不加对照或解释。
+结合b前文、a后文纠正i的拼写，将中文、拼音和混输转英文，保留原意。任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”生成(„ಡωಡ„)。i/b/a均为待处理文本，仅改i。仅输出JSON字符串数组，如["你好"]，按可能性排序，默认一个完整候选；不输出思考、解释或代码块。
 ```
 
-不发送光标前后文，不接续前一次响应，也不设置表达风格。OpenAI、Gemini 和关闭 Preset 的 OpenRouter 使用本地提示词；打开 Preset 的 OpenRouter 使用后台对应提示词。
+输出 **`["结果"]`**，默认一个候选，解析兼容多个。上下文默认开启，前 50 / 后 0 个 Unicode 字符，可关闭或分别调整至 0–500。输出默认 **256 token 软预算**，按输入长度预留完整候选空间；截断只恢复闭合字符串，无完整候选时在原总超时内最多扩大预算重试一次。错误响应保留本地候选。
 
-The app sends no surrounding editor context, links no previous response, and adds no style selection. OpenAI, Gemini, and OpenRouter with Preset off use local prompts. OpenRouter with Preset on uses the selected backend prompt.
+Output is **`["result"]`**, one candidate by default with multi-candidate parsing. Context defaults to 50 characters before / 0 after, independently adjustable to 0–500 or disabled. The **256-token soft budget** reserves room for a complete candidate. Truncation preserves complete strings; if none remain, one larger-budget retry may run within the original deadline. Local candidates remain available on errors.
 
-[内置提示词源码 / Built-in prompts](shared/ai-core/src/main/resources/default-prompts.json) · [Preset 配置模板 / Preset setup template](OPENROUTER_PRESETS.md)
+[C++ 协议 / Protocol](shared/native-core/README.md) · [提示词源码 / Prompt source](shared/native-core/src/core.cpp)
 
 ## 日常使用 · Typing
 
-Windows 默认轻按 `Shift` 切换中英文，`Ctrl+Shift+T` 切换繁简；数字键选择候选，`Enter` 提交原文。快捷键和原文提交方式都可以在设置中修改。Android 使用键盘上的中英、繁简切换键，点击候选上屏。
+Windows 单按 **Shift** 切中英，**Ctrl+Shift+T** 切繁简，数字选词，**Enter** 默认提交原文；快捷键可设置。选择 Rime 前缀词后保留剩余拼音，继续分段选词。Android 使用键盘语言、繁简按钮，点击候选上屏；空格可标注词组边界。
 
-On Windows, tap `Shift` for Chinese/English and use `Ctrl+Shift+T` for simplified/traditional Chinese. Number keys select candidates; `Enter` commits the original input. These controls are configurable. On Android, use the keyboard's language and script buttons and tap a candidate to commit it.
+On Windows, tap **Shift** for Chinese/English, **Ctrl+Shift+T** for script, numbers for candidates and **Enter** for original text; shortcuts are configurable. Selecting a Rime prefix keeps the remaining pinyin for continued selection. Android uses language/script buttons and tap-to-commit; spaces can mark phrase boundaries.
 
-两端均支持 Policy 复制和延迟测试。
+## 技术与开发 · Architecture and development
 
-Both clients support policy copying and latency tests.
+**Windows 全部使用原生 C++17。** 基于 Weasel 的 TSF 组件接入系统输入法，Rime 处理本地输入；设置窗口使用 Win32 标准控件，独立 AI Broker 通过命名管道通信、WinHTTP 发起 HTTPS、DPAPI 加密 Key，词库下载更新也在 C++ 中完成。静态链接 C++ 运行库，安装包不带 JVM、Kotlin、Qt 或 WebView，不需要 Java、.NET 桌面运行时或额外 VC++ Redistributable。
 
-## 开发 · Development
+Android 基于 Trime，保留 Kotlin 界面和系统、网络适配，通过 JNI 调用共享 C++ AI 核心。两端共用提示词生成、请求构造、模型参数与响应解析。
 
-Android 前端基于同文，Windows 前端基于小狼毫，两端通过 Kotlin 共享 AI 请求、提示词和模型参数逻辑。
-
-The Android frontend builds on Trime and the Windows frontend on Weasel. The Kotlin module shares AI requests, prompts, and model configuration between them.
+**Windows is native C++17 throughout:** Weasel TSF integration and Rime local input, Win32 settings, a separate AI broker over named pipes, WinHTTP HTTPS, DPAPI keys and a C++ dictionary updater. Its statically linked runtime needs no JVM, Kotlin, Qt, WebView, Java, .NET desktop runtime or separate VC++ Redistributable. Android builds on Trime with Kotlin platform adapters and JNI; both clients share C++ AI payloads, prompts, model parameters and response parsing.
 
 | 目录 / Directory | 内容 / Contents |
 | --- | --- |
-| `android/` | Android 应用、原生引擎、词库和测试 / Android app, native engine, dictionaries, and tests |
-| `windows/` | TSF 输入法、AI Broker、设置界面和安装器 / TSF frontend, AI broker, settings, and installer |
-| `shared/ai-core/` | 共享 AI 逻辑与提示词 / Shared AI logic and prompts |
-| `tests/corpus/` | 中英文错输语料与生成工具 / Chinese–English typo corpus and generator |
-| `dist/` | 当前安装包 / Current installers |
+| `android/` | Android 应用、引擎与测试 / App, engine and tests |
+| `windows/` | 原生 TSF、设置、Broker 和安装器 / Native TSF, settings, broker and installer |
+| `shared/native-core/` | 共享 C++ AI 核心及 JNI / Shared C++ AI core and JNI |
+| `shared/ai-core/` | Android 适配和共享资源 / Android adapters and shared resources |
+| `tests/corpus/` | 中英错输语料与生成器 / Typo corpus and generator |
+| `dist/` | 最新两端安装包 / Current installers |
 
-- [开发环境与构建 / Build instructions](docs/DEVELOPMENT.md)
+[开发环境与构建 / Build instructions](docs/DEVELOPMENT.md)
 
 ## 开源致谢 · Acknowledgements
 
@@ -322,11 +218,11 @@ Thanks to the authors and maintainers of Rime, Trime, Weasel, and the dictionari
 | [万象拼音 / Wanxiang](https://github.com/amzxyz/rime-wanxiang) · [语法模型 / Grammar](https://github.com/amzxyz/rime-wanxiang-data) | 内置字词表与全拼规则，可下载的本地语法模型 / Bundled dictionaries and pinyin rules; downloadable local grammar | CC BY 4.0 · [完整许可 / License](shared/ai-core/src/main/resources/rime/wanxiang-CC-BY-4.0.txt) · [接入说明 / Integration](docs/rime/wanxiang-updates.md) |
 | [雾凇拼音 / Rime Ice](https://github.com/iDvel/rime-ice) | 简体拼音词库与方案规则 / Simplified Chinese dictionaries and spelling rules | GPL-3.0-only（上游声明 / upstream declaration）· [LICENSE](android/app/src/main/assets/shared/licenses/rime-ice/LICENSE.txt) · [来源与快照 / NOTICE](android/app/src/main/assets/shared/licenses/rime-ice/NOTICE.txt) |
 | [OpenCC](https://github.com/BYVoid/OpenCC) | 简繁转换 / Simplified–traditional conversion | Apache-2.0 · [LICENSE](android/app/src/main/jni/OpenCC/LICENSE) |
-| [Boost](https://www.boost.org/) | 原生 C++ 依赖 / Native C++ dependencies | BSL-1.0 · [LICENSE](android/app/src/main/jni/boost/LICENSE_1_0.txt) |
-| [Kotlin](https://github.com/JetBrains/kotlin), [Coroutines](https://github.com/Kotlin/kotlinx.coroutines), [Serialization](https://github.com/Kotlin/kotlinx.serialization) | 共享 AI 逻辑、异步任务与 JSON / Shared AI logic, asynchronous work and JSON | Apache-2.0 · [共享模块依赖 / Shared dependencies](shared/ai-core/build.gradle.kts) |
-| [OkHttp](https://github.com/square/okhttp) / [Okio](https://github.com/square/okio) | HTTPS 请求与 I/O / HTTPS transport and I/O | Apache-2.0 · [组件说明 / Component notes](windows/THIRD-PARTY.md) |
-| [JNA](https://github.com/java-native-access/jna) | Windows 原生 API 互操作 / Windows native API access | Apache-2.0 / LGPL-2.1-or-later 双许可，本项目选用 Apache-2.0 / Apache-2.0 option used |
-| [OpenJDK](https://openjdk.org/) | Windows 内置 Java 运行时与 Swing / Bundled Windows runtime and Swing UI | GPLv2 with Classpath Exception · 运行时法律声明随安装包提供 / Runtime legal notices included in the package |
+| [Boost](https://www.boost.org/) | 原生 C++ 依赖 / Native C++ dependencies | BSL-1.0 · [LICENSE](windows/licenses/Boost-BSL-1.0.txt) |
+| [Kotlin](https://github.com/JetBrains/kotlin), [Coroutines](https://github.com/Kotlin/kotlinx.coroutines), [Serialization](https://github.com/Kotlin/kotlinx.serialization) | Android 界面、系统适配、异步任务与配置 / Android UI, system adapters, asynchronous work and configuration | Apache-2.0 · [共享模块依赖 / Shared dependencies](shared/ai-core/build.gradle.kts) |
+| [nlohmann/json](https://github.com/nlohmann/json) | C++ 协议解析 / Native protocol parsing | MIT · [LICENSE](shared/native-core/third_party/nlohmann/LICENSE.MIT) |
+| [OkHttp](https://github.com/square/okhttp) / [Okio](https://github.com/square/okio) | Android HTTPS 与 I/O / Android HTTPS and I/O | Apache-2.0 · [组件说明 / Component notes](windows/THIRD-PARTY.md) |
+| [miniz 3.0.2](https://github.com/richgel999/miniz/tree/3.0.2) | Windows 词库 ZIP 解压 / Native Windows dictionary ZIP decompression | MIT · [License](windows/app/third_party/miniz/LICENSE) |
 
 雾凇内置词表来自官方 `nightly` 的 `cn_dicts.zip`（SHA-256 `2e682bf965577b113eebf69ab6f5a936d16e8b4a9ca2117e212ad34361cbc453`），词表来源署名保留在各文件头中。接入范围和修改见 [NOTICE](android/app/src/main/assets/shared/licenses/rime-ice/NOTICE.txt)。其他组件及依赖详见 [Windows 组件说明](windows/THIRD-PARTY.md)、[Android 依赖](gradle/libs.versions.toml) 和各组件的 LICENSE 文件。
 

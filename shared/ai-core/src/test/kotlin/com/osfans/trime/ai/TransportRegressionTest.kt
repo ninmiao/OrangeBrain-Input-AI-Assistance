@@ -3,6 +3,7 @@ package com.osfans.trime.ai
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.*
 import kotlin.test.*
+import kotlinx.serialization.json.*
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -12,7 +13,7 @@ import okhttp3.tls.HeldCertificate
 class TransportRegressionTest {
     private val request = AiRequest(RequestStamp(1,1,1,1,1),AiInput("nihao"),"system",false)
     private fun envelope(content:String="你好") =
-        """{"choices":[{"finish_reason":"stop","message":{"content":${kotlinx.serialization.json.JsonPrimitive(content)}}}]}"""
+        """{"choices":[{"finish_reason":"stop","message":{"content":${kotlinx.serialization.json.JsonPrimitive(kotlinx.serialization.json.JsonArray(listOf(kotlinx.serialization.json.JsonPrimitive(content))).toString())}}}]}"""
 
     @Test fun duplicateLongCandidatesKeepFirstAndPreserveOrder() {
         val text="我今天下午有一个重要的会议，需要和 team 一起讨论项目进度以及下周计划，请你明天早上九点之前把整理好的文件发给我。"
@@ -68,4 +69,25 @@ class TransportRegressionTest {
         assertEquals(RequestPhase.RECEIVING,(error as ApiTimeoutException).phase)
         assertTrue((System.nanoTime()-start)/1_000_000<2500)
     }
+    @Test fun retryExpandsBudgetOnceAndKeepsContext() = fixture {server,client,_ ->
+        server.enqueue(MockResponse().setBody("""{"choices":[{"finish_reason":"length","message":{"content":"[\"未结束"}}]}"""))
+        server.enqueue(MockResponse().setBody(envelope()))
+        val input=request.copy(input=AiInput("nihao","前文","后文"),outputTokenBudget=1)
+        assertEquals(listOf("你好"),client.request(server.url("/v1/chat/completions").toString(),"test","model",input,4000).candidates)
+        val first=kotlinx.serialization.json.Json.parseToJsonElement(server.takeRequest().body.readUtf8()).jsonObject
+        val second=kotlinx.serialization.json.Json.parseToJsonElement(server.takeRequest().body.readUtf8()).jsonObject
+        assertTrue(second.getValue("max_completion_tokens").jsonPrimitive.int>first.getValue("max_completion_tokens").jsonPrimitive.int)
+        assertEquals(first["messages"],second["messages"])
+    }
+    @Test fun completeCandidateFromTruncationAvoidsSecondRequest() = fixture {server,client,_ ->
+        server.enqueue(MockResponse().setBody("""{"choices":[{"finish_reason":"length","message":{"content":"[\"完整\",\"未结束"}}]}"""))
+        val result=client.request(server.url("/v1/chat/completions").toString(),"test","model",request,2000)
+        assertEquals(listOf("完整"),result.candidates);assertTrue(result.recovered);assertEquals(1,server.requestCount)
+    }
+    @Test fun secondTruncationDoesNotLoop() = fixture {server,client,_ ->
+        repeat(2){server.enqueue(MockResponse().setBody("""{"choices":[{"finish_reason":"length","message":{"content":"[\"未结束"}}]}"""))}
+        assertFailsWith<ApiTruncatedException>{client.request(server.url("/v1/chat/completions").toString(),"test","model",request,4000)}
+        assertEquals(2,server.requestCount)
+    }
+
 }

@@ -1,4 +1,4 @@
-﻿param([Parameter(Mandatory=$true)][ValidateSet('Stop','Register','Unregister')][string]$Action,[Parameter(Mandatory=$true)][string]$Root)
+param([Parameter(Mandatory=$true)][ValidateSet('Stop','Register','Unregister')][string]$Action,[Parameter(Mandatory=$true)][string]$Root)
 $ErrorActionPreference='Stop'
 # Uninstall may inherit a temporary directory that no longer exists.
 $stableDirectory=Join-Path $env:WINDIR 'System32'
@@ -13,7 +13,30 @@ if(Test-Path -LiteralPath $target){
 }
 $names=@('ZephyrBroker.exe','ZephyrServer.exe','ZephyrSettings.exe','ZephyrDeployer.exe')
 Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.Path -and [IO.Path]::GetDirectoryName($_.Path) -eq $target -and [IO.Path]::GetFileName($_.Path) -in $names } | ForEach-Object { Stop-Process -Id $_.Id -Force -ErrorAction Stop }
-if($Action -eq 'Stop'){exit 0}
+if($Action -eq 'Stop'){
+ # Remove the previous jpackage runtime before copying the native application.
+ # Do not rely on InstallDelete: fail the upgrade if old runtime files remain.
+ foreach($name in @('app','runtime')) {
+  $legacy=[IO.Path]::GetFullPath((Join-Path $target $name))
+  if([IO.Path]::GetDirectoryName($legacy) -ne $target){throw 'Unexpected legacy directory'}
+  if(!(Test-Path -LiteralPath $legacy)){continue}
+  $pending=[Collections.Generic.Stack[string]]::new();$pending.Push($legacy)
+  while($pending.Count -gt 0) {
+   $current=$pending.Pop();$item=Get-Item -LiteralPath $current -Force
+   if($item.Attributes -band [IO.FileAttributes]::ReparsePoint){throw 'Legacy directory contains a reparse point'}
+   if($item.PSIsContainer){
+    foreach($child in Get-ChildItem -LiteralPath $current -Force) {
+     $childPath=[IO.Path]::GetFullPath($child.FullName)
+     if(!$childPath.StartsWith($legacy+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'Legacy cleanup path escaped its directory'}
+     $pending.Push($childPath)
+    }
+   }
+  }
+  Remove-Item -LiteralPath $legacy -Recurse -Force -ErrorAction Stop
+  if(Test-Path -LiteralPath $legacy){throw 'Legacy runtime cleanup did not finish'}
+ }
+ exit 0
+}
 $state=Get-Content -LiteralPath (Join-Path $target 'installation.json') -Raw | ConvertFrom-Json
 function Register-Dll([string]$name,[string]$arch,[bool]$remove) {
  if($name -notmatch '^ZephyrTSF(x64|x86)-[a-f0-9]{12}\.dll$'){throw 'Invalid DLL name'}

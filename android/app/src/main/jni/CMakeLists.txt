@@ -59,3 +59,5 @@ include_directories("${X11Keysym}")
 include(Rime)
 
 add_subdirectory(librime_jni)
+
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../../../../../shared/native-core" "${CMAKE_CURRENT_BINARY_DIR}/zephyr-core")

@@ -68,7 +68,9 @@ class ModelSettingsActivity : AppCompatActivity() {
             .onFailure {providerState="获取失败，可重试或手动填写供应商 ID"}
         render()
     }
+    override fun onPause() { flushPending();super.onPause() }
     private fun render() {
+        flushPending()
         val c = current()
         page = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; isFocusableInTouchMode = true; setPadding(24, 48, 24, 48) }
         setContentView(ScrollView(this).apply { addView(page) })
@@ -77,12 +79,11 @@ class ModelSettingsActivity : AppCompatActivity() {
         label("支持非流式 Chat Completions。OpenRouter 刷新列表时同步模型思考能力；OpenAI 使用已核实的型号规则。未知模型不会自动套用全部档位。")
         if (c.endpoint.isBlank()) { label("请返回 AI 设置，先验证身份并配置连接和密钥。"); return }
         val model = field("模型 ID（可直接填写新模型）", c.model)
-        button("保存模型 ID") { work {
-            val id = model.text.toString().trim()
-            require(id.isNotBlank() && id.length <= 256 && id.none { it.isISOControl() })
-            withContext(Dispatchers.IO) { store.updatePolicyConfig(policyId) { require(it.endpoint == c.endpoint); it.copy(model = id) } }
-            render(); report("模型已切换；每个模型保留自己的参数选择")
-        } }
+        autoSave(model) { value ->
+            require(value.isNotBlank() && value.length<=256 && value.none {it.isWhitespace() || it.isISOControl()})
+            store.updatePolicyConfig(policyId) {require(it.endpoint==c.endpoint);it.copy(model=value)}
+        }
+        model.setOnFocusChangeListener { _,focused -> if(!focused && model.text.toString().trim()==current().model)render() }
         button("从列表选择模型") {
             val ids = (c.modelCatalog.models.map { it.id } + c.discoveredModels + listOf(c.model)).filter { it.isNotBlank() }.distinct().sorted()
             val names = ids.map { id -> c.modelCatalog.models.firstOrNull { it.id == id }?.let { "${it.name} · $id" } ?: id }
@@ -113,17 +114,11 @@ class ModelSettingsActivity : AppCompatActivity() {
             }
             button("刷新供应商列表") { lifecycleScope.launch { fetchProviders(identity,c.model) } }
             val provider = field("OpenRouter 提供商（留空自动路由）", c.provider)
-            button("保存提供商") { work {
-                val route = provider.text.toString().trim()
-                ApiRouting.wire(c.endpoint, emptyMap(), route)
-                withContext(Dispatchers.IO) {
-                    store.updatePolicyConfig(policyId) {
-                        require(it.endpoint == c.endpoint && it.model == c.model)
-                        it.copy(provider = route)
-                    }
-                }
-                render(); report("提供商已保存；下次请求生效")
-            } }
+            autoSave(provider) { value ->
+                ApiRouting.wire(c.endpoint,emptyMap(),value)
+                store.updatePolicyConfig(policyId) {require(it.endpoint==c.endpoint && it.model==c.model);it.copy(provider=value)}
+            }
+
         }
 
         label("当前模型参数", 20f)
@@ -210,15 +205,33 @@ class ModelSettingsActivity : AppCompatActivity() {
                 inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED or if (p.type == "number") InputType.TYPE_NUMBER_FLAG_DECIMAL else 0
                 isSaveEnabled = false
             }
-            val dialog = AlertDialog.Builder(this).setTitle(p.label).setView(edit).setPositiveButton("保存", null).setNegativeButton("取消", null).create()
-            dialog.setOnShowListener { dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                val raw = edit.text.toString().trim()
-                val value = if (raw.isEmpty()) null else if (p.type == "integer") raw.toLongOrNull()?.let { JsonPrimitive(it) } else raw.toDoubleOrNull()?.let { JsonPrimitive(it) }
-                if ((raw.isNotEmpty() && value == null) || (value != null && !p.accepts(value))) edit.error = "请输入允许范围内的数字"
-                else { dialog.dismiss(); apply(value) }
-            } }
+            val dialog = AlertDialog.Builder(this).setTitle(p.label+" · 自动保存").setView(edit).setPositiveButton("完成",null).create()
+            autoSave(edit) { raw ->
+                val value=if(raw.isEmpty())null else if(p.type=="integer")JsonPrimitive(requireNotNull(raw.toLongOrNull())) else JsonPrimitive(requireNotNull(raw.toDoubleOrNull()))
+                require(value==null || p.accepts(value))
+                val current=current();require(current.endpoint==c.endpoint && current.model==c.model)
+                val values=store.parameters(current).toMutableMap();if(value==null)values.remove(p.key) else values[p.key]=value
+                store.saveParameters(c.endpoint,c.model,values,policyId)
+            }
+            dialog.setOnDismissListener {flushPending();render()}
             dialog.show()
         }
+    }
+    private var saving:Job?=null
+    private val pendingSaves=linkedMapOf<EditText,()->Unit>()
+    private fun flushPending() {
+        saving?.cancel();val changes=pendingSaves.values.toList();pendingSaves.clear()
+        changes.forEach { change -> try {change();report("已自动保存并生效")}catch(_:Exception){report("输入未完成或无效，保留原设置")} }
+    }
+    private fun autoSave(field:EditText,save:(String)->Unit) {
+        field.addTextChangedListener(object:android.text.TextWatcher {
+            override fun beforeTextChanged(s:CharSequence?,start:Int,count:Int,after:Int){}
+            override fun onTextChanged(s:CharSequence?,start:Int,before:Int,count:Int){}
+            override fun afterTextChanged(s:android.text.Editable?) {
+                val value=s.toString().trim();pendingSaves[field]={save(value)}
+                saving?.cancel();saving=lifecycleScope.launch {delay(350);flushPending()}
+            }
+        })
     }
     private fun label(text: String, size: Float = 14f) = TextView(this).apply { this.text = text; textSize = size; setPadding(0, 12, 0, 12); page.addView(this) }
     private fun field(hint: String, text: String): EditText { label(hint); return EditText(this).apply { this.hint = hint; contentDescription = hint; setText(text); isSingleLine = true; inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI; isSaveEnabled = false; page.addView(this) } }

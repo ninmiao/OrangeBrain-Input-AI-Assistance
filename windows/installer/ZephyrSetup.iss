@@ -2,7 +2,7 @@
   #error Image required
 #endif
 #ifndef Version
-  #define Version "1.7.1"
+  #define Version "1.9.1"
 #endif
 [Setup]
 AppId={{EBA0B59B-4AD5-46C9-9F26-1C517208A753}
@@ -40,6 +40,11 @@ Source: "{#Image}\ZephyrTSFx86.dll"; DestDir: "{app}"; DestName: "{#Dll32}"; Fla
 Source: "{#Meta}\installation.json"; DestDir: "{app}"; Flags: ignoreversion overwritereadonly
 Source: "setup-helper.ps1"; DestDir: "{app}"; Flags: ignoreversion overwritereadonly; AfterInstall: RegisterIme
 Source: "setup-helper.ps1"; Flags: dontcopy
+[InstallDelete]
+; These are the old jpackage-owned directories, never the user's AppData.
+; PrepareToInstall validates the fixed installation root and stops its processes first.
+Type: filesandordirs; Name: "{app}\runtime"
+Type: filesandordirs; Name: "{app}\app"
 [Registry]
 Root: HKLM64; Subkey: "Software\ZephyrInput"; ValueType: string; ValueName: "WeaselRoot"; ValueData: "{app}"; Flags: uninsdeletekey
 Root: HKLM32; Subkey: "Software\ZephyrInput"; ValueType: string; ValueName: "WeaselRoot"; ValueData: "{app}"; Flags: uninsdeletekey
@@ -92,7 +97,7 @@ end;
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
  ExtractTemporaryFile('setup-helper.ps1');
- if not Helper(ExpandConstant('{tmp}\setup-helper.ps1'),'Stop') then Result := 'Cannot stop Zephyr Input. Close its settings window and retry.';
+ if not Helper(ExpandConstant('{tmp}\setup-helper.ps1'),'Stop') then Result := 'Cannot prepare the Zephyr Input update. Close its settings window and retry; the old runtime must be removable.';
 end;
 procedure RegisterIme;
 begin

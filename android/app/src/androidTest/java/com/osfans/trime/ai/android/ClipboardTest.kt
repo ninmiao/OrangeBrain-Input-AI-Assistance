@@ -28,14 +28,23 @@ class ClipboardTest {
                 device.findObject(By.desc("剪贴板")).click()
                 assertTrue(device.wait(Until.hasObject(By.textStartsWith("当前复制 · ")),5000))
                 device.findObject(By.textStartsWith("当前复制 · ")).click()
-                assertTrue(device.wait(Until.hasObject(By.desc("test-editor").text(text)),5000))
+                if (!device.wait(Until.hasObject(By.desc("test-editor").text(text)),5000)) {
+                    assertEquals("Pasting must preserve the current composition",text,device.findObject(By.desc("test-editor"))?.text)
+                }
             }
             copy("剪贴板 Paste 123");paste("剪贴板 Paste 123")
             device.findObject(By.desc("test-editor")).text=""
             copy("第二次\n完整内容");paste("第二次\n完整内容")
             device.findObject(By.desc("test-editor")).text=""
-            session.runOnReady {clearComposition();setRuntimeOption("ascii_mode",false);for(ch in "nihao")processKey(ch.code)}
+            // Exercise actual key events and let editor selection callbacks settle between keys.
+            device.findObject(By.desc("test-editor")).click()
             device.waitForIdle()
+            session.runOnReady {clearComposition();assertTrue(selectSchema("rime_ai_simp"));setRuntimeOption("ascii_mode",false)}
+            for (ch in "NIHAO") {
+                device.pressKeyCode(android.view.KeyEvent.keyCodeFromString("KEYCODE_$ch"))
+                device.waitForIdle()
+            }
+            assertEquals("nihao",session.run {rawInputCached})
             copy(" + clipboard");paste("你好 + clipboard")
             assertEquals("",session.runOnReady {rawInputCached})
         } finally {

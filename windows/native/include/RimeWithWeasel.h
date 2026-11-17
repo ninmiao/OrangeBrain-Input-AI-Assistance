@@ -63,6 +63,7 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
   virtual bool ChangePage(bool backward, WeaselSessionId ipc_id, EatLine eat);
   virtual void FocusIn(DWORD param, WeaselSessionId ipc_id);
   virtual void FocusOut(DWORD param, WeaselSessionId ipc_id);
+  void UpdateTextContext(const std::wstring& data,DWORD ipc_id) override;
   virtual void UpdateInputPosition(RECT const& rc, WeaselSessionId ipc_id);
   virtual void StartMaintenance();
   virtual void EndMaintenance();

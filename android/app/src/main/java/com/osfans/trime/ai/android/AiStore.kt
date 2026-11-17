@@ -31,16 +31,15 @@ data class AiPolicy(
     val localOverride: PromptPackage? = null,
     val history: List<PromptVersion> = emptyList(),
     val provider: String = "",
-    val presets: PromptPresets = PromptPresets(),
 ) {
     fun applyTo(c: AiConfig) = c.copy(selectedPolicyId = id, endpoint = endpoint, model = model,
-        provider = provider, presets = presets, modelCatalog = catalog, discoveredModels = discoveredModels, modelValues = modelValues,
+        provider = provider, modelCatalog = catalog, discoveredModels = discoveredModels, modelValues = modelValues,
         active = active, localOverride = localOverride, history = history,
         remoteUrl = "", autoUpdate = false, modelCatalogUrl = "")
 }
 
 private fun AiConfig.snapshotPolicy(name: String) = AiPolicy(selectedPolicyId, name, endpoint, model,
-    modelCatalog, discoveredModels, modelValues, active, localOverride, history, provider, presets)
+    modelCatalog, discoveredModels, modelValues, active, localOverride, history, provider)
 
 object TerraDefaults {
     const val MODEL = "gpt-6.1-terra"
@@ -60,6 +59,7 @@ data class AiConfig(
     val automatic: Boolean = true,
     val wordSegmentation: Boolean = true,
     val targetLimit: Int = 300,
+    val contextEnabled:Boolean=true, val beforeLength:Int=50, val afterLength:Int=0, val outputTokenBudget:Int=256,
     val debounceMs: Long = 200,
     val timeoutMs: Int = 10000,
     val endpoint: String = TerraDefaults.ENDPOINT,
@@ -81,7 +81,6 @@ data class AiConfig(
     val policies: List<AiPolicy> = emptyList(),
     val policyVersion: Int = 0,
     val provider: String = "",
-    val presets: PromptPresets = PromptPresets(),
 )
 
 class AiStore internal constructor(private val context: Context) {
@@ -141,13 +140,9 @@ class AiStore internal constructor(private val context: Context) {
                 modelValues=mapOf(ApiRouting.HYDROGEN to mapOf("reasoning_effort" to JsonPrimitive("low"),"service_tier" to JsonPrimitive("default"))))
             c.copy(policyVersion=4, policies=c.policies + if(c.policies.size>=20 || c.policies.any { ApiRouting.isGemini(it.endpoint) }) emptyList() else listOf(if(c.policies.any { it.id==gemini.id })gemini.copy(id=UUID.randomUUID().toString()) else gemini))
         }
-        if (config.policyVersion < 5) update { c ->
-            val policies = c.policies.map { it.copy(presets=it.presets.withDefaults()) }
-            policies.first { it.id == c.selectedPolicyId }.applyTo(c).copy(policies=policies,policyVersion=5)
-        }
+        if (config.policyVersion < 6) update { it.copy(policyVersion=6,contextEnabled=true,beforeLength=50,afterLength=0) }
     }
     fun effective(c: AiConfig = config) = (c.localOverride ?: c.active?.pack ?: builtin).upgraded()
-    fun preset(c: AiConfig, chinese: Boolean) = if(ApiRouting.isOpenRouter(c.endpoint)) c.presets.selected(chinese,c.traditional) else ""
     fun prompt(c: AiConfig, chinese: Boolean): String {
         val pack = effective(c)
         return pack.compose(chinese,c.traditional)
@@ -178,7 +173,7 @@ class AiStore internal constructor(private val context: Context) {
         update { c ->
             val policy = c.policies.first { it.id == id }
             var edited = transform(policy.applyTo(c))
-            if (edited.endpoint != policy.endpoint) edited = edited.copy(modelCatalog = ModelCatalog(), modelValues = emptyMap(), discoveredModels = emptyList(),provider=if(ApiRouting.isOpenRouter(edited.endpoint))edited.provider else "",presets=if(ApiRouting.isOpenRouter(edited.endpoint))edited.presets else PromptPresets())
+            if (edited.endpoint != policy.endpoint) edited = edited.copy(modelCatalog = ModelCatalog(), modelValues = emptyMap(), discoveredModels = emptyList(),provider=if(ApiRouting.isOpenRouter(edited.endpoint))edited.provider else "")
             edited.modelCatalog.validate()
             edited = edited.copy(modelValues = edited.modelValues.mapNotNull { (model, values) ->
                 ReasoningCapabilities.definition(edited.endpoint,model,edited.modelCatalog)?.let { model to it.filterValues(values) }
@@ -235,7 +230,7 @@ class AiStore internal constructor(private val context: Context) {
             if (c.selectedPolicyId == id) remaining.first().applyTo(c).copy(policies = remaining) else c.copy(policies = remaining)
         }
         credentialsForPolicy(id).clear()
-        BenchmarkStore(context, id).clear()
+        context.getSharedPreferences("benchmark-policy-selection", Context.MODE_PRIVATE).let { prefs -> prefs.edit().putStringSet("ids",prefs.getStringSet("ids",emptySet()).orEmpty()-id).apply() }
     }
 
     // Only publish after atomic disk commit. No observer can see half-applied configuration.
@@ -244,7 +239,7 @@ class AiStore internal constructor(private val context: Context) {
         val old = config
         var next = transform(old).copy(generation = old.generation + 1, candidateCount = 1, completion = false)
         // Capabilities and values belong to this exact endpoint, not just a model name.
-        if (next.endpoint != old.endpoint && next.selectedPolicyId == old.selectedPolicyId && !(old.policyVersion == 0 && next.policyVersion == 1)) next = next.copy(modelCatalog = ModelCatalog(), discoveredModels = emptyList(), modelValues = emptyMap(), modelCatalogUrl = "",provider=if(ApiRouting.isOpenRouter(next.endpoint))next.provider else "",presets=if(ApiRouting.isOpenRouter(next.endpoint))next.presets else PromptPresets())
+        if (next.endpoint != old.endpoint && next.selectedPolicyId == old.selectedPolicyId && !(old.policyVersion == 0 && next.policyVersion == 1)) next = next.copy(modelCatalog = ModelCatalog(), discoveredModels = emptyList(), modelValues = emptyMap(), modelCatalogUrl = "",provider=if(ApiRouting.isOpenRouter(next.endpoint))next.provider else "")
         next.modelCatalog.validate()
         next = next.copy(modelValues = next.modelValues.mapNotNull { (id, values) ->
             ReasoningCapabilities.definition(next.endpoint,id,next.modelCatalog)?.let { id to it.filterValues(values) }
@@ -252,7 +247,7 @@ class AiStore internal constructor(private val context: Context) {
         next.modelValues.values.forEach { ModelParameters.validateWire(it) }
         require(next.debounceMs in 50..2000 && next.timeoutMs in 1000..60000)
         require(next.targetLimit in 1..300)
-        next.presets.validate()
+        require(next.beforeLength in 0..500 && next.afterLength in 0..500 && next.outputTokenBudget in 1..65536)
         require(next.policies.map { it.id }.distinct().size == next.policies.size)
         if (next.policies.isNotEmpty()) {
             val name = next.policies.first { it.id == next.selectedPolicyId }.name

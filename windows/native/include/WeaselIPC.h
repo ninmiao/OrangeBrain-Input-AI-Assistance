@@ -32,6 +32,7 @@ enum WEASEL_IPC_COMMAND {
   WEASEL_IPC_SELECT_CANDIDATE_ON_CURRENT_PAGE,
   WEASEL_IPC_HIGHLIGHT_CANDIDATE_ON_CURRENT_PAGE,
   WEASEL_IPC_CHANGE_PAGE,
+  WEASEL_IPC_UPDATE_CONTEXT,
   WEASEL_IPC_LAST_COMMAND
 };
 
@@ -80,6 +81,7 @@ struct RequestHandler {
   }
   virtual void FocusIn(DWORD param, DWORD session_id) {}
   virtual void FocusOut(DWORD param, DWORD session_id) {}
+  virtual void UpdateTextContext(const std::wstring&, DWORD) {}
   virtual void UpdateInputPosition(RECT const& rc, DWORD session_id) {}
   virtual void StartMaintenance() {}
   virtual void EndMaintenance() {}
@@ -137,6 +139,7 @@ class Client {
   // 翻页，backward = true 向前翻，false向后翻
   bool ChangePage(bool backward);
   // 更新输入位置
+  void UpdateTextContext(const std::wstring& before, const std::wstring& after);
   void UpdateInputPosition(RECT const& rc);
   // 输入窗口获得焦点
   void FocusIn();

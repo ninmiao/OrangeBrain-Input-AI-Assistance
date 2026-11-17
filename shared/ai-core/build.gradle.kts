@@ -21,3 +21,18 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.12.2")
 }
 tasks.test { useJUnitPlatform() }
+
+val nativeRoot = projectDir.resolve("../native-core")
+val nativeOut = layout.buildDirectory.dir("native-core")
+val nativeResources = layout.buildDirectory.dir("native-resources")
+val buildNativeCore by tasks.registering(Exec::class) {
+    inputs.dir(nativeRoot.resolve("third_party")); inputs.dir(nativeRoot.resolve("src")); inputs.dir(nativeRoot.resolve("tests")); inputs.file(nativeRoot.resolve("CMakeLists.txt"))
+    outputs.file(nativeOut.map { it.file("Release/zephyr_core.dll") })
+    commandLine("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", projectDir.resolve("../../script/build-core.ps1"), "-BuildDir", nativeOut.get().asFile)
+}
+val copyNativeCore by tasks.registering(Copy::class) {
+    dependsOn(buildNativeCore)
+    from(nativeOut.map { it.file("Release/zephyr_core.dll") }); into(nativeResources.map { it.dir("native") })
+}
+sourceSets.main { resources.srcDir(nativeResources) }
+tasks.processResources { dependsOn(copyNativeCore) }

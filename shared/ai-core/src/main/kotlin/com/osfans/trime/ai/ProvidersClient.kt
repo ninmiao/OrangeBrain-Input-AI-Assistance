@@ -15,14 +15,8 @@ class ProvidersClient {
   }
   fun decode(bytes:ByteArray):List<ProviderOption> {
    require(bytes.size<=2*1024*1024)
-   val rows=Json.parseToJsonElement(bytes.toString(Charsets.UTF_8)).jsonObject.getValue("data").jsonObject.getValue("endpoints").jsonArray
-   require(rows.size<=1000)
-   return rows.mapNotNull { row ->
-    val o=row.jsonObject
-    val id=o["tag"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
-    if(id.isBlank() || id.length>128 || id.any{it.isWhitespace() || it.isISOControl()})return@mapNotNull null
-    ProviderOption(id,o["provider_name"]?.jsonPrimitive?.contentOrNull ?: id)
-   }.distinctBy{it.id}.sortedBy{it.name}
+   return NativeCore.invoke("providersDecode",buildJsonObject {put("body",bytes.toString(Charsets.UTF_8))}).jsonArray.map { ProviderOption(it.jsonObject.getValue("id").jsonPrimitive.content,it.jsonObject.getValue("name").jsonPrimitive.content) }
+
   }
  }
  suspend fun fetch(model:String):List<ProviderOption> = withContext(Dispatchers.IO) {

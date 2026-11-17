@@ -7,12 +7,12 @@ class ModelCatalogTest {
     private val request = AiRequest(RequestStamp(1, 1, 1, 1, 1), AiInput("nihao"), "system", false)
     @Test fun defaultOmitsOptionalParametersAndSelectionUsesTopLevelFields() {
         val client = ChatCompletionsClient()
-        assertEquals(setOf("model", "stream", "messages"), client.payload("test", request).keys)
+        assertEquals(setOf("model", "stream", "messages", "max_completion_tokens"), client.payload("test", request).keys)
         val values = mapOf("reasoning_effort" to JsonPrimitive("low"), "service_tier" to JsonPrimitive("priority"), "max_completion_tokens" to JsonPrimitive(128))
         val body = client.payload("test", request, values)
         values.forEach { (key, value) -> assertEquals(value, body[key]) }
         val user = body.getValue("messages").jsonArray[1].jsonObject.getValue("content").jsonPrimitive.content
-        assertEquals("nihao",user)
+        assertEquals("""{"i":"nihao"}""",user)
     }
     @Test fun parametersCannotOverrideTransportOrMessages() {
         for (key in listOf("model", "messages", "stream", "api_key", "endpoint", "tools")) {

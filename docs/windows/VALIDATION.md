@@ -1,6 +1,6 @@
 # Windows 开发预览验证
 
-当前更新：**Windows 1.5.5：模型下拉选择与更新；Android 1.4.0：数字混输**，结果见 [Windows 本次验证](model-picker-1.5.1.md) 及 [Android 本次验证](../ai/number-row-providers-1.4.0.md)。下方为历史结果，不能当作本版完整桌面兼容性复测。
+当前 Windows 设置更新：**1.9.1**，见 [界面与手动保存验证](gui-1.9.1.md)。1.9.0 的安装和输入验证见 [原生版验证](validation-1.9.0-native.md)。下方为历史记录。
 
 ## Windows 1.4.0 历史记录
 

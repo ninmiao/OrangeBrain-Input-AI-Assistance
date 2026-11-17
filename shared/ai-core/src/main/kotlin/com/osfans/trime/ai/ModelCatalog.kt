@@ -14,53 +14,21 @@ data class ModelParameter(
     val choices: List<ParameterChoice> = emptyList(),
     val min: Double? = null, val max: Double? = null,
 ) {
-    fun accepts(value: JsonPrimitive): Boolean = when (type) {
-        "enum" -> value.isString && choices.any { it.value == value.content }
-        "boolean" -> !value.isString && value.booleanOrNull != null
-        "number", "integer" -> !value.isString && value.doubleOrNull?.let {
-            it.isFinite() && (min == null || it >= min) && (max == null || it <= max) &&
-                (type != "integer" || value.longOrNull != null)
-        } == true
-        else -> false
-    }
+    fun accepts(value: JsonPrimitive): Boolean = NativeCore.invoke("accepts",buildJsonObject { put("parameter",Json.encodeToJsonElement(serializer(),this@ModelParameter));put("value",value) }).jsonPrimitive.boolean
+
 }
 
 @Serializable
 data class ModelDefinition(val id: String, val name: String = id, val parameters: List<ModelParameter> = emptyList()) {
-    fun filterValues(values: Map<String, JsonPrimitive>) = values.filter { (key, value) -> parameters.any { it.key == key && it.accepts(value) } }
+    fun filterValues(values: Map<String, JsonPrimitive>) = NativeCore.invoke("filterValues",buildJsonObject { put("definition",Json.encodeToJsonElement(serializer(),this@ModelDefinition));put("values",JsonObject(values)) }).jsonObject.mapValues { it.value.jsonPrimitive }
+
 }
 
 /** A manually maintained UI capability catalog, never a claim about account/model availability. */
 @Serializable
 data class ModelCatalog(val schema_version: Int = 1, val version: String = "local-1", val models: List<ModelDefinition> = emptyList()) {
     fun validate(): ModelCatalog {
-        require(schema_version == 1 && version.isNotBlank() && version.length <= 100)
-        require(models.size <= 2000 && models.map { it.id }.distinct().size == models.size)
-        models.forEach { model ->
-            require(model.id.isNotBlank() && model.id.length <= 256 && model.id.none { it.isISOControl() })
-            require(model.name.isNotBlank() && model.name.length <= 256)
-            require(model.parameters.size <= 24 && model.parameters.map { it.key }.distinct().size == model.parameters.size)
-            model.parameters.forEach { p ->
-                require(p.key in allowedKeys && p.label.isNotBlank() && p.label.length <= 100)
-                require(p.type in setOf("enum", "number", "integer", "boolean"))
-                require(p.min == null || p.min.isFinite()); require(p.max == null || p.max.isFinite())
-                require(p.min == null || p.max == null || p.min <= p.max)
-                if (p.type == "enum") {
-                    require(p.choices.isNotEmpty() && p.choices.size <= 32 && p.choices.map { it.value }.distinct().size == p.choices.size)
-                    require(p.choices.all { it.label.isNotBlank() && it.label.length <= 100 && it.value.isNotBlank() && it.value.length <= 128 })
-                } else require(p.choices.isEmpty())
-                when (p.key) {
-                    "reasoning_effort", "service_tier" -> require(p.type == "enum")
-                    "enable_thinking" -> require(p.type == "boolean")
-                    "max_tokens", "max_completion_tokens" -> require(p.type == "integer" && p.min != null && p.min >= 1 && p.max != null && p.max <= 1000000)
-                    else -> {
-                        val range = when (p.key) { "temperature" -> 0.0..2.0; "top_p" -> 0.0..1.0; else -> -2.0..2.0 }
-                        require(p.type == "number" && p.min != null && p.max != null && p.min >= range.start && p.max <= range.endInclusive)
-                    }
-                }
-            }
-        }
-        require(json.encodeToString(this).toByteArray(Charsets.UTF_8).size <= MAX_BYTES)
+        NativeCore.invoke("validateCatalog",json.encodeToJsonElement(serializer(),this))
         return this
     }
     fun export(): String = json.encodeToString(this)
@@ -87,21 +55,5 @@ data class ModelCatalog(val schema_version: Int = 1, val version: String = "loca
 }
 
 object ModelParameters {
-    fun validateWire(values: Map<String, JsonPrimitive>) {
-        require(values.keys.all { it in ModelCatalog.allowedKeys })
-        require(!(values.containsKey("max_tokens") && values.containsKey("max_completion_tokens")))
-        values.forEach { (key, value) ->
-            require(value !is JsonNull && value.content.length <= 128)
-            when (key) {
-                "reasoning_effort", "service_tier" -> require(value.isString && value.content.isNotBlank())
-                "enable_thinking" -> require(!value.isString && value.booleanOrNull != null)
-                "max_tokens", "max_completion_tokens" -> require(!value.isString && value.longOrNull?.let { it in 1..1000000 } == true)
-                else -> {
-                    val number = value.doubleOrNull
-                    require(!value.isString && number != null && number.isFinite())
-                    require(number in when (key) { "temperature" -> 0.0..2.0; "top_p" -> 0.0..1.0; else -> -2.0..2.0 })
-                }
-            }
-        }
-    }
+ fun validateWire(values:Map<String,JsonPrimitive>) { NativeCore.invoke("validateParameters",JsonObject(values)) }
 }

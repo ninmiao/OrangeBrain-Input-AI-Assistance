@@ -117,7 +117,7 @@ class WanxiangActivity:AppCompatActivity() {
         label("词表与语法模型配合使用。万象模型下载后增强排序；切换雾凇时停用，切回万象后恢复开关。")
         val choice=Spinner(this).apply {adapter=ArrayAdapter(this@WanxiangActivity,android.R.layout.simple_spinner_dropdown_item,arrayOf("万象拼音 / Wanxiang","雾凇拼音 / Rime Ice"));contentDescription="选择词库";page.addView(this)}
         val grammar=Switch(this).apply {text="万象语法模型（默认开启，下载后生效）";isChecked=true;contentDescription="万象语法模型开关";page.addView(this)}
-        val apply=button("应用选择（离线）")
+        val apply=button("重新部署当前词库")
         val wanxiang=button("更新万象词表")
         val ice=button("更新雾凇词表")
         val model=button("下载 / 更新万象语法模型")
@@ -127,29 +127,33 @@ class WanxiangActivity:AppCompatActivity() {
         val info=label("读取状态…")
         label("万象：amzxyz · CC BY 4.0；雾凇：iDvel · GPL-3.0-only。词表和模型均在本地使用，云端 AI 独立配置。")
         var busy=false
+        var applied:Pair<Boolean,Boolean>?=null
+        fun begin(action:String) {
+            val intent=Intent(this,WanxiangDownloadService::class.java).setAction(action).putExtra("grammar",grammar.isChecked).putExtra("wanxiang",choice.selectedItemPosition==0)
+            ContextCompat.startForegroundService(this,intent)
+        }
+        fun autoApply() {val desired=(choice.selectedItemPosition==0) to grammar.isChecked;if(!busy && applied!=null && applied!=desired){applied=desired;begin("select")}}
+
         fun controls() {choice.isEnabled=!busy;grammar.isEnabled=!busy && choice.selectedItemPosition==0;model.isEnabled=grammar.isEnabled
             listOf(apply,wanxiang,ice).forEach {it.isEnabled=!busy} }
         choice.onItemSelectedListener=object:AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent:AdapterView<*>?) {}
-            override fun onItemSelected(parent:AdapterView<*>?,view:android.view.View?,position:Int,id:Long) {controls()}
+            override fun onItemSelected(parent:AdapterView<*>?,view:android.view.View?,position:Int,id:Long) {controls();autoApply()}
         }
+        grammar.setOnCheckedChangeListener {_,_->autoApply()}
         lifecycleScope.launch {
             runCatching {withContext(Dispatchers.IO) {WanxiangUpdater(DataManager.userDataDir,AndroidWanxiangActivator,bundledDirectory=DataManager.sharedDataDir).state()}}
-                .onSuccess {choice.setSelection(if(it.enabled)0 else 1);grammar.isChecked=it.grammar;info.text=it.summary()}.onFailure {info.text="${it.message}"}
+                .onSuccess {applied=it.enabled to it.grammar;choice.setSelection(if(it.enabled)0 else 1);grammar.isChecked=it.grammar;info.text=it.summary()}.onFailure {info.text="${it.message}"}
             WanxiangDownloadService.state.collect {s ->
                 busy=s.busy
                 if(!busy && s.progress.message.isNotEmpty()) runCatching {withContext(Dispatchers.IO) {WanxiangUpdater(DataManager.userDataDir,AndroidWanxiangActivator,bundledDirectory=DataManager.sharedDataDir).state()}}
-                    .onSuccess {choice.setSelection(if(it.enabled)0 else 1);grammar.isChecked=it.grammar}
+                    .onSuccess {applied=it.enabled to it.grammar;choice.setSelection(if(it.enabled)0 else 1);grammar.isChecked=it.grammar}
                 controls()
                 if(s.progress.message.isNotEmpty())info.text=s.progress.message+if(s.progress.total>0)"\n${s.progress.done/1_000_000} / ${s.progress.total/1_000_000} MB" else ""
                 cancel.isEnabled=s.busy && s.progress.canCancel
                 bar.isIndeterminate=s.busy && s.progress.total==0L
                 if(s.progress.total>0)bar.progress=(s.progress.done*100/s.progress.total).toInt()
             }
-        }
-        fun begin(action:String) {
-            val intent=Intent(this,WanxiangDownloadService::class.java).setAction(action).putExtra("grammar",grammar.isChecked).putExtra("wanxiang",choice.selectedItemPosition==0)
-            ContextCompat.startForegroundService(this,intent)
         }
         apply.setOnClickListener {begin("select")};wanxiang.setOnClickListener {begin("wanxiang")};ice.setOnClickListener {begin("ice")};model.setOnClickListener {begin("model")}
         cancel.setOnClickListener {startService(Intent(this,WanxiangDownloadService::class.java).setAction("cancel"))}

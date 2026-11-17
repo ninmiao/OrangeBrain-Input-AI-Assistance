@@ -1,10 +1,10 @@
 # 开发环境与工具
 
-仓库根目录包含 `android/`、`windows/`、`shared/ai-core/`，不需要嵌套仓库或子模块。Gradle wrapper 保留在根目录，Android 工程仍从根目录构建；Windows 是独立 Gradle 工程，使用 `gradlew.bat -p windows`，仅构建 Windows 时不要求 Android SDK。
+仓库根目录包含 `android/`、`windows/`、`shared/ai-core/`，不需要嵌套仓库或子模块。Gradle wrapper 保留在根目录，Android 工程仍从根目录构建；Windows 是独立 CMake/MSBuild 工程，使用 `windows/scripts/build-app.ps1`；仅构建 Windows 不要求 JDK、Kotlin、Gradle 或 Android SDK。
 
 ## 共用工具
 
-JDK 17（含 jpackage），Python 3.12+，Git，仓库中的 Gradle wrapper。设置 `JAVA_HOME` 并将 Python 放入 PATH。JDK / SDK / VS / Gradle 缓存都是本机工具，不上传到 Git。脚本也支持忽略目录 `.tools/jdk/<JDK>/`。无需全局安装 Kotlin 或 Gradle。
+Python 3.12+、Git。Android 另外需要 JDK 17 和仓库中的 Gradle wrapper；Windows 使用 MSVC 和 CMake。将 Python 放入 PATH，仅 Android 构建需要设置 `JAVA_HOME`。JDK / SDK / VS / Gradle 缓存都是本机工具，不上传到 Git。脚本也支持忽略目录 `.tools/jdk/<JDK>/`。无需全局安装 Kotlin 或 Gradle。
 
 ## Android
 
@@ -31,12 +31,12 @@ APK 输出为 `android/app/build/outputs/apk/demo/`。原有 `script/` 测试工
 
 ## Windows 11 x64
 
-安装 Visual Studio 2022 Build Tools 的 C++ 桌面工具链、MSVC v143、ATL 和 Windows SDK 10.0.22621.0；不需要 MFC。安装 7-Zip；生成一键安装程序还需要 [Inno Setup 7](https://jrsoftware.org/isdl.php)，默认编译器为 `.tools/inno/ISCC.exe`，也可向 `build-installer.ps1` 传 `-Compiler`。此机器实测 MSVC 14.41.34120、JDK 17、Boost 1.89、librime 1.17.0。ARM64 不在此构建脚本范围。
+安装 Visual Studio 2022 Build Tools 的 C++ 桌面工具链、MSVC v143、ATL 和 Windows SDK 10.0.22621.0；不需要 MFC。安装 7-Zip；生成一键安装程序还需要 [Inno Setup 7](https://jrsoftware.org/isdl.php)，默认编译器为 `.tools/inno/ISCC.exe`，也可向 `build-installer.ps1` 传 `-Compiler`。此机器实测 MSVC 14.41.34120、Boost 1.89、librime 1.17.0。ARM64 不在此构建脚本范围。
 
 ```powershell
 python windows/scripts/prepare-deps.py
 ./windows/scripts/build-native.ps1 -Architecture both
-./gradlew.bat -p windows test installDist
+./windows/scripts/build-app.ps1
 ./windows/scripts/package.ps1 -Destination ./.tools/release-image
 ./windows/scripts/build-installer.ps1 -Image ./.tools/release-image/ZephyrSettings
 ```
@@ -45,14 +45,15 @@ python windows/scripts/prepare-deps.py
 
 标准 VS 安装通过 vcvars 使用 ATL；此机额外的 `.tools/windows-atl` 是本机提取的微软开发依赖缓存，不属于项目源码，也不要求其他开发者复制。原生脚本使用可用的 VS 安装路径，不固定当前用户名。
 
-`package.ps1` 从已提交的 OpenCC 源词表生成 Windows 文本词典，不依赖 Android 的历史构建产物。它运行 JVM 测试、打包自包含 Java 运行时、两个位数的 TSF DLL、x64 输入服务和词库。输出目录必须是新目录，避免覆盖正在运行的包。安装包不包含用户配置、API Key、测试证书或几十万条生成语料。`build-installer.ps1` 将 app-image 包装为单个 `dist/Zephyr-Input-Windows-1.7.1-Setup-x64.exe`；安装器源码位于 `windows/installer/`。EXE 尚未进行产品代码签名。
+`package.ps1` 从已提交的 OpenCC 源词表生成 Windows 文本词典，不依赖 Android 的历史构建产物。它编译并运行 C++ 测试，打包原生设置/后台、两个位数的 TSF DLL、x64 输入服务和词库。设置与后台静态链接 C++ 运行库，仅调用 Windows 系统 DLL；没有 Java、Qt、WebView 或独立 .NET 运行时。输出目录必须是新目录，避免覆盖正在运行的包。安装包不包含用户配置、API Key、测试证书或几十万条生成语料。`build-installer.ps1` 将 app-image 包装为单个 `dist/Zephyr-Input-Windows-1.9.1-Setup-x64.exe`；安装器源码位于 `windows/installer/`。EXE 尚未进行产品代码签名。
 
 管理员 PowerShell 中可执行 `windows/scripts/test-installer.ps1 -Setup <Setup完整路径>`，它实际执行更新、重复覆盖、卸载和重装，检查注册项、程序文件及配置/凭据哈希。该脚本会暂时中断本机输入法，适合专用验证环境，不作为普通单元测试执行。最终恢复当前版本，原始报告保存在 `.tools/installer-validation.json`。
 
 ## 测试
 
 ```powershell
-./gradlew.bat -p windows test
+./windows/scripts/build-app.ps1
+python windows/tests/test-native-app.py
 ./gradlew.bat -p shared/ai-core test
 python tests/corpus/generate.py
 python -m unittest discover -s tests/corpus -p test_corpus.py
@@ -65,11 +66,15 @@ python -m unittest discover -s tests/corpus -p test_corpus.py
 
 在输入服务和 Broker 已启动、云端 AI 已关闭时，执行 `test-components.ps1 -Ipc` 检查真实 librime、OpenCC、组合输入、上屏、焦点取消和本机管道。生成采样：`python tests/corpus/sample-native.py`；逐键回归：`test-components.ps1 -Corpus tests/corpus/generated/native-sample.tsv`。时延仅代表输入服务 IPC，不代表显示延迟。
 
-真实 API 评估另行显式运行，见 Windows README。人工回归 44 条与自动生成 464,693 条分开报告；自动变体不是人工确认的唯一意图。质量验收必须查看逐条输出、协议失败、Top-1/Top-3 和同义答案，不能仅看请求成功数。
+真实 API 评估另行显式运行，见 Windows README。人工回归 60 条与自动生成 464,693 条分开报告；自动变体不是人工确认的唯一意图。质量验收必须查看逐条输出、协议失败、Top-1/Top-3 和同义答案，不能仅看请求成功数。
 
 
 `windows/tests/tsf_ui_host.cpp` 是标准 Win32 Edit、RichEdit、密码框的交互测试宿主，使用真实注册的 TSF，仅在自己的进程激活 Profile。它不通过 SendInput 模拟输入、不修改系统默认输入法。使用 `./windows/scripts/build-test-host.ps1 -Platform x64` 构建（也支持 x86）。程序位于 `windows/build/ui-host-x64/tsf_ui_host.exe`，可供人工或经授权的电脑操作工具操作。真实逐键输入请使用键盘，不要用粘贴代替。
 
 ## 万象资源更新
 
-两端共享更新器和小型 HTTP/ZIP 测试；万象与雾凇原始词表随安装包分发并纳入源码；只有大型 `.gram`、下载缓存和编译产物不加入安装包或 Git。Windows 打包会额外编译 `ZephyrDataDeploy.exe`，需要 Visual Studio C++ Build Tools；数据更新本身不需要 UAC。详见 [万象下载、许可和测试](rime/wanxiang-updates.md)。
+Android 使用 Kotlin 更新适配，Windows 使用原生 C++ 更新器；两端保留 HTTP/ZIP 测试；万象与雾凇原始词表随安装包分发并纳入源码；只有大型 `.gram`、下载缓存和编译产物不加入安装包或 Git。Windows 打包会额外编译 `ZephyrDataDeploy.exe`，需要 Visual Studio C++ Build Tools；数据更新本身不需要 UAC。详见 [万象下载、许可和测试](rime/wanxiang-updates.md)。
+
+## 共享 C++ AI 核心
+
+`shared/native-core` 使用 C++17 与 nlohmann/json；Windows 需要现有 VS C++ Build Tools，Android 使用 NDK。Android Gradle 构建 JNI 库，`shared/ai-core` 保留 Android JVM 平台桥接。Windows 直接静态链接 C++ 核心，不使用 JNI。可单独执行 `powershell -File script/build-core.ps1`。协议、截断和预算见 [原生核心说明](../shared/native-core/README.md)。

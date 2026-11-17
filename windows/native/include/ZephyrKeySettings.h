@@ -4,10 +4,13 @@
 #include <fstream>
 #include <filesystem>
 #include <optional>
+#include <mutex>
+#include <cstdint>
+#include <algorithm>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 namespace zephyr {
-struct KeyPreferences { bool enterOriginal=true,spaceOriginal=false; std::string languageShortcut="shift",scriptShortcut="ctrl_shift_t"; };
+struct KeyPreferences { bool enterOriginal=true,spaceOriginal=false; std::string languageShortcut="shift",scriptShortcut="ctrl_shift_t"; bool contextEnabled=true,aiEnabled=false; int beforeLength=50,afterLength=0; uint64_t revision=0; };
 inline std::optional<KeyPreferences> readKeyPreferences(const std::filesystem::path& path) {
   try {
     std::ifstream input(path);if(!input)return {};
@@ -15,12 +18,13 @@ inline std::optional<KeyPreferences> readKeyPreferences(const std::filesystem::p
     auto enter=tree.get_optional<bool>("enterOriginal"),space=tree.get_optional<bool>("spaceOriginal");
     auto language=tree.get_optional<std::string>("languageShortcut"),script=tree.get_optional<std::string>("scriptShortcut");
     if(!enter&&!space&&!language&&!script)return {};
-    return KeyPreferences{enter.value_or(true),space.value_or(false),language.value_or("shift"),script.value_or("ctrl_shift_t")};
+    return KeyPreferences{enter.value_or(true),space.value_or(false),language.value_or("shift"),script.value_or("ctrl_shift_t"),tree.get<bool>("contextEnabled",true),tree.get<bool>("enabled",false),std::clamp(tree.get<int>("beforeLength",50),0,500),std::clamp(tree.get<int>("afterLength",0),0,500)};
   } catch(...) { return {}; }
 }
 // Read settings independently of cloud latency. The serialized input-service thread
 // checks only file metadata on ordinary keystrokes; JSON is parsed after atomic saves.
 inline std::optional<KeyPreferences> currentKeyPreferences() {
+  static std::mutex guard;std::lock_guard<std::mutex> lock(guard);
   static std::filesystem::path path=[] {
     wchar_t appdata[32768];DWORD n=GetEnvironmentVariableW(L"APPDATA",appdata,32768);
     return n&&n<32768?std::filesystem::path(appdata)/L"ZephyrInput"/L"settings.json":std::filesystem::path();
@@ -30,7 +34,7 @@ inline std::optional<KeyPreferences> currentKeyPreferences() {
   WIN32_FILE_ATTRIBUTE_DATA info{};
   if(path.empty()||!GetFileAttributesExW(path.c_str(),GetFileExInfoStandard,&info)){initialized=false;value.reset();return value;}
   if(!initialized||CompareFileTime(&previous,&info.ftLastWriteTime)!=0) {
-    initialized=true;previous=info.ftLastWriteTime;value=readKeyPreferences(path);
+    initialized=true;previous=info.ftLastWriteTime;value=readKeyPreferences(path);if(value)value->revision=(uint64_t(info.ftLastWriteTime.dwHighDateTime)<<32)|info.ftLastWriteTime.dwLowDateTime;
   }
   return value;
 }

@@ -13,13 +13,13 @@ class CoreTest {
         RequestStamp(1, revision, 1, 1, 1), AiInput("nihao"), "system", false)
 
     @Test fun wireContainsOnlyCurrentText() {
-        assertEquals("你好",Protocol.encode(AiInput("你好")))
+        assertEquals("""{"i":"你好"}""",Protocol.encode(AiInput("你好")))
         assertFails { Protocol.encode(AiInput("a".repeat(301))) }
     }
     @Test fun emptyAndOversizedResultsAreRejectedWithoutAlteringUserPunctuation() {
         listOf("", " ","a".repeat(2001),"a\u0000b").forEach { assertFails { Protocol.decode(it) } }
         val content="\"咖啡\"，谢谢！\n{hello: world}"
-        assertEquals(listOf(content),Protocol.decode(content).candidates)
+        assertEquals(listOf(content),Protocol.decode(JsonArray(listOf(JsonPrimitive(content))).toString()).candidates)
     }
 
     @Test fun waits200msAndDebounces() = runTest {
@@ -85,18 +85,18 @@ class CoreTest {
     @Test fun promptPackageCompatibilityAndLanguagePriority() {
         val text = requireNotNull(javaClass.getResource("/default-prompts.json")).readText()
         val pack = PromptPackage.parse(text.toByteArray())
-        assertContains(pack.compose(false),"转为英文")
-        assertContains(pack.compose(true,true),"繁体汉字")
-        assertContains(pack.compose(true),"简体汉字")
-        assertFalse(pack.compose(true).contains("上下文"))
+        assertContains(pack.compose(false),"转英文")
+        assertContains(pack.compose(true,true),"繁体")
+        assertContains(pack.compose(true),"简体")
+        assertContains(pack.compose(true),"前文")
         assertFalse(pack.compose(true).contains("风格"))
         assertFalse(pack.compose(true).contains("candidates"))
         val obj = Json.parseToJsonElement(text).jsonObject
         val old = JsonObject(obj - "keyboard_language_rules")
         assertEquals(LanguageRules(), PromptPackage.parse(old.toString().toByteArray()).keyboard_language_rules)
         val partial = JsonObject(obj + ("keyboard_language_rules" to buildJsonObject { put("chinese", "中文") }))
-        assertFails { PromptPackage.parse(partial.toString().toByteArray()) }
+        assertContains(PromptPackage.parse(partial.toString().toByteArray()).compose(true),"中文")
         assertFails { PromptPackage.parse(ByteArray(128 * 1024 + 1)) }
-        assertFails { PromptPackage.parse(text.replace("\"schema_version\": 2", "\"schema_version\": 99").toByteArray()) }
+        assertFails { PromptPackage.parse(text.replace("\"schema_version\": 3", "\"schema_version\": 99").toByteArray()) }
     }
 }

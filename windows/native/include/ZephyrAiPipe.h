@@ -27,7 +27,7 @@ inline std::wstring unhex(const std::string& s) {
 }
 class AiPipe {
  public:
-  struct Work { DWORD session;uint64_t revision;std::string input;bool chinese,traditional; };
+  struct Work { DWORD session;uint64_t revision;std::string input;bool chinese,traditional;std::string before,after; };
   struct Result { DWORD session;uint64_t revision;std::vector<std::wstring> candidates;bool segmentation=true,enterOriginal=true,spaceOriginal=false;std::wstring error; };
   AiPipe():thread([this]{run();}) {}
   ~AiPipe() {
@@ -69,8 +69,8 @@ class AiPipe {
       if(h==INVALID_HANDLE_VALUE)continue;
       { std::lock_guard<std::mutex> lock(mutex);if(stop||token!=generation){CloseHandle(h);continue;}pipe=h; }
       DWORD mode=PIPE_READMODE_MESSAGE;SetNamedPipeHandleState(h,&mode,nullptr,nullptr);
-      std::string payload="Z1\t"+std::string(w.chinese?"zh":"en")+"\t"+(w.traditional?"1":"0")+"\t"+hex(w.input);
-      char output[32768];DWORD bytes=0;OVERLAPPED ov{};ov.hEvent=CreateEventW(nullptr,TRUE,FALSE,nullptr);
+      std::string payload="Z2\t"+std::string(w.chinese?"zh":"en")+"\t"+(w.traditional?"1":"0")+"\t"+hex(w.input)+"\t"+hex(w.before)+"\t"+hex(w.after);
+      char output[131072];DWORD bytes=0;OVERLAPPED ov{};ov.hEvent=CreateEventW(nullptr,TRUE,FALSE,nullptr);
       BOOL ok=TransactNamedPipe(h,payload.data(),DWORD(payload.size()),output,sizeof(output),&bytes,&ov);
       if(!ok&&GetLastError()==ERROR_IO_PENDING) {
         if(WaitForSingleObject(ov.hEvent,65000)==WAIT_OBJECT_0)ok=GetOverlappedResult(h,&ov,&bytes,FALSE);
@@ -91,7 +91,7 @@ class AiPipe {
             if(fields.size()>=5){r.enterOriginal=fields[3]=="1";r.spaceOriginal=fields[4]=="1";}
             while(std::getline(stream,line)) {
               if(line.rfind("E\t",0)==0)r.error=unhex(line.substr(2));
-              else if(r.candidates.empty()){auto v=unhex(line);if(!v.empty())r.candidates.push_back(v);}
+              else if(r.candidates.size()<8){auto v=unhex(line);if(!v.empty())r.candidates.push_back(v);}
             }
             result=std::move(r);
           }

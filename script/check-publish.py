@@ -17,17 +17,18 @@ def git(*args):
 
 
 def main():
-    ignored_tracked = git("ls-files", "-ci", "--exclude-standard", "-z")
+    ignored_tracked = [name for name in git("ls-files", "-ci", "--exclude-standard", "-z") if (ROOT / name).exists()]
     candidates = sorted(set(git("ls-files", "-co", "--exclude-standard", "-z")))
     files = [name for name in candidates if (ROOT / name).is_file()]
     required = [
         ".gitignore", "README.md", "LICENSE", "AUTHORS", "PRIVACY.md",
         "build.gradle.kts", "settings.gradle.kts", "gradlew", "gradlew.bat",
         "gradle/wrapper/gradle-wrapper.jar", "docs/DEVELOPMENT.md", "docs/PUBLISHING.md",
+        "windows/app/CMakeLists.txt", "windows/app/third_party/miniz/LICENSE", "windows/app/third_party/miniz/miniz_export.h",
         "android/app/build.gradle.kts", "android/app/src/main/jni/CMakeLists.txt",
         "android/app/src/main/assets/ai/default-prompts.json",
         "shared/ai-core/src/main/resources/default-prompts.json",
-        "windows/build.gradle.kts", "windows/native/weasel.sln",
+        "windows/scripts/build-app.ps1", "windows/native/weasel.sln",
         "windows/native/weasel.props.template", "windows/native/LICENSE.txt",
         "windows/native/UPSTREAM.json", "windows/THIRD-PARTY.md",
         "windows/scripts/package.ps1", "windows/scripts/prepare-deps.py",
@@ -38,7 +39,7 @@ def main():
         "docs/ai/submodules.lock", "tests/corpus/gold.tsv",
     ]
     missing = sorted(set(required) - set(files))
-    key_pattern = re.compile(rb"sk-(?:(?:proj|or-v1)-[A-Za-z0-9_-]{24,}|[A-Za-z0-9]{40,})")
+    key_pattern = re.compile(rb"(?:sk-(?:(?:proj|or-v1)-[A-Za-z0-9_-]{24,}|[A-Za-z0-9]{40,})|AIza[A-Za-z0-9_-]{30,}|AQ\.[A-Za-z0-9_-]{30,})")
     private_pattern = re.compile(rb"-----BEGIN (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----")
     sensitive, oversized = [], []
     total = 0

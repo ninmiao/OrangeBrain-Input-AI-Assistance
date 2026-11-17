@@ -22,13 +22,8 @@ class ModelsClient {
         }
         fun decode(bytes: ByteArray, gemini: Boolean = false): List<String> {
             require(bytes.size <= 8 * 1024 * 1024)
-            val data = Json.parseToJsonElement(bytes.toString(Charsets.UTF_8)).jsonObject.getValue(if (gemini) "models" else "data").jsonArray
-            require(data.size <= 2000)
-            return data.filter { item -> !gemini || (item.jsonObject["supportedGenerationMethods"] as? JsonArray)?.any { it.jsonPrimitive.content == "generateContent" } == true }.map {
-                val id = it.jsonObject.getValue(if (gemini) "name" else "id").jsonPrimitive
-                require(id.isString && id.content.isNotBlank() && id.content.length <= 256 && id.content.none { c -> c.isISOControl() })
-                if (gemini) id.content.removePrefix("models/") else id.content
-            }.distinct().sorted()
+            return NativeCore.invoke("modelsDecode",buildJsonObject { put("gemini",gemini);put("body",bytes.toString(Charsets.UTF_8)) }).jsonArray.map { it.jsonPrimitive.content }
+
         }
     }
     data class Discovery(val ids:List<String>,val definitions:List<ModelDefinition>)

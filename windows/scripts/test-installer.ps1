@@ -1,4 +1,4 @@
-﻿param([Parameter(Mandatory=$true)][string]$Setup,[string]$Report)
+param([Parameter(Mandatory=$true)][string]$Setup,[string]$Report)
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 if(!$Report){$Report=Join-Path $root '.tools/installer-validation.json'}
@@ -26,6 +26,11 @@ function Install-Check([string]$label) {
  if($state.version -ne $expectedVersion){throw 'Wrong installed version'}
  $null=Get-Uninstaller
  foreach($arch in @('x64','x86')){if(!(Test-Path -LiteralPath (Join-Path $target $state.$arch))){throw 'TSF DLL missing'}}
+ if([version]$expectedVersion -ge [version]'1.9.0') {
+  foreach($old in @('runtime','app')){if(Test-Path -LiteralPath (Join-Path $target $old)){throw 'Old JVM program directory remains after upgrade'}}
+  $forbidden=Get-ChildItem -LiteralPath $target -Recurse -File | Where-Object {$_.Extension -in @('.jar','.class','.kt') -or $_.Name -in @('jvm.dll','java.exe','javaw.exe','jli.dll')}
+  if($forbidden){throw 'JVM or Kotlin runtime remains after native upgrade'}
+ }
  $checks.Add($label)
 }
 try {

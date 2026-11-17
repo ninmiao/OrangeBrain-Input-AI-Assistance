@@ -13,8 +13,8 @@ int main() {
   auto key=[&](UINT code,UINT mask=0) {client.ProcessKeyEvent(weasel::KeyEvent(code,mask));return response();};
   response();
   for(int language=0;language<2;++language) {
-    if(language)key(' ',ibus::CONTROL_MASK);
-    const std::string raw=language?"hello wrld":"nihao";
+    if(language){key(ibus::Shift_L,ibus::SHIFT_MASK);key(ibus::Shift_L,ibus::RELEASE_MASK);}
+    const std::string raw=language?"I wnated to recieve teh updated report before our meeting tomorrow, please keep the original file.":"jintianxiaban yihouwoxianghexiaowangyiqiquchi huoguo danshimingtianshangwuhaiyouhuiyi suoyiwomenzaodianhuijia";
     for(char c:raw)key(c);
     bool ready=false;
     for(int i=0;i<300;++i) {
@@ -38,5 +38,5 @@ int main() {
     std::cout<<"mode="<<language<<" candidate="<<utf8<<"\n";
     key(ibus::Tab);if(commit!=first||status.composing)return 7;
   }
-  client.EndSession();std::cout<<"LIVE Chinese and English: C++ typing -> Kotlin pipe -> model -> ranked candidate -> commit passed\n";return 0;
+  client.EndSession();std::cout<<"LIVE Chinese and English: C++ typing -> native broker -> model -> ranked candidate -> commit passed\n";return 0;
 }

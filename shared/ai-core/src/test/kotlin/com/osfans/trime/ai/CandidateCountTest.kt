@@ -1,17 +1,8 @@
 package com.osfans.trime.ai
 import kotlin.test.*
 class CandidateCountTest {
-    private fun pack()=PromptPackage.parse(requireNotNull(javaClass.getResourceAsStream("/default-prompts.json")).readBytes())
-    @Test fun plainTextAlwaysProducesOneCandidate() {
-        for(count in 1..5)assertEquals(AiResult(listOf("甲，乙。")),Protocol.decode("甲，乙。",true,count))
-    }
-    @Test fun legacyPromptCannotBringBackContextStylesOrJson() {
-        val legacy=pack().copy(schema_version=1,response_schema_version=1,revision=8,keyboard_language_rules=LanguageRules("OLD JSON","OLD JSON"))
-        assertEquals(pack().compose(true,true),legacy.compose(true,true))
-    }
-    @Test fun currentOverridesKeepTheirOwnLanguageRules() {
-        val custom=pack().copy(keyboard_language_rules=LanguageRules("CUSTOM ZH","CUSTOM EN"))
-        assertEquals("CUSTOM ZH"+PromptPackage.KAOMOJI_RULE+PromptPackage.OUTPUT_RULE,custom.compose(true))
-        assertEquals("CUSTOM EN"+PromptPackage.KAOMOJI_RULE+PromptPackage.ENGLISH_OUTPUT_RULE,custom.compose(false))
-    }
+ @Test fun arraysPreserveRankingAndDeduplicate(){ assertEquals(listOf("甲","乙"),Protocol.decode("""["甲","乙","甲"]""").candidates) }
+ @Test fun plainTextAndThinkingNeverBecomeCandidates(){ for(t in listOf("你好","<think>分析</think>[\"你好\"]","```json\n[\"你好\"]\n```","[\"<think>分析</think>\"]"))assertFails {Protocol.decode(t)} }
+ @Test fun oldPromptMigratesToStructuredContextContract(){ val old=PromptPackage(revision=8,response_schema_version=1,keyboard_language_rules=LanguageRules("OLD","OLD"));assertEquals(PromptPackage().compose(true),old.compose(true)) }
+ @Test fun customRuleKeepsMandatoryContract(){val p=PromptPackage(keyboard_language_rules=LanguageRules("CUSTOM ZH","CUSTOM EN"));assertTrue(p.compose(true).startsWith("CUSTOM ZH"));assertTrue(p.compose(false).endsWith(PromptPackage.OUTPUT_RULE))}
 }

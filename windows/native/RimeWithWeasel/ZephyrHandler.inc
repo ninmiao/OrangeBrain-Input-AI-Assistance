@@ -21,7 +21,7 @@ void RimeWithWeaselHandler::_ZephyrRefresh(WeaselSessionId id) {
   }
   if(!z.input.empty()) {
     z.add(u8tow(z.input),z.chinese?L"原文":L"Original");
-    m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional});
+    m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
   } else m_zephyr_ai.cancel(id);
 }
 bool RimeWithWeaselHandler::_ZephyrChoose(WeaselSessionId id,size_t index) {
@@ -68,7 +68,14 @@ bool RimeWithWeaselHandler::_ZephyrRespond(WeaselSessionId id,EatLine eat) {
 }
 BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,EatLine eat) {
   auto& z=m_zephyr[id];int code=key.keycode;
-  if(auto prefs=zephyr::currentKeyPreferences()){z.enterOriginal=prefs->enterOriginal;z.spaceOriginal=prefs->spaceOriginal;z.languageShortcut=prefs->languageShortcut;z.scriptShortcut=prefs->scriptShortcut;}
+  if(auto prefs=zephyr::currentKeyPreferences()){
+    z.enterOriginal=prefs->enterOriginal;z.spaceOriginal=prefs->spaceOriginal;z.languageShortcut=prefs->languageShortcut;z.scriptShortcut=prefs->scriptShortcut;
+    // Invalidate before processing a digit/selection, including idle poll messages.
+    if(z.applyConfiguration(prefs->revision)) {
+      m_zephyr_ai.cancel(id);
+      if(prefs->aiEnabled&&!z.input.empty())m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
+    }
+  }
   if(code==0) {
     if(!z.commit.empty()||z.refreshPending){z.refreshPending=false;_ZephyrRespond(id,eat);return TRUE;}
     auto result=m_zephyr_ai.take(id);
@@ -115,4 +122,16 @@ BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,E
   else handled=false;
   if(changed)_ZephyrRefresh(id);
   _ZephyrRespond(id,eat);return handled?TRUE:FALSE;
+}
+
+void RimeWithWeaselHandler::UpdateTextContext(const std::wstring& data,DWORD id) {
+  auto found=m_zephyr.find(id);if(found==m_zephyr.end())return;
+  auto split=data.find(L'\t');if(split==data.npos)return;
+  auto decode=[](const std::wstring& hex){std::wstring out;if(hex.size()%4||hex.size()>4000)throw std::runtime_error("context");for(size_t i=0;i<hex.size();i+=4){unsigned n=0;for(size_t j=0;j<4;++j){auto c=hex[i+j];int v=c>=L'0'&&c<=L'9'?c-L'0':c>=L'a'&&c<=L'f'?c-L'a'+10:-1;if(v<0)throw std::runtime_error("context");n=(n<<4)|v;}out+=wchar_t(n);}return wtou8(out);};
+  try {
+    auto before=decode(data.substr(0,split)),after=decode(data.substr(split+1));auto&z=found->second;
+    if(z.before==before&&z.after==after)return;z.before=before;z.after=after;
+    ++z.revision;z.aiError.clear();z.adopt(z.revision,{});
+    if(!z.input.empty())m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
+  }catch(...){m_zephyr_ai.cancel(id);}
 }

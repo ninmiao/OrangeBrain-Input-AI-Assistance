@@ -1,0 +1,24 @@
+{"text": "[\"你好\"", "truncated": true, "expected": ["你好"]}
+{"text": "[\"你好\",", "truncated": true, "expected": ["你好"]}
+{"text": "[\"你好\",\"未完成", "truncated": true, "expected": ["你好"]}
+{"text": "[\"你好\",\"\\", "truncated": true, "expected": ["你好"]}
+{"text": "[\"你好\",\"\\u4", "truncated": true, "expected": ["你好"]}
+{"text": "[\"你好\",\"\\uD83D", "truncated": true, "expected": ["你好"]}
+{"text": "[\"你好\",\"\\uD83D\\u", "truncated": true, "expected": ["你好"]}
+{"text": "[\"你好\",\"x\\\"", "truncated": true, "expected": ["你好"]}
+{"text": "[\"hello\\nworld\"", "truncated": true, "expected": ["hello\nworld"]}
+{"text": "[\"he\\\"llo\", \"wor", "truncated": true, "expected": ["he\"llo"]}
+{"text": "[\"🍜\",\"面", "truncated": true, "expected": ["🍜"]}
+{"text": "[\"你好\", \"hello\", ", "truncated": true, "expected": ["你好", "hello"]}
+{"text": "[\"你好\",\n ", "truncated": true, "expected": ["你好"]}
+{"text": "[", "truncated": true, "expected": []}
+{"text": "[\"半句话", "truncated": true, "expected": []}
+{"text": "[\"\\u4f", "truncated": true, "expected": []}
+{"text": "[\"🍜", "truncated": true, "expected": []}
+{"text": "[\"hello\",oops", "truncated": true, "expected": []}
+{"text": "思考：[\"你好\"]", "truncated": false, "expected": []}
+{"text": "```json\n[\"你好\"]\n```", "truncated": false, "expected": []}
+{"text": "[\"你好\"] trailing", "truncated": false, "expected": []}
+{"text": "[\"<think>secret</think>\"]", "truncated": false, "expected": []}
+{"text": "[\"你好\",\"hello\"]", "truncated": false, "expected": ["你好", "hello"]}
+{"text": "[\"你好\"", "truncated": false, "expected": []}

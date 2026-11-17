@@ -20,11 +20,4 @@ class ApiRoutingTest {
         assertFails { ApiRouting.wire(ApiRouting.OPENROUTER,mapOf("service_tier" to JsonPrimitive("flex"))) }
         assertFalse(ApiRouting.isOpenRouter("https://openrouter.ai.evil.example/v1/chat/completions"))
     }
-    @Test fun mixedBenchmarkCannotRemoveLastAPIOrExceedFive() {
-        val rows=listOf(BenchmarkEntry(),BenchmarkEntry(ApiRouting.DEEPSEEK,api="openrouter",provider=ApiRouting.WAFER))
-        BenchmarkConfig(entries=rows).validate()
-        BenchmarkConfig(entries=rows.take(1)).validate()
-        assertFails { BenchmarkConfig(entries=rows+List(4){BenchmarkEntry()}).validate() }
-        assertFails { BenchmarkEntry(ApiRouting.DEEPSEEK,api="openrouter",speed="flex").validate() }
-    }
 }

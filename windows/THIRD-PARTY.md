@@ -7,8 +7,13 @@
 - **OpenCC**: https://github.com/BYVoid/OpenCC, Apache-2.0. Windows config uses shipped text dictionaries; these are also shared with Android.
 - **Boost 1.89**: https://www.boost.org, Boost Software License 1.0. Development sources/build products are excluded from publishing.
 - **WTL / ATL**: WTL headers retained with Weasel source; Microsoft ATL is a Visual Studio development dependency and is not committed as source.
-- **OkHttp 4.12 / Okio**: https://github.com/square/okhttp and https://github.com/square/okio, Apache-2.0; shared cancellable HTTPS transport.
-- **Kotlin, kotlinx.coroutines, kotlinx.serialization**: Apache-2.0. **JNA**: LGPL-2.1-or-later / Apache-2.0, using the Apache-2.0 option.
-- **OpenJDK runtime**: GPLv2 with Classpath Exception. Runtime legal notices are included in the generated app image.
 
 Zephyr original source remains GPL-3.0-or-later; see [the project licensing notice](../LICENSE-NOTICE.md). Rime Ice dictionaries retain GPL-3.0-only; the project grant does not relicense them. Distributors must retain notices and provide corresponding source for covered components; this document does not replace their licenses. No API credentials are included in source or packages.
+
+## nlohmann/json
+
+Version 3.12.0, MIT. Used by the C++ AI core. Source: https://github.com/nlohmann/json . License is included as `licenses/nlohmann-json-MIT.txt`.
+
+## miniz
+
+Version 3.0.2, MIT. Only the native DEFLATE decompressor is compiled into the Windows application for dictionary ZIP files. Source: https://github.com/richgel999/miniz/tree/3.0.2 . Unmodified upstream source is in `app/third_party/miniz`; license is shipped as `licenses/miniz-MIT.txt`.

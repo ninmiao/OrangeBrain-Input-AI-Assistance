@@ -15,7 +15,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
 /** Stateless HTTPS adapters for OpenAI Responses, OpenRouter/chat and Gemini Interactions. Cancellation closes the underlying call, including body reads.
- * Reuses connections; does not redirect, retry, log or change provider/model settings.
+ * Reuses connections; does not redirect, log or change provider/model settings. Retries truncation once within the original deadline.
  */
 class ChatCompletionsClient internal constructor(private val http: OkHttpClient) {
     constructor() : this(sharedHttp)
@@ -24,46 +24,29 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
             .followRedirects(false).followSslRedirects(false).retryOnConnectionFailure(false).build()
     }
 
-    fun payload(model: String, request: AiRequest, parameters: Map<String, JsonPrimitive> = emptyMap(), endpoint: String = "", provider: String = "", preset: String = ""): JsonObject {
-        ModelParameters.validateWire(parameters)
-        ApiRouting.validatePreset(preset)
-        require(preset.isEmpty() || ApiRouting.isOpenRouter(endpoint)) { "Presets require OpenRouter" }
-        val input = Protocol.encode(request.input)
-        return buildJsonObject {
-            put("model", model)
-            when {
-                ApiRouting.isGemini(endpoint) -> {
-                    parameters["reasoning_effort"]?.let { effort ->
-                        ReasoningCapabilities.known(endpoint,model)?.let { levels -> require(effort.content in levels) { "Unsupported thinking for $model" } }
-                    }
-                    put("input", input)
-                    put("system_instruction", request.systemPrompt)
-                    put("generation_config", ApiRouting.wire(endpoint, parameters, provider))
-                    put("store", false)
-                }
-                ApiRouting.isResponses(endpoint) -> {
-                    put("input", input); put("stream", false); put("store", false)
-                    if(preset.isEmpty()) put("instructions", request.systemPrompt) else put("preset", preset)
-                    ApiRouting.wire(endpoint, parameters, provider).forEach { (k,v) -> put(k,v) }
-                }
-                else -> {
-                    put("stream", false)
-                    if(preset.isNotEmpty()) put("preset", preset)
-                    putJsonArray("messages") {
-                        if(preset.isEmpty()) add(buildJsonObject { put("role", "system"); put("content", request.systemPrompt) })
-                        add(buildJsonObject { put("role", "user"); put("content", input) })
-                    }
-                    ApiRouting.wire(endpoint, parameters, provider).forEach { (k,v) -> put(k,v) }
-                }
-            }
+    fun payload(model:String,request:AiRequest,parameters:Map<String,JsonPrimitive> = emptyMap(),endpoint:String="",provider:String=""):JsonObject =
+        NativeCore.invoke("payload",buildJsonObject {
+            put("model",model);put("endpoint",endpoint);put("provider",provider);put("parameters",JsonObject(parameters))
+            putJsonObject("request") { put("input",Json.encodeToJsonElement(AiInput.serializer(),request.input));put("systemPrompt",request.systemPrompt);put("outputTokenBudget",request.outputTokenBudget) }
+        }).jsonObject
+    suspend fun request(endpoint:String,key:String,model:String,request:AiRequest,timeoutMs:Int=10000,parameters:Map<String,JsonPrimitive> = emptyMap(),provider:String=""):AiResult {
+        val deadline=System.nanoTime()+timeoutMs*1_000_000L
+        return try { send(endpoint,key,model,request,timeoutMs,parameters,provider) }
+        catch(e:ApiTruncatedException) {
+            val left=((deadline-System.nanoTime())/1_000_000).toInt()
+            if(left<1000)throw e
+            val old=parameters["max_completion_tokens"]?.intOrNull ?: parameters["max_tokens"]?.intOrNull ?: request.outputTokenBudget
+            val raised=NativeCore.invoke("retryBudget",buildJsonObject {put("budget",old);put("input",request.input.input);put("remainingMs",left)}).jsonPrimitive.int
+            if(raised<=old)throw e
+            send(endpoint,key,model,request.copy(outputTokenBudget=raised),left,parameters.filterKeys { it!="max_tokens" && it!="max_completion_tokens" },provider)
         }
     }
-    suspend fun request(endpoint: String, key: String, model: String, request: AiRequest, timeoutMs: Int = 10000, parameters: Map<String, JsonPrimitive> = emptyMap(), provider: String = "", preset: String = ""): AiResult {
+    private suspend fun send(endpoint: String, key: String, model: String, request: AiRequest, timeoutMs: Int = 10000, parameters: Map<String, JsonPrimitive> = emptyMap(), provider: String = ""): AiResult {
         val url = URI(endpoint)
         require(url.scheme == "https" && url.host != null && url.userInfo == null && url.query == null && url.fragment == null)
         require(key.isNotBlank() && !key.contains('\r') && !key.contains('\n') && model.isNotBlank())
         require(timeoutMs in 1000..60000)
-        val body = payload(model, request, parameters, endpoint, provider, preset).toString()
+        val body = payload(model, request, parameters, endpoint, provider).toString()
             .toRequestBody("application/json; charset=utf-8".toMediaType())
         val phase = AtomicReference(RequestPhase.QUEUED)
         val listener = object : EventListener() {
@@ -95,10 +78,6 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
                         val result = runCatching {
                             response.use {
                                 if (!it.isSuccessful) {
-                                    if (preset.isNotEmpty() && ApiRouting.isOpenRouter(endpoint)) {
-                                        val bytes = runCatching { it.peekBody(65536).bytes() }.getOrNull()
-                                        if (bytes != null && presetFailure(bytes)) throw ApiPresetException()
-                                    }
                                     throw ApiHttpException(it.code)
                                 }
                                 val stream = it.body?.byteStream() ?: throw ApiResponseException()
@@ -110,7 +89,7 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
                                     if (output.size() + size > 65536) throw ApiResponseException()
                                     output.write(buffer, 0, size)
                                 }
-                                decodeEnvelope(output.toByteArray(), request, endpoint, preset)
+                                decodeEnvelope(output.toByteArray(), request, endpoint)
                             }
                         }
                         continuation.resumeWith(result)
@@ -123,68 +102,10 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
     }
 
 
-    internal fun decodeEnvelope(bytes: ByteArray, request: AiRequest, endpoint: String = "", preset: String = ""): AiResult {
-        try {
-            if (preset.isNotEmpty() && ApiRouting.isOpenRouter(endpoint) && presetFailure(bytes)) throw ApiPresetException()
-            val envelope = Json.parseToJsonElement(bytes.toString(Charsets.UTF_8)).jsonObject
-            (envelope["error"] as? JsonObject)?.let { error ->
-                throw ApiProviderException((error["code"] as? JsonPrimitive)?.content?.toIntOrNull())
-            }
-            val text = when {
-                ApiRouting.isGemini(endpoint) -> {
-                    when(envelope["status"]?.jsonPrimitive?.content) {
-                        "incomplete" -> throw ApiTruncatedException()
-                        "failed", "cancelled" -> throw ApiProviderException(null)
-                    }
-                    val step = envelope.getValue("steps").jsonArray.last { it.jsonObject["type"]?.jsonPrimitive?.content == "model_output" }.jsonObject
-                    step.getValue("content").jsonArray.filter { it.jsonObject["type"]?.jsonPrimitive?.content == "text" }
-                        .joinToString("") { it.jsonObject.getValue("text").jsonPrimitive.content }
-                }
-                ApiRouting.isResponses(endpoint) -> {
-                    when(envelope["status"]?.jsonPrimitive?.content) {
-                        "incomplete" -> throw ApiTruncatedException()
-                        "failed", "cancelled" -> throw ApiProviderException(null)
-                    }
-                    envelope.getValue("output").jsonArray.filter { it.jsonObject["type"]?.jsonPrimitive?.content == "message" }
-                        .flatMap { it.jsonObject.getValue("content").jsonArray }
-                        .filter { it.jsonObject["type"]?.jsonPrimitive?.content == "output_text" }
-                        .joinToString("") { it.jsonObject.getValue("text").jsonPrimitive.content }
-                }
-                else -> {
-                    val choice = envelope.getValue("choices").jsonArray.first().jsonObject
-                    when ((choice["finish_reason"] as? JsonPrimitive)?.content) {
-                        "length" -> throw ApiTruncatedException()
-                        "error", "content_filter" -> throw ApiProviderException(null)
-                    }
-                    val content = choice.getValue("message").jsonObject.getValue("content").jsonPrimitive
-                    require(content.isString)
-                    content.content
-                }
-            }
-            return Protocol.decode(text).copy(usage = usage(envelope, endpoint))
-        } catch (e: ApiPresetException) { throw e
-        } catch (e: ApiProviderException) { throw e
-        } catch (e: ApiTruncatedException) { throw e
-        } catch (_: Exception) { throw ApiResponseException() }
-    }
-
-    private fun presetFailure(bytes: ByteArray): Boolean = runCatching {
-        val error = Json.parseToJsonElement(bytes.toString(Charsets.UTF_8)).jsonObject["error"] as? JsonObject
-        val metadata = error?.get("metadata") as? JsonObject
-        val code = (metadata?.get("presetErrorCode") as? JsonPrimitive)?.content.orEmpty()
-        val message = (error?.get("message") as? JsonPrimitive)?.content.orEmpty().lowercase()
-        code in setOf("preset_not_found", "preset_access_denied", "preset_disabled") ||
-            ("preset" in message && listOf("not found", "access denied", "not accessible", "disabled").any { it in message })
-    }.getOrDefault(false)
-
-    private fun usage(envelope: JsonObject, endpoint: String): TokenUsage? {
-        val u = envelope["usage"] as? JsonObject ?: return null
-        fun number(obj: JsonObject?, key: String) = (obj?.get(key) as? JsonPrimitive)?.intOrNull?.takeIf { it >= 0 }
-        if(ApiRouting.isGemini(endpoint)) return TokenUsage(number(u,"total_input_tokens"),number(u,"total_output_tokens"),number(u,"total_thought_tokens"),number(u,"total_cached_tokens"))
-        val responses = ApiRouting.isResponses(endpoint)
-        val thinking = number(u[if(responses) "output_tokens_details" else "completion_tokens_details"] as? JsonObject,"reasoning_tokens")
-        val total = number(u,if(responses) "output_tokens" else "completion_tokens")
-        return TokenUsage(number(u,if(responses) "input_tokens" else "prompt_tokens"),total?.let { (it-(thinking ?: 0)).coerceAtLeast(0) },thinking,
-            number(u[if(responses) "input_tokens_details" else "prompt_tokens_details"] as? JsonObject,"cached_tokens"))
+    internal fun decodeEnvelope(bytes:ByteArray,request:AiRequest,endpoint:String=""):AiResult {
+        if(bytes.size>65536)throw ApiResponseException()
+        return try { Json { ignoreUnknownKeys=true }.decodeFromJsonElement(AiResult.serializer(),NativeCore.invoke("envelope",buildJsonObject {
+            put("endpoint",endpoint);put("body",bytes.toString(Charsets.UTF_8))
+        })) } catch(e:ApiTruncatedException) { throw e } catch(e:ApiProviderException) {throw e} catch(_:Exception) {throw ApiResponseException()}
     }
 }

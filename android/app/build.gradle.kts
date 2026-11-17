@@ -27,8 +27,8 @@ android {
         minSdk = 23
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         targetSdk = 35
-        versionCode = 20261203
-        versionName = "1.6.1"
+        versionCode = 20261205
+        versionName = "1.7.1"
 
         multiDexEnabled = true
         setProperty("archivesBaseName", "Zephyr-Input-${versionName}")
@@ -110,6 +110,7 @@ android {
     }
 
     packaging {
+        resources.excludes += "native/*.dll"
         resources {
             excludes +=
                 setOf(

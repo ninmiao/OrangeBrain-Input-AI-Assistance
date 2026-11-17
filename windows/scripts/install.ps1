@@ -13,11 +13,21 @@ Start-Transcript -Path (Join-Path $PSScriptRoot 'install.log') -Force | Out-Null
 $target=Join-Path $env:ProgramFiles 'Zephyr Input'
 $source=[IO.Path]::GetFullPath($PSScriptRoot)
 if(!(Test-Path -LiteralPath "$source/ZephyrTSFx64.dll")){throw 'Run install.ps1 from the packaged Windows image.'}
-# Stop only this product's executables before replacing their image and JARs.
+# Stop only this product's executables before replacing their native images.
 $resolvedTarget=[IO.Path]::GetFullPath($target).TrimEnd('\')+'\'
 $expected=[IO.Path]::GetFullPath((Join-Path $env:ProgramFiles 'Zephyr Input')).TrimEnd('\')+'\'
 if($resolvedTarget -ne $expected){throw 'Unexpected install target'}
 Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.Path -and $_.Path.StartsWith($resolvedTarget,[StringComparison]::OrdinalIgnoreCase) } | ForEach-Object { Stop-Process -Id $_.Id -Force }
+# Remove only the old jpackage-owned program directories, never AppData.
+if((Test-Path -LiteralPath $target) -and ((Get-Item -LiteralPath $target).Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'Install target cannot be a reparse point'}
+foreach($name in @('app','runtime')) {
+    $old=[IO.Path]::GetFullPath((Join-Path $target $name))
+    if([IO.Path]::GetDirectoryName($old).TrimEnd('\')+'\' -ne $resolvedTarget){throw 'Unexpected legacy runtime path'}
+    if(Test-Path -LiteralPath $old) {
+        if((Get-Item -LiteralPath $old).Attributes -band [IO.FileAttributes]::ReparsePoint){throw 'Legacy runtime path cannot be a reparse point'}
+        Remove-Item -LiteralPath $old -Recurse -Force
+    }
+}
 # TSF DLLs stay loaded in Windows processes. Content-addressed names permit
 # upgrading without replacing a mapped DLL or terminating unrelated apps.
 $dlls=@{}
@@ -41,7 +51,7 @@ foreach($view in @([Microsoft.Win32.RegistryView]::Registry64,[Microsoft.Win32.R
 if($LASTEXITCODE){throw "x64 registration failed: $LASTEXITCODE"}
 & "$env:WINDIR/SysWOW64/regsvr32.exe" /s (Join-Path $target $dlls['x86'])
 if($LASTEXITCODE){throw "x86 registration failed: $LASTEXITCODE"}
-$state=@{version='1.7.1';x64=$dlls['x64'];x86=$dlls['x86']}
+$state=@{version='1.9.1';x64=$dlls['x64'];x86=$dlls['x86']}
 [IO.File]::WriteAllText((Join-Path $target 'installation.json'),($state | ConvertTo-Json),[Text.UTF8Encoding]::new($false))
 $startup=Join-Path ([Environment]::GetFolderPath('CommonStartup')) 'Zephyr Input.lnk'
 $shell=New-Object -ComObject WScript.Shell

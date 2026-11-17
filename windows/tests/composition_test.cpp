@@ -71,6 +71,14 @@ int main() {
     check(errorState.candidates.size()==1&&errorState.commit.empty(),"preset error is never a selectable candidate");
     errorState.insert('i');check(errorState.aiError.empty(),"new input clears stale preset failure");
     errorState.aiError=L"Preset unavailable";errorState.clear();check(errorState.aiError.empty(),"cancel clears preset failure");
-    std::cout<<checks<<" native composition checks passed\n";return 0;
+    {
+    zephyr::Composition pending;pending.insert('a');pending.add(L"本地",L"Rime",2);
+    auto previous=pending.revision;pending.adopt(previous,{L"旧 AI"});
+    check(pending.applyConfiguration(123),"new configuration invalidates");check(pending.refreshPending,"configuration requests redraw");
+    check(pending.candidates.size()==1&&pending.candidates[0]==L"本地","local candidate survives settings change");
+    check(!pending.adopt(previous,{L"过期响应"}),"old response rejected after settings change");check(!pending.applyConfiguration(123),"same configuration does not restart");
+    check(pending.applyConfiguration(124),"second configuration applies");check(pending.input=="a","configuration preserves pending input");
+  }
+  std::cout<<checks<<" native composition checks passed\n";return 0;
   } catch(const std::exception& e){std::cerr<<e.what()<<"\n";return 1;}
 }

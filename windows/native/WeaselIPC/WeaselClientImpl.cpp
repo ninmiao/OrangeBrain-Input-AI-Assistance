@@ -103,6 +103,14 @@ bool ClientImpl::ChangePage(bool backward) {
   return ret != 0;
 }
 
+void ClientImpl::UpdateTextContext(const std::wstring& before,const std::wstring& after) {
+  if(!_Active() || before.size()>1000 || after.size()>1000)return;
+  auto encode=[](const std::wstring& text){std::wstring out;const wchar_t* h=L"0123456789abcdef";for(wchar_t c:text){out+=h[(c>>12)&15];out+=h[(c>>8)&15];out+=h[(c>>4)&15];out+=h[c&15];}return out;};
+  std::wstring data=encode(before)+L"\t"+encode(after);
+  channel << data; _SendMessage(WEASEL_IPC_UPDATE_CONTEXT,DWORD(data.size()),session_id);
+}
+void Client::UpdateTextContext(const std::wstring& before,const std::wstring& after){m_pImpl->UpdateTextContext(before,after);}
+
 void ClientImpl::UpdateInputPosition(RECT const& rc) {
   if (!_Active())
     return;

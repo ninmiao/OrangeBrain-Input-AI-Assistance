@@ -10,7 +10,7 @@ class ReasoningCapabilitiesTest {
         assertFalse(ReasoningCapabilities.known(openai,"gpt-5.4-nano")!!.contains("max"))
         assertEquals(listOf("omit"),ReasoningCapabilities.options(openai,"gpt-4.1-mini").map{it.value})
         assertEquals(listOf("omit"),ReasoningCapabilities.options(openai,"unknown-future").map{it.value})
-        assertFails { BenchmarkEntry(ApiRouting.DEEPSEEK,"medium",api="openrouter").parameters() }
+        assertFalse("medium" in ReasoningCapabilities.known(ApiRouting.OPENROUTER,ApiRouting.DEEPSEEK)!!)
     }
     @Test fun metadataHonorsMandatoryAndMissingEffortAndRefreshOverridesOldChoices() {
         val json="""{"data":[{"id":"a","reasoning":{"mandatory":true,"supported_efforts":["none","low","high"]}},{"id":"b"},{"id":"c","reasoning":{"supported_efforts":null}},{"id":"d","reasoning":{"mandatory":false}}]}"""

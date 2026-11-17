@@ -9,52 +9,15 @@ object ReasoningCapabilities {
         "none" -> "无思考"; "minimal" -> "极轻"; "low" -> "轻度"; "medium" -> "普通";
         "high" -> "深度"; "xhigh" -> "很高"; "max" -> "最高"; else -> value
     },value) }
-    fun known(endpoint:String,model:String):List<String>? {
-        val host=runCatching { URI(endpoint).host }.getOrNull()
-        if (ApiRouting.isGemini(endpoint)) return when {
-            model.startsWith("gemini-4-hydrogen") -> listOf("low","medium","high","xhigh")
-            model.startsWith("gemini-4-") || model.startsWith("gemini-3.8-flash") -> listOf("low","medium","high")
-            model.startsWith("gemini-3.6-flash") || model.startsWith("gemini-3.5-flash-lite") -> listOf("minimal","low","medium","high")
-            else -> null
-        }
-        val router=host=="openrouter.ai"
-        if (!router && host!="api.openai.com") return null
-        val id=if(router) model.removePrefix("openai/") else model
-        return when {
-            router && model in setOf("deepseek/deepseek-v4-flash-0731","deepseek/deepseek-v4-flash-20260731") -> listOf("none","low","high","max")
-            id.matches(Regex("gpt-4(?:\\.1|o)(?:-.*)?")) -> emptyList()
-            id.matches(Regex("gpt-6(?:\\.1)?-(?:astra|sol)(?:-.*)?")) && !id.startsWith("gpt-6-sol") -> listOf("low","medium","high","xhigh","max")
-            id.matches(Regex("gpt-6-(?:luna|sol)(?:-.*)?")) || id.matches(Regex("gpt-6\\.1-terra(?:-.*)?")) || id.matches(Regex("gpt-5\\.6(?:-(?:luna|sol|terra))?(?:-20[0-9-]+)?")) -> listOf("none","low","medium","high","xhigh","max")
-            id.matches(Regex("gpt-5\\.4(?:-(?:nano|mini))?(?:-20[0-9-]+)?")) -> listOf("none","low","medium","high","xhigh")
-            id.matches(Regex("gpt-5(?:-mini|-nano)?(?:-20[0-9-]+)?")) -> listOf("minimal","low","medium","high")
-            id.matches(Regex("(?:o1|o3|o4-mini)(?:-20[0-9-]+)?")) -> listOf("low","medium","high")
-            else -> null
-        }
-    }
+    fun known(endpoint:String,model:String):List<String>? = NativeCore.invoke("known",buildJsonObject{put("endpoint",endpoint);put("model",model)}).let { if(it is JsonNull)null else it.jsonArray.map { value -> value.jsonPrimitive.content } }
     fun definition(endpoint:String,model:String,catalog:ModelCatalog):ModelDefinition? {
-        val existing=catalog.models.firstOrNull { it.id==model }
-        if (runCatching { URI(endpoint).host }.getOrNull() == "openrouter.ai" && catalog.version.startsWith("models-") && existing!=null) return existing
-        val levels=known(endpoint,model) ?: return existing
-        val base=if (ApiRouting.isGemini(endpoint)) (existing ?: ModelDefinition(model)).let { definition ->
-            definition.copy(parameters = definition.parameters.filter { it.key in setOf("reasoning_effort", "max_completion_tokens", "max_tokens") } +
-                ModelParameter("service_tier", "速度", choices=listOf(ParameterChoice("普通", "default"))))
-        } else existing ?: ModelDefinition(model)
-        return base.copy(parameters=base.parameters.filterNot { it.key=="reasoning_effort" } +
-            if(levels.isEmpty()) emptyList() else listOf(ModelParameter("reasoning_effort","思考强度",choices=choices(levels))))
+        val value=NativeCore.invoke("modelDefinition",buildJsonObject { put("endpoint",endpoint);put("model",model);put("catalog",Json.encodeToJsonElement(ModelCatalog.serializer(),catalog)) })
+        return if(value is JsonNull)null else Json.decodeFromJsonElement(ModelDefinition.serializer(),value)
     }
     fun options(endpoint:String,model:String,catalog:ModelCatalog=ModelCatalog()):List<ParameterChoice> =
         (definition(endpoint,model,catalog)?.parameters?.firstOrNull { it.key=="reasoning_effort" }?.choices ?: emptyList()) + ParameterChoice("服务端默认（不发送）","omit")
     fun fromModels(bytes:ByteArray):List<ModelDefinition> {
-        val data=Json.parseToJsonElement(bytes.toString(Charsets.UTF_8)).jsonObject.getValue("data").jsonArray
-        return data.map { item ->
-            val obj=item.jsonObject;val id=obj.getValue("id").jsonPrimitive.content
-            val reasoning=obj["reasoning"] as? JsonObject
-            val levels=when(val efforts=reasoning?.get("supported_efforts")) {
-                JsonNull -> all
-                is JsonArray -> efforts.map { it.jsonPrimitive.content }.filter { it in all }
-                else -> emptyList()
-            }.filterNot { it=="none" && reasoning?.get("mandatory")?.jsonPrimitive?.booleanOrNull==true }
-            ModelDefinition(id,parameters=if(levels.isEmpty()) emptyList() else listOf(ModelParameter("reasoning_effort","思考强度",choices=choices(levels.distinct()))))
-        }
+        require(bytes.size<=8*1024*1024)
+        return NativeCore.invoke("modelsReasoning",buildJsonObject {put("body",bytes.toString(Charsets.UTF_8))}).jsonArray.map { Json.decodeFromJsonElement(ModelDefinition.serializer(),it) }
     }
 }

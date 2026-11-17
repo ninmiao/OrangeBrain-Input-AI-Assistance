@@ -9,11 +9,11 @@
 namespace zephyr {
 // Both language modes share this buffer. Space is a boundary, not a commit.
 struct Composition {
-  std::string input;
+  std::string input,before,after;
   std::string languageShortcut="shift",scriptShortcut="ctrl_shift_t";
   ShortcutState shortcuts;
   size_t caret = 0, selected = 0, page = 0;
-  uint64_t revision = 0;
+  uint64_t revision = 0, configurationRevision = 0;
   bool chinese = true, traditional = false, segmentation = true, enterOriginal = true, spaceOriginal = false;
   std::vector<std::wstring> candidates;
   std::vector<std::wstring> comments;
@@ -45,6 +45,10 @@ struct Composition {
     for(const auto& v:values) add(v,L"AI");
     for(size_t i=0;i<old.size();++i) if(labels[i]!=L"AI") add(old[i],labels[i],indices[i]);
     selected=page=0;return true;
+  }
+  bool applyConfiguration(uint64_t value) {
+    if(value==configurationRevision)return false;
+    configurationRevision=value;++revision;adopt(revision,{});aiError.clear();refreshPending=true;return true;
   }
   bool chooseDigit(int digit) {
     if (input.empty() || digit < 1 || digit > 5) return false;

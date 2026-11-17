@@ -6,7 +6,7 @@ import org.junit.Test
 class KaomojiPromptTest {
  @Test fun packagedRulesAndSavedPolicyUpgrade() {
   val pack=AiStore.get(InstrumentationRegistry.getInstrumentation().targetContext).builtin
-  assertEquals(13L,pack.revision)
+  assertEquals(14L,pack.revision)
   for (chinese in listOf(true,false)) {
    val prompt=pack.compose(chinese)
    assertEquals(1,prompt.split(PromptPackage.KAOMOJI_RULE).size-1)

@@ -28,13 +28,13 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if gemini:
             assert self.headers.get('Authorization') is None
             assert payload['generation_config']['thinking_level']=='low' and payload['store'] is False
-            assert payload['input']=='woxianghekafe' and 'before' not in payload and 'previous_interaction_id' not in payload
+            assert json.loads(payload['input'])['i']=='woxianghekafe' and 'before' not in payload and 'previous_interaction_id' not in payload
             self.reply({'status':'completed','steps':[{'type':'model_output','content':[{'type':'text','text':'我想喝咖啡'}]}],'usage':{'total_input_tokens':100,'total_output_tokens':7,'total_thought_tokens':20,'total_cached_tokens':0}});return
         if self.path=='/v1/responses':
             assert payload['reasoning']['effort']=='low' and payload['store'] is False
-            assert payload['input']=='woxianghekafe' and 'previous_response_id' not in payload
+            assert json.loads(payload['input'])['i']=='woxianghekafe' and 'previous_response_id' not in payload
             self.reply({'status':'completed','output':[{'type':'message','content':[{'type':'output_text','text':'我想喝咖啡'}]}]});return
-        request={'input':payload['messages'][1]['content']}
+        request={'input':json.loads(payload['messages'][1]['content'])['i']}
         assert isinstance(request['input'],str)
         system=payload['messages'][0]['content']
         if payload.get('model')=='transport-slow-body':
@@ -46,7 +46,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.reply({'error':{'code':429,'message':'private synthetic provider details'}});return
         if request['input']=='slow':time.sleep(2)
         if payload.get('model')=='candidates-test':
-            if '一个候选' not in system or 'candidates' in system:
+            if '一个完整候选' not in system or 'candidates' in system:
                 self.send_error(422);return
             self.reply({'choices':[{'message':{'content':'你好，这是一段用于验证单个长候选仍然可以横向查看并点击上屏的文字。'}}]});return
         if payload.get('model')=='segmentation-test':
@@ -69,9 +69,16 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if any(payload.get(k)!=v for k,v in expected.items()) or set(payload)!={'model','stream','messages',*expected}:
                 self.send_error(422);return
             self.reply({'choices':[{'message':{'content':'参数正确'}}]});return
-        candidate='Hello from AI.' if ('修正英文' in system) else '你好，世界'
+        candidate='Hello from AI.' if ('转英文' in system) else '你好，世界'
         self.reply({'choices':[{'message':{'content':candidate}}]})
     def reply(self,value,delay=0):
+        # Production model text uses the compact JSON array contract.
+        for choice in value.get('choices',[]):
+            message=choice.get('message',{})
+            if isinstance(message.get('content'),str):message['content']=json.dumps([message['content']],ensure_ascii=False,separators=(',',':'))
+        for step in value.get('steps',[])+value.get('output',[]):
+            for part in step.get('content',[]):
+                if isinstance(part.get('text'),str):part['text']=json.dumps([part['text']],ensure_ascii=False,separators=(',',':'))
         body=json.dumps(value,ensure_ascii=False).encode()
         self.send_response(200);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(body)));self.end_headers()
         if delay:time.sleep(delay)
