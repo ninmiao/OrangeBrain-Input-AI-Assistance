@@ -28,6 +28,7 @@
 - Windows 停止构建和发布 ARM64。Windows x64 仍附带 x86 TSF，Android 继续发布 ARM64 Demo。
 - GitHub Actions 并行构建两端，校验后汇总一个 `dist` 附件。仓库 `dist/` 只保留 Windows 1.12.5 x64、Android 1.10.3 ARM64 Demo 和 `SHA256SUMS`。
 - 发布包源自已做运行验证的 [云构建](https://github.com/ninmiao/Zephyr-Input/actions/runs/44232709695)。Windows 安装器原样使用；Android 在本机用原 Demo 证书重签，所有应用载荷与云包一致。
+- [主分支云构建复测](https://github.com/ninmiao/Zephyr-Input/actions/runs/44249434540)通过 Windows x64、Android ARM64 和 dist 汇总任务。已下载汇总附件并核对 ZIP 和两个安装包的 SHA-256。
 
 ### 2026-11-17 · GitHub Actions 三目标云构建
 
