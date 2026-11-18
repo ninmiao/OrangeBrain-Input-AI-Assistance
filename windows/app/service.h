@@ -6,6 +6,7 @@ namespace zw {
 struct Input {
   bool chinese = true, traditional = false;
   std::string input, before, after;
+  bool manual = false;
 };
 Input decodeWire(const std::string& text);
 std::string responseWire(const J& config, const J& result = J(),

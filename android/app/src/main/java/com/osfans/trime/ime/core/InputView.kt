@@ -6,6 +6,7 @@ package com.osfans.trime.ime.core
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.text.InputType
 import android.view.View
 import android.view.WindowInsets
 import android.view.inputmethod.EditorInfo
@@ -147,8 +148,13 @@ class InputView(
         visibility = View.GONE
     }
 
-    private fun showRawInput(raw: String = "") {
-        val display = if (theme.configId == "rime_ai_ios" && rawInputAllowed) { if(com.osfans.trime.ai.android.AiStore.get(context).config.wordSegmentation) raw.replace('\'', ' ') else raw } else ""
+    private fun showRawInput(raw: String = "", chinese: Boolean = false) {
+        val display = when {
+            !rawInputAllowed || (chinese && theme.configId != "rime_ai_ios") -> ""
+            chinese && com.osfans.trime.ai.android.AiStore.get(context).config.wordSegmentation ->
+                raw.replace('\'', ' ')
+            else -> raw
+        }
         rawInputHint.text = display
         rawInputHint.contentDescription = if (display.isEmpty()) null else "正在输入：$display"
         rawInputHint.visibility = if (display.isEmpty()) View.GONE else View.VISIBLE
@@ -307,12 +313,12 @@ class InputView(
         info: EditorInfo,
         restarting: Boolean = false,
     ) {
-        val kind = info.inputType and android.text.InputType.TYPE_MASK_CLASS
-        val variation = info.inputType and android.text.InputType.TYPE_MASK_VARIATION
-        rawInputAllowed = kind == android.text.InputType.TYPE_CLASS_TEXT && variation !in setOf(
-            android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD,
-            android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
-            android.text.InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD)
+        val kind = info.inputType and InputType.TYPE_MASK_CLASS
+        val variation = info.inputType and InputType.TYPE_MASK_VARIATION
+        rawInputAllowed = kind == InputType.TYPE_CLASS_TEXT &&
+            info.imeOptions and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING == 0 &&
+            variation !in setOf(InputType.TYPE_TEXT_VARIATION_PASSWORD,
+                InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD, InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD)
         showRawInput()
         broadcaster.onStartInput(info)
         enterKeyLabel.updateLabelOnEditorInfo(info)
@@ -331,7 +337,7 @@ class InputView(
             }
 
             is RimeMessage.OptionMessage -> {
-                if (it.data.option == "ascii_mode" && it.data.value) showRawInput()
+                if (it.data.option == "ascii_mode") showRawInput()
                 broadcaster.onRimeOptionUpdated(it.data)
 
                 if (it.data.option == "_liquid_keyboard") {
@@ -341,9 +347,14 @@ class InputView(
                     }
                 }
             }
-            is RimeMessage.CommitTextMessage -> showRawInput()
+            is RimeMessage.CommitTextMessage -> {
+                if (!it.data.text.isNullOrEmpty()) showRawInput()
+            }
             is RimeMessage.CompositionMessage -> {
-                showRawInput(if (it.data.length > 0 && !rime.run { statusCached.isAsciiMode }) rime.run { rawInputCached } else "")
+                val chinese = !rime.run { statusCached.isAsciiMode }
+                // ASCII composition can have raw input without a candidate preedit.
+                val raw = if (chinese && it.data.length == 0) "" else rime.run { rawInputCached }
+                showRawInput(raw, chinese)
                 val data = if (composingTextMode != ComposingTextMode.DISABLE ||
                     candidatesMode == PopupCandidatesMode.ALWAYS_SHOW
                 ) {

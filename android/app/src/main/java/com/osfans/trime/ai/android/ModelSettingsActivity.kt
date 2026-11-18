@@ -76,7 +76,7 @@ class ModelSettingsActivity : AppCompatActivity() {
         setContentView(ScrollView(this).apply { addView(page) })
         label("模型与参数", 24f)
         status = label("当前模型：${c.model.ifBlank { "未配置" }} · 列表 ${c.modelCatalog.version}")
-        label("支持非流式 Chat Completions。OpenRouter 刷新列表时同步模型思考能力；OpenAI 使用已核实的型号规则。未知模型不会自动套用全部档位。")
+        label("OpenRouter 从服务端同步思考档位。OpenAI 和 Gemini 的具体档位按已知型号显示。")
         if (c.endpoint.isBlank()) { label("请返回 AI 设置，先验证身份并配置连接和密钥。"); return }
         val model = field("模型 ID（可直接填写新模型）", c.model)
         autoSave(model) { value ->
@@ -93,7 +93,7 @@ class ModelSettingsActivity : AppCompatActivity() {
         }
         button("刷新模型列表（GET /models）") { work {
             val count = store.refreshModels(policyId)
-            render(); report("已刷新 $count 个模型；OpenRouter 思考档位同步自服务端，OpenAI 已知型号使用核实规则")
+            render(); report("已刷新 $count 个模型及其可用思考选项")
         } }
 
         if (ApiRouting.isOpenRouter(c.endpoint)) {

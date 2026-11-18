@@ -12,7 +12,8 @@ import org.junit.Test
 class AssistantKeyboardTest {
  @Test fun assistantHasSeparateRoleAndCommitsOnlyItsText()=exercise(false)
  @Test fun correctionCanCommitWhileAssistantIsStillStreaming()=exercise(true)
- private fun exercise(correction:Boolean)=runBlocking {
+ @Test fun manualAssistantRetriesWhenBothAutomaticModesAreOff()=exercise(false, manual=true)
+ private fun exercise(correction:Boolean, manual:Boolean=false)=runBlocking {
   val ins=InstrumentationRegistry.getInstrumentation();val d=UiDevice.getInstance(ins)
   val store=AiStore.get(ins.targetContext);val old=store.config
   val idle=Configurator.getInstance().waitForIdleTimeout;Configurator.getInstance().waitForIdleTimeout=0;d.wakeUp()
@@ -20,9 +21,9 @@ class AssistantKeyboardTest {
   val s=RimeDaemon.createSession("assistant-keyboard-test")
   try {
    val endpoint="${TestNetwork.baseUrl}/v1/chat/completions"
-   store.updatePolicyConfig(id){it.copy(endpoint=endpoint,model="assistant-stream-test")}
+   store.updatePolicyConfig(id){it.copy(endpoint=endpoint,model=if(manual) "assistant-retry-test" else "assistant-stream-test")}
    store.credentialsForPolicy(id).save(endpoint,"emulator-test-key");store.selectPolicy(id)
-   store.update{it.copy(enabled=true,consent=true,automatic=true,assistantEnabled=true,traditional=false)}
+   store.update{it.copy(enabled=!manual,consent=true,automatic=true,assistantEnabled=!manual,traditional=false)}
    s.runOnReady{clearComposition();selectSchema("rime_ai_simp");setRuntimeOption("ascii_mode",false)}
    d.executeShellCommand("settings put secure show_ime_with_hard_keyboard 1")
    val ime="${ins.targetContext.packageName}/com.osfans.trime.ime.core.TrimeInputMethodService"
@@ -33,6 +34,23 @@ class AssistantKeyboardTest {
    s.runOnReady{clearComposition();selectSchema("rime_ai_simp");setRuntimeOption("ascii_mode",false)}
    d.findObject(By.desc("test-editor")).text="";d.waitForIdle();delay(350)
    "chishenme".forEach {c->s.runOnReady{processKey(c.code)};delay(35)}
+   if(manual) {
+    assertTrue(d.wait(Until.hasObject(By.desc("AI 状态：手动触发")),5000))
+    delay(500)
+    val trigger=By.desc("AI 重试或召唤助手")
+    assertTrue(d.wait(Until.hasObject(trigger),5000))
+    assertFalse(d.hasObject(By.descStartsWith("AI 纠错：")))
+    d.findObject(trigger).click()
+    assertTrue(d.wait(Until.hasObject(By.desc("AI 纠错：纠错第1次")),5000))
+    d.findObject(trigger).click()
+    assertTrue(d.wait(Until.hasObject(By.desc("AI 纠错：纠错第2次")),5000))
+    assertFalse(d.hasObject(By.desc("AI 助手：助手第1次")))
+    assertTrue(d.wait(Until.hasObject(By.desc("AI 助手：助手第2次")),10000))
+    assertFalse(d.hasObject(By.desc("AI 纠错：纠错第1次")))
+    d.findObject(By.desc("AI 助手：助手第2次")).click()
+    assertTrue(d.wait(Until.hasObject(By.desc("test-editor").text("助手第2次")),5000))
+    return@runBlocking
+   }
    assertTrue(d.wait(Until.hasObject(By.desc("AI 纠错：吃什么？")),10000))
    assertTrue(d.hasObject(By.text("助手：生成中…")))
    assertTrue(d.hasObject(By.desc("AI 状态：生成中…")))

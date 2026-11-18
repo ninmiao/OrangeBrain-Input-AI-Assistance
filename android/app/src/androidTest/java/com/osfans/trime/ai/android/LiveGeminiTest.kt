@@ -23,9 +23,10 @@ class LiveGeminiTest {
         for(item in cases) {
             val row=item.jsonObject;val raw=row.getValue("input").jsonPrimitive.content
             val chinese=row.getValue("chinese").jsonPrimitive.boolean;val traditional=row.getValue("traditional").jsonPrimitive.boolean
+            val kaomoji = row["kaomoji"]?.jsonPrimitive?.booleanOrNull == true
             val start=android.os.SystemClock.elapsedRealtime()
             val result=runCatching {
-                val request=AiRequest(RequestStamp(0,0,0,0,0),AiInput(raw),pack.compose(chinese,traditional),false)
+                val request=AiRequest(RequestStamp(0,0,0,0,0),AiInput(raw),pack.compose(chinese,traditional,kaomoji),false,assistantEnabled=kaomoji)
                 ChatCompletionsClient().request(ApiRouting.GEMINI,key,ApiRouting.HYDROGEN,request,30000,mapOf("reasoning_effort" to JsonPrimitive("low"),"service_tier" to JsonPrimitive("default")))
             }
             val record=buildJsonObject {
@@ -33,10 +34,10 @@ class LiveGeminiTest {
                 put("elapsed_ms",android.os.SystemClock.elapsedRealtime()-start)
                 put("success",result.isSuccess)
                 result.onSuccess {
-                    val candidate=it.candidates.single()
+                    val candidate=if (kaomoji) it.candidates[1] else it.candidates.single()
                     require(candidate.isNotBlank() && !candidate.startsWith("{\"candidates\""))
                     if(!chinese)require(candidate.none { c -> c in '\u3400'..'\u9fff' })
-                    if(row["kaomoji"]?.jsonPrimitive?.booleanOrNull==true)require(candidate.length in 2..60 && candidate.none { c -> c in '\u3400'..'\u9fff' })
+                    if(kaomoji)require(candidate.length in 2..60 && candidate.none { c -> c in '\u3400'..'\u9fff' })
                     put("output",candidate)
                     fun normalized(s:String)=s.lowercase().filter { c -> c.isLetterOrDigit() }
                     put("normalized_match",row.getValue("expected").jsonArray.any { e -> normalized(e.jsonPrimitive.content)==normalized(candidate) })

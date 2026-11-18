@@ -37,6 +37,7 @@ enum Id {
   ASSISTANT,
   SERVICE_STATUS,
   SERVICE_RESTART,
+  AI_SHORTCUT,
   NAME = 300,
   ENDPOINT,
   MODEL,
@@ -75,7 +76,8 @@ const std::vector<std::string> languageValues = {"shift",
                                                  "ctrl_shift_space",
                                                  "disabled"},
                                scriptValues = {"ctrl_shift_t", "ctrl_shift_f",
-                                               "ctrl_shift_c", "disabled"};
+                                               "ctrl_shift_c", "disabled"},
+                               aiShortcutValues = {"f8", "f9", "f10", "ctrl_shift_f8", "disabled"};
 std::wstring text(HWND h) {
   int n = GetWindowTextLengthW(h);
   std::wstring s(n + 1, 0);
@@ -152,7 +154,9 @@ class App {
     auto dir=appDirectory();
     bool broker=processRunning(dir/L"ZephyrBroker.exe"),server=processRunning(dir/L"ZephyrServer.exe");
     std::string value=std::string(u8"AI 后台：")+(broker?u8"运行":u8"未运行")+u8" · 输入服务："+(server?u8"运行":u8"未运行");
-    value+=store_.load().value("enabled",false)?u8" · 已开启":u8" · 已关闭";
+    const auto config = store_.load();
+    value+=(config["enabled"].get<bool>() || config["assistantEnabled"].get<bool>())
+        ? u8" · 自动请求" : u8" · 手动请求";
     auto path=store_.directory()/L"last-request-status.json";
     if(fs::exists(path)) {auto r=J::parse(readFile(path,4096),nullptr,false);if(r.is_object())value+=u8"\n最近请求："+r.value("state",std::string())+" · "+r.value("time",std::string());}
     else value+=u8"\n尚未收到请求结果（运行不代表 API 已连通）";
@@ -396,13 +400,14 @@ class App {
                                  WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 0, 0,
                                  window_, nullptr, instance_, this);
     column_ = 0;
-    check(0, ENABLED, L"启用在线 AI / Cloud AI", 12);
-    check(0, ASSISTANT, L"纠错＋助手 / Correction + assistant", 48);
-    check(0, ENTER_ORIGINAL, L"回车提交原文 / Enter: original", 84);
-    check(0, SPACE_ORIGINAL, L"空格提交原文 / Space: original", 120);
-    check(0, SEGMENTATION, L"空格分词 / Phrase boundaries", 156);
-    field(0, LANGUAGE, L"中英快捷键 / Language shortcut", 206, true, true);
-    field(0, SCRIPT, L"繁简快捷键 / Script shortcut", 276, true, true);
+    check(0, ENABLED, L"自动纠错 / Auto correction", 12);
+    check(0, ASSISTANT, L"自动助手（含纠错）/ Auto assistant", 44);
+    check(0, ENTER_ORIGINAL, L"回车提交原文 / Enter: original", 76);
+    check(0, SPACE_ORIGINAL, L"空格提交原文 / Space: original", 108);
+    check(0, SEGMENTATION, L"空格分词 / Phrase boundaries", 140);
+    field(0, LANGUAGE, L"中英快捷键 / Language shortcut", 176, true, true);
+    field(0, SCRIPT, L"繁简快捷键 / Script shortcut", 235, true, true);
+    field(0, AI_SHORTCUT, L"AI 重试／召唤助手 / AI shortcut", 294, true, true);
     column_ = 1;
     field(0, DEBOUNCE, L"停顿 / Debounce (50–2000 ms)", 12);
     field(0, TIMEOUT, L"总超时 / Timeout (1000–60000 ms)", 82);
@@ -411,7 +416,7 @@ class App {
     field(0, BEFORE, L"前文字符 / Before (0–500)", 266);
     field(0, AFTER, L"后文字符 / After (0–500)", 336);
     column_ = 0;
-    button(0,SERVICE_RESTART,L"重启服务（取消未上屏文字）",346);
+    button(0,SERVICE_RESTART,L"重启服务（取消未上屏文字）",356);
     column_ = -1;
     label(0,L"",396,48);controls_[SERVICE_STATUS]=pages_[0].items.back().window;
     column_ = 0;
@@ -579,6 +584,7 @@ class App {
            std::to_string(config_[pair.second].get<int>()));
     choices(control(LANGUAGE), languageValues, config_["languageShortcut"]);
     choices(control(SCRIPT), scriptValues, config_["scriptShortcut"]);
+    choices(control(AI_SHORTCUT), aiShortcutValues, config_["aiShortcut"]);
     loading_ = false;
   }
   std::string policyLabel(const J& p) {
@@ -617,7 +623,7 @@ class App {
     text(control(ACTIVE),
          u8"正在使用 / Active: " +
              activePolicy(saved_)["name"].get<std::string>() +
-             (saved_["enabled"].get<bool>() ? "" : u8" · 在线 AI 已关闭"));
+             ((saved_["enabled"].get<bool>() || saved_["assistantEnabled"].get<bool>()) ? "" : u8" · AI 手动触发"));
     if (form) loadPolicy();
     loading_ = false;
   }
@@ -688,6 +694,7 @@ class App {
       }
       next["languageShortcut"] = utf8(text(control(LANGUAGE)));
       next["scriptShortcut"] = utf8(text(control(SCRIPT)));
+      next["aiShortcut"] = utf8(text(control(AI_SHORTCUT)));
       validateConfiguration(next);
       captureKey();
       config_ = std::move(next);
@@ -772,7 +779,13 @@ class App {
   }
   void startApi(int kind) {
     if (apiBusy_) return;
-    if(dirty_) { status(u8"请先保存修改，再测速或更新列表 / Save changes first"); return; }
+    if (dirty_) {
+      if (kind != MODELS_UPDATE) {
+        status(u8"请先保存修改，再测速或更新供应商 / Save changes first");
+        return;
+      }
+      if (!capture(false)) return;
+    }
     auto snapshot = config_, p = activePolicy(config_);
     auto selected = benchmarkSelection();
     if (kind == BENCH_RUN) {
@@ -877,14 +890,7 @@ class App {
              d->endpoint == utf8(text(control(ENDPOINT)))) {
       loading_ = true;
       if (d->kind == MODELS_UPDATE) {
-        auto updated = config_;
-        auto& changedPolicy = activePolicy(updated);
-        changedPolicy["modelList"] = d->data;
-        auto levels = reasoningOptions(changedPolicy);
-        if (std::find(levels.begin(), levels.end(), changedPolicy["reasoning"]) == levels.end())
-          changedPolicy["reasoning"] = "omit";
-        config_ = std::move(updated);
-        modified(MODELS_UPDATE);
+        activePolicy(config_)["modelList"] = d->data;
         auto current = utf8(text(control(MODEL)));
         std::vector<std::string> ids = {current};
         for (auto& id : d->data["ids"])
@@ -899,9 +905,13 @@ class App {
         choices(control(PROVIDER), ids, current);
       }
       loading_ = false;
-      refreshParameters();
+      refreshParameters(false);
+      if (d->kind == MODELS_UPDATE) modified(REASONING);
     }
-    if(dirty_) status(u8"列表已更新，请保存 / List updated; save changes");
+    if (d->kind == MODELS_UPDATE && d->policy == editing_ &&
+        d->endpoint == utf8(text(control(ENDPOINT))))
+      status(u8"模型与思考选项已刷新，请保存 / Models and reasoning refreshed; save changes");
+    else if(dirty_) status(u8"列表已更新，请保存 / List updated; save changes");
     else status(u8"已完成 / Finished");
   }
   void dictionaryState() {
@@ -1048,7 +1058,7 @@ class App {
       }
     }
     if ((id >= ENABLED && id <= ASSISTANT) || (id >= NAME && id <= SPEED) ||
-        id == CHINESE_PROMPT || id == ENGLISH_PROMPT) {
+        id == CHINESE_PROMPT || id == ENGLISH_PROMPT || id == AI_SHORTCUT) {
       if (notification == EN_CHANGE || notification == CBN_SELCHANGE ||
           notification == CBN_EDITCHANGE || notification == BN_CLICKED)
         modified(id);
@@ -1068,6 +1078,9 @@ class App {
       require(save(false) && !store_.load()["assistantEnabled"].get<bool>(),"Assistant mode not persisted");
       checkValue(ASSISTANT,true);modified(ASSISTANT);
       require(save(false) && store_.load()["assistantEnabled"].get<bool>(),"Assistant mode not re-enabled");
+      require(text(control(AI_SHORTCUT))==L"f8","Default AI shortcut missing");
+      choices(control(AI_SHORTCUT),aiShortcutValues,"f9");modified(AI_SHORTCUT);
+      require(save(false) && store_.load()["aiShortcut"]=="f9","AI shortcut not persisted");
       config_=saved_=original;store_.save(original);reload();dirty_=false;
       require(GetClassLongPtrW(window_,GCLP_HICON)!=0,"Window logo missing");
       SetWindowPos(window_,nullptr,0,0,px(1000),px(740),SWP_NOMOVE|SWP_NOZORDER);
@@ -1103,6 +1116,28 @@ class App {
       require(save(false),"Explicit save failed");
       require(activePolicy(store_.load())["name"]=="Manual save regression","Save did not persist");
       require(!dirty_ && flash_>0,"Save feedback missing");
+      auto& policy = activePolicy(config_);
+      policy["endpoint"] = "https://openrouter.ai/api/v1/chat/completions";
+      policy["model"] = "fixture/model";
+      reload();
+      auto refresh = [&](const char* metadata) {
+        auto result = std::make_unique<Done>();
+        result->kind = MODELS_UPDATE;
+        result->policy = editing_;
+        result->endpoint = utf8(text(control(ENDPOINT)));
+        result->data = {{"endpoint", result->endpoint}, {"ids", {"fixture/model"}},
+          {"catalog", {{"version", "models-api"},
+            {"models", core("modelsReasoning", J::parse(metadata))}}}};
+        done(std::move(result));
+      };
+      refresh(R"({"data":[{"id":"fixture/model","reasoning":{"supported_efforts":["low","high"]}}]})");
+      require(dirty_ && SendMessageW(control(REASONING), CB_GETCOUNT, 0, 0) == 3,
+              "Model refresh did not update reasoning options");
+      choices(control(REASONING), {"omit", "low", "high"}, "high");
+      refresh(R"({"data":[{"id":"fixture/model","reasoning":{"supported_efforts":["low"]}}]})");
+      require(text(control(REASONING)) == L"omit" &&
+              SendMessageW(control(REASONING), CB_GETCOUNT, 0, 0) == 2,
+              "Model refresh retained an unsupported reasoning choice");
       auto modelBefore=text(control(MODEL));
       SetWindowPos(window_,nullptr,0,0,px(800),px(580),SWP_NOMOVE|SWP_NOZORDER);
       layout();

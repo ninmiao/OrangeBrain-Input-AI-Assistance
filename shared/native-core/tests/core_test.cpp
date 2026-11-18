@@ -10,6 +10,30 @@ int main() {
     int count = 0;
 #include "stream_test.inc"
     {
+      auto call = [](const char* op, const J& args) {
+        return J::parse(zephyr::invoke(J{{"op", op}, {"args", args}}.dump())).at("ok");
+      };
+      const std::string endpoint = "https://generativelanguage.googleapis.com/v1beta/interactions";
+      auto row = [](const char* id, bool thinking) {
+        return J{{"name", id}, {"thinking", thinking},
+                 {"supportedGenerationMethods", {"generateContent"}}};
+      };
+      auto models = call("modelsReasoning", {{"gemini", true},
+          {"models", {row("models/gemini-4-hydrogen", false),
+                      row("models/gemini-3.8-flash", true),
+                      row("models/gemini-unknown", true)}}});
+      J catalog = {{"version", "models-gemini"}, {"models", models}};
+      auto definition = [&](const char* id) {
+        return call("modelDefinition", {{"endpoint", endpoint}, {"model", id},
+                                        {"catalog", catalog}});
+      };
+      if (definition("gemini-4-hydrogen").at("parameters").size() != 1 ||
+          definition("gemini-3.8-flash").at("parameters").at(1).at("choices").size() != 3 ||
+          !definition("gemini-unknown").is_null())
+        throw std::runtime_error("Gemini discovery reasoning mismatch");
+      ++count;
+    }
+    {
       auto r = J::parse(zephyr::invoke(
           R"CASE({"op": "decode", "args": {"text": "[\"你好\"", "truncated": true}})CASE"));
       if (!r.contains("ok") ||

@@ -9,10 +9,10 @@ class KaomojiPromptTest {
   assertEquals(14L,pack.revision)
   for (chinese in listOf(true,false)) {
    val prompt=pack.compose(chinese)
-   assertEquals(1,prompt.split(PromptPackage.KAOMOJI_RULE).size-1)
+   assertFalse(prompt.contains(PromptPackage.KAOMOJI_RULE))
    val old=pack.copy(revision=9,keyboard_language_rules=LanguageRules("CUSTOM ZH","CUSTOM EN"))
    assertEquals(pack.compose(chinese),old.compose(chinese))
-   assertTrue(old.compose(chinese).contains(PromptPackage.KAOMOJI_RULE))
+   assertTrue(old.compose(chinese, assistantEnabled=true).contains(PromptPackage.KAOMOJI_RULE))
    assertTrue(old.compose(chinese).endsWith(PromptPackage.outputRule(chinese)))
   }
  }

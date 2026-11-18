@@ -59,7 +59,8 @@ class ModelsClient {
                 if(page.isNotEmpty())require(seen.add(page) && seen.size<=20) { "Invalid model pagination" }
             } finally { connection.disconnect() }
         } while(page.isNotEmpty())
-        Discovery(decode(buildJsonObject { put("models",JsonArray(rows)) }.toString().toByteArray(Charsets.UTF_8),true),emptyList())
+        val envelope = buildJsonObject { put("models", JsonArray(rows)) }.toString().toByteArray(Charsets.UTF_8)
+        Discovery(decode(envelope, true), ReasoningCapabilities.fromModels(envelope, gemini = true))
     }
 }
 

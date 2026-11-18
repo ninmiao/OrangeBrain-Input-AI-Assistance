@@ -57,7 +57,11 @@ void WeaselTSF::_ProcessKeyEvent(WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
       else if (ke.keycode == ibus::Down)
         ke.keycode = ibus::Up;
     }
-    if (!keyCountToSimulate)
+    if (_status.composing && (lParam & (1LL << 30)) && !(ke.mask & ibus::RELEASE_MASK) &&
+        zephyr::shortcutChord(zephyr::currentKeyPreferences().value_or(zephyr::KeyPreferences{}).aiShortcut,
+                             ke.keycode, ke.mask))
+      *pfEaten = TRUE;  // Holding the shortcut must not flood the AI service.
+    else if (!keyCountToSimulate)
       *pfEaten = (BOOL)m_client.ProcessKeyEvent(ke);
 
     if (ke.keycode == ibus::Caps_Lock) {

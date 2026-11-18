@@ -4,6 +4,7 @@ root=pathlib.Path(__file__).resolve().parents[2]
 class Handler(http.server.BaseHTTPRequestHandler):
     protocol_version="HTTP/1.1"
     requests=0
+    retry_requests=0
     def log_message(self,*args): pass
     def do_GET(self):
         if self.path=="/stats": self.reply({"requests":type(self).requests});return
@@ -25,12 +26,16 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.send_error(401);return
         type(self).requests += 1
         payload=json.loads(self.rfile.read(int(self.headers['Content-Length'])))
-        if payload.get('model') in ('assistant-test','assistant-stream-test'):
+        if payload.get('model') in ('assistant-test','assistant-stream-test','assistant-retry-test'):
             system=payload.get('instructions',payload.get('system_instruction','')) or payload.get('messages',[{}])[0].get('content','')
             assert 'No requests for more info; Give your best result directly.' in system
             assert '默认一个候选' not in system
             values=['What should I eat?','Try a sandwich.'] if 'Both candidates use English only.' in system else ['吃什么？','吃碗面吧。']
-            if payload.get('model')=='assistant-stream-test':
+            if payload.get('model')=='assistant-retry-test':
+                type(self).retry_requests += 1
+                attempt = type(self).retry_requests
+                values = [f'纠错第{attempt}次', f'助手第{attempt}次']
+            if payload.get('model') in ('assistant-stream-test','assistant-retry-test'):
                 assert payload.get('stream') is True
                 self.send_response(200);self.send_header('Content-Type','text/event-stream');self.send_header('Connection','close');self.end_headers();self.close_connection=True
                 def event(text):

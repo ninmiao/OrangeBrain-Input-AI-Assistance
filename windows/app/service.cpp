@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <condition_variable>
 #include <fstream>
+#include <string_view>
 #include <thread>
 namespace zw {
 Input decodeWire(const std::string& text) {
@@ -18,16 +19,18 @@ Input decodeWire(const std::string& text) {
       start = i + 1;
     }
   require((fields.size() == 4 && fields[0] == "Z1") ||
-              (fields.size() == 6 && (fields[0] == "Z2" || fields[0] == "Z4")),
+              (fields.size() == 6 && (fields[0] == "Z2" || fields[0] == "Z4")) ||
+              (fields.size() == 7 && fields[0] == "Z4" && fields[6] == "assistant"),
           "Invalid pipe version");
   require((fields[1] == "zh" || fields[1] == "en") &&
               (fields[2] == "0" || fields[2] == "1"),
           "Invalid input mode");
   Input r{fields[1] == "zh", fields[2] == "1", unhex(fields[3])};
-  if (fields.size() == 6) {
+  if (fields.size() >= 6) {
     r.before = unhex(fields[4]);
     r.after = unhex(fields[5]);
   }
+  r.manual = fields.size() == 7;
   require(!r.input.empty() && wide(r.input).size() <= 600 &&
               std::none_of(r.input.begin(), r.input.end(),
                            [](unsigned char c) { return c < 32 || c == 127; }),
@@ -38,10 +41,13 @@ Input decodeWire(const std::string& text) {
 std::string responseWire(const J& c, const J& result,
                          const std::string& error) {
   auto b = [&](const char* key) { return c.at(key).get<bool>() ? "1" : "0"; };
+  const bool assistant = result.is_object()
+      ? result.value("assistantEnabled", c.value("assistantEnabled", false))
+      : c.value("assistantEnabled", false);
   std::string out = "Z1\t" + std::string(b("wordSegmentation")) + "\t" +
                     std::to_string(c.at("debounceMs").get<int>()) + "\t" +
                     b("enterOriginal") + "\t" + b("spaceOriginal") + "\t" +
-                      (c.value("assistantEnabled",true) ? "1" : "0") + "\t" +
+                      (assistant ? "1" : "0") + "\t" +
                       (result.is_object() && result.value("streaming",false) ? "1" : "0") + "\n";
   if (!error.empty()) out += "E\t" + hex(error) + "\n";
   if (result.is_object())
@@ -65,6 +71,7 @@ Input latencySample(bool chinese) {
       chinese ? u8"，请大家确认时间。" : ", please confirm the time."};
 }
 J requestPayload(const J& c, const J& p, const Input& raw, int budget) {
+  const bool assistant = raw.manual || c.at("assistantEnabled").get<bool>();
   auto context = core("context", {{"input", raw.input},
                                   {"before", raw.before},
                                   {"after", raw.after},
@@ -73,7 +80,7 @@ J requestPayload(const J& c, const J& p, const Input& raw, int budget) {
                                   {"afterLimit", c.at("afterLength")}});
   context["input"] = raw.input;
   std::string prompt = core(
-      "prompt", {{"chinese", raw.chinese}, {"traditional", raw.traditional}, {"assistantEnabled", c.value("assistantEnabled", true)}});
+      "prompt", {{"chinese", raw.chinese}, {"traditional", raw.traditional}, {"assistantEnabled", assistant}});
   auto custom = p.value(raw.chinese ? "chinesePrompt" : "englishPrompt", "");
   if (!custom.empty()) {
     auto pos = prompt.find(u8"仅输出JSON字符串数组");
@@ -92,7 +99,7 @@ J requestPayload(const J& c, const J& p, const Input& raw, int budget) {
        {"request",
         {{"input", context},
          {"systemPrompt", prompt},
-         {"assistantEnabled", c.value("assistantEnabled", true)},
+         {"assistantEnabled", assistant},
          {"outputTokenBudget",
           budget < 0 ? c.at("outputTokenBudget").get<int>() : budget}}}});
 }
@@ -114,7 +121,7 @@ J requestAi(const Store& store, const J& c, const J& p, const Input& raw,
   else o.headers = {{"Authorization", "Bearer " + key}};
   J state=J::object(), latest, published;
   auto feed=[&](const std::string& bytes,bool finish) {
-    auto r=core("stream",{{"endpoint",p.at("endpoint")},{"assistantEnabled",c.value("assistantEnabled",true)},
+    auto r=core("stream",{{"endpoint",p.at("endpoint")},{"assistantEnabled",raw.manual || c.at("assistantEnabled").get<bool>()},
                           {"state",state},{"chunkHex",hex(bytes)},{"finish",finish}});
     state=r.at("state");latest=r.at("result");
     if(latest.is_object() && latest.at("candidates")!=published) {
@@ -152,12 +159,15 @@ std::string handleRequest(const Store& store, const std::string& text,
   auto config = store.load();
   J result;
   std::string failure;
-  if (config.at("enabled")) {
+  if (input.manual || config.at("enabled").get<bool>() || config.at("assistantEnabled").get<bool>()) {
     try {
       result = requestAi(store, config, activePolicy(config), input, cancel,
                          connected, http, [&](const J& r) {
                            if(partial && store.load()==config) {
-                             auto progress=r;progress["streaming"]=true;partial(progress);
+                             auto progress=r;
+                             progress["streaming"]=true;
+                             progress["assistantEnabled"]=input.manual || config.at("assistantEnabled").get<bool>();
+                             partial(progress);
                            }
                          });
       store.requestStatus(result.value("streamError",std::string()).empty()?"OK":"partial: "+result.at("streamError").get<std::string>());
@@ -172,8 +182,9 @@ std::string handleRequest(const Store& store, const std::string& text,
     }
   }
   auto latest = store.load();
-  return responseWire(latest, latest == config ? result : J(),
-                      latest == config ? failure : "");
+  if (latest != config) return responseWire(latest);
+  if (input.manual) latest["assistantEnabled"] = true;
+  return responseWire(latest, result, failure);
 }
 namespace {
 bool pipeOperation(HANDLE pipe, bool writing, void* buffer, DWORD count,
@@ -295,7 +306,7 @@ void runBroker(const Store& store, bool startServer,
               response =
                   handleRequest(store, std::string(input, count), {}, alive,
                     [&](const J& r) {
-                      if(std::string(input,2)!="Z4")return;
+                      if (count < 3 || std::string_view(input, 3) != "Z4\t") return;
                       auto message=responseWire(store.load(),r);DWORD written=0;
                       if(!pipeOperation(pipe,true,message.data(),DWORD(message.size()),written))
                         throw Error("cancelled");

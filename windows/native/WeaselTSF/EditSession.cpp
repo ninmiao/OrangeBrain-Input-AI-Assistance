@@ -74,12 +74,13 @@ STDMETHODIMP WeaselTSF::DoEditSession(TfEditCookie ec) {
     _UpdateUI(*context, _status);
   }
 
-  // Read under the existing TSF edit lock. Exclude the composition range, and
-  // never ask the editor for surrounding text while cloud/context is disabled.
+  // Cache the current composition's context locally so a manual AI shortcut
+  // can use it immediately. The broker only sends it with an AI request.
   try {
     auto prefs=zephyr::currentKeyPreferences().value_or(zephyr::KeyPreferences{});
     std::wstring before,after;
-    if(prefs.aiEnabled && prefs.contextEnabled && !_IsKeyboardDisabled()) {
+    if(_status.composing && prefs.contextEnabled &&
+       (prefs.aiEnabled || prefs.aiShortcut!="disabled") && !_IsKeyboardDisabled()) {
       com_ptr<ITfRange> anchor;
       if(_pComposition)_pComposition->GetRange(&anchor);
       if(!anchor) { TF_SELECTION selection{};ULONG fetched=0;

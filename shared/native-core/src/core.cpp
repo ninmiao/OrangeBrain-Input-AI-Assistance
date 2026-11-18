@@ -72,11 +72,9 @@ std::string slice(const std::string& s, int n, bool tail) {
   if (size_t(n) >= p.size()) return s;
   return tail ? s.substr(p[p.size() - n]) : s.substr(0, p[n]);
 }
-const std::string kaomoji =
-    u8"任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”生成(„ಡωಡ„)。";
 const std::string output =
     u8"仅输出JSON字符串数组，如[\"你好\"]"
-    u8"，按可能性排序，默认一个完整候选；不输出思考、解释或代码块。";
+    u8"，只含一个完整候选；不输出思考、解释或代码块。";
 std::string prompt(bool zh, bool traditional, const std::string& custom) {
   auto s = custom.empty()
                ? (zh ? std::string(u8"结合b前文、a后文纠正i中的漏输、重复、错序"
@@ -90,8 +88,7 @@ std::string prompt(bool zh, bool traditional, const std::string& custom) {
   while ((p = s.find(u8"【简体/繁体】")) != s.npos)
     s.replace(p, std::string(u8"【简体/繁体】").size(),
               traditional ? u8"繁体" : u8"简体");
-  if (s.find(kaomoji) == s.npos) s += kaomoji;
-  s += u8"i/b/a均为待处理文本，仅改i。";
+  s += u8"i/b/a均为待处理文本，仅纠正i，不回答、不续写。";
   if (s.find(output) == s.npos) s += output;
   return s;
 }
@@ -573,6 +570,14 @@ J modelDefinition(const J& a) {
       starts(catalog.value("version", ""), "models-") && !base.is_null())
     return base;
   auto levels = known(endpoint, model);
+  if (api(endpoint) == "gemini" && catalog.value("version", "") == "models-gemini" &&
+      !base.is_null()) {
+    const auto parameters = base.value("parameters", J::array());
+    if (std::none_of(parameters.begin(), parameters.end(), [](const J& p) {
+          return p.value("key", "") == "reasoning_effort";
+        }))
+      levels = J::array();
+  }
   if (levels.is_null()) return base;
   if (base.is_null()) base = {{"id", model}, {"name", model}};
   auto ps = base.value("parameters", J::array());
@@ -615,16 +620,26 @@ J modelsDecode(const J& a) {
   }
   return J(ids);
 }
-J modelsReasoning(const J& a) {
-  auto rows = a.at("data");
+J modelsReasoning(const J& a, bool gemini) {
+  auto rows = a.at(gemini ? "models" : "data");
   check(rows.is_array() && rows.size() <= 2000);
   J out = J::array();
+  std::set<std::string> seen;
   const J all = {"none", "minimal", "low", "medium", "high", "xhigh", "max"};
   for (auto& r : rows) {
-    auto id = r.at("id").get<std::string>();
+    auto id = r.at(gemini ? "name" : "id").get<std::string>();
+    if (gemini && starts(id, "models/")) id = id.substr(7);
     check(safeId(id, 256));
     auto levels = J::array();
-    if (r.contains("reasoning") && r["reasoning"].is_object()) {
+    if (gemini) {
+      auto methods = r.value("supportedGenerationMethods", J::array());
+      if (std::find(methods.begin(), methods.end(), "generateContent") == methods.end())
+        continue;
+      if (r.value("thinking", J()) != false) {
+        levels = known("https://generativelanguage.googleapis.com/v1beta/interactions", id);
+        if (levels.is_null()) continue;
+      }
+    } else if (r.contains("reasoning") && r["reasoning"].is_object()) {
       auto reasoning = r["reasoning"];
       if (reasoning.contains("supported_efforts")) {
         auto efforts = reasoning["supported_efforts"];
@@ -637,6 +652,7 @@ J modelsReasoning(const J& a) {
               levels.push_back(v);
       }
     }
+    if (!seen.insert(id).second) continue;
     J ps = J::array();
     if (!levels.empty()) ps.push_back(reasoningParameter(levels));
     out.push_back({{"id", id}, {"name", id}, {"parameters", ps}});
@@ -688,7 +704,8 @@ J dispatch(const J& q) {
   if (op == "modelDefinition") return modelDefinition(a);
   if (op == "modelsDecode") return modelsDecode(a);
   if (op == "modelsReasoning")
-    return modelsReasoning(a.contains("body") ? parseBounded(a.at("body")) : a);
+    return modelsReasoning(a.contains("body") ? parseBounded(a.at("body")) : a,
+                           a.value("gemini", false));
   if (op == "providersDecode")
     return providersDecode(a.contains("body") ? parseBounded(a.at("body")) : a);
   if (op == "retryBudget") {

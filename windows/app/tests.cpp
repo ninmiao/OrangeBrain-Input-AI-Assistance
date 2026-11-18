@@ -46,6 +46,14 @@ int main(int argc, char** argv) {
     check(migrated["policies"].size() == 3 && migrated["candidateCount"] == 1 &&
               !migrated["completion"].get<bool>(),
           "Legacy migration");
+    auto legacyModes=c;
+    legacyModes["settingsRevision"]=2;
+    legacyModes["assistantEnabled"]=true;
+    check(normalizeConfiguration(legacyModes)["assistantEnabled"]==false,
+          "Legacy disabled AI stays off automatically");
+    legacyModes["enabled"]=true;
+    check(normalizeConfiguration(legacyModes)["assistantEnabled"]==true,
+          "Legacy enabled assistant stays enabled");
     for (auto pair : {std::pair<const char*, int>{"timeoutMs", 0},
                       {"beforeLength", 501},
                       {"outputTokenBudget", 0},
@@ -104,6 +112,12 @@ int main(int argc, char** argv) {
           "Z2 wire Unicode");
     check(decodeWire("Z1\ten\t0\t6869").input == "hi",
           "Legacy wire compatible");
+    auto manual = decodeWire("Z4\ten\t0\t6869\t\t\tassistant");
+    check(manual.manual && manual.input == "hi", "Explicit retry wire");
+    rejects([&] { decodeWire("Z4\ten\t0\t6869\t\t\tretry"); },
+            "Invalid explicit request mode");
+    check(handleRequest(store,"Z4\ten\t0\t6869\t\t") == responseWire(c),
+          "Both modes off suppresses automatic requests");
     rejects([&] { decodeWire("Z2\tzh\t0\txx\t\t"); },
             "Invalid wire hex rejected");
     rejects([&] { decodeWire("Z1\tzh\t0\t6869\t\t"); },
@@ -116,9 +130,13 @@ int main(int argc, char** argv) {
     check(payload["max_output_tokens"].get<int>() >=
               int(raw.input.size()) * 4 + 32,
           "Soft budget full candidate reserve");
-    check(payload["instructions"].get<std::string>().find(
+    auto single=payload["instructions"].get<std::string>();
+    check(single.find(u8"只含一个完整候选")!=single.npos && single.find(u8"颜表情")==single.npos,
+          "Automatic correction uses the correction-only prompt");
+    check(requestPayload(c,p,manual)["instructions"].get<std::string>().find(
               "No requests for more info; Give your best result directly.") != std::string::npos,
-          "Strict output contract");
+          "Manual request uses assistant prompt with both automatic modes off");
+    c["assistantEnabled"]=true;
     c["contextEnabled"] = false;
     payload = requestPayload(c, p, raw);
     compact = J::parse(payload["input"].get<std::string>());

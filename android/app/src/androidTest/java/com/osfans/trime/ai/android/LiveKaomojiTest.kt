@@ -21,17 +21,17 @@ class LiveKaomojiTest {
         val cases=listOf(true to "颜表情 笑死",true to "yanbiaoqing xiaosi",false to "kaomoji laughing",true to "颜表情 伤心")
         for ((index,pair) in cases.withIndex()) {
             val (chinese,raw)=pair
-            val request=AiRequest(RequestStamp(0,index.toLong(),0,0,0),AiInput(raw),store.builtin.compose(chinese),false)
+            val request=AiRequest(RequestStamp(0,index.toLong(),0,0,0),AiInput(raw),store.builtin.compose(chinese, assistantEnabled=true),false,assistantEnabled=true)
             val start=android.os.SystemClock.elapsedRealtime()
             val result=ChatCompletionsClient().request(ApiRouting.OPENROUTER,key,ApiRouting.DEEPSEEK,request,10000,
                 mapOf("reasoning_effort" to JsonPrimitive("none"),"service_tier" to JsonPrimitive("default")),ApiRouting.WAFER)
-            assertEquals(1,result.candidates.size)
-            val candidate=result.candidates.single()
+            assertEquals(2,result.candidates.size)
+            val candidate=result.candidates[1]
             assertTrue("Expected symbols, got: $candidate",candidate.any { !it.isLetterOrDigit() && !it.isWhitespace() })
             assertFalse("Must not echo trigger: $candidate",candidate.contains("颜表情") || candidate.contains("yanbiaoqing"))
             assertTrue("Expected a compact expression: $candidate",candidate.length in 2..60)
             InstrumentationRegistry.getInstrumentation().sendStatus(0,Bundle().apply {
-                putString("stream","Live OpenRouter emulator: case=$index result=${result.candidates.single()} elapsedMs=${android.os.SystemClock.elapsedRealtime()-start} candidates=1\n")
+                putString("stream","Live OpenRouter emulator: case=$index result=$candidate elapsedMs=${android.os.SystemClock.elapsedRealtime()-start} candidates=2\n")
             })
         }
     }

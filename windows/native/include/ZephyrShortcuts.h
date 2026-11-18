@@ -9,6 +9,10 @@ inline bool shortcutChord(const std::string& name, int key, int mask) {
   if(mask&ibus::RELEASE_MASK)return false;
   if(name=="ctrl_space")return key==' '&&mods==ibus::CONTROL_MASK;
   if(name=="ctrl_shift_space")return key==' '&&mods==(ibus::CONTROL_MASK|ibus::SHIFT_MASK);
+  if(name=="f8")return key==ibus::F8&&mods==0;
+  if(name=="f9")return key==ibus::F9&&mods==0;
+  if(name=="f10")return key==ibus::F10&&mods==0;
+  if(name=="ctrl_shift_f8")return key==ibus::F8&&mods==(ibus::CONTROL_MASK|ibus::SHIFT_MASK);
   if(mods!=(ibus::CONTROL_MASK|ibus::SHIFT_MASK))return false;
   if(key>='a'&&key<='z')key-=32;
   return (name=="ctrl_shift_t"&&key=='T')||(name=="ctrl_shift_f"&&key=='F')||(name=="ctrl_shift_c"&&key=='C');
@@ -19,6 +23,10 @@ inline std::wstring shortcutLabel(const std::string& name) {
   if(name=="shift_right")return L"Right Shift";
   if(name=="ctrl_space")return L"Ctrl+Space";
   if(name=="ctrl_shift_space")return L"Ctrl+Shift+Space";
+  if(name=="f8")return L"F8";
+  if(name=="f9")return L"F9";
+  if(name=="f10")return L"F10";
+  if(name=="ctrl_shift_f8")return L"Ctrl+Shift+F8";
   return L"";
 }
 enum class ShortcutAction { None, Language, Script };

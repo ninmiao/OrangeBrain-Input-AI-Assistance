@@ -9,8 +9,8 @@ import kotlinx.serialization.json.*
   return NativeCore.invoke("prompt",buildJsonObject {put("assistantEnabled",assistantEnabled);put("chinese",chinese);put("traditional",traditional);put("custom",if(chinese)rules.chinese else rules.non_chinese)}).jsonPrimitive.content
  }
  companion object {
-  const val KAOMOJI_RULE="任意写法的“颜/表情/颜表情”加描述生成颜表情，如“颜 笑死”生成(„ಡωಡ„)。"
-  const val OUTPUT_RULE="仅输出JSON字符串数组，如[\"你好\"]，按可能性排序，默认一个完整候选；不输出思考、解释或代码块。"
+  const val KAOMOJI_RULE="When asked for an emoticon, output a kaomoji"
+  const val OUTPUT_RULE="仅输出JSON字符串数组，如[\"你好\"]，只含一个完整候选；不输出思考、解释或代码块。"
   const val ENGLISH_OUTPUT_RULE=OUTPUT_RULE
   fun outputRule(chinese:Boolean)=OUTPUT_RULE
   fun parse(bytes:ByteArray):PromptPackage {

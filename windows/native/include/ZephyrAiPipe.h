@@ -27,7 +27,7 @@ inline std::wstring unhex(const std::string& s) {
 }
 class AiPipe {
  public:
-  struct Work { DWORD session;uint64_t revision;std::string input;bool chinese,traditional;std::string before,after; };
+  struct Work { DWORD session;uint64_t revision;std::string input;bool chinese,traditional;std::string before,after;bool manual=false; };
   struct Result { DWORD session;uint64_t revision;std::vector<std::wstring> candidates;bool segmentation=true,enterOriginal=true,spaceOriginal=false;std::wstring error;bool assistantEnabled=false,streaming=false; };
   explicit AiPipe(std::wstring testPipe={}):nameOverride(std::move(testPipe)),thread([this]{run();}) {}
   ~AiPipe() {
@@ -41,9 +41,11 @@ class AiPipe {
   }
   void cancel(DWORD session) {
     std::lock_guard<std::mutex> lock(mutex);
+    if(statusSession!=session)return;
     if(pending&&pending->session==session)pending.reset();
     if(result&&result->session==session)result.reset();
     ++generation;if(pipe!=INVALID_HANDLE_VALUE)CancelIoEx(pipe,nullptr);
+    cv.notify_all();
   }
   std::wstring status(DWORD session,uint64_t revision) {
     std::lock_guard<std::mutex> lock(mutex);
@@ -74,19 +76,24 @@ class AiPipe {
       {
         std::unique_lock<std::mutex> lock(mutex);cv.wait(lock,[&]{return stop||pending.has_value();});if(stop)return;
         token=generation;
-        if(cv.wait_for(lock,std::chrono::milliseconds(debounce),[&]{return stop||generation!=token;}))continue;
+        if(!pending->manual && cv.wait_for(lock,std::chrono::milliseconds(debounce),[&]{return stop||generation!=token;}))continue;
         w=*pending;pending.reset();
       }
       wchar_t username[256];DWORD size=256;
       if(!GetUserNameW(username,&size))continue;
       std::wstring name=nameOverride.empty()?L"\\\\.\\pipe\\ZephyrAI-"+std::wstring(username):nameOverride;
-      HANDLE h=CreateFileW(name.c_str(),GENERIC_READ|GENERIC_WRITE,0,nullptr,OPEN_EXISTING,FILE_FLAG_OVERLAPPED,nullptr);
+      auto open=[&] { return CreateFileW(name.c_str(),GENERIC_READ|GENERIC_WRITE,
+                                        0,nullptr,OPEN_EXISTING,FILE_FLAG_OVERLAPPED,nullptr); };
+      HANDLE h=open();
+      if(h==INVALID_HANDLE_VALUE && w.manual && GetLastError()==ERROR_PIPE_BUSY &&
+         WaitNamedPipeW(name.c_str(),250))h=open();
       if(h==INVALID_HANDLE_VALUE) {
         std::lock_guard<std::mutex> lock(mutex);if(token==generation)statusText=L"后台未连接";continue;
       }
-      { std::lock_guard<std::mutex> lock(mutex);if(stop||token!=generation){CloseHandle(h);continue;}pipe=h;statusText=L"请求中…"; }
+      { std::lock_guard<std::mutex> lock(mutex);if(stop||token!=generation){CloseHandle(h);continue;}pipe=h;missing=false;statusText=L"请求中…"; }
       DWORD mode=PIPE_READMODE_MESSAGE;SetNamedPipeHandleState(h,&mode,nullptr,nullptr);
       std::string payload="Z4\t"+std::string(w.chinese?"zh":"en")+"\t"+(w.traditional?"1":"0")+"\t"+hex(w.input)+"\t"+hex(w.before)+"\t"+hex(w.after);
+      if(w.manual)payload+="\tassistant";
       char output[131072];DWORD bytes=0;OVERLAPPED ov{};ov.hEvent=CreateEventW(nullptr,TRUE,FALSE,nullptr);
       const auto deadline=GetTickCount64()+65000;
       auto operation=[&](bool writing,void* buffer,DWORD length) {

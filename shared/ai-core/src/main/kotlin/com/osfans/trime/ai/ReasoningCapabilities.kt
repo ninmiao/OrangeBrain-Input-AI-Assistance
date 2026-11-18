@@ -16,8 +16,11 @@ object ReasoningCapabilities {
     }
     fun options(endpoint:String,model:String,catalog:ModelCatalog=ModelCatalog()):List<ParameterChoice> =
         (definition(endpoint,model,catalog)?.parameters?.firstOrNull { it.key=="reasoning_effort" }?.choices ?: emptyList()) + ParameterChoice("服务端默认（不发送）","omit")
-    fun fromModels(bytes:ByteArray):List<ModelDefinition> {
+    fun fromModels(bytes:ByteArray, gemini: Boolean = false):List<ModelDefinition> {
         require(bytes.size<=8*1024*1024)
-        return NativeCore.invoke("modelsReasoning",buildJsonObject {put("body",bytes.toString(Charsets.UTF_8))}).jsonArray.map { Json.decodeFromJsonElement(ModelDefinition.serializer(),it) }
+        return NativeCore.invoke("modelsReasoning", buildJsonObject {
+            put("body", bytes.toString(Charsets.UTF_8))
+            put("gemini", gemini)
+        }).jsonArray.map { Json.decodeFromJsonElement(ModelDefinition.serializer(), it) }
     }
 }

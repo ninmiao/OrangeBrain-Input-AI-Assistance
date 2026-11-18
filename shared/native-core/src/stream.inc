@@ -110,6 +110,9 @@ J streamDecode(const J& a) {
     }
   }
   if(result.is_object()) {
+    auto& candidates = result.at("candidates");
+    const size_t slots = roles ? 2 : 1;
+    if (candidates.size() > slots) candidates.erase(candidates.begin() + slots, candidates.end());
     result["streaming"]=!finish&&!done;
     if(!error.empty()) {result["streamError"]=error;result["recovered"]=true;}
   } else if(finish||done) throw Failure(error.empty()?"response":error.c_str());

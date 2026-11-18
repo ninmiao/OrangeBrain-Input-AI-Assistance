@@ -42,9 +42,19 @@ int main() {
   check(s.process(' ',C|S,3,"ctrl_shift_space","disabled")==A::Language);
   check(s.process(' ',C,4,"shift","disabled")==A::None);
   check(s.process('T',C|S,5,"shift","disabled")==A::None);
+  check(shortcutChord("f8",ibus::F8,0));
+  check(shortcutChord("f9",ibus::F9,0));
+  check(shortcutChord("f10",ibus::F10,0));
+  check(shortcutChord("ctrl_shift_f8",ibus::F8,C|S));
+  check(!shortcutChord("f8",ibus::F8,U));
+  check(!shortcutChord("f8",ibus::F8,C|S));
+  check(!shortcutChord("disabled",ibus::F8,0));
   const std::filesystem::path path="shortcut-fixture.json";
   {std::ofstream f(path);f<<R"({"languageShortcut":"ctrl_space","scriptShortcut":"ctrl_shift_f"})";}
   auto prefs=readKeyPreferences(path);check(prefs&&prefs->languageShortcut=="ctrl_space"&&prefs->scriptShortcut=="ctrl_shift_f");
+  check(prefs&&prefs->aiShortcut=="f8");
+  {std::ofstream f(path);f<<R"({"languageShortcut":"shift","enabled":false,"settingsRevision":3,"assistantEnabled":true,"aiShortcut":"f9"})";}
+  prefs=readKeyPreferences(path);check(prefs&&prefs->aiEnabled&&prefs->aiShortcut=="f9");
   std::filesystem::remove(path);
   std::cout<<checks<<" shortcut checks passed\n";
 }

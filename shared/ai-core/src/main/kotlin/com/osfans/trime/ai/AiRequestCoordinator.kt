@@ -46,7 +46,7 @@ class AiRequestCoordinator(
     }
 
     fun submit(request: AiRequest?, enabled: Boolean, sensitive: Boolean, debounceMs: Long = 200) {
-        require(debounceMs in 50..2000)
+        require(debounceMs == 0L || debounceMs in 50..2000)
         invalidate()
         if (!enabled || sensitive || request == null || request.input.input.isBlank()) return
         Protocol.encode(request.input) // Reject invalid snapshots before network access.

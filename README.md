@@ -1,6 +1,6 @@
 # Zephyr Input · 微风输入法
 
-[下载 Windows 版](dist/Zephyr-Input-Windows-1.12.1-Setup-x64.exe) · [下载 Android 版](dist/Zephyr-Input-1.10.1-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
+[Windows 1.12.3 x64](dist/Zephyr-Input-Windows-1.12.3-Setup-x64.exe) · [Android 1.10.2 ARM64](dist/Zephyr-Input-1.10.2-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
@@ -8,7 +8,7 @@
 
 Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 Android** 两个版本。自带万象和雾凇两套离线词表，默认使用万象，支持从 GitHub 一键更新及单独下载万象语法模型；联网后调用 **在线 LLM API**，通过提示词补足词库匹配：修正漏输、重复、错序和邻键误触，处理长拼音和中英文混输，还能在候选栏里给出简短答案、建议、续写、术语和颜表情。
 
-在线 AI 的中文模式将拼音转为汉字，英语保留并纠错；英文模式优先纠正英语，把中文、拼音或混输转成英文。两种语言模式都有候选区，默认给出“纠错”和“助手”两个候选，由你选择上屏；在 AI 开关附近可切换为仅纠错。
+在线 AI 的中文模式将拼音转为汉字，英语保留并纠错；英文模式优先纠正英语，把中文、拼音或混输转成英文。自动纠错给出一个候选，助手模式还会给出第二个候选。你也可以只在需要时手动召唤助手。
 
 云端支持 **OpenAI、OpenRouter 和 Google Gemini**。可以把接口、Key、模型和参数保存成多个 Policy 随时切换；OpenRouter 支持供应商路由。纠错能有多强、等待有多短，取决于模型的能力，以及你的钱包（笑）。
 
@@ -22,18 +22,18 @@ I built Zephyr for my own daily typing: fast pinyin input, clear privacy control
 
 **Zephyr Input** is a **Rime-based pinyin keyboard for Windows and Android**. It bundles Wanxiang (the default) and Rime Ice dictionaries for offline typing, updates them from GitHub, offers a separate grammar-model download, and calls **online LLM APIs** for missing letters, repeated characters, swapped letters, nearby-key mistakes, long pinyin, and mixed Chinese–English input. Its assistant can also suggest a brief answer, advice, a continuation, a term, or a kaomoji directly in the candidate bar.
 
-For online AI, Chinese mode converts pinyin to Chinese while keeping and correcting English. English mode corrects English and translates Chinese, pinyin, or mixed input into English. Both modes default to a correction and an assistant suggestion. Turn off the assistant beside Cloud AI for correction only.
+For online AI, Chinese mode converts pinyin to Chinese while keeping and correcting English. English mode corrects English and translates Chinese, pinyin, or mixed input into English. Auto correction offers one candidate. Assistant mode adds a second candidate, and you can also invoke it on demand.
 
 Cloud assistance supports **OpenAI, OpenRouter, and Google Gemini**, with separate policies for keys, models, and parameters. OpenRouter also supports provider routing. The quality depends on the model—and your wallet. **LLM features require an internet connection: models run on remote services accessed through OpenAI, OpenRouter, or Google Gemini, not locally on your phone or computer.** Offline typing uses Rime and local dictionaries. Cloud AI sends your current input and enabled surrounding context to your chosen API service. Keys are encrypted on your device.
 
 
 ## Quickstart · 快速开始
 
-1. **Windows：**[下载安装器](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-Windows-1.12.1-Setup-x64.exe)，运行并允许 UAC，注销再登录后选择 **Zephyr Input**。开始菜单打开设置。
-2. **Android：**[下载 APK](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-1.10.1-arm64-v8a-demo.apk)，安装后按应用引导启用键盘，等待首次词库部署完成。
-3. **先离线打字也可以。** 要用在线 AI，在 **方案 / Policy**（Android 为 **AI 辅助**）填对应平台的 API Key、选择模型并启用 AI；Windows 点击右上角 **保存并生效**。停顿后选择 AI 候选上屏。
+1. **Windows**：下载安装器，运行并允许 UAC。选择 **Zephyr Input** 输入法，从开始菜单打开设置。
+2. **Android**：下载 ARM64 APK，安装后按引导启用键盘，等待首次词库部署。
+3. **在线 AI**：在 Policy 中填 API Key、选择模型。Windows 修改后点 **保存并生效**，Android 先允许使用云端 AI。组字时按 **F8**（Windows）或点 **星光**（Android）手动请求，也可开启 **自动纠错** 或 **自动助手**。
 
-**Windows:** [download Setup](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-Windows-1.12.1-Setup-x64.exe), approve UAC, sign out/in and select Zephyr Input; open settings from Start. **Android:** [install the APK](https://github.com/ninmiao/Zephyr-Input/raw/refs/heads/main/dist/Zephyr-Input-1.10.1-arm64-v8a-demo.apk), enable the keyboard and let dictionaries deploy. Offline typing works immediately. For online AI, add your service's key and model in **Policy / AI assistance**, enable AI, and click **Save** on Windows; pause typing and select a suggestion.
+Run Setup and approve UAC on **Windows**, or install the ARM64 APK and enable the keyboard on **Android**. To use online AI, add a key and model to your policy, save on Windows, and grant cloud permission on Android. While composing, press **F8** or tap the **sparkle** for help on demand, or turn on **Auto correction** or **Auto assistant**.
 
 ## 词表、本地模型与在线 AI · Local data and online AI
 
@@ -88,9 +88,11 @@ Real emulator capture: for `woyaochihuogu`, online AI suggests “我要吃火�
 
 The candidate area shows AI request status. Windows settings show background services and the last request, with a restart button that preserves settings and keys but cancels uncommitted text. On Android, tap the AI dot for details or reset requests in settings.
 
-默认开启 **纠错＋AI 助手**，单次请求流式返回，完整纠错先显示，助手随后补到第二位：第一项是保留原意的纠错，第二项根据输入意图给出可直接上屏的内容。需要回答、找词或续写时直接输入，选择“助手”候选即可。只想纠错，在 AI 开关旁关闭助手；Windows 修改后点击 **保存并生效**。
+组字时，Windows 按 **F8**，Android 点候选栏左侧的星光图标，即可取消上一条请求并重新请求助手。Windows 可换成 F9、F10、Ctrl+Shift+F8 或关闭快捷键。Android 首次使用请在设置里允许云端 AI。
 
-**Correction + assistant** is on by default. One streaming request shows the complete correction first, then fills the assistant slot: the first candidate corrects your input; the second offers something ready to insert. Type a question, a term description or an unfinished sentence, then select the assistant candidate. For correction only, turn off the assistant beside Cloud AI; save the change on Windows.
+仅打开 **自动纠错** 时只请求纠错。打开 **自动助手** 后，单次流式请求先显示完整纠错，再显示助手候选。两个开关都关闭后，只有手动触发才发送。Windows 修改后点击 **保存并生效**。
+
+While composing, press **F8** on Windows or tap the sparkle in the Android candidate bar to cancel the previous request and request the assistant. Windows also offers F9, F10, Ctrl+Shift+F8, and a disabled option. Auto correction returns one result. Auto assistant streams the correction first and then the assistant suggestion. Turning both off leaves manual invocation available. Android asks for cloud permission in settings.
 
 | 当前输入 / Input | 前文 / Context | 助手候选示例 / Assistant example |
 | --- | --- | --- |
@@ -140,21 +142,21 @@ A **policy** holds an endpoint, key, model, parameters and extra instructions; i
 | 速度 / Speed | `priority`（快速 / Fast） | `default` | `default` |
 | 供应商 / Provider | — | `wafer/us`，留空自动 / blank for Auto | — |
 
-以上为客户端初始值；请更新模型列表或填写你的 Key 可调用的完整 ID。思考强度按模型适配：`omit` 不发送该参数，交给服务端；`none` 才是请求无思考，`low` 仍可能消耗思考 token。OpenRouter 的供应商在模型参数中选择或手填。
+以上为客户端初始值。更新模型列表时，OpenRouter 同步服务端提供的思考档位。OpenAI 和 Gemini 的具体档位按已核实型号显示。Gemini 明确标记不支持思考时隐藏档位。`omit` 使用服务端默认，`none` 请求关闭思考。`low` 仍可能消耗思考 token。OpenRouter 的供应商可在模型参数中选择或手填。
 
-These are app defaults; refresh models or enter an ID available to your key. Thinking options follow the model: `omit` leaves the parameter to the server, `none` requests no reasoning, and `low` can still use reasoning tokens. OpenRouter provider routing is a model parameter, selectable or editable.
+These are app defaults. Refreshing the model list reads OpenRouter's reported reasoning levels. OpenAI and Gemini levels follow known model rules. Gemini hides thinking levels when the service reports that a model does not support thinking. Choose `omit` for the server default or `none` to request no reasoning. On OpenRouter you can also choose or enter a model's provider.
 
 ### Windows
 
-顶部选择方案，在 **方案 / Policy** 页填写接口与 Key，选择模型、思考、速度及供应商，点击右上角 **保存并生效**。在 **输入 / Input** 页启用在线 AI 后也要保存。修改和方案选择保存后才生效；字段短暂高亮，Key 加密保存后清空，留空表示保留原 Key。附加提示词在独立的 **提示词 / Prompts** 页。
+在 **方案 / Policy** 页填写接口与 Key，选择模型和参数，点击 **保存并生效**。在 **输入 / Input** 页可设置自动模式和手动快捷键，修改后也需保存。Key 字段留空会保留原凭据。附加提示词在 **提示词 / Prompts** 页。
 
-Select a policy at the top, enter its endpoint and key under **Policy**, choose the model and parameters, then click **Save**. Enable cloud AI under **Input** and save. Draft edits and policy selection apply only after saving; fields briefly highlight. The key field clears after encrypted storage; leaving it blank keeps the saved key. Extra instructions have their own **Prompts** tab.
+Under **Policy**, enter the endpoint and key, choose the model and parameters, then click **Save**. Configure automatic modes and the manual shortcut under **Input** and save. Leaving the key field blank keeps the saved key. Add extra instructions in the **Prompts** tab.
 
 ### Android
 
-**AI 辅助 → 编辑 Policy → 验证身份并配置连接 / 密钥**，保存接口和 Key；在 **模型与参数** 更新或填写模型，选择思考、速度及供应商。返回列表勾选方案并启用 AI；开启“停手自动请求”后，停顿时请求候选。
+在 **AI 辅助 → 编辑 Policy → 验证身份并配置连接 / 密钥** 保存接口和 Key，在 **模型与参数** 选择或填写模型并设置参数。回到列表勾选方案，打开 **允许使用云端 AI**。如需自动候选，开启 **停手自动请求** 和所需自动模式。
 
-Open **AI assistance → edit policy**, authenticate and save the endpoint/key. Under **Model and parameters**, refresh or enter a model and choose thinking, speed and provider. Select the policy and enable AI; automatic requests run after a typing pause when enabled.
+Open **AI assistance → Edit policy**, authenticate, and save the endpoint and key. Choose a model and its parameters under **Model and parameters**. Select the policy and allow cloud AI. To request suggestions after a typing pause, enable automatic requests and choose an automatic mode.
 
 ### Gemini 与测速 · Gemini and benchmarks
 
@@ -180,9 +182,9 @@ Each request sends the current prompt and input. `i` is input, with optional `b`
 {"i":"woxianghekafe","b":"午饭后我有点困，"}
 ```
 
-默认“纠错＋AI 助手”：第一项保持原意、修正输入；第二项推断意图，给出简短答案、建议、续写、术语或颜表情。关闭助手后，只请求纠错候选。
+助手提示词的第一项保持原意并修正输入，第二项根据意图给出简短答案、建议、续写、术语或颜表情。纠错提示词只修正输入。
 
-The default **Correction + assistant** mode returns a faithful correction first, then a brief answer, suggestion, continuation, term or kaomoji. Turn off the assistant beside Cloud AI to request correction only.
+The assistant prompt returns a faithful correction first, followed by a brief answer, suggestion, continuation, term or kaomoji. The separate correction prompt only edits the input.
 
 **中文模式 / Chinese (Simplified)**
 
@@ -204,9 +206,9 @@ Output is **`["correction","assistant"]`**, with labelled roles, or **`["result"
 
 ## 日常使用 · Typing
 
-Windows 单按 **Shift** 切中英，**Ctrl+Shift+T** 切繁简，数字选词，**Enter** 默认提交原文；快捷键可设置。选择 Rime 前缀词后保留剩余拼音，继续分段选词。Android 使用键盘语言、繁简按钮，点击候选上屏；空格可标注词组边界。
+Windows 单按 **Shift** 切中英，**Ctrl+Shift+T** 切繁简，数字选词，**Enter** 默认提交原文。选择 Rime 前缀词后可继续分段选词。Android 的中英文模式都在键盘顶部用小字显示尚未上屏的输入，退格同步更新，提交后收起。
 
-On Windows, tap **Shift** for Chinese/English, **Ctrl+Shift+T** for script, numbers for candidates and **Enter** for original text; shortcuts are configurable. Selecting a Rime prefix keeps the remaining pinyin for continued selection. Android uses language/script buttons and tap-to-commit; spaces can mark phrase boundaries.
+On Windows, tap **Shift** for Chinese/English, **Ctrl+Shift+T** for script, numbers for candidates, and **Enter** to commit raw input by default. Selecting a Rime prefix keeps the remaining pinyin for continued selection. Android shows uncommitted Chinese and English input in a small line above the keyboard that updates as you edit and clears after commit.
 
 ## 技术与开发 · Architecture and development
 

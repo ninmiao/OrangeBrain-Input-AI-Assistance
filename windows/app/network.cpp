@@ -50,7 +50,7 @@ void CALLBACK callback(HINTERNET, DWORD_PTR context, DWORD status, LPVOID info,
 }
 HINTERNET session() {
   static Internet s(WinHttpOpen(
-      L"Zephyr-Input/1.12.1", WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
+      L"Zephyr-Input/1.12.3", WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
       WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, WINHTTP_FLAG_ASYNC));
   require(s.h != nullptr, "Cannot initialize WinHTTP");
   return s.h;
@@ -235,15 +235,14 @@ J discoverModels(const J& p, const std::string& key,
     if (!gemini) {
       auto ids = core("modelsDecode", {{"body", r.body}, {"gemini", false}});
       require(!ids.empty(), "No models returned; previous list retained");
-      J definitions = J::array();
+      auto catalog = p.at("catalog");
       if (core("routing", {{"endpoint", endpoint}})["api"] == "openrouter")
-        definitions = core("modelsReasoning", {{"body", r.body}});
+        catalog = {{"schema_version", 1},
+                   {"version", "models-api"},
+                   {"models", core("modelsReasoning", {{"body", r.body}})}};
       return J{{"endpoint", endpoint},
                {"ids", ids},
-               {"catalog",
-                {{"schema_version", 1},
-                 {"version", "models-api"},
-                 {"models", definitions}}}};
+               {"catalog", catalog}};
     }
     auto body = J::parse(r.body);
     for (auto& row : body.at("models")) rows.push_back(row);
@@ -256,7 +255,11 @@ J discoverModels(const J& p, const std::string& key,
   auto ids = core("modelsDecode",
                   {{"envelope", {{"models", rows}}}, {"gemini", true}});
   require(!ids.empty(), "No models returned");
-  return J{{"endpoint", endpoint}, {"ids", ids}, {"catalog", p.at("catalog")}};
+  return J{{"endpoint", endpoint},
+           {"ids", ids},
+           {"catalog", {{"schema_version", 1},
+                        {"version", "models-gemini"},
+                        {"models", core("modelsReasoning", {{"models", rows}, {"gemini", true}})}}}};
 }
 J discoverProviders(const std::string& model, std::shared_ptr<Cancel> cancel) {
   require(model.find('/') != model.npos && model.size() <= 256,

@@ -21,9 +21,11 @@ class CandidateCountTest {
         try {
             // Exercise loading an actual pre-upgrade saved configuration.
             File(ins.targetContext.noBackupFilesDir,"ai-config.json").writeText(
-                Json { encodeDefaults=true }.encodeToString(old.copy(candidateCount=5,completion=true,assistantEnabled=false)))
+                Json { encodeDefaults=true }.encodeToString(
+                    old.copy(policyVersion=6,candidateCount=5,completion=true,enabled=false,assistantEnabled=true)))
             val migrated=AiStore(ins.targetContext).config
             assertEquals(1,migrated.candidateCount);assertFalse(migrated.completion)
+            assertFalse(migrated.assistantEnabled)
             assertEquals(old.policies,migrated.policies);assertEquals(old.selectedPolicyId,migrated.selectedPolicyId)
             store.update { old.copy(candidateCount=5,completion=true,assistantEnabled=false) }
             assertEquals(1,store.config.candidateCount);assertFalse(store.config.completion)
@@ -36,7 +38,8 @@ class CandidateCountTest {
             store.updatePolicyConfig(second) { it.copy(modelValues=emptyMap()) }
             assertEquals("思考：服务端默认 · 速度：服务端默认",store.policyParameterSummary(store.config.policies.first { it.id==second }))
             settings=ins.startActivitySync(Intent(ins.targetContext,AiSettingsActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-            assertTrue(d.wait(Until.hasObject(By.text("仅纠错：返回一个最佳候选。")),5000))
+            assertTrue(d.wait(Until.hasObject(By.text("自动纠错")),5000))
+            assertTrue(d.hasObject(By.text("自动助手（含纠错）")))
             assertFalse(d.hasObject(By.textStartsWith("AI 候选数量")))
             assertFalse(d.hasObject(By.text("显示独立补全")))
             val selector=By.desc("选择 Policy Policy summary fast")

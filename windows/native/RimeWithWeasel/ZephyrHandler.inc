@@ -21,7 +21,8 @@ void RimeWithWeaselHandler::_ZephyrRefresh(WeaselSessionId id) {
   }
   if(!z.input.empty()) {
     z.add(u8tow(z.input),z.chinese?L"原文":L"Original");
-    m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
+    if(auto prefs=zephyr::currentKeyPreferences();prefs&&prefs->aiEnabled)
+      m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
   } else m_zephyr_ai.cancel(id);
 }
 bool RimeWithWeaselHandler::_ZephyrChoose(WeaselSessionId id,size_t index) {
@@ -43,7 +44,8 @@ bool RimeWithWeaselHandler::_ZephyrChoose(WeaselSessionId id,size_t index) {
 bool RimeWithWeaselHandler::_ZephyrRespond(WeaselSessionId id,EatLine eat) {
   if(!eat)return false;
   auto& z=m_zephyr[id];auto& session=get_session_status(id);
-  if(auto prefs=zephyr::currentKeyPreferences())z.aiStatus=prefs->aiEnabled?m_zephyr_ai.status(id,z.revision):L"关闭";
+  const auto prefs=zephyr::currentKeyPreferences().value_or(zephyr::KeyPreferences{});
+  z.aiStatus=(prefs.aiEnabled||z.manualAi)?m_zephyr_ai.status(id,z.revision):L"手动";
   weasel::CandidateInfo info;info.is_last_page=(z.page+1)*5>=z.candidates.size();
   info.currentPage=int(z.page);info.totalPages=int((z.candidates.size()+4)/5);info.highlighted=int(z.selected%5);
   for(size_t i=z.page*5;i<z.candidates.size()&&i<(z.page+1)*5;i++) {
@@ -60,7 +62,9 @@ bool RimeWithWeaselHandler::_ZephyrRespond(WeaselSessionId id,EatLine eat) {
     std::to_wstring(display.size())+L","+std::to_wstring(cursor)+L"\nctx.aux="+
     std::wstring(z.chinese?(z.traditional?L"繁":L"简"):L"EN")+
     (zephyr::shortcutLabel(z.languageShortcut).empty()?L"":L" · "+zephyr::shortcutLabel(z.languageShortcut)+(z.chinese?L" → EN":L" → 中"))+
-    L" · AI "+escape_string(z.aiStatus)+(z.aiError.empty()?L"":L" · "+escape_string(z.aiError))+
+    L" · AI "+escape_string(z.aiStatus)+
+    (zephyr::shortcutLabel(prefs.aiShortcut).empty()?L"":L" ("+zephyr::shortcutLabel(prefs.aiShortcut)+L")")+
+    (z.aiError.empty()?L"":L" · "+escape_string(z.aiError))+
     L"\nctx.cand="+cs.str()+L"\nconfig.inline_preedit=0\n";
   auto style=session.style;style.inline_preedit=false;
   std::wstringstream ss;boost::archive::text_woarchive sa(ss);sa<<style;body+=L"style="+ss.str()+L"\n";
@@ -69,7 +73,8 @@ bool RimeWithWeaselHandler::_ZephyrRespond(WeaselSessionId id,EatLine eat) {
 }
 BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,EatLine eat) {
   auto& z=m_zephyr[id];int code=key.keycode;
-  if(auto prefs=zephyr::currentKeyPreferences()){
+  const auto prefs=zephyr::currentKeyPreferences();
+  if(prefs){
     z.enterOriginal=prefs->enterOriginal;z.spaceOriginal=prefs->spaceOriginal;z.languageShortcut=prefs->languageShortcut;z.scriptShortcut=prefs->scriptShortcut;
     // Invalidate before processing a digit/selection, including idle poll messages.
     if(z.applyConfiguration(prefs->revision)) {
@@ -82,11 +87,20 @@ BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,E
     auto result=m_zephyr_ai.take(id);
     if(!result||result->revision!=z.revision||z.input.empty()) {
       auto current=m_zephyr_ai.status(id,z.revision);
-      if(auto prefs=zephyr::currentKeyPreferences())if(!prefs->aiEnabled)current=L"关闭";
+      if(!z.manualAi&&(!prefs||!prefs->aiEnabled))current=L"手动";
       if(!z.input.empty()&&current!=z.aiStatus){z.aiStatus=current;_ZephyrRespond(id,eat);return TRUE;}
       return FALSE;
     }
     z.aiError=result->error;z.segmentation=result->segmentation;z.enterOriginal=result->enterOriginal;z.spaceOriginal=result->spaceOriginal;z.adopt(result->revision,result->candidates,result->assistantEnabled,result->streaming);_ZephyrRespond(id,eat);return TRUE;
+  }
+  if(zephyr::shortcutChord(prefs?prefs->aiShortcut:"f8",code,key.mask)) {
+    z.shortcuts.reset();
+    if(z.input.empty())return FALSE;
+    z.retryAi();
+    m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,
+                        z.chinese,z.traditional,z.before,z.after,true});
+    _ZephyrRespond(id,eat);
+    return TRUE;
   }
   bool ctrl=(key.mask&ibus::CONTROL_MASK)!=0,alt=(key.mask&ibus::MOD1_MASK)!=0;
   auto shortcut=z.shortcuts.process(code,key.mask,GetTickCount64(),z.languageShortcut,z.scriptShortcut);
@@ -141,7 +155,11 @@ void RimeWithWeaselHandler::UpdateTextContext(const std::wstring& data,DWORD id)
   try {
     auto before=decode(data.substr(0,split)),after=decode(data.substr(split+1));auto&z=found->second;
     if(z.before==before&&z.after==after)return;z.before=before;z.after=after;
+    // A manual request uses the snapshot at the key press. An edit-session
+    // context reply must not cause a second request for the same key press.
+    if(z.manualAi)return;
     ++z.revision;z.aiError.clear();z.adopt(z.revision,{});
-    if(!z.input.empty())m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
+    if(auto prefs=zephyr::currentKeyPreferences();prefs&&prefs->aiEnabled&&!z.input.empty())
+      m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
   }catch(...){m_zephyr_ai.cancel(id);}
 }

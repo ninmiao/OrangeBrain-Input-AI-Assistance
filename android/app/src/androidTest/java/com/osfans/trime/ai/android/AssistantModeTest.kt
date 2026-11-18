@@ -15,9 +15,9 @@ class AssistantModeTest {
   val store=AiStore.get(ins.targetContext);val old=store.config
   var activity:android.app.Activity?=null
   try {
-   store.update{it.copy(assistantEnabled=true)}
+   store.update{it.copy(assistantEnabled=true,consent=true)}
    activity=ins.startActivitySync(Intent(ins.targetContext,AiSettingsActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-   val selector=By.text("纠错＋AI 助手（关闭为仅纠错）")
+   val selector=By.text("自动助手（含纠错）")
    assertTrue(d.wait(Until.hasObject(selector),5000))
    fun awaitMode(value:Boolean) {
     val deadline=System.currentTimeMillis()+5000
@@ -36,7 +36,7 @@ class AssistantModeTest {
   }
  }
  @Test fun defaultAndPersistedMode() {
-  assertTrue(AiConfig().assistantEnabled)
+  assertFalse(AiConfig().assistantEnabled)
   val context=InstrumentationRegistry.getInstrumentation().targetContext
   val store=AiStore.get(context);val old=store.config
   try {

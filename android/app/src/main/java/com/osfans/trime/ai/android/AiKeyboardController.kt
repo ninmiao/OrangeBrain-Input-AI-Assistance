@@ -83,7 +83,26 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             setOnClickListener { scope.launch { withContext(Dispatchers.IO) { store.update { it.copy(traditional = !it.traditional) } } } }
         }
         val content = LinearLayout(context).apply { gravity = android.view.Gravity.CENTER_VERTICAL }
-        label = TextView(context).apply { setPadding(dp(8), 0, dp(8), 0); textSize = 12f }
+        root.addView(ImageButton(context).apply {
+            contentDescription = "AI 重试或召唤助手"
+            setImageResource(com.osfans.trime.R.drawable.ic_ai_sparkle_24)
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            setPadding(dp(8), dp(4), dp(8), dp(4))
+            background = android.graphics.drawable.RippleDrawable(
+                android.content.res.ColorStateList.valueOf(0x24565CC6), null,
+                android.graphics.drawable.ColorDrawable(android.graphics.Color.WHITE))
+            setOnClickListener {
+                when {
+                    !active || sensitive -> notice("此输入框不允许发送到 AI")
+                    !store.config.consent -> {
+                        notice("请先在设置里允许使用云端 AI")
+                        openSettings()
+                    }
+                    else -> { revision++; refresh(true) }
+                }
+            }
+        }, LinearLayout.LayoutParams(dp(36), dp(candidateHeightDp)))
+        label = TextView(context).apply { gravity = android.view.Gravity.CENTER; setPadding(0, 0, dp(5), 0); textSize = 9f }
         root.addView(label,LinearLayout.LayoutParams(-2,dp(candidateHeightDp)))
         candidateRow = LinearLayout(context)
         content.addView(candidateRow, LinearLayout.LayoutParams(-2, -1))
@@ -125,21 +144,23 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         }
     }
     private fun openSettings() { service.startActivity(Intent(service, AiSettingsActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+    private fun notice(message: String) = Toast.makeText(service, message, Toast.LENGTH_SHORT).show()
     private fun render() {
         val c = store.config
         scriptButton?.text = if (c.traditional) "繁" else "简"
         scriptButton?.contentDescription = if (c.traditional) "繁体输出，点击切换简体" else "简体输出，点击切换繁体"
         val indicator = when {
             sensitive -> "隐私字段"
-            !c.enabled -> "关闭"
+            !c.consent -> "未授权"
             state is AiState.Loading -> "请求中…"
             state is AiState.Failed -> (state as AiState.Failed).detail
             ready?.result?.streamError?.isNotEmpty() == true -> "部分返回"
             ready?.result?.streaming == true -> "生成中…"
             ready != null -> "已返回"
+            !c.automatic || (!c.enabled && !c.assistantEnabled) -> "手动触发"
             else -> "待请求"
         }
-        label?.text = "● AI"
+        label?.text = "●"
         label?.contentDescription = "AI 状态：$indicator"
         label?.setTextColor(when {
             state is AiState.Failed || ready?.result?.streamError?.isNotEmpty()==true -> 0xffb3261e.toInt()
@@ -181,8 +202,8 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
                     }
                 })
             }
-            result.result.candidates.forEachIndexed { index, text -> add(text, false, if (store.config.assistantEnabled) (if (index == 0) "纠错" else "助手") else "") }
-            if (store.config.assistantEnabled && result.result.candidates.size == 1) {
+            result.result.candidates.forEachIndexed { index, text -> add(text, false, if (result.request.assistantEnabled) (if (index == 0) "纠错" else "助手") else "") }
+            if (result.request.assistantEnabled && result.result.candidates.size == 1) {
                 candidateRow?.addView(android.widget.TextView(panel!!.context).apply {
                     text = if (result.result.streaming) "助手：生成中…" else "助手：未完成"
                     textSize = candidateTextSize;setTextColor(0xff777777.toInt());gravity=android.view.Gravity.CENTER
@@ -237,7 +258,8 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
 
     private fun capture(manual: Boolean): Target? {
         val c = store.config
-        if (!active || sensitive || !c.enabled || !c.consent) return null
+        if (!active || sensitive || !c.consent ||
+            (!manual && !c.enabled && !c.assistantEnabled)) return null
         val connection = service.currentInputConnection ?: return null
         val raw = rime.run { rawInputCached }
         if (raw.isNotEmpty()) {
@@ -261,6 +283,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         val a = extracted.selectionStart
         val b = extracted.selectionEnd
         if (a !in 0..text.length || b !in 0..text.length) return null
+        if (manual && a == b && !directEligible) return null
         val end = maxOf(a, b)
         val range = EditorRanges.capture(text, a, b, c.targetLimit, manual) ?: return null
         val start = range.start
@@ -277,14 +300,18 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             val c = store.config
             if (!manual && !c.automatic) return@launch
             target = capture(manual)
-            val snapshot = target ?: return@launch
+            val snapshot = target?.takeIf { it.input.input.isNotBlank() } ?: run {
+                if (manual && active) notice("请先输入或选中文字")
+                return@launch
+            }
+            val assistant = manual || c.assistantEnabled
             val request = AiRequest(RequestStamp(session, revision, c.generation, keyboardGeneration, c.generation), snapshot.input,
-                store.prompt(c, chinese), c.completion, c.candidateCount,c.outputTokenBudget,c.assistantEnabled)
-            coordinator.submit(request, c.enabled, sensitive, c.debounceMs)
+                store.prompt(c, chinese, assistant), c.completion, c.candidateCount,c.outputTokenBudget,assistant)
+            coordinator.submit(request, true, sensitive, if (manual) 0L else c.debounceMs)
         }
     }
 
-    private fun valid(result: AiState.Ready, snapshot: Target): Boolean = active && !sensitive && store.config.enabled &&
+    private fun valid(result: AiState.Ready, snapshot: Target): Boolean = active && !sensitive && store.config.consent &&
         result.request.stamp == RequestStamp(session, revision, store.config.generation, keyboardGeneration, store.config.generation) &&
         capture(snapshot.manual) == snapshot
 

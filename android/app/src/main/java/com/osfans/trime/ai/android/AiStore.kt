@@ -55,7 +55,7 @@ object TerraDefaults {
 data class AiConfig(
     val generation: Long = 0,
     val enabled: Boolean = false,
-    val assistantEnabled: Boolean = true,
+    val assistantEnabled: Boolean = false,
     val consent: Boolean = false,
     val automatic: Boolean = true,
     val wordSegmentation: Boolean = true,
@@ -142,11 +142,12 @@ class AiStore internal constructor(private val context: Context) {
             c.copy(policyVersion=4, policies=c.policies + if(c.policies.size>=20 || c.policies.any { ApiRouting.isGemini(it.endpoint) }) emptyList() else listOf(if(c.policies.any { it.id==gemini.id })gemini.copy(id=UUID.randomUUID().toString()) else gemini))
         }
         if (config.policyVersion < 6) update { it.copy(policyVersion=6,contextEnabled=true,beforeLength=50,afterLength=0) }
+        if (config.policyVersion < 7) update { it.copy(policyVersion = 7, assistantEnabled = it.enabled && it.assistantEnabled) }
     }
     fun effective(c: AiConfig = config) = (c.localOverride ?: c.active?.pack ?: builtin).upgraded()
-    fun prompt(c: AiConfig, chinese: Boolean): String {
+    fun prompt(c: AiConfig, chinese: Boolean, assistant: Boolean = c.assistantEnabled): String {
         val pack = effective(c)
-        return pack.compose(chinese,c.traditional,c.assistantEnabled)
+        return pack.compose(chinese,c.traditional,assistant)
     }
 
     fun policyParameterSummary(policy: AiPolicy): String {
@@ -313,10 +314,18 @@ class AiStore internal constructor(private val context: Context) {
         val ids=discovered.ids
         withContext(Dispatchers.IO) { updatePolicyConfig(policyId) {
             require(it.generation == captured.generation) { "配置已变化，请重新刷新" }
-            it.copy(discoveredModels = ids, modelCatalog = if(discovered.definitions.isEmpty()) it.modelCatalog else ModelCatalog(version="models-2026-11-09",models=discovered.definitions.map { fresh ->
-                val previous=it.modelCatalog.models.firstOrNull { old -> old.id==fresh.id }
-                fresh.copy(parameters=(previous?.parameters?.filterNot { p -> p.key=="reasoning_effort" } ?: emptyList())+fresh.parameters)
-            }))
+            val previous = it.modelCatalog.models.associateBy { model -> model.id }
+            val fresh = discovered.definitions.associateBy { model -> model.id }
+            val catalog = if (fresh.isEmpty()) it.modelCatalog
+            else ModelCatalog(
+                version = if (ApiRouting.isGemini(it.endpoint)) "models-gemini" else "models-api",
+                models = (previous + fresh.mapValues { (id, model) ->
+                    val other = previous[id]?.parameters.orEmpty().filterNot { p -> p.key == "reasoning_effort" }
+                    model.copy(parameters = other + model.parameters)
+                }).values.toList(),
+            )
+            require(ids.isNotEmpty()) { "服务未返回模型，已保留旧列表" }
+            it.copy(discoveredModels = ids, modelCatalog = catalog)
         } }
         return ids.size
     }

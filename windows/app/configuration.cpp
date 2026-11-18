@@ -38,14 +38,15 @@ J defaultPolicy(const std::string& type) {
   return p;
 }
 J defaultConfiguration() {
-  return J{{"settingsRevision", 2},
+  return J{{"settingsRevision", 3},
            {"enabled", false},
-           {"assistantEnabled", true},
+           {"assistantEnabled", false},
            {"selectedPolicy", "openai"},
            {"candidateCount", 1},
            {"completion", false},
            {"languageShortcut", "shift"},
            {"scriptShortcut", "ctrl_shift_t"},
+           {"aiShortcut", "f8"},
            {"enterOriginal", true},
            {"spaceOriginal", false},
            {"wordSegmentation", true},
@@ -61,6 +62,8 @@ J defaultConfiguration() {
 J normalizeConfiguration(J c) {
   require(c.is_object(), "Invalid settings");
   int revision = c.value("settingsRevision", 0);
+  const bool legacyAssistant = c.value("enabled", false) &&
+                               c.value("assistantEnabled", true);
   auto defaults = defaultConfiguration();
   for (auto it = defaults.begin(); it != defaults.end(); ++it)
     if (!c.contains(it.key())) c[it.key()] = it.value();
@@ -95,7 +98,8 @@ J normalizeConfiguration(J c) {
       c["policies"].push_back(p);
     }
   }
-  c["settingsRevision"] = 2;
+  if (revision < 3) c["assistantEnabled"] = legacyAssistant;
+  c["settingsRevision"] = 3;
   c["candidateCount"] = 1;
   c["completion"] = false;
   return c;
@@ -105,8 +109,14 @@ std::vector<std::string> reasoningOptions(const J& p) {
       "catalog",
       J{{"schema_version", 1}, {"version", "local-1"}, {"models", J::array()}});
   auto cache = p.value("modelList", J());
-  if (cache.is_object() && cache.value("endpoint", "") == p.at("endpoint"))
-    catalog = cache.value("catalog", catalog);
+  if (cache.is_object() && cache.value("endpoint", "") == p.at("endpoint")) {
+    auto discovered = cache.value("catalog", J::object());
+    for (const auto& model : discovered.value("models", J::array())) {
+      if (model.at("id") != p.at("model")) continue;
+      catalog = std::move(discovered);
+      break;
+    }
+  }
   auto definition = core("modelDefinition", {{"endpoint", p.at("endpoint")},
                                              {"model", p.at("model")},
                                              {"catalog", catalog}});
@@ -172,6 +182,8 @@ void validateConfiguration(const J& c) {
   require(language.count(c.at("languageShortcut")) &&
               script.count(c.at("scriptShortcut")),
           "Invalid keyboard shortcut");
+  const std::set<std::string> ai = {"f8", "f9", "f10", "ctrl_shift_f8", "disabled"};
+  require(ai.count(c.at("aiShortcut")), "Invalid AI shortcut");
   require(c.at("policies").is_array() && !c["policies"].empty() &&
               c["policies"].size() <= 32,
           "Keep 1 to 32 policies");

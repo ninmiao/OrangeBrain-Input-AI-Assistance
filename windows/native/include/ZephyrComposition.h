@@ -20,11 +20,13 @@ struct Composition {
   std::vector<int> rimeIndices;
   bool partialSelection = false;
   bool refreshPending = false;
+  bool manualAi = false;
   std::wstring preedit;
   size_t preeditCaret = 0;
   std::wstring commit;
   std::wstring aiError,aiStatus=L"待请求";
-  void changed() { aiError.clear(); ++revision; selected = page = 0; candidates.clear(); comments.clear(); rimeIndices.clear(); }
+  void changed() { manualAi=false; aiError.clear(); ++revision; selected = page = 0; candidates.clear(); comments.clear(); rimeIndices.clear(); }
+  void retryAi() { manualAi=true; ++revision; aiError.clear(); adopt(revision,{}); }
   bool insert(char ch) {
     if (ch < 32 || ch > 126 || input.size() >= 300) return false;
     input.insert(caret++, 1, ch); changed(); return true;
@@ -60,7 +62,7 @@ struct Composition {
   }
   bool applyConfiguration(uint64_t value) {
     if(value==configurationRevision)return false;
-    configurationRevision=value;++revision;adopt(revision,{});aiError.clear();refreshPending=true;return true;
+    configurationRevision=value;manualAi=false;++revision;adopt(revision,{});aiError.clear();refreshPending=true;return true;
   }
   bool chooseDigit(int digit) {
     if (input.empty() || digit < 1 || digit > 5) return false;

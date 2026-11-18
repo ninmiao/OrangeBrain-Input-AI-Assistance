@@ -61,7 +61,7 @@ class AiSettingsActivity : AppCompatActivity() {
     private fun renderMain() {
         val c = store.config
         label("AI 云端候选", 25f)
-        serviceStatusView=label("AI 状态：${if(c.enabled)AiRuntimeStatus.state.value else "关闭"}")
+        serviceStatusView=label("AI 状态：${AiRuntimeStatus.state.value}")
         button("重置 AI 请求 / Reset AI") {
             store.update { it };AiRuntimeStatus.state.value="已重置，待请求"
             report("已取消旧请求并重新加载 AI 配置；无需重启键盘")
@@ -69,19 +69,20 @@ class AiSettingsActivity : AppCompatActivity() {
         status = label("当前 Policy：${c.policies.first { it.id == c.selectedPolicyId }.name}")
         button("词库与语法模型（万象 / 雾凇）") { startActivity(Intent(this, com.osfans.trime.rime.android.WanxiangActivity::class.java)) }
         button("一键测速（最多 5 组）") { startActivity(Intent(this, BenchmarkActivity::class.java)) }
-        label("开启后发送当前输入及已启用的前后文；候选仅在点击后上屏。密码及隐私字段不请求。")
-        toggle("启用 AI", c.enabled) { enabled ->
-            if (enabled && !c.consent) AlertDialog.Builder(this).setTitle("开启云端 AI")
-                .setMessage("输入内容会发送到所选 Policy 的 API 服务，可能产生费用。是否开启？")
-                .setPositiveButton("开启") { _, _ -> save { it.copy(enabled = true, consent = true) } }
+        fun allowCloud(enabled: Boolean, update: (AiConfig) -> AiConfig) {
+            if (enabled && !c.consent) AlertDialog.Builder(this).setTitle("允许发送到云端 AI")
+                .setMessage("AI 会把当前输入及已启用的前后文发送到所选 Policy，可能产生 API 费用。")
+                .setPositiveButton("允许") { _, _ -> save { update(it).copy(consent = true) } }
                 .setNegativeButton("取消") { _, _ -> render() }.setOnCancelListener { render() }.show()
-            else save { it.copy(enabled = enabled) }
+            else save(update)
         }
-        toggle("纠错＋AI 助手（关闭为仅纠错）", c.assistantEnabled) { value -> save { it.copy(assistantEnabled = value) } }
+        toggle("允许使用云端 AI", c.consent) { value -> allowCloud(value) { it.copy(consent = value) } }
+        toggle("自动纠错", c.enabled) { value -> allowCloud(value) { it.copy(enabled = value) } }
+        toggle("自动助手（含纠错）", c.assistantEnabled) { value -> allowCloud(value) { it.copy(assistantEnabled = value) } }
         toggle("空格分词（中文键盘）", c.wordSegmentation) { value -> save { it.copy(wordSegmentation = value) } }
         label("开启时，拼音保留在键盘候选区；空格只标记词组边界，点击候选后才上屏。英文键盘仍正常输入空格。")
         toggle("停手自动请求", c.automatic) { value -> save { it.copy(automatic = value) } }
-        label(if (c.assistantEnabled) "第一项纠错，第二项按意图给出答案、建议或续写；点击后上屏。" else "仅纠错：返回一个最佳候选。")
+        label("星光按钮可重试当前输入或召唤一次助手。关闭自动纠错和自动助手后，只在点星光时请求。")
         val debounce = field("停手等待（毫秒，50–2000）", c.debounceMs.toString(), numeric = true)
         val timeout = field("请求超时（秒，1–60）", (c.timeoutMs / 1000).toString(), numeric = true)
         val target = field("当前输入上限（字符，1–300）", c.targetLimit.toString(), numeric = true)
