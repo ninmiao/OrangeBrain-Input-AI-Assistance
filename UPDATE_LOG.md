@@ -27,7 +27,7 @@
 
 - 新增手动构建，Windows x64、Windows ARM64 和 Android ARM64 三个目标并行运行。每个目标独立上传安装包及 SHA-256 校验文件。
 - Windows ARM64 使用校验过的 librime ARM64 上游快照，原生编译输入服务、TSF、设置和后台。x64 包继续附带 x86 输入模块。ARM64 包验证所有可执行组件的 PE 架构。
-- Android 检查 APK 架构、签名和 AI 核心资源。Windows 和 Android 使用独立的依赖缓存。
+- Android 检查 APK 架构、签名和 AI 核心资源。Windows 和 Android 使用独立的依赖缓存。 Git 排除本地生成的 Windows ARM64 中间目录。
 - [首次完整云端验证](https://github.com/ninmiao/Zephyr-Input/actions/runs/44232709695)通过。已下载三个产物并逐一核对 SHA-256。Windows ARM64 和 Android ARM64 未做设备安装验证。
 
 ### 2026-11-17 · Sol 档位、Gemini 截断与 Windows AI 排查

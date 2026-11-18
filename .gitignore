@@ -109,7 +109,9 @@ desktop.ini
 /windows/native/libarm64/
 /windows/native/Release/
 /windows/native/x64/
+/windows/native/ARM64/
 /windows/native/*/Release/
+/windows/native/*/ARM64/
 /windows/native/*/x64/
 /windows/native/weasel.props
 /windows/native/msbuild*.log
