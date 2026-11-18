@@ -38,11 +38,19 @@ if($Action -eq 'Stop'){
  exit 0
 }
 $state=Get-Content -LiteralPath (Join-Path $target 'installation.json') -Raw | ConvertFrom-Json
+$architectures=switch ([string]$state.architecture) {
+ 'arm64' {'arm64'}
+ 'x64' {'x64';'x86'}
+ '' {'x64';'x86'} # Installers before architecture metadata used the two x86-family DLLs.
+ default {throw 'Invalid installation architecture'}
+}
+$views=@([Microsoft.Win32.RegistryView]::Registry64)
+if($architectures -contains 'x86'){$views+=[Microsoft.Win32.RegistryView]::Registry32}
 function Register-Dll([string]$name,[string]$arch,[bool]$remove) {
- if($name -notmatch '^ZephyrTSF(x64|x86)-[a-f0-9]{12}\.dll$'){throw 'Invalid DLL name'}
+ if($name -notmatch ('^ZephyrTSF'+$arch+'-[a-f0-9]{12}\.dll$')){throw 'Invalid DLL name'}
  $dll=Join-Path $target $name
  if(!(Test-Path -LiteralPath $dll)){if($remove){return};throw 'Missing TSF DLL'}
- $reg=Join-Path $env:WINDIR $(if($arch -eq 'x64'){'System32/regsvr32.exe'}else{'SysWOW64/regsvr32.exe'})
+ $reg=Join-Path $env:WINDIR $(if($arch -eq 'x86'){'SysWOW64/regsvr32.exe'}else{'System32/regsvr32.exe'})
  $args=@('/s');if($remove){$args+='/u'};$args+='"'+$dll+'"'
  $p=Start-Process -FilePath $reg -ArgumentList $args -WindowStyle Hidden -Wait -PassThru
  if($p.ExitCode){throw "TSF $arch registration failed: $($p.ExitCode)"}
@@ -54,7 +62,7 @@ if($Action -eq 'Register') {
   $pending=@($sessionKey.GetValue('PendingFileRenameOperations',$null))
   if($pending.Count -gt 0 -and $pending.Count%2 -eq 0) {
    $keep=[Collections.Generic.List[string]]::new()
-   $own=@((Join-Path $target $state.x64),(Join-Path $target $state.x86))
+   $own=@($architectures | ForEach-Object {Join-Path $target $state.$_})
    for($i=0;$i -lt $pending.Count;$i+=2) {
     $src=$pending[$i] -replace '^\\\?\?\\',''
     if($src -in $own -and [string]::IsNullOrEmpty($pending[$i+1])){continue}
@@ -65,21 +73,26 @@ if($Action -eq 'Register') {
   }
  } finally {$sessionKey.Close()}
 
- foreach($view in @([Microsoft.Win32.RegistryView]::Registry64,[Microsoft.Win32.RegistryView]::Registry32)) {
+ foreach($view in $views) {
   $base=[Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$view)
   try{$key=$base.CreateSubKey('Software\ZephyrInput');try{$key.SetValue('WeaselRoot',$target)}finally{$key.Close()}}finally{$base.Close()}
  }
- try {Register-Dll $state.x64 'x64' $false;Register-Dll $state.x86 'x86' $false}
- catch {try{Register-Dll $state.x64 'x64' $true;Register-Dll $state.x86 'x86' $true}catch{};throw}
+ $registered=@()
+ try {
+  foreach($arch in $architectures){Register-Dll $state.$arch $arch $false;$registered+=$arch}
+ } catch {
+  foreach($arch in $registered){try{Register-Dll $state.$arch $arch $true}catch{}}
+  throw
+ }
 } else {
- Register-Dll $state.x64 'x64' $true;Register-Dll $state.x86 'x86' $true
- foreach($view in @([Microsoft.Win32.RegistryView]::Registry64,[Microsoft.Win32.RegistryView]::Registry32)) {
+ foreach($arch in $architectures){Register-Dll $state.$arch $arch $true}
+ foreach($view in $views) {
   $base=[Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$view)
   try{$base.DeleteSubKeyTree('Software\ZephyrInput',$false)}finally{$base.Close()}
  }
  # Only old product DLLs that preceded the tracked installer are cleaned here.
  Add-Type -TypeDefinition 'using System;using System.Runtime.InteropServices;public class ZephyrRemove{[DllImport("kernel32.dll",CharSet=CharSet.Unicode,SetLastError=true)]public static extern bool MoveFileEx(string a,IntPtr b,int flags);}'
- Get-ChildItem -LiteralPath $target -File | Where-Object { $_.Name -match '^ZephyrTSF(x64|x86)(-[a-f0-9]{12})?\.dll$' } | ForEach-Object {
+ Get-ChildItem -LiteralPath $target -File | Where-Object { $_.Name -match '^ZephyrTSF(x64|x86|arm64)(-[a-f0-9]{12})?\.dll$' } | ForEach-Object {
   $path=[IO.Path]::GetFullPath($_.FullName)
   if([IO.Path]::GetDirectoryName($path) -ne $target){throw 'Unexpected cleanup path'}
   try {Remove-Item -LiteralPath $path -Force -ErrorAction Stop} catch {

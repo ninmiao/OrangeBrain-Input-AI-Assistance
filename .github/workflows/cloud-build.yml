@@ -1,0 +1,142 @@
+name: Zephyr cloud builds
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [build/cloud-test]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zephyr-cloud-${{ github.ref }}-${{ github.event_name == 'push' && github.sha || 'manual' }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows ${{ matrix.arch }}
+    runs-on: windows-2022
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+    env:
+      TARGET_ARCH: ${{ matrix.arch }}
+    defaults:
+      run:
+        shell: powershell
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            .tools/windows-downloads/*.7z
+            .tools/windows-downloads/boost-*.tar.xz
+            .tools/boost-win64/lib
+            .tools/boost-win32/lib
+            .tools/boost-winarm64/lib
+          key: windows-v143-${{ matrix.arch }}-${{ hashFiles('windows/scripts/prepare-deps.py') }}
+      - name: Prepare native dependencies
+        run: |
+          $vsInstaller = Join-Path ([Environment]::GetFolderPath('ProgramFilesX86')) 'Microsoft Visual Studio/Installer'
+          Add-Content -LiteralPath $env:GITHUB_PATH -Value $vsInstaller -Encoding UTF8
+          $env:Path = "$vsInstaller;$env:Path"
+          $deps = if ($env:TARGET_ARCH -eq 'arm64') { 'arm64' } else { 'both' }
+          python windows/scripts/prepare-deps.py --architecture $deps --reuse-boost
+          if ($LASTEXITCODE) { throw 'Windows dependencies failed' }
+      - name: Build native input service
+        run: |
+          $platform = if ($env:TARGET_ARCH -eq 'arm64') { 'ARM64' } else { 'both' }
+          ./windows/scripts/build-native.ps1 -Architecture $platform
+          if ($env:TARGET_ARCH -eq 'x64') {
+            ./windows/scripts/test-components.ps1
+            ./windows/scripts/test-native.ps1 -Platform x64
+            ./windows/scripts/test-native.ps1 -Platform x86
+          }
+      - name: Build and verify installer
+        run: |
+          $destination = Join-Path $env:RUNNER_TEMP 'zephyr-image'
+          $output = Join-Path $env:RUNNER_TEMP 'zephyr-output'
+          $cross = $env:TARGET_ARCH -eq 'arm64'
+          ./windows/scripts/package.ps1 -Destination $destination -Architecture $env:TARGET_ARCH -SkipTests:$cross
+          $image = Join-Path $destination 'ZephyrSettings'
+          python windows/scripts/verify-package.py $image $env:TARGET_ARCH
+          if ($LASTEXITCODE) { throw 'Windows image architecture check failed' }
+          $compiler = (Get-Command ISCC.exe -ErrorAction SilentlyContinue).Source
+          if (!$compiler) {
+            $compiler = (Get-ChildItem "${env:ProgramFiles(x86)}/Inno Setup */ISCC.exe" |
+              Select-Object -First 1).FullName
+          }
+          if (!$compiler) { throw 'Inno Setup compiler is missing' }
+          $version = (Get-Item (Join-Path $image 'ZephyrSettings.exe')).VersionInfo.ProductVersion
+          if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid Windows version' }
+          ./windows/scripts/build-installer.ps1 -Image $image -Version $version -Architecture $env:TARGET_ARCH -Compiler $compiler -OutputDirectory $output
+          $installer = Get-Item -LiteralPath "$output/Zephyr-Input-Windows-$version-Setup-$env:TARGET_ARCH.exe"
+          if ($installer.VersionInfo.ProductVersion.Trim() -ne $version) { throw 'Installer version mismatch' }
+          $digest = (Get-FileHash -LiteralPath $installer.FullName).Hash.ToLowerInvariant()
+          "$digest  $($installer.Name)" | Set-Content -LiteralPath "$output/SHA256SUMS" -Encoding ASCII
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: windows-${{ matrix.arch }}
+          path: ${{ runner.temp }}/zephyr-output/
+          if-no-files-found: error
+          retention-days: 7
+
+  android:
+    name: Android arm64
+    runs-on: windows-2022
+    timeout-minutes: 45
+    env:
+      BUILD_ABI: arm64-v8a
+    defaults:
+      run:
+        shell: powershell
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            android/app/boost-1.89.0.tar.xz
+          key: android-arm64-gradle-${{ hashFiles('**/*.gradle.kts', 'gradle/**/*.toml', 'gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Prepare Android build environment
+        run: |
+          if (!$env:JAVA_HOME_17_X64) { throw 'JDK 17 is missing' }
+          Add-Content -LiteralPath $env:GITHUB_ENV -Value "JAVA_HOME=$env:JAVA_HOME_17_X64" -Encoding UTF8
+          Add-Content -LiteralPath $env:GITHUB_ENV -Value "PYTHON_EXECUTABLE=$((Get-Command python.exe).Source)" -Encoding UTF8
+          $sdkmanager = Join-Path $env:ANDROID_HOME 'cmdline-tools/latest/bin/sdkmanager.bat'
+          & $sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.0.13004108' 'cmake;3.31.6'
+          if ($LASTEXITCODE) { throw 'Android SDK setup failed' }
+          ./android/script/prepare-native.ps1
+      - name: Build and verify ARM64 demo APK
+        run: |
+          ./gradlew.bat :app:assembleDemo :ai-core:test --console=plain --no-daemon
+          if ($LASTEXITCODE) { throw 'Android build failed' }
+          $apkDir = 'android/app/build/outputs/apk/demo'
+          python android/script/verify-apk-core.py $apkDir
+          if ($LASTEXITCODE) { throw 'APK content check failed' }
+          $apk = Get-Item -LiteralPath (Join-Path $apkDir ((Get-Content -Raw "$apkDir/output-metadata.json" | ConvertFrom-Json).elements[0].outputFile))
+          $buildTools = Join-Path $env:ANDROID_HOME 'build-tools/35.0.0'
+          $badging = & "$buildTools/aapt.exe" dump badging $apk.FullName
+          if ($LASTEXITCODE -or !($badging -match "^native-code: 'arm64-v8a'$")) {
+            throw 'APK ARM64 ABI check failed'
+          }
+          & "$buildTools/apksigner.bat" verify $apk.FullName
+          if ($LASTEXITCODE) { throw 'APK signature verification failed' }
+          $output = Join-Path $env:RUNNER_TEMP 'zephyr-output'
+          New-Item -ItemType Directory -Path $output | Out-Null
+          Copy-Item -LiteralPath $apk.FullName -Destination $output
+          $digest = (Get-FileHash -LiteralPath $apk.FullName).Hash.ToLowerInvariant()
+          "$digest  $($apk.Name)" | Set-Content -LiteralPath "$output/SHA256SUMS" -Encoding ASCII
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-arm64
+          path: ${{ runner.temp }}/zephyr-output/
+          if-no-files-found: error
+          retention-days: 7

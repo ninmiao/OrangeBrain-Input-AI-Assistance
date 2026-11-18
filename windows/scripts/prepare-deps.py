@@ -7,28 +7,34 @@ from pathlib import Path
 import urllib.request,hashlib,subprocess,shutil,argparse,os,tarfile
 ROOT=Path(__file__).resolve().parents[2]
 PACKAGES={
- 'x64':('rime-33e7814-Windows-msvc-x64.7z','7478c7caa4ff6b37de86daba1f7ce4a994a4f5ba24872a820fb2b3a9b01fed15'),
- 'x86':('rime-33e7814-Windows-msvc-x86.7z','af235c26c06152ce09ceb8fe9d9ab9fba7ab43ce30aa952b40174d806f5cc3d9'),
+ 'x64':('1.17.0','rime-33e7814-Windows-msvc-x64.7z','7478c7caa4ff6b37de86daba1f7ce4a994a4f5ba24872a820fb2b3a9b01fed15','lib64'),
+ 'x86':('1.17.0','rime-33e7814-Windows-msvc-x86.7z','af235c26c06152ce09ceb8fe9d9ab9fba7ab43ce30aa952b40174d806f5cc3d9','lib'),
+ 'arm64':('latest','rime-bb56876-Windows-msvc-arm64.7z','448cbf4dae4af8f490f3cead363eccca6099c90ec0af64fdbe246c9019b72800','libarm64'),
 }
+BOOST_LIBS=('thread','serialization','filesystem','locale','date_time','chrono','regex')
 def download(url,path,sha):
     if not path.exists():
         temp=path.with_suffix('.partial');urllib.request.urlretrieve(url,temp)
         if hashlib.sha256(temp.read_bytes()).hexdigest()!=sha:raise RuntimeError('Download checksum mismatch: '+path.name)
         temp.replace(path)
     if hashlib.sha256(path.read_bytes()).hexdigest()!=sha:raise RuntimeError('Cached checksum mismatch: '+path.name)
-def run(skip_boost=False):
+def run(skip_boost=False, architecture='both', reuse_boost=False):
     archives=ROOT/'.tools/windows-downloads';archives.mkdir(exist_ok=True,parents=True)
     seven=shutil.which('7z') or r'C:\Program Files\7-Zip\7z.exe'
     native=ROOT/'windows/native'
-    for arch,(name,sha) in PACKAGES.items():
-        archive=archives/name;download('https://github.com/rime/librime/releases/download/1.17.0/'+name,archive,sha)
+    architectures=('x64','x86') if architecture=='both' else (architecture,)
+    for arch in architectures:
+        tag,name,sha,library_dir=PACKAGES[arch]
+        archive=archives/name;download(f'https://github.com/rime/librime/releases/download/{tag}/{name}',archive,sha)
         subprocess.run([seven,'x','-y',str(archive),'-o'+str(archives/arch)],check=True,stdout=subprocess.DEVNULL)
-        lib=native/('lib64' if arch=='x64' else 'lib');lib.mkdir(exist_ok=True)
+        lib=native/library_dir;lib.mkdir(exist_ok=True)
         shutil.copy2(archives/arch/'dist/lib/rime.lib',lib/'rime.lib')
-        if arch=='x64':
-            (native/'output').mkdir(exist_ok=True)
-            shutil.copy2(archives/arch/'dist/lib/rime.dll',native/'output/rime.dll')
-            for p in (archives/arch/'dist/include').glob('*.h'):shutil.copy2(p,native/'include'/p.name)
+        if arch!='x86':
+            output=native/'output'/('arm64' if arch=='arm64' else '')
+            output.mkdir(exist_ok=True,parents=True)
+            shutil.copy2(archives/arch/'dist/lib/rime.dll',output/'rime.dll')
+            if arch=='x64':
+                for p in (archives/arch/'dist/include').glob('*.h'):shutil.copy2(p,native/'include'/p.name)
     if skip_boost:return
     boost=ROOT/'android/app/src/main/jni/boost'
     if not (boost/'boost/version.hpp').exists() and not (boost/'libs/config/include/boost/version.hpp').exists():
@@ -47,10 +53,21 @@ def run(skip_boost=False):
     vswhere=Path(os.environ['ProgramFiles(x86)'])/'Microsoft Visual Studio/Installer/vswhere.exe'
     vs=subprocess.check_output([str(vswhere),'-latest','-products','*','-requires','Microsoft.VisualStudio.Component.VC.Tools.x86.x64','-property','installationPath'],text=True).strip()
     if not vs:raise RuntimeError('Install Visual Studio 2022 C++ Build Tools and ATL')
-    for bits in ('64','32'):
+    for arch in architectures:
+        bits={'x64':'64','x86':'32','arm64':'arm64'}[arch]
         cmd=archives/f'build-boost-{bits}.cmd';stage=ROOT/f'.tools/boost-win{bits}'
-        text=f'@echo off\ncall "{vs}/VC/Auxiliary/Build/vcvars{bits}.bat"\nif errorlevel 1 exit /b 1\ncd /d "{boost}"\nif not exist b2.exe call bootstrap.bat\nif errorlevel 1 exit /b 1\nb2 headers\nif errorlevel 1 exit /b 1\nb2 -j4 toolset=msvc-14.3 address-model={bits} variant=release link=static runtime-link=static threading=multi --with-thread --with-serialization --with-filesystem --with-locale --with-date_time --with-chrono --with-regex --stagedir="{stage}" stage\n'
+        host_bits='32' if arch=='x86' else '64'
+        text=f'@echo off\ncall "{vs}/VC/Auxiliary/Build/vcvars{host_bits}.bat"\nif errorlevel 1 exit /b 1\ncd /d "{boost}"\nif not exist b2.exe call .\\bootstrap.bat vc143\nif errorlevel 1 exit /b 1\n.\\b2.exe headers\nif errorlevel 1 exit /b 1\n'
+        if not reuse_boost or not all(any((stage/'lib').glob(f'libboost_{name}-*.lib')) for name in BOOST_LIBS):
+            target={'x64':'architecture=x86 address-model=64','x86':'architecture=x86 address-model=32','arm64':'architecture=arm address-model=64'}[arch]
+            libraries=' '.join(f'--with-{name}' for name in BOOST_LIBS)
+            text+=f'.\\b2.exe -j4 toolset=msvc-14.3 {target} variant=release link=static runtime-link=static threading=multi {libraries} --stagedir="{stage}" stage\n'
         cmd.write_text(text,encoding='utf-8');subprocess.run([str(cmd)],check=True)
-    print('Pinned librime and Boost x64/x86 dependencies ready.')
+    print(f'Pinned librime and Boost dependencies ready: {", ".join(architectures)}')
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--skip-boost',action='store_true');run(parser.parse_args().skip_boost)
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--skip-boost',action='store_true')
+    parser.add_argument('--architecture',choices=['both',*PACKAGES],default='both')
+    parser.add_argument('--reuse-boost',action='store_true')
+    args=parser.parse_args()
+    run(args.skip_boost,args.architecture,args.reuse_boost)

@@ -106,6 +106,7 @@ desktop.ini
 /windows/native/output/
 /windows/native/lib/
 /windows/native/lib64/
+/windows/native/libarm64/
 /windows/native/Release/
 /windows/native/x64/
 /windows/native/*/Release/
