@@ -1,6 +1,6 @@
 # Zephyr Input · 微风输入法
 
-[Windows 1.12.3 x64](dist/Zephyr-Input-Windows-1.12.3-Setup-x64.exe) · [Android 1.10.2 ARM64](dist/Zephyr-Input-1.10.2-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
+[Windows 1.12.4 x64](dist/Zephyr-Input-Windows-1.12.4-Setup-x64.exe) · [Android 1.10.3 ARM64](dist/Zephyr-Input-1.10.3-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
@@ -31,9 +31,9 @@ Cloud assistance supports **OpenAI, OpenRouter, and Google Gemini**, with separa
 
 1. **Windows**：下载安装器，运行并允许 UAC。选择 **Zephyr Input** 输入法，从开始菜单打开设置。
 2. **Android**：下载 ARM64 APK，安装后按引导启用键盘，等待首次词库部署。
-3. **在线 AI**：在 Policy 中填 API Key、选择模型。Windows 修改后点 **保存并生效**，Android 先允许使用云端 AI。组字时按 **F8**（Windows）或点 **星光**（Android）手动请求，也可开启 **自动纠错** 或 **自动助手**。
+3. **在线 AI**：在 Policy 中填 API Key 并选模型，在 **AI 增强（自动）** 里选模式。Windows 点 **保存并生效**，Android 允许使用云端 AI。组字时按 **F8**（Windows）或点 **星光**（Android）也可手动请求。
 
-Run Setup and approve UAC on **Windows**, or install the ARM64 APK and enable the keyboard on **Android**. To use online AI, add a key and model to your policy, save on Windows, and grant cloud permission on Android. While composing, press **F8** or tap the **sparkle** for help on demand, or turn on **Auto correction** or **Auto assistant**.
+Run Setup and approve UAC on **Windows**, or install the ARM64 APK and enable the keyboard on **Android**. For online AI, add a key and model to your policy and choose a mode under **Automatic AI**. Save on Windows and grant cloud permission on Android. While composing, press **F8** or tap the **sparkle** for help on demand.
 
 ## 词表、本地模型与在线 AI · Local data and online AI
 
@@ -90,9 +90,9 @@ The candidate area shows AI request status. Windows settings show background ser
 
 组字时，Windows 按 **F8**，Android 点候选栏左侧的星光图标，即可取消上一条请求并重新请求助手。Windows 可换成 F9、F10、Ctrl+Shift+F8 或关闭快捷键。Android 首次使用请在设置里允许云端 AI。
 
-仅打开 **自动纠错** 时只请求纠错。打开 **自动助手** 后，单次流式请求先显示完整纠错，再显示助手候选。两个开关都关闭后，只有手动触发才发送。Windows 修改后点击 **保存并生效**。
+在 **AI 增强（自动）** 中选择 **无**、**仅纠错** 或 **AI 助手＋纠错**。选 **无** 时只响应手动触发。**仅纠错** 返回一个修正候选。**AI 助手＋纠错** 通过一次流式请求先显示纠错，再显示助手。Windows 修改后点击 **保存并生效**。
 
-While composing, press **F8** on Windows or tap the sparkle in the Android candidate bar to cancel the previous request and request the assistant. Windows also offers F9, F10, Ctrl+Shift+F8, and a disabled option. Auto correction returns one result. Auto assistant streams the correction first and then the assistant suggestion. Turning both off leaves manual invocation available. Android asks for cloud permission in settings.
+While composing, press **F8** on Windows or tap the sparkle on Android to cancel the previous request and request the assistant. **Automatic AI** offers **None**, **Correction only**, and **Assistant + correction**. **None** keeps manual requests available. In assistant mode, a single streaming request shows correction first and the assistant suggestion second. Windows also offers F9, F10, Ctrl+Shift+F8, and a disabled shortcut option.
 
 | 当前输入 / Input | 前文 / Context | 助手候选示例 / Assistant example |
 | --- | --- | --- |
@@ -154,9 +154,9 @@ Under **Policy**, enter the endpoint and key, choose the model and parameters, t
 
 ### Android
 
-在 **AI 辅助 → 编辑 Policy → 验证身份并配置连接 / 密钥** 保存接口和 Key，在 **模型与参数** 选择或填写模型并设置参数。回到列表勾选方案，打开 **允许使用云端 AI**。如需自动候选，开启 **停手自动请求** 和所需自动模式。
+在 **AI 辅助 → 编辑 Policy → 验证身份并配置连接 / 密钥** 保存接口和 Key，在 **模型与参数** 选择或填写模型并设置参数。回到列表选中方案，允许使用云端 AI，并在 **AI 增强（自动）** 里选模式。Android 选择后立即保存。
 
-Open **AI assistance → Edit policy**, authenticate, and save the endpoint and key. Choose a model and its parameters under **Model and parameters**. Select the policy and allow cloud AI. To request suggestions after a typing pause, enable automatic requests and choose an automatic mode.
+Open **AI assistance → Edit policy**, authenticate, and save the endpoint and key. Choose a model and its parameters under **Model and parameters**. Select the policy, allow cloud AI, and choose an **Automatic AI** mode. Android saves the selection immediately.
 
 ### Gemini 与测速 · Gemini and benchmarks
 
@@ -168,9 +168,9 @@ Gemini uses the native **Interactions** API: choose its built-in policy and save
 
 Test one policy or check **1–5 existing policies** and run them together. Each uses its saved configuration; results, including failures, are appended separately. Long samples include context and show latency, candidates and available token counts. Tests consume API usage; save Windows edits first.
 
-连接失败先检查 Key 平台与额度、完整模型 ID 和支持的参数；固定供应商失败可刷新或改 Auto。长句超时可用测速确认模型耗时，再调整模型、思考或总超时。
+连接失败时先检查 Key、额度、模型 ID 和参数。固定供应商失败时可刷新列表或改用自动路由。Windows 会区分后台忙、连接或发送超时、等待响应头超时、读取输出超时及模型截断。GPT‑6.2 Sol 支持 `low` 至 `max` 的五个档位，`omit` 使用服务端默认。
 
-For failures, check service/key, credit, model ID and supported parameters. Refresh a failed provider route or try Auto. For long-input timeouts, benchmark first, then adjust model, thinking or the total deadline.
+For failures, check the key, quota, model ID, and parameters. Refresh a failed provider route or try Auto. Windows distinguishes a busy broker, connection or send timeouts, header timeouts, output timeouts, and truncated responses. GPT‑6.2 Sol exposes five reasoning levels from `low` through `max`, plus `omit` for the server default.
 
 ### LLM 提示词 · Prompts
 
@@ -198,9 +198,9 @@ i is input; b/a context. Return only JSON ["correction","assistant"]. First fix 
 i is input; b/a context. Return only JSON ["correction","assistant"]. First correct and polish English; translate Chinese, pinyin or mixed input into English; preserve meaning, negation, numbers and names, without answering or continuing. Second infer intent for a brief insertable answer, suggestion, continuation or term. No requests for more info; Give your best result directly. When asked for an emoticon, output a kaomoji, e.g. („ಡωಡ„). Both candidates use English only.
 ```
 
-输出 **`["纠错","助手"]`**，候选标明角色；仅纠错模式输出 **`["结果"]`**。繁体模式将提示词中的 Simplified 换成 Traditional。上下文默认前 50 / 后 0 个字符，可关闭或调整。默认 256 token 软预算，按输入长度预留空间；第二项截断时保留完整第一项，错误响应保留本地候选。
+输出 **`["纠错","助手"]`**，候选标明角色。仅纠错模式输出 **`["结果"]`**。上下文默认前 50 / 后 0 个字符，可关闭或调整。默认 256 token 软预算会按输入长度预留空间，Gemini 思考模型另有思考额度。第二项截断时保留完整第一项，失败时本地候选仍可用。
 
-Output is **`["correction","assistant"]`**, with labelled roles, or **`["result"]`** in correction-only mode. Traditional Chinese replaces Simplified in the prompt. Context defaults to 50 characters before / 0 after. The default 256-token soft budget reserves space based on input length; a truncated second item does not discard a complete first item. Local candidates remain available on errors.
+Output is **`["correction","assistant"]`**, with labelled roles, or **`["result"]`** in correction-only mode. Context defaults to 50 characters before and 0 after. The default 256-token soft budget reserves space based on input length and adds room for Gemini thinking models. A complete correction remains available if the second item is truncated. Local candidates remain available on errors.
 
 [C++ 协议 / Protocol](shared/native-core/README.md) · [提示词源码 / Prompt source](shared/native-core/src/core.cpp)
 

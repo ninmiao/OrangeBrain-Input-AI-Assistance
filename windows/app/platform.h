@@ -16,6 +16,7 @@ namespace zw {
 using J = nlohmann::json;
 namespace fs = std::filesystem;
 using Clock = std::chrono::steady_clock;
+enum class TimeoutPhase { Send = 1, Headers, Body };
 struct Error : std::runtime_error {
   std::string code;
   int status;

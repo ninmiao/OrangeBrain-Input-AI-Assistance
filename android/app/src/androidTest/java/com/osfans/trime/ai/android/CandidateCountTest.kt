@@ -38,8 +38,7 @@ class CandidateCountTest {
             store.updatePolicyConfig(second) { it.copy(modelValues=emptyMap()) }
             assertEquals("思考：服务端默认 · 速度：服务端默认",store.policyParameterSummary(store.config.policies.first { it.id==second }))
             settings=ins.startActivitySync(Intent(ins.targetContext,AiSettingsActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-            assertTrue(d.wait(Until.hasObject(By.text("自动纠错")),5000))
-            assertTrue(d.hasObject(By.text("自动助手（含纠错）")))
+            assertTrue(d.wait(Until.hasObject(By.textStartsWith("AI 增强（自动）：")),5000))
             assertFalse(d.hasObject(By.textStartsWith("AI 候选数量")))
             assertFalse(d.hasObject(By.text("显示独立补全")))
             val selector=By.desc("选择 Policy Policy summary fast")

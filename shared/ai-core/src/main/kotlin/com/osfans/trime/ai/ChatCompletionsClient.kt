@@ -74,6 +74,7 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
                                 }
                                 val stream = it.body?.byteStream() ?: throw ApiResponseException()
                                 var state:JsonElement = buildJsonObject {}
+                                var done = false
                                 var published:List<String>? = null
                                 val json=Json { ignoreUnknownKeys=true }
                                 fun feed(bytes:ByteArray,size:Int,finish:Boolean):AiResult? {
@@ -83,6 +84,7 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
                                         put("state",state);put("chunkHex",hex);put("finish",finish)
                                     }).jsonObject
                                     state=r.getValue("state")
+                                    done = r.getValue("done").jsonPrimitive.boolean
                                     val value=r["result"]?.takeIf { it != JsonNull }?.let { json.decodeFromJsonElement(AiResult.serializer(),it) }
                                     if(value!=null) {
                                         latest.set(value)
@@ -91,12 +93,12 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
                                     return value
                                 }
                                 val buffer = ByteArray(4096)
-                                while (continuation.isActive) {
+                                while (continuation.isActive && !done) {
                                     val size = stream.read(buffer)
                                     if (size < 0) break
                                     feed(buffer,size,false)
                                 }
-                                feed(buffer,0,true) ?: throw ApiResponseException()
+                                (if (done) latest.get() else feed(buffer,0,true)) ?: throw ApiResponseException()
                             }
                         }
                         continuation.resumeWith(result.recoverCatching { error ->

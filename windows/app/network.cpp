@@ -50,7 +50,7 @@ void CALLBACK callback(HINTERNET, DWORD_PTR context, DWORD status, LPVOID info,
 }
 HINTERNET session() {
   static Internet s(WinHttpOpen(
-      L"Zephyr-Input/1.12.3", WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
+      L"Zephyr-Input/1.12.4", WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
       WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, WINHTTP_FLAG_ASYNC));
   require(s.h != nullptr, "Cannot initialize WinHTTP");
   return s.h;
@@ -115,10 +115,11 @@ HttpResponse http(const HttpOptions& o) {
     throw Error("network");
   }
   auto deadline = Clock::now() + std::chrono::milliseconds(o.timeoutMs);
+  auto phase = TimeoutPhase::Send;
   auto guard = [&] {
     if (o.cancel) o.cancel->check();
     if (o.connected && !o.connected()) throw Error("cancelled");
-    if (Clock::now() >= deadline) throw Error("timeout");
+    if (Clock::now() >= deadline) throw Error("timeout", int(phase));
   };
   auto start = [&] {
     guard();
@@ -135,7 +136,7 @@ HttpResponse http(const HttpOptions& o) {
       guard();
     }
     if (state->error) {
-      if (state->error == ERROR_WINHTTP_TIMEOUT) throw Error("timeout");
+      if (state->error == ERROR_WINHTTP_TIMEOUT) throw Error("timeout", int(phase));
       throw Error("network", int(state->error));
     }
     guard();
@@ -159,6 +160,7 @@ HttpResponse http(const HttpOptions& o) {
       request.h, state->headers.c_str(), DWORD(state->headers.size()),
       state->body.empty() ? WINHTTP_NO_REQUEST_DATA : state->body.data(),
       DWORD(state->body.size()), DWORD(state->body.size()), context));
+  phase = TimeoutPhase::Headers;
   start();
   wait(WinHttpReceiveResponse(request.h, nullptr));
   HttpResponse response;
@@ -171,6 +173,7 @@ HttpResponse http(const HttpOptions& o) {
   response.location = header(request.h, WINHTTP_QUERY_LOCATION);
   response.contentRange = header(request.h, WINHTTP_QUERY_CONTENT_RANGE);
   if (o.receivedHeaders) o.receivedHeaders(response);
+  phase = TimeoutPhase::Body;
   size_t count = 0;
   for (;;) {
     DWORD requested=DWORD(state->buffer.size());
@@ -190,6 +193,7 @@ HttpResponse http(const HttpOptions& o) {
       o.consume(state->buffer.data(), n);
     else
       response.body.append(state->buffer.data(), n);
+    if (o.complete && o.complete()) break;
   }
   return response;
 }

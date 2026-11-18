@@ -244,7 +244,7 @@ secrets.properties
 
 
 
-!/dist/Zephyr-Input-Windows-1.12.3-Setup-x64.exe
-!/dist/Zephyr-Input-1.10.2-arm64-v8a-demo.apk
+!/dist/Zephyr-Input-Windows-1.12.4-Setup-x64.exe
+!/dist/Zephyr-Input-1.10.3-arm64-v8a-demo.apk
 
 !/docs/ai/streaming-validation.md

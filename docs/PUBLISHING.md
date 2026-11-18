@@ -11,7 +11,7 @@
 - 当前版本验证说明、测试使用的模型配置示例和参考数据。
 - README、PRIVACY、LICENSE、AUTHORS 以及第三方组件原有许可证。
 
-SDK、JDK、模拟器、VS/Boost 缓存、生成语料、截图、测试日志、编译输出、私钥和用户凭据不进入源码仓库。按项目发布要求，`dist/` 例外跟踪两个当前安装包：Android 1.7.1 ARM64 APK 和 Windows 1.9.1 Setup x64 EXE；旧版本及解压目录已清理。升级时必须同步更新 `.gitignore` 的精确允许清单；其他 APK/ZIP/EXE 仍被忽略。
+SDK、JDK、模拟器、VS/Boost 缓存、生成语料、截图、测试日志、编译输出、私钥和用户凭据不进入源码仓库。按项目发布要求，`dist/` 例外跟踪两个当前安装包：Android ARM64 APK 和 Windows x64 安装器。最新版本和下载链接见 [README](../README.md)。升级时必须同步更新 `.gitignore` 的精确允许清单；其他 APK/ZIP/EXE 仍被忽略。
 
 本项目仍有约五千个源码/资源文件，主要来自 Weasel、librime、OpenCC 等原生依赖及词库；它们不是开发工具缓存，不应仅为降低文件数而移除。源码体积较大的部分是必要词库。万象与雾凇原始字词表、全拼规则、署名和许可证应一同提交；`.gram` 模型、下载缓存和编译词库保留在本地忽略目录。
 
@@ -23,9 +23,9 @@ SDK、JDK、模拟器、VS/Boost 缓存、生成语料、截图、测试日志�
 
 ## 构建与发布附件
 
-Windows 1.9.1 与 Android 1.7.1 均内置万象、雾凇词表，可分别从官方 GitHub 更新；约 407 MB 的万象语法模型单独下载。本次共用 C++ AI 核心，使用 JSON 候选数组、默认前 50 / 后 0 字上下文和 token 软预算；Windows 手动保存，Android 设置自动生效，一键测速选择已有 Policy。两个包均包含提示词 5.0.0 / revision 14。
+两端均内置万象、雾凇词表，可从官方 GitHub 更新。约 407 MB 的万象语法模型单独下载。两端共用 C++ AI 核心，使用流式 JSON 候选数组、默认前 50 / 后 0 字上下文和 token 软预算。Windows 手动保存，Android 设置自动生效，一键测速选择已有 Policy。
 
-环境与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。Windows 先使用 `windows/scripts/package.ps1` 生成 app-image，再使用 `build-installer.ps1` 生成包含原生程序和词表的 Setup EXE（不含 JVM/Kotlin），只发布这个安装器；Android 发布 ARM64 demo APK。当前版本为 Windows 1.9.1 / Android 1.7.1，结果见 [双词表与模型验证](rime/wanxiang-updates.md) 和根目录 [更新日志](../UPDATE_LOG.md)。
+环境与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。Windows 先使用 `windows/scripts/package.ps1` 生成 app-image，再使用 `build-installer.ps1` 生成包含原生程序和词表的 Setup EXE（不含 JVM/Kotlin），只发布这个安装器；Android 发布 ARM64 demo APK。各版本的构建和验证结果见 [更新日志](../UPDATE_LOG.md)。
 
 新库仍需保留项目及第三方源码许可证、版权和来源信息。不将手机或 Windows 用户数据放入项目；不将本地加密凭据作为“安全文件”发布。
 

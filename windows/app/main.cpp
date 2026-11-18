@@ -37,7 +37,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, LPWSTR, int) {
       for (auto& p : c["policies"])
         keys[p["id"].get<std::string>()] = store.hasKey(p["id"]);
       atomicWrite(args[1], J{{"runtime", "native C++17"},
-                             {"version", "1.12.3"},
+                             {"version", "1.12.4"},
                              {"policyCount", c["policies"].size()},
                              {"selectedPolicy", c["selectedPolicy"]},
                              {"savedKeys", keys}}

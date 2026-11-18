@@ -311,6 +311,11 @@ J payload(const J& arg) {
   // shorten a candidate.
   int floor =
       int(chars(request.at("input").at("input").get<std::string>()) * 4 + 32);
+  // Gemini Interactions charges thinking against this same hard cutoff.
+  // Keep a separate allowance for it so a long correction can still finish.
+  if (api(e) == "gemini" &&
+      (v.contains("reasoning_effort") || !known(e, model).empty()))
+    floor = std::min(65536, floor + 768);
   int budget = std::max(requested, floor);
   v.erase("max_tokens");
   v["max_completion_tokens"] = budget;
@@ -445,6 +450,8 @@ J known(const std::string& e, std::string m) {
     return std::regex_match(m, std::regex(r));
   };
   if (matches(R"(gpt-4(\.1|o)(-.*)?)")) return J::array();
+  if (matches(R"(gpt-6\.2-sol(-20[0-9-]+)?)"))
+    return {"low", "medium", "high", "xhigh", "max"};
   if (matches(R"(gpt-6(\.1)?-(astra|sol)(-.*)?)") && !starts(m, "gpt-6-sol"))
     return {"low", "medium", "high", "xhigh", "max"};
   if (matches(R"(gpt-6-(luna|sol)(-.*)?)") ||

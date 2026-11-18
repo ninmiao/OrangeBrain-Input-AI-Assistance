@@ -38,7 +38,16 @@ J streamDecode(const J& a) {
     if(type=="error" || type=="response.failed") {error="provider";done=true;return;}
     if(api(endpoint)=="gemini") {
       auto index=std::to_string(e.value("index",-1));
-      if(type=="step.start") s["steps"][index]=e.at("step").value("type",std::string());
+      if(type=="step.start") {
+        const auto& step = e.at("step");
+        auto kind = step.value("type", std::string());
+        s["steps"][index] = kind;
+        if (kind == "model_output") {
+          for (const auto& block : step.value("content", J::array()))
+            if (block.value("type", std::string()) == "text")
+              text += block.value("text", std::string());
+        }
+      }
       if(type=="step.delta" && s.value("steps",J::object()).value(index,std::string())=="model_output") {
         auto d=e.at("delta");
         if(d.value("type",std::string())=="text") text+=d.value("text",std::string());
@@ -96,7 +105,7 @@ J streamDecode(const J& a) {
     }
     try { result=decode((finish||done)&&!cut&&error.empty()?text:partial,!(finish||done)||cut||!error.empty(),roles); }
     catch(const Failure&) {
-      if((finish||done) && error.empty()) error="response";
+      if((finish||done) && error.empty()) error=cut ? "truncated" : "response";
     }
     if(finish && !done) { cut=true;if(error.empty())error="truncated"; }
     if(result.is_object() && (finish||done) && s.contains("usage")) {
@@ -114,7 +123,10 @@ J streamDecode(const J& a) {
     const size_t slots = roles ? 2 : 1;
     if (candidates.size() > slots) candidates.erase(candidates.begin() + slots, candidates.end());
     result["streaming"]=!finish&&!done;
-    if(!error.empty()) {result["streamError"]=error;result["recovered"]=true;}
+    if(!error.empty() || ((done||finish) && cut)) {
+      result["streamError"]=error.empty() ? "truncated" : error;
+      result["recovered"]=true;
+    }
   } else if(finish||done) throw Failure(error.empty()?"response":error.c_str());
   s["pending"]=streamHex(pending);s["text"]=text;s["data"]=data;s["done"]=done;
   s["cut"]=cut;s["error"]=error;s["result"]=result;

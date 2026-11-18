@@ -23,6 +23,10 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 
 class AiSettingsActivity : AppCompatActivity() {
+    private enum class AiMode(val title: String) {
+        NONE("无"), CORRECTION("仅纠错"), ASSISTANT("AI 助手＋纠错")
+    }
+
     private val feedbackPreview = com.osfans.trime.ime.keyboard.KeyboardFeedbackPreview()
     private lateinit var store: AiStore
     private lateinit var page: LinearLayout
@@ -76,13 +80,31 @@ class AiSettingsActivity : AppCompatActivity() {
                 .setNegativeButton("取消") { _, _ -> render() }.setOnCancelListener { render() }.show()
             else save(update)
         }
-        toggle("允许使用云端 AI", c.consent) { value -> allowCloud(value) { it.copy(consent = value) } }
-        toggle("自动纠错", c.enabled) { value -> allowCloud(value) { it.copy(enabled = value) } }
-        toggle("自动助手（含纠错）", c.assistantEnabled) { value -> allowCloud(value) { it.copy(assistantEnabled = value) } }
+        val mode = when {
+            !c.automatic -> AiMode.NONE
+            c.assistantEnabled -> AiMode.ASSISTANT
+            c.enabled -> AiMode.CORRECTION
+            else -> AiMode.NONE
+        }
+        button("AI 增强（自动）：${mode.title}") {
+            val modes = AiMode.entries
+            AlertDialog.Builder(this).setTitle("AI 增强（自动）")
+                .setSingleChoiceItems(modes.map { it.title }.toTypedArray(), mode.ordinal) { dialog, index ->
+                    dialog.dismiss()
+                    val selected = modes[index]
+                    val automatic = selected != AiMode.NONE
+                    if (selected != mode || (automatic && !c.consent)) {
+                        allowCloud(automatic) {
+                            it.copy(enabled = automatic, automatic = automatic,
+                                assistantEnabled = selected == AiMode.ASSISTANT)
+                        }
+                    }
+                }.setNegativeButton("取消", null).show()
+        }
+        label("选「无」时只在点星光后请求助手。")
+        toggle("允许使用云端 AI（含手动请求）", c.consent) { value -> allowCloud(value) { it.copy(consent = value) } }
         toggle("空格分词（中文键盘）", c.wordSegmentation) { value -> save { it.copy(wordSegmentation = value) } }
         label("开启时，拼音保留在键盘候选区；空格只标记词组边界，点击候选后才上屏。英文键盘仍正常输入空格。")
-        toggle("停手自动请求", c.automatic) { value -> save { it.copy(automatic = value) } }
-        label("星光按钮可重试当前输入或召唤一次助手。关闭自动纠错和自动助手后，只在点星光时请求。")
         val debounce = field("停手等待（毫秒，50–2000）", c.debounceMs.toString(), numeric = true)
         val timeout = field("请求超时（秒，1–60）", (c.timeoutMs / 1000).toString(), numeric = true)
         val target = field("当前输入上限（字符，1–300）", c.targetLimit.toString(), numeric = true)

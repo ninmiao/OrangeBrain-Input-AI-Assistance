@@ -39,11 +39,20 @@ class AiPipe {
       if(pipe!=INVALID_HANDLE_VALUE)CancelIoEx(pipe,nullptr); }
     cv.notify_all();
   }
+  void updateContext(DWORD session, uint64_t revision,
+                     const std::string& before, const std::string& after) {
+    std::lock_guard<std::mutex> lock(mutex);
+    if (!pending || pending->manual || pending->session != session ||
+        pending->revision != revision) return;
+    pending->before = before;
+    pending->after = after;
+  }
   void cancel(DWORD session) {
     std::lock_guard<std::mutex> lock(mutex);
     if(statusSession!=session)return;
     if(pending&&pending->session==session)pending.reset();
     if(result&&result->session==session)result.reset();
+    statusText=L"已取消";
     ++generation;if(pipe!=INVALID_HANDLE_VALUE)CancelIoEx(pipe,nullptr);
     cv.notify_all();
   }
@@ -80,15 +89,25 @@ class AiPipe {
         w=*pending;pending.reset();
       }
       wchar_t username[256];DWORD size=256;
-      if(!GetUserNameW(username,&size))continue;
+      if(!GetUserNameW(username,&size)) {
+        std::lock_guard<std::mutex> lock(mutex);
+        if(token==generation)statusText=L"无法连接后台";
+        continue;
+      }
       std::wstring name=nameOverride.empty()?L"\\\\.\\pipe\\ZephyrAI-"+std::wstring(username):nameOverride;
       auto open=[&] { return CreateFileW(name.c_str(),GENERIC_READ|GENERIC_WRITE,
                                         0,nullptr,OPEN_EXISTING,FILE_FLAG_OVERLAPPED,nullptr); };
       HANDLE h=open();
-      if(h==INVALID_HANDLE_VALUE && w.manual && GetLastError()==ERROR_PIPE_BUSY &&
-         WaitNamedPipeW(name.c_str(),250))h=open();
+      auto error = h == INVALID_HANDLE_VALUE ? GetLastError() : ERROR_SUCCESS;
+      if(error==ERROR_PIPE_BUSY && WaitNamedPipeW(name.c_str(),250)) {
+        h=open();
+        error=h==INVALID_HANDLE_VALUE ? GetLastError() : ERROR_SUCCESS;
+      }
       if(h==INVALID_HANDLE_VALUE) {
-        std::lock_guard<std::mutex> lock(mutex);if(token==generation)statusText=L"后台未连接";continue;
+        std::lock_guard<std::mutex> lock(mutex);
+        if(token==generation)
+          statusText = error==ERROR_PIPE_BUSY ? L"后台忙" : L"后台未连接";
+        continue;
       }
       { std::lock_guard<std::mutex> lock(mutex);if(stop||token!=generation){CloseHandle(h);continue;}pipe=h;missing=false;statusText=L"请求中…"; }
       DWORD mode=PIPE_READMODE_MESSAGE;SetNamedPipeHandleState(h,&mode,nullptr,nullptr);
@@ -130,7 +149,7 @@ class AiPipe {
             }
             r.streaming=fields.size()>=7&&fields[6]=="1";
             bool more=r.streaming;
-            statusText=!r.error.empty()?L"请求失败":more?(r.candidates.empty()?L"请求中…":L"助手生成中…"):
+            statusText=!r.error.empty()?(r.candidates.empty()?L"请求失败":L"部分返回"):more?(r.candidates.empty()?L"请求中…":L"助手生成中…"):
               (r.candidates.empty()?L"无结果":r.assistantEnabled&&r.candidates.size()==1?L"助手未完成":L"✓ 已返回");
             completed=!more;result=std::move(r);
             if(!more)break;

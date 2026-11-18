@@ -120,10 +120,12 @@ J requestAi(const Store& store, const J& c, const J& p, const Input& raw,
     o.headers = {{"x-goog-api-key", key}, {"Api-Revision", "2026-05-20"}};
   else o.headers = {{"Authorization", "Bearer " + key}};
   J state=J::object(), latest, published;
+  bool done = false;
   auto feed=[&](const std::string& bytes,bool finish) {
     auto r=core("stream",{{"endpoint",p.at("endpoint")},{"assistantEnabled",raw.manual || c.at("assistantEnabled").get<bool>()},
                           {"state",state},{"chunkHex",hex(bytes)},{"finish",finish}});
     state=r.at("state");latest=r.at("result");
+    done=r.value("done", false);
     if(latest.is_object() && latest.at("candidates")!=published) {
       if(cancel)cancel->check();
       if(connected && !connected())throw Error("cancelled");
@@ -135,12 +137,13 @@ J requestAi(const Store& store, const J& c, const J& p, const Input& raw,
     if(r.status<200 || r.status>=300)throw Error("HTTP",r.status);
   };
   o.consume=[&](const char* bytes,size_t count){feed(std::string(bytes,count),false);};
+  o.complete=[&]{return done;};
   try {
     auto response=transport(o);
     if(response.status<200 || response.status>=300)throw Error("HTTP",response.status);
     // Injected test transports and compatible gateways may buffer a JSON body.
     if(!response.body.empty())feed(response.body,false);
-    feed({},true);
+    if (!done) feed({},true);
     return latest;
   } catch(const Error& e) {
     if(e.code=="cancelled" || !latest.is_object())throw;
@@ -159,6 +162,9 @@ std::string handleRequest(const Store& store, const std::string& text,
   auto config = store.load();
   J result;
   std::string failure;
+  auto record = [&](const std::string& status) {
+    try { store.requestStatus(status); } catch (...) { /* Diagnostics are optional. */ }
+  };
   if (input.manual || config.at("enabled").get<bool>() || config.at("assistantEnabled").get<bool>()) {
     try {
       result = requestAi(store, config, activePolicy(config), input, cancel,
@@ -170,15 +176,16 @@ std::string handleRequest(const Store& store, const std::string& text,
                              partial(progress);
                            }
                          });
-      store.requestStatus(result.value("streamError",std::string()).empty()?"OK":"partial: "+result.at("streamError").get<std::string>());
+      const auto streamError = result.value("streamError", std::string());
+      if (!streamError.empty()) failure = errorText(Error(streamError));
+      record(failure.empty() ? "OK" : "partial: " + failure);
     } catch (const Error& e) {
       if (e.code == "cancelled") throw;
       failure = errorText(e);
-      try {
-        store.requestStatus(
-            e.code == "HTTP" ? "HTTP " + std::to_string(e.status) : e.code);
-      } catch (...) {
-      }
+      record(failure);
+    } catch (const std::exception&) {
+      failure = errorText(Error("response"));
+      record(failure);
     }
   }
   auto latest = store.load();

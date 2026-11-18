@@ -23,6 +23,7 @@ struct HttpOptions {
   // Streaming consumer for large, resumable dictionary downloads.
   std::function<void(const HttpResponse&)> receivedHeaders;
   std::function<void(const char*, size_t)> consume;
+  std::function<bool()> complete;
   bool testLoopbackHttp = false;
   bool lowLatency = false;
 };

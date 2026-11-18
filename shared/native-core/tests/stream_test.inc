@@ -14,10 +14,11 @@
     if(gemini) {
       begin+=event({{"event_type","step.start"},{"index",0},{"step",{{"type","thought"}}}});
       begin+=event({{"event_type","step.delta"},{"index",0},{"delta",{{"type","text"},{"text","secret"}}}});
-      begin+=event({{"event_type","step.start"},{"index",1},{"step",{{"type","model_output"}}}});
+      begin+=event({{"event_type","step.start"},{"index",1},
+                    {"step",{{"type","model_output"},{"content",{{{"type","text"},{"text","["}}}}}}});
     } else if(openai)begin+=event({{"type","response.reasoning_summary_text.delta"},{"delta","secret"}});
     else begin+=event({{"choices",J::array({J{{"delta",{{"reasoning","secret"}}}}})}});
-    auto first=begin+delta(u8"[\"你好🍜\"");
+    auto first=begin+delta(gemini ? u8"\"你好🍜\"" : u8"[\"你好🍜\"");
     auto second=delta(",\"say \\\"hi\\\" \\ud83d\\ude00\"]");
     auto end=gemini?event({{"event_type","interaction.completed"},{"interaction",{{"status","completed"},{"usage",{{"total_input_tokens",12},{"total_output_tokens",8}}}}}}):
       openai?event({{"type","response.completed"},{"response",{{"usage",{{"input_tokens",12},{"output_tokens",8}}}}}}):
@@ -38,5 +39,13 @@
     }
     auto r=invoke({{"endpoint",endpoint},{"assistantEnabled",true},{"chunkHex",hex(first+event({{"error",{{"message","secret"}}}}))}});
     if(r["result"]["candidates"]!=J::array({u8"你好🍜"}) || r["result"]["streamError"]!="provider")throw std::runtime_error("provider error lost correction");++count;
+    if (gemini) {
+      auto noOutput = J::parse(zephyr::invoke(J{{"op","stream"},{"args",{
+          {"endpoint",endpoint},{"chunkHex",hex(event({{"event_type","interaction.completed"},
+              {"interaction",{{"status","incomplete"}}}}))}}}}.dump()));
+      if (noOutput.value("error", "") != "truncated")
+        throw std::runtime_error("Gemini token exhaustion reported as invalid format");
+      ++count;
+    }
   }
 }

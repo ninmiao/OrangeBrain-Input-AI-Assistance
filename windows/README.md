@@ -4,7 +4,7 @@ Windows 客户端完全使用 C++。标准 Win32 设置窗口、WinHTTP 网络�
 
 ## 安装与运行
 
-双击 `Zephyr-Input-Windows-1.12.3-Setup-x64.exe`，完成 Windows 管理员授权。安装程序自动定位 `%ProgramFiles%\Zephyr Input`，注册独立的 x64/x86 TSF 组件、开始菜单和登录启动项。运行新版 Setup 即可覆盖更新，保留当前用户的设置、Key 和词库。安装后注销再登录，从 Windows 输入法菜单选择 **Zephyr Input**。如未显示，在中文（简体，中国）的语言选项中添加 Zephyr Input。
+双击 `Zephyr-Input-Windows-1.12.4-Setup-x64.exe`，完成 Windows 管理员授权。安装程序自动定位 `%ProgramFiles%\Zephyr Input`，注册独立的 x64/x86 TSF 组件、开始菜单和登录启动项。运行新版 Setup 即可覆盖更新，保留当前用户的设置、Key 和词库。安装后注销再登录，从 Windows 输入法菜单选择 **Zephyr Input**。如未显示，在中文（简体，中国）的语言选项中添加 Zephyr Input。
 
 开始菜单 **Zephyr Input** 打开设置；`ZephyrSettings.exe` 也可直接运行。`start_service.bat` 启动当前用户的 AI Broker 和本地输入服务。从 Windows“设置 → 应用 → 已安装的应用 → Zephyr Input”卸载，或运行安装目录的 `unins*.exe（具体编号以系统卸载入口为准）`。卸载程序注销输入法、清理程序文件、开始菜单和启动项；被其他应用占用的旧 TSF DLL 在重启时删除。用户数据默认保留在 `%APPDATA%\ZephyrInput`，便于重装恢复。
 
@@ -43,7 +43,7 @@ Windows 客户端完全使用 C++。标准 Win32 设置窗口、WinHTTP 网络�
 
 **更新模型列表**会同步刷新思考选项。OpenRouter 读取服务端档位，OpenAI 和 Gemini 按已核实的型号显示，Gemini 明确标记不支持思考时隐藏档位。已有档位仍适用就保留，否则改用服务端默认。OpenRouter 可另行刷新并选择供应商。
 
-**输入 / Input** 页可设置自动纠错、自动助手及手动快捷键。自动纠错只返回一个候选。自动助手用一次流式请求先显示纠错，再显示助手。两个自动模式都关闭时，可以在组字中按 **F8** 手动请求。前后文默认前 50 字、后 0 字，输出 token 软预算默认 256，均可调整。
+**输入 / Input** 页的 **AI 增强（自动）** 提供三个选项。**仅纠错**返回一个候选。**AI 助手＋纠错**用一次流式请求先显示纠错，再显示助手。选择**无**时，可在组字中按 **F8** 手动请求。前后文默认前 50 字、后 0 字，输出 token 软预算默认 256，均可调整。
 
 每次一键测速从现有 Policy 勾选 1–5 项并点击运行，逐项追加全部成功或失败结果。使用各自的模型、Key 和参数，发送含前后文的长输入样例。它会发送实际请求并产生 API 用量。网络请求在独立后台进程执行，失败保留本地候选；默认读取前 50 / 后 0 字，可关闭上下文。
 

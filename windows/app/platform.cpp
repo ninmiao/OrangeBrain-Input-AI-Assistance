@@ -241,7 +241,14 @@ std::string errorText(const std::exception& e) {
   if (err) {
     if (err->code == "HTTP") return "HTTP " + std::to_string(err->status);
     if (err->code == "cancelled") return u8"已取消 / Cancelled";
-    if (err->code == "timeout") return u8"请求超时 / Request timed out";
+    if (err->code == "timeout") {
+      switch (TimeoutPhase(err->status)) {
+        case TimeoutPhase::Send: return u8"连接或发送超时 / Connection or send timed out";
+        case TimeoutPhase::Headers: return u8"等待响应头超时 / Response headers timed out";
+        case TimeoutPhase::Body: return u8"读取模型输出超时 / Model response timed out";
+      }
+      return u8"请求超时 / Request timed out";
+    }
     if (err->code == "truncated")
       return u8"模型输出截断 / Truncated model output";
     if (err->code == "response")

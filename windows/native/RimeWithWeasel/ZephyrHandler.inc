@@ -155,11 +155,8 @@ void RimeWithWeaselHandler::UpdateTextContext(const std::wstring& data,DWORD id)
   try {
     auto before=decode(data.substr(0,split)),after=decode(data.substr(split+1));auto&z=found->second;
     if(z.before==before&&z.after==after)return;z.before=before;z.after=after;
-    // A manual request uses the snapshot at the key press. An edit-session
-    // context reply must not cause a second request for the same key press.
-    if(z.manualAi)return;
-    ++z.revision;z.aiError.clear();z.adopt(z.revision,{});
-    if(auto prefs=zephyr::currentKeyPreferences();prefs&&prefs->aiEnabled&&!z.input.empty())
-      m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
-  }catch(...){m_zephyr_ai.cancel(id);}
+    // Refresh the queued snapshot without resetting that keypress's debounce.
+    // Once sent, the request keeps the snapshot it started with.
+    m_zephyr_ai.updateContext(id,z.revision,z.before,z.after);
+  }catch(...){ /* Optional editor context must not cancel the current request. */ }
 }

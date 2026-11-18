@@ -22,7 +22,7 @@ enum Id {
   STATUS,
   ACTIVE,
   SAVE,
-  ENABLED = 200,
+  AI_MODE = 200,
   ENTER_ORIGINAL,
   SPACE_ORIGINAL,
   SEGMENTATION,
@@ -34,7 +34,6 @@ enum Id {
   BEFORE,
   AFTER,
   BUDGET,
-  ASSISTANT,
   SERVICE_STATUS,
   SERVICE_RESTART,
   AI_SHORTCUT,
@@ -77,7 +76,10 @@ const std::vector<std::string> languageValues = {"shift",
                                                  "disabled"},
                                scriptValues = {"ctrl_shift_t", "ctrl_shift_f",
                                                "ctrl_shift_c", "disabled"},
-                               aiShortcutValues = {"f8", "f9", "f10", "ctrl_shift_f8", "disabled"};
+                               aiShortcutValues = {"f8", "f9", "f10", "ctrl_shift_f8", "disabled"},
+                               aiModeValues = {u8"无 / None", u8"仅纠错 / Correction only",
+                                               u8"AI 助手＋纠错 / Assistant + correction"};
+enum AiMode { NoAi, Correction, AssistantAndCorrection };
 std::wstring text(HWND h) {
   int n = GetWindowTextLengthW(h);
   std::wstring s(n + 1, 0);
@@ -400,8 +402,7 @@ class App {
                                  WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 0, 0,
                                  window_, nullptr, instance_, this);
     column_ = 0;
-    check(0, ENABLED, L"自动纠错 / Auto correction", 12);
-    check(0, ASSISTANT, L"自动助手（含纠错）/ Auto assistant", 44);
+    field(0, AI_MODE, L"AI 增强（自动）/ Automatic AI", 12, true, true);
     check(0, ENTER_ORIGINAL, L"回车提交原文 / Enter: original", 76);
     check(0, SPACE_ORIGINAL, L"空格提交原文 / Space: original", 108);
     check(0, SEGMENTATION, L"空格分词 / Phrase boundaries", 140);
@@ -569,11 +570,13 @@ class App {
   }
   void loadGlobal() {
     loading_ = true;
-    for (auto pair : {std::pair<int, const char*>{ENABLED, "enabled"},
-                      {ENTER_ORIGINAL, "enterOriginal"},
+    const auto mode = config_["assistantEnabled"].get<bool>() ? AssistantAndCorrection
+        : config_["enabled"].get<bool>() ? Correction : NoAi;
+    choices(control(AI_MODE), aiModeValues, aiModeValues[mode]);
+    for (auto pair : {std::pair<int, const char*>{ENTER_ORIGINAL, "enterOriginal"},
                       {SPACE_ORIGINAL, "spaceOriginal"},
                       {SEGMENTATION, "wordSegmentation"},
-                      {CONTEXT, "contextEnabled"}, {ASSISTANT, "assistantEnabled"}})
+                      {CONTEXT, "contextEnabled"}})
       checkValue(pair.first, config_[pair.second]);
     for (auto pair : {std::pair<int, const char*>{DEBOUNCE, "debounceMs"},
                       {TIMEOUT, "timeoutMs"},
@@ -675,11 +678,14 @@ class App {
                         {CHINESE_PROMPT, "chinesePrompt"},
                         {ENGLISH_PROMPT, "englishPrompt"}})
         p[pair.second] = utf8(text(control(pair.first)));
-      for (auto pair : {std::pair<int, const char*>{ENABLED, "enabled"},
-                        {ENTER_ORIGINAL, "enterOriginal"},
+      auto mode = SendMessageW(control(AI_MODE), CB_GETCURSEL, 0, 0);
+      require(mode >= NoAi && mode <= AssistantAndCorrection, "Choose an AI mode");
+      next["enabled"] = mode != NoAi;
+      next["assistantEnabled"] = mode == AssistantAndCorrection;
+      for (auto pair : {std::pair<int, const char*>{ENTER_ORIGINAL, "enterOriginal"},
                         {SPACE_ORIGINAL, "spaceOriginal"},
                         {SEGMENTATION, "wordSegmentation"},
-                        {CONTEXT, "contextEnabled"}, {ASSISTANT, "assistantEnabled"}})
+                        {CONTEXT, "contextEnabled"}})
         next[pair.second] = checked(pair.first);
       for (auto pair : {std::pair<int, const char*>{DEBOUNCE, "debounceMs"},
                         {TIMEOUT, "timeoutMs"},
@@ -1057,7 +1063,7 @@ class App {
         return;
       }
     }
-    if ((id >= ENABLED && id <= ASSISTANT) || (id >= NAME && id <= SPEED) ||
+    if ((id >= AI_MODE && id <= BUDGET) || (id >= NAME && id <= SPEED) ||
         id == CHINESE_PROMPT || id == ENGLISH_PROMPT || id == AI_SHORTCUT) {
       if (notification == EN_CHANGE || notification == CBN_SELCHANGE ||
           notification == CBN_EDITCHANGE || notification == BN_CLICKED)
@@ -1073,11 +1079,17 @@ class App {
       require(config_==original,"UI configuration mismatch");
       serviceState();
       require(IsWindow(control(SERVICE_RESTART)) && utf8(text(control(SERVICE_STATUS))).find(u8"AI 后台")!=std::string::npos,"Service indicator or restart button missing");
-      checkValue(ASSISTANT,false);modified(ASSISTANT);
-      require(dirty_ && store_.load()==original,"Assistant mode saved before Save");
-      require(save(false) && !store_.load()["assistantEnabled"].get<bool>(),"Assistant mode not persisted");
-      checkValue(ASSISTANT,true);modified(ASSISTANT);
-      require(save(false) && store_.load()["assistantEnabled"].get<bool>(),"Assistant mode not re-enabled");
+      require(SendMessageW(control(AI_MODE), CB_GETCOUNT, 0, 0) == 3, "AI modes missing");
+      for (auto mode : {Correction, AssistantAndCorrection, NoAi}) {
+        const auto previous = store_.load();
+        SendMessageW(control(AI_MODE), CB_SETCURSEL, mode, 0);
+        command(AI_MODE, CBN_SELCHANGE);
+        require(dirty_ && store_.load() == previous, "AI mode saved before Save");
+        require(save(false), "AI mode save failed");
+        const auto saved = store_.load();
+        require(saved["enabled"] == (mode != NoAi) &&
+                saved["assistantEnabled"] == (mode == AssistantAndCorrection), "Wrong saved AI mode");
+      }
       require(text(control(AI_SHORTCUT))==L"f8","Default AI shortcut missing");
       choices(control(AI_SHORTCUT),aiShortcutValues,"f9");modified(AI_SHORTCUT);
       require(save(false) && store_.load()["aiShortcut"]=="f9","AI shortcut not persisted");

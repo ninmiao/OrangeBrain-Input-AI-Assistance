@@ -154,6 +154,13 @@ int main(int argc, char** argv) {
     auto gp = requestPayload(c, gemini, raw);
     check(gp.contains("system_instruction") && gp["store"] == false,
           "Gemini request");
+    check(gp["generation_config"]["max_output_tokens"].get<int>() >=
+              int(raw.input.size()) * 4 + 32 + 768,
+          "Gemini thinking does not consume the long correction reserve");
+    p["model"] = "gpt-6.2-sol";
+    check(reasoningOptions(p) == std::vector<std::string>{"omit","low","medium","high","xhigh","max"},
+          "GPT-6.2 Sol exposes supported reasoning options");
+    p = defaultPolicy();
     check(utf8(wide(u8"你好😀 café")) == u8"你好😀 café", "Unicode round trip");
     int attempts = 0,updates=0;
     auto result = requestAi(store,c,p,raw,{}, {},[&](const HttpOptions& o) {
@@ -164,6 +171,7 @@ int main(int argc, char** argv) {
       check(updates==1,"Correction delivered before assistant");
       send({{"type","response.output_text.delta"},{"delta",u8",\"你好呀\"]"}});
       send({{"type","response.completed"},{"response",{{"usage",J::object()}}}});
+      check(o.complete && o.complete(), "Terminal SSE event releases the transport");
       return HttpResponse{200,""};
     },[&](const J& r){updates++;check(r["candidates"].size()==updates,"Stable stream slots");});
     check(attempts==1 && updates==2 && result["candidates"].size()==2,"One request both candidates");
@@ -231,7 +239,13 @@ int main(int argc, char** argv) {
       o.cancel.reset();
       o.url = base + "/body-slow";
       o.timeoutMs = 150;
-      rejects([&] { http(o); }, "Cancel during body read");
+      try {
+        http(o);
+        check(false, "Body deadline expected");
+      } catch (const Error& e) {
+        check(e.code == "timeout" && e.status == int(TimeoutPhase::Body),
+              "Timeout identifies the body phase");
+      }
       o.url = base + "/huge";
       o.timeoutMs = 3000;
       o.limit = 10;
@@ -249,6 +263,11 @@ int main(int argc, char** argv) {
       http(o);
       check(firstMs>=0 && firstMs<1000,"WinHTTP does not wait to fill its buffer");
       check(streamed=="data: first\n\ndata: second\n\n","All stream chunks received");
+      streamed.clear();
+      o.timeoutMs = 1000;
+      o.complete = [&] { return streamed == "data: first\n\n"; };
+      http(o);
+      check(streamed == "data: first\n\n", "Completed stream stops before waiting for more bytes");
     }
     wchar_t zipEnv[32768];
     if (GetEnvironmentVariableW(L"ZEPHYR_TEST_ZIPS", zipEnv, 32768)) {

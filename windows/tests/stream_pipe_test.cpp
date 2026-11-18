@@ -7,7 +7,7 @@ int main() {
   auto name=L"\\\\.\\pipe\\Zephyr-stream-fixture-"+std::to_wstring(GetCurrentProcessId());
   HANDLE ready=CreateEventW(nullptr,TRUE,FALSE,nullptr);
   std::atomic<int> served{0};
-  std::atomic<bool> manualReceived{false};
+  std::atomic<bool> manualReceived{false}, updatedContextReceived{false};
   std::thread server([&] {
     for(int i=0;i<3;++i) {
       HANDLE pipe=CreateNamedPipeW(name.c_str(),PIPE_ACCESS_DUPLEX,PIPE_TYPE_MESSAGE|PIPE_READMODE_MESSAGE|PIPE_WAIT,1,131072,16384,0,nullptr);
@@ -18,6 +18,8 @@ int main() {
           const std::string wire(request,n), suffix="\tassistant";
           if(wire.size()>=suffix.size()&&wire.compare(wire.size()-suffix.size(),suffix.size(),suffix)==0)
             manualReceived=true;
+          if(i==0 && wire.find("\t"+zephyr::hex("updated before")+"\t")!=wire.npos)
+            updatedContextReceived=true;
           ++served;
           std::string first="Z1\t1\t50\t1\t0\t1\t1\n"+zephyr::hex("corrected")+"\n";
           WriteFile(pipe,first.data(),DWORD(first.size()),&n,nullptr);
@@ -46,7 +48,11 @@ int main() {
       failed=true;return false;
     };
     WaitForSingleObject(ready,5000);ResetEvent(ready);
-    client.submit({123,1,"one",true,false});take(1,1);take(1,2);
+    client.submit({123,1,"one",true,false});
+    client.updateContext(123,1,"updated before","");
+    take(1,1);
+    client.updateContext(123,1,"late edit-session reply","");
+    take(1,2);
     WaitForSingleObject(ready,5000);ResetEvent(ready);
     client.submit({123,2,"two",true,false});take(2,1);client.cancel(123);
     WaitForSingleObject(ready,5000);
@@ -58,6 +64,6 @@ int main() {
     zephyr::AiPipe missing(name+L"-missing");
     if(missing.status(9,1)!=L"后台未连接")failed=true;else ++checks;
   }
-  if(failed||served!=3||!manualReceived)return 1;
+  if(failed||served!=3||!manualReceived||!updatedContextReceived)return 1;
   std::cout<<checks<<" streaming pipe checks passed: early correction, final assistant, cancellation, reconnect\n";
 }
