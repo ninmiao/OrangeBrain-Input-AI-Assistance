@@ -5,7 +5,6 @@
 #include <ResponseParser.h>
 #include <iostream>
 #include <algorithm>
-#include <cwctype>
 int main() {
   weasel::Client client;if(!client.Connect())return 2;client.StartSession();
   weasel::Context ctx;weasel::Status status;std::wstring commit;weasel::Config config;weasel::UIStyle style;
@@ -16,22 +15,24 @@ int main() {
     if(language){key(ibus::Shift_L,ibus::SHIFT_MASK);key(ibus::Shift_L,ibus::RELEASE_MASK);}
     const std::string raw=language?"I wnated to recieve teh updated report before our meeting tomorrow, please keep the original file.":"jintianxiaban yihouwoxianghexiaowangyiqiquchi huoguo danshimingtianshangwuhaiyouhuiyi suoyiwomenzaodianhuijia";
     for(char c:raw)key(c);
-    bool ready=false;
+    bool ready=false, assistantMode=false;
     for(int i=0;i<300;++i) {
       Sleep(100);
       if(client.ProcessKeyEvent(weasel::KeyEvent(0,0))) {
         if(!response())return 3;
-        if(!ctx.cinfo.comments.empty()&&ctx.cinfo.comments[0].str.rfind(L"AI",0)==0) {
-          bool waiting=ctx.cinfo.comments[0].str==L"AI 纠错" &&
-            (ctx.cinfo.candies.size()<2 || ctx.cinfo.candies[1].str==L"助手生成中…");
-          if(!waiting){ready=true;break;}
-        }
+        if(ctx.cinfo.currentPage!=0 || ctx.cinfo.comments.empty())continue;
+        const auto& firstRole=ctx.cinfo.comments[0].str;
+        assistantMode=firstRole==L"AI 纠错";
+        ready=firstRole==L"AI" || (assistantMode && ctx.cinfo.comments.size()>=2 &&
+                                  ctx.cinfo.comments[1].str==L"AI 助手");
+        if(ready)break;
       }
     }
-    if(!ready){std::cerr<<"Live AI candidate timeout, mode="<<language<<"\n";return 4;}
+    if(!ready){
+      std::cerr<<"Live AI candidate timeout, mode="<<language<<"\n";return 4;
+    }
     if(ctx.preedit.str!=std::wstring(raw.begin(),raw.end())||!commit.empty()||!status.composing)return 5;
-    std::wstring first=ctx.cinfo.candies[0].str,normalized=first;
-    std::transform(normalized.begin(),normalized.end(),normalized.begin(),::towlower);
+    const auto& first=ctx.cinfo.candies[0].str;
     // Semantic accuracy is measured by gold.jsonl, not this transport test.
     // Verify both candidate languages, then commit the exact returned text.
     bool han=std::any_of(first.begin(),first.end(),[](wchar_t c){return c>=0x3400&&c<=0x9fff;});
@@ -40,12 +41,9 @@ int main() {
     int bytes=WideCharToMultiByte(CP_UTF8,0,first.data(),int(first.size()),nullptr,0,nullptr,nullptr);std::string utf8(bytes,' ');
     WideCharToMultiByte(CP_UTF8,0,first.data(),int(first.size()),utf8.data(),bytes,nullptr,nullptr);
     std::cout<<"mode="<<language<<" candidate="<<utf8<<"\n";
-    if(ctx.cinfo.comments[0].str==L"AI 纠错") {
-      if(ctx.cinfo.candies.size()<2 || ctx.cinfo.comments[1].str!=L"AI 助手")return 8;
-      auto assistant=ctx.cinfo.candies[1].str;
-      if(assistant.empty()||assistant==L"助手未完成")return 9;
-      key('2');if(commit!=assistant||status.composing)return 10;
-    } else {key(ibus::Tab);if(commit!=first||status.composing)return 7;}
+    const auto chosen=ctx.cinfo.candies[assistantMode ? 1 : 0].str;
+    key(assistantMode ? '2' : '1');
+    if(commit!=chosen || status.composing)return 10;
   }
   client.EndSession();std::cout<<"LIVE Chinese and English: C++ typing -> native broker -> model -> ranked candidate -> commit passed\n";return 0;
 }

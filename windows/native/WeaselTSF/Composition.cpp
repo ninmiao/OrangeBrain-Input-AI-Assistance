@@ -389,14 +389,56 @@ BOOL WeaselTSF::_InsertText(com_ptr<ITfContext> pContext,
   return TRUE;
 }
 
+class CCompositionRefreshEditSession : public CEditSession {
+ public:
+  CCompositionRefreshEditSession(WeaselTSF* service, ITfContext* context,
+                                 uint64_t epoch, uint64_t serial)
+      : CEditSession(service, context), epoch_(epoch), serial_(serial) {}
+
+  STDMETHODIMP DoEditSession(TfEditCookie ec) override {
+    return _pTextService->_DoCompositionEditSession(ec, _pContext, epoch_, serial_);
+  }
+
+ private:
+  const uint64_t epoch_;
+  const uint64_t serial_;
+};
+
 void WeaselTSF::_UpdateComposition(com_ptr<ITfContext> pContext) {
-  HRESULT hr = E_FAIL;
-  _zephyrRefreshPending=true;
+  const auto epoch = _compositionRefreshEpoch;
+  const auto serial = ++_compositionRefreshSerial;
+  _zephyrRefreshPending = true;
   _pEditSessionContext = pContext;
-  HRESULT requested = _pEditSessionContext->RequestEditSession(
-      _tfClientId, this, TF_ES_ASYNCDONTCARE | TF_ES_READWRITE, &hr);
-  if (FAILED(requested) || FAILED(hr)) _zephyrRefreshPending=false;
+  com_ptr<CCompositionRefreshEditSession> session;
+  session.Attach(new CCompositionRefreshEditSession(this, pContext, epoch, serial));
+  HRESULT hr = E_FAIL;
+  const HRESULT requested = pContext->RequestEditSession(
+      _tfClientId, session, TF_ES_ASYNCDONTCARE | TF_ES_READWRITE, &hr);
+  if (epoch != _compositionRefreshEpoch || serial != _compositionRefreshSerial)
+    return;
+  if (FAILED(requested) || FAILED(hr)) {
+    _zephyrRefreshPending = false;
+    _zephyrAiRefreshPending = false;
+  }
   _async_edit = SUCCEEDED(requested) && (hr == TF_S_ASYNC);
+}
+
+void WeaselTSF::_InvalidateCompositionRefresh() {
+  ++_compositionRefreshEpoch;
+  _zephyrRefreshPending = false;
+  _zephyrAiRefreshPending = false;
+  _zephyrAiSnapshotRead = false;
+  _async_edit = false;
+}
+
+void WeaselTSF::_ClearForContextChange() {
+  if (_status.composing || _IsComposing() || _hasPendingUI) {
+    _AbortComposition(true);
+  } else {
+    _InvalidateCompositionRefresh();
+    _fTestKeyDownPending = _fTestKeyUpPending = FALSE;
+    m_client.ClearComposition();
+  }
 }
 
 /* Composition State */
@@ -429,7 +471,7 @@ void WeaselTSF::_AbortComposition(bool clear) {
   _status.composing = false;
   _hasPendingUI = false;
   _pendingUIContext.reset();
-  _zephyrRefreshPending = false;
+  _InvalidateCompositionRefresh();
   _fTestKeyDownPending = _fTestKeyUpPending = FALSE;
   m_client.ClearComposition();
   if (_IsComposing() && _pEditSessionContext) {

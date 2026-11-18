@@ -134,7 +134,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <TargetName>weasel$(Platform)</TargetName>
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)output\arm64\</OutDir>
+    <OutDir>$(SolutionDir)output\</OutDir>
     <IntDir>$(SolutionDir)msbuild\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -268,7 +268,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)weasel$(Platform)$(TargetExt)</OutputFile>
+      <OutputFile>$(SolutionDir)output\weasel$(Platform)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>

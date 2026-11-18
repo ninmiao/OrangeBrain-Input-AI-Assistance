@@ -10,7 +10,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 namespace zephyr {
-struct KeyPreferences { bool enterOriginal=true,spaceOriginal=false; std::string languageShortcut="shift",scriptShortcut="ctrl_shift_t"; bool contextEnabled=true,aiEnabled=false; int beforeLength=50,afterLength=0; uint64_t revision=0; std::string aiShortcut="f8"; };
+struct KeyPreferences { bool enterOriginal=true,spaceOriginal=false; std::string languageShortcut="shift",scriptShortcut="ctrl_shift_t"; bool contextEnabled=true,aiEnabled=false; int beforeLength=50,afterLength=0; uint64_t revision=0; std::string aiShortcut="f8"; bool wordSegmentation=true; };
 inline std::optional<KeyPreferences> readKeyPreferences(const std::filesystem::path& path) {
   try {
     std::ifstream input(path);if(!input)return {};
@@ -21,7 +21,7 @@ inline std::optional<KeyPreferences> readKeyPreferences(const std::filesystem::p
     const bool correction = tree.get<bool>("enabled", false);
     const bool assistant = tree.get<int>("settingsRevision", 0) >= 3 &&
                            tree.get<bool>("assistantEnabled", false);
-    return KeyPreferences{enter.value_or(true),space.value_or(false),language.value_or("shift"),script.value_or("ctrl_shift_t"),tree.get<bool>("contextEnabled",true),correction||assistant,std::clamp(tree.get<int>("beforeLength",50),0,500),std::clamp(tree.get<int>("afterLength",0),0,500),0,tree.get<std::string>("aiShortcut","f8")};
+    return KeyPreferences{enter.value_or(true),space.value_or(false),language.value_or("shift"),script.value_or("ctrl_shift_t"),tree.get<bool>("contextEnabled",true),correction||assistant,std::clamp(tree.get<int>("beforeLength",50),0,500),std::clamp(tree.get<int>("afterLength",0),0,500),0,tree.get<std::string>("aiShortcut","f8"),tree.get<bool>("wordSegmentation",true)};
   } catch(...) { return {}; }
 }
 // Read settings independently of cloud latency. The serialized input-service thread

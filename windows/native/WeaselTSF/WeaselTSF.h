@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Globals.h"
+#include <cstdint>
 #include <WeaselIPC.h>
 #include <WeaselIPCData.h>
 
@@ -16,7 +17,6 @@ class WeaselTSF : public ITfTextInputProcessorEx,
                   public ITfCompositionSink,
                   public ITfThreadFocusSink,
                   public ITfActiveLanguageProfileNotifySink,
-                  public ITfEditSession,
                   public ITfDisplayAttributeProvider {
  public:
   bool _zephyrRefreshPending=false;
@@ -86,9 +86,6 @@ class WeaselTSF : public ITfTextInputProcessorEx,
   /* ITfCompositionSink */
   STDMETHODIMP OnCompositionTerminated(TfEditCookie ecWrite,
                                        ITfComposition* pComposition);
-
-  /* ITfEditSession */
-  STDMETHODIMP DoEditSession(TfEditCookie ec);
 
   /* ITfActiveLanguageProfileNotifySink */
   STDMETHODIMP OnActivated(REFCLSID clsid,
@@ -162,6 +159,13 @@ class WeaselTSF : public ITfTextInputProcessorEx,
                         bool* const scroll_next);
 
  private:
+  friend class CCompositionRefreshEditSession;
+  HRESULT _DoCompositionEditSession(TfEditCookie ec, ITfContext* context,
+                                    uint64_t epoch, uint64_t serial);
+  bool _HasFocusedEditContext(ITfContext* context);
+  void _InvalidateCompositionRefresh();
+  void _ClearForContextChange();
+
   /* ui callback functions private */
   void _SelectCandidateOnCurrentPage(const size_t index);
   void _HandleMouseHoverEvent(const size_t index);
@@ -179,6 +183,9 @@ class WeaselTSF : public ITfTextInputProcessorEx,
   BOOL _InitKeyEventSink();
   void _UninitKeyEventSink();
   void _ProcessKeyEvent(WPARAM wParam, LPARAM lParam, BOOL* pfEaten);
+  bool _ShouldDeferCandidateKey(weasel::KeyEvent key);
+  bool _zephyrAiRefreshPending = false;
+  bool _zephyrAiSnapshotRead = false;
 
   BOOL _InitPreservedKey();
   void _UninitPreservedKey();
@@ -214,6 +221,8 @@ class WeaselTSF : public ITfTextInputProcessorEx,
   BOOL _fTestKeyDownPending, _fTestKeyUpPending;
 
   com_ptr<ITfContext> _pEditSessionContext;
+  uint64_t _compositionRefreshEpoch = 0;
+  uint64_t _compositionRefreshSerial = 0;
   std::wstring _editSessionText;
 
   com_ptr<CCompartmentEventSink> _pKeyboardCompartmentSink;

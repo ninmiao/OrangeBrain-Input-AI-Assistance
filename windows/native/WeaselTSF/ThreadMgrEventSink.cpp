@@ -14,10 +14,8 @@ STDMETHODIMP WeaselTSF::OnSetFocus(ITfDocumentMgr* pDocMgrFocus,
   // Moving between controls in one application does not necessarily produce
   // ITfKeyEventSink::OnSetFocus(FALSE). Cancel the server composition here,
   // rather than merely hiding its UI and reviving it on a later focus.
-  if (pDocMgrFocus != pDocMgrPrevFocus) {
-    if (_status.composing || _IsComposing() || _hasPendingUI) _AbortComposition(true);
-    else m_client.ClearComposition();
-  }
+  if (pDocMgrFocus != pDocMgrPrevFocus)
+    _ClearForContextChange();
   _InitTextEditSink(pDocMgrFocus);
 
   com_ptr<ITfDocumentMgr> pCandidateListDocumentMgr;
@@ -37,17 +35,15 @@ STDMETHODIMP WeaselTSF::OnSetFocus(ITfDocumentMgr* pDocMgrFocus,
 STDMETHODIMP WeaselTSF::OnPushContext(ITfContext* pContext) {
   com_ptr<ITfDocumentMgr> focused;
   com_ptr<ITfContext> top;
-  if (_status.composing && _pThreadMgr &&
-      SUCCEEDED(_pThreadMgr->GetFocus(&focused)) && focused &&
-      SUCCEEDED(focused->GetTop(&top)) && top != _pEditSessionContext)
-    _AbortComposition(true);
+  if (_pThreadMgr && SUCCEEDED(_pThreadMgr->GetFocus(&focused)) &&
+      focused && SUCCEEDED(focused->GetTop(&top)) && top)
+    _CheckInputContext(top);
   return S_OK;
 }
 
 STDMETHODIMP WeaselTSF::OnPopContext(ITfContext* pContext) {
-  if (pContext == _pEditSessionContext &&
-      (_status.composing || _IsComposing() || _hasPendingUI))
-    _AbortComposition(true);
+  if (pContext == _pEditSessionContext)
+    _ClearForContextChange();
   return S_OK;
 }
 

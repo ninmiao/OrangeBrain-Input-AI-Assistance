@@ -35,10 +35,10 @@ int main() {
       for(int i=0;i<301;i++)z.insert('a');check(z.input.size()==300,"input bounded to 300");
     }
     zephyr::Composition z;z.insert('x');z.add(L"x",L"Original");z.adopt(z.revision,{L"one",L"one",L"two"});
-    check(z.candidates==std::vector<std::wstring>({L"one",L"two",L"x"}),"ranking and deduplication");
+    check(z.candidates==std::vector<std::wstring>({L"one",L"two",L"x"}),"AI is first and deduplicates within its own results");
     zephyr::Composition mapped;mapped.insert('x');mapped.add(L"现在",L"Rime",2);
-    auto previous=mapped.revision;mapped.adopt(previous,{L"完整纠错"});
-    check(mapped.rimeIndices==std::vector<int>({-1,2}),"AI ranking preserves native candidate indices");
+    auto previous=mapped.revision;mapped.adopt(previous,{L"现在"},true);
+    check(mapped.rimeIndices==std::vector<int>({-1,2}),"same-text AI keeps the native partial choice and its index");
     mapped.partialSelection=true;mapped.changed();
     check(!mapped.adopt(previous,{L"old"}),"partial selection invalidates pending AI output");
     mapped.clear();check(!mapped.partialSelection&&mapped.rimeIndices.empty(),"cancel clears segment state");
@@ -85,17 +85,58 @@ int main() {
     check(roles.candidates.size()==3&&roles.comments[0]!=roles.comments[1],"identical role candidates retained");
     roles.applyConfiguration(1);
     check(roles.candidates.size()==1&&roles.candidates[0]==L"local","both AI roles invalidated");
-    roles.adopt(roles.revision,{L"corrected",L"answer"},true);roles.choose(1);
+    roles.adopt(roles.revision,{L"corrected",L"answer"},true);roles.chooseDigit(2);
     check(roles.commit==L"answer","assistant selection inserts only content");
   }
   {
-    zephyr::Composition stream;stream.insert('x');stream.add(L"local",L"Rime",3);
-    stream.adopt(stream.revision,{L"corrected"},true,true);
-    check(stream.candidates.size()==3&&stream.rimeIndices[1]==-2,"assistant slot reserved");
-    stream.choose(1);check(stream.commit.empty()&&stream.input=="x","waiting is not commit text");
-    stream.selected=2;stream.adopt(stream.revision,{L"corrected",L"answer"},true,false);
-    check(stream.selected==2&&stream.candidates[2]==L"local"&&stream.rimeIndices[2]==3,"stream preserves selected local candidate");
-    stream.choose(0);check(stream.commit==L"corrected","correction can be committed independently");
+    zephyr::Composition stream;stream.insert('x');
+    for(int i=0;i<7;++i) stream.add(L"local "+std::to_wstring(i),L"Rime",i);
+    stream.add(L"x",L"Original");
+    check(stream.candidates[0]==L"local 0"&&stream.candidates[1]==L"local 1",
+          "while AI waits, local candidates begin at slots one and two");
+    stream.selected=4;
+    stream.adopt(stream.revision,{L"corrected"},true);
+    check(stream.selected==5&&stream.page==1&&stream.rimeIndices[5]==4,
+          "first reorder follows the highlighted native candidate across pages");
+    check(stream.candidates.size()==9&&stream.candidates[0]==L"corrected"&&stream.candidates[1]==L"local 0",
+          "an unfinished assistant leaves slot two available to Rime");
+    stream.adopt(stream.revision,{L"corrected",L"answer"},true);
+    check(stream.selected==6&&stream.page==1&&stream.rimeIndices[6]==4,
+          "assistant arrival follows the same native candidate");
+    check(stream.candidates[1]==L"answer"&&stream.rimeIndices[2]==0,
+          "assistant takes slot two and shifts locals in order");
+    stream.retryAi();
+    check(stream.selected==4&&stream.page==0&&stream.candidates[0]==L"local 0",
+          "retry restores the local list and preserves its highlight");
+    stream.adopt(stream.revision,{L"corrected"},true);
+    stream.selected=0;stream.page=0;
+    stream.adopt(stream.revision,{L"different correction",L"answer"},true);
+    check(stream.selected==0&&stream.page==0&&stream.candidates[0]==L"corrected",
+          "later frames keep the displayed correction and its highlight");
+    stream.chooseDigit(1);check(stream.commit==L"corrected","digit one selects the displayed correction");
+  }
+  {
+    zephyr::Composition context;
+    context.insert('a');
+    context.before = "first field";
+    context.after = "end of first field";
+    const auto previous = context.revision;
+    context.commit = L"undelivered candidate";
+    context.refreshPending = true;
+    context.cancel();
+    context.insert('b');
+    check(context.before.empty() && context.after.empty(),
+          "first request after focus change cannot contain the previous field");
+    check(context.commit.empty() && !context.refreshPending,
+          "focus cancellation discards unpublished commit and refresh");
+    check(!context.adopt(previous, {L"old result"}), "old field result cannot enter new composition");
+    context.before = "second field";
+    context.after = "end of second field";
+    context.add(L"confirmed", L"Original");
+    context.choose(0);
+    check(context.commit == L"confirmed", "ordinary selection preserves its commit for delivery");
+    check(context.before.empty() && context.after.empty(),
+          "committing a composition drops its cached surrounding range");
   }
   std::cout<<checks<<" native composition checks passed\n";return 0;
   } catch(const std::exception& e){std::cerr<<e.what()<<"\n";return 1;}

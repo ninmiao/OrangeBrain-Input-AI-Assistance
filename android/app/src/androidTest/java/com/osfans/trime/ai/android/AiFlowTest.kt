@@ -108,9 +108,11 @@ class AiFlowTest {
             session.runOnReady { setRuntimeOption("ascii_mode", true) }
             device.findObject(By.desc("test-editor")).text = "这个 model 的 latency 有点高"
             instrumentation.waitForIdleSync()
-            // Exercise the on-screen keyboard after accessibility text replacement has settled.
-            val keyboardBounds = device.findObject(By.res(context.packageName, "keyboard_view")).visibleBounds
-            device.click(keyboardBounds.centerX(), keyboardBounds.bottom - keyboardBounds.height() / 8)
+            // Only text entered through the IME can arm a request for committed text.
+            session.runOnReady {
+                assertTrue(processMixedKey('x'.code))
+                assertTrue(processMixedKey(0xff0d))
+            }
             assertTrue("English candidate never appeared", device.wait(Until.hasObject(By.text("Hello from AI.").clazz("android.widget.Button")), 15000))
             device.takeScreenshot(java.io.File(context.getExternalFilesDir(null), "ai-english.png"))
             device.findObject(By.text("Hello from AI.").clazz("android.widget.Button")).click()

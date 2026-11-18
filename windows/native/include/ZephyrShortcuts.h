@@ -4,6 +4,15 @@
 #include <KeyEvent.h>
 #include <string>
 namespace zephyr {
+inline bool candidateListKey(int key, int mask, bool enterOriginal, bool spaceIsLiteral) {
+  if (mask & (ibus::RELEASE_MASK | ibus::CONTROL_MASK | ibus::SUPER_MASK))
+    return false;
+  if (key >= '1' && key <= '5') return !(mask & ibus::SHIFT_MASK);
+  if (mask & ibus::ALT_MASK) return false;
+  return key == ibus::Up || key == ibus::Down || key == ibus::Tab ||
+         (key == ibus::Return && !enterOriginal) || (key == ' ' && !spaceIsLiteral);
+}
+
 inline bool shortcutChord(const std::string& name, int key, int mask) {
   int mods=mask & (ibus::SHIFT_MASK|ibus::CONTROL_MASK|ibus::ALT_MASK|ibus::SUPER_MASK);
   if(mask&ibus::RELEASE_MASK)return false;

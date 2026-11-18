@@ -6,7 +6,9 @@ import android.text.InputType
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.ExtractedText
 import android.view.inputmethod.ExtractedTextRequest
+import android.view.inputmethod.InputConnection
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
@@ -25,7 +27,8 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     private var chinese = true
     private var active = false
     private var sensitive = true
-    private var directEligible = false
+    private var directTarget: Target? = null
+    private var observedSelection: Selection? = null
     private var suppress = false
     private var applying = false
     private var target: Target? = null
@@ -58,8 +61,9 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         }
     }
 
+    private data class Selection(val start: Int, val end: Int)
     private data class Target(val input: AiInput, val composing: Boolean, val start: Int, val end: Int,
-        val selectionStart: Int, val selectionEnd: Int, val documentHash: Int, val manual: Boolean)
+        val selection: Selection, val documentHash: Int, val manual: Boolean)
 
     fun createView(): View {
         val context = ContextThemeWrapper(service, android.R.style.Theme_Material_Light)
@@ -129,7 +133,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     private fun openClipboard() {
         val expected=session;val connection=service.currentInputConnection ?: return
         clipboard.open({active && session==expected && connection===service.currentInputConnection}) { text ->
-            suppress=true;directEligible=false;captureJob?.cancel();coordinator.invalidate();revision++
+            suppress = true; directTarget = null; captureJob?.cancel(); coordinator.invalidate(); revision++
             applying=true
             service.postRimeJob {
                 try {
@@ -215,7 +219,9 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     }
 
     fun start(info: EditorInfo) {
-        session++; revision++; active = true; suppress = false; applying = false; directEligible = false
+        session++; revision++; active = true; suppress = false; applying = false
+        directTarget = null; target = null; captureJob?.cancel()
+        observedSelection = Selection(info.initialSelStart, info.initialSelEnd).takeIf { it.start >= 0 && it.end >= 0 }
         chinese = !rime.run { statusCached.isAsciiMode }
         syncScript()
         keyboardGeneration++
@@ -228,7 +234,12 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         render()
     }
 
-    fun finish() { clipboard.close();active = false; session++; revision++; captureJob?.cancel(); coordinator.invalidate(); target = null }
+    fun finish() {
+        clipboard.close()
+        active = false; session++; revision++
+        captureJob?.cancel(); coordinator.invalidate()
+        target = null; directTarget = null; observedSelection = null
+    }
     fun destroy() { finish(); configJob.cancel() }
     private fun syncScript() {
         val traditional = store.config.traditional
@@ -237,26 +248,54 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         }
     }
     fun userInput() {
-        // Called synchronously before a real key action, including local candidate taps.
-        suppress = false; directEligible = true; revision++; coordinator.invalidate()
+        // A key can be navigation or a modifier. Only a successful text commit arms direct mode.
+        suppress = false; directTarget = null; revision++
+        captureJob?.cancel(); coordinator.invalidate()
     }
-    fun selectionChanged() {
-        if (applying) return
-        revision++; coordinator.invalidate()
-        if (!suppress) refresh(false)
+
+    fun textCommitted(connection: InputConnection, text: String) {
+        directTarget = null
+        val config = store.config
+        if (!active || sensitive || !config.consent || suppress || applying || !config.automatic ||
+            (!config.enabled && !config.assistantEnabled) ||
+            connection !== service.currentInputConnection || text.isEmpty()) return
+        directTarget = captureDirect(readEditor(connection), connection, manual = false)
+            ?.takeIf { it.input.input.endsWith(text) }
+        if (directTarget != null) {
+            revision++
+            refresh(false)
+        }
+    }
+
+    fun selectionChanged(start: Int, end: Int, composingStart: Int, composingEnd: Int) {
+        val selection = Selection(start, end)
+        if (selection == observedSelection) return
+        observedSelection = selection
+        if (selection == target?.selection || selection == directTarget?.selection) return
+        directTarget = null
+        revision++
+        captureJob?.cancel(); coordinator.invalidate()
+        // An IME preedit update can report its caret after the Rime event that
+        // scheduled it. Refresh only while the caret still belongs to that preedit.
+        if (!suppress && !applying && start == end && composingStart >= 0 &&
+            end in composingStart..composingEnd && rime.run { rawInputCached.isNotEmpty() }) {
+            refresh(false)
+        }
     }
     fun rimeChanged(message: RimeMessage<*>) {
         if (applying || !active) return
         if (message is RimeMessage.CompositionMessage || message is RimeMessage.StatusMessage ||
             message is RimeMessage.CommitTextMessage || message is RimeMessage.OptionMessage) {
             val language = !rime.run { statusCached.isAsciiMode }
-            if (language != chinese) { chinese = language; keyboardGeneration++; suppress = false; directEligible = true }
+            if (language != chinese) {
+                chinese = language; keyboardGeneration++; suppress = false; directTarget = null
+            }
             revision++; coordinator.invalidate()
             if (!suppress) refresh(false)
         }
     }
 
-    private fun capture(manual: Boolean): Target? {
+    private fun capture(manual: Boolean, requireCurrentSelection: Boolean = false): Target? {
         val c = store.config
         if (!active || sensitive || !c.consent ||
             (!manual && !c.enabled && !c.assistantEnabled)) return null
@@ -273,23 +312,43 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             val before=if(suffix!=null) textBefore.removeSuffix(suffix) else textBefore
             val after=if(c.contextEnabled && c.afterLength>0)connection.getTextAfterCursor(c.afterLength*2,0)?.toString().orEmpty() else ""
             val snapshot=Protocol.context(if(c.wordSegmentation && chinese) input.replace('\'', ' ') else input,before,after,c.contextEnabled,c.beforeLength,c.afterLength)
-            return Target(snapshot, true, 0, 0, 0, 0, 0, manual)
+            val currentSelection = readEditor(connection)?.let {
+                Selection(it.startOffset + it.selectionStart, it.startOffset + it.selectionEnd)
+                    .takeIf { _ -> it.startOffset >= 0 && it.selectionStart >= 0 && it.selectionEnd >= 0 }
+            }
+            // A delayed selection callback cannot establish the live caret for a write.
+            val selection = currentSelection ?: if (requireCurrentSelection) return null
+                else observedSelection ?: return null
+            return Target(snapshot, true, 0, 0, selection, 0, manual)
         }
-        if (!manual && !directEligible) return null
-        val extracted = connection.getExtractedText(ExtractedTextRequest().apply { hintMaxChars = 2048 }, 0) ?: return null
+        if (!manual && directTarget == null) return null
+        val direct = captureDirect(readEditor(connection), connection, manual) ?: return null
+        return direct.takeIf { manual || it == directTarget }
+    }
+
+    private fun readEditor(connection: InputConnection): ExtractedText? = try {
+        connection.getExtractedText(ExtractedTextRequest().apply { hintMaxChars = 2048 }, 0)
+    } catch (_: RuntimeException) {
+        null
+    }
+
+    private fun captureDirect(extracted: ExtractedText?, connection: InputConnection, manual: Boolean): Target? {
+        extracted ?: return null
+        val c = store.config
         // Fail closed for partial windows: absolute offsets are otherwise ambiguous across editors.
         if (extracted.startOffset != 0 || extracted.partialStartOffset != -1) return null
         val text = extracted.text?.toString() ?: return null
         val a = extracted.selectionStart
         val b = extracted.selectionEnd
         if (a !in 0..text.length || b !in 0..text.length) return null
-        if (manual && a == b && !directEligible) return null
         val end = maxOf(a, b)
         val range = EditorRanges.capture(text, a, b, c.targetLimit, manual) ?: return null
         val start = range.start
         val input = range.original
         if (a != b && connection.getSelectedText(0)?.toString() != input) return null
-        return Target(Protocol.context(input,text.substring(0,start),text.substring(end),c.contextEnabled,c.beforeLength,c.afterLength), false, start, end, a, b, text.hashCode(), manual)
+        val snapshot = Protocol.context(input, text.substring(0, start), text.substring(end),
+            c.contextEnabled, c.beforeLength, c.afterLength)
+        return Target(snapshot, false, start, end, Selection(a, b), text.hashCode(), manual)
     }
 
     private fun refresh(manual: Boolean) {
@@ -313,7 +372,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
 
     private fun valid(result: AiState.Ready, snapshot: Target): Boolean = active && !sensitive && store.config.consent &&
         result.request.stamp == RequestStamp(session, revision, store.config.generation, keyboardGeneration, store.config.generation) &&
-        capture(snapshot.manual) == snapshot
+        capture(snapshot.manual, requireCurrentSelection = true) == snapshot
 
     private fun adopt(result: AiState.Ready, text: String) {
         val snapshot = target ?: return
@@ -321,30 +380,37 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         val connection = service.currentInputConnection ?: return
         if (snapshot.composing) {
             service.postRimeJob {
-                val allowed = withContext(Dispatchers.Main.immediate) {
-                    if (!valid(result, snapshot) || connection !== service.currentInputConnection) false
-                    else { applying = true; suppress = true; coordinator.invalidate(); true }
-                }
-                if (!allowed) return@postRimeJob
+                // The editor operation replaces its composing span in one write. Recheck the
+                // snapshot on Main, after waiting for Rime, and before touching the editor.
+                var attempted = false
                 try {
-                    clearComposition()
-                    withContext(Dispatchers.Main.immediate) {
-                        if (session == result.request.stamp.editorSession && revision == result.request.stamp.inputRevision &&
-                            connection === service.currentInputConnection && store.config.generation == result.request.stamp.apiGeneration) {
-                            connection.beginBatchEdit()
-                            try { connection.setComposingText("", 1); connection.finishComposingText(); connection.commitText(text, 1) }
-                            finally { connection.endBatchEdit() }
+                    val committed = withContext(Dispatchers.Main.immediate) {
+                        if (!valid(result, snapshot) || connection !== service.currentInputConnection) return@withContext false
+                        attempted = true
+                        applying = true; suppress = true; directTarget = null
+                        revision++; target = null; coordinator.invalidate()
+                        try {
+                            connection.commitText(text, 1)
+                        } catch (_: RuntimeException) {
+                            false
                         }
                     }
-                } finally { withContext(Dispatchers.Main.immediate) { applying = false; revision++; target = null } }
+                    if (committed && withContext(Dispatchers.Main.immediate) {
+                            session == result.request.stamp.editorSession && connection === service.currentInputConnection
+                        }) clearComposition()
+                } finally {
+                    if (attempted) withContext(NonCancellable + Dispatchers.Main.immediate) {
+                        if (session == result.request.stamp.editorSession) applying = false
+                    }
+                }
             }
         } else {
-            applying = true; suppress = true; coordinator.invalidate()
+            applying = true; suppress = true; directTarget = null; coordinator.invalidate()
             connection.beginBatchEdit()
             try {
                 if (connection.setSelection(snapshot.start, snapshot.end)) {
                     if (connection.getSelectedText(0)?.toString() == snapshot.input.input) connection.commitText(text, 1)
-                    else connection.setSelection(snapshot.selectionStart, snapshot.selectionEnd)
+                    else connection.setSelection(snapshot.selection.start, snapshot.selection.end)
                 }
             } finally { connection.endBatchEdit(); applying = false; revision++; target = null }
         }

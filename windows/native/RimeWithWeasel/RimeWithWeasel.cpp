@@ -272,19 +272,20 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
 }
 
 void RimeWithWeaselHandler::CommitComposition(WeaselSessionId ipc_id) {
-  auto& z=m_zephyr[ipc_id];if(z.selected<z.rimeIndices.size()&&z.rimeIndices[z.selected]==-2)return;
+  auto& z=m_zephyr[ipc_id];
   _ZephyrChoose(ipc_id,z.selected);_ZephyrRefresh(ipc_id);z.refreshPending=true;
 }
 
 void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
-  m_zephyr[ipc_id].clear();m_zephyr_ai.cancel(ipc_id);
+  m_zephyr[ipc_id].cancel();
+  m_zephyr_ai.cancel(ipc_id);
   if(!m_disabled)rime_api->clear_composition(to_session_id(ipc_id));
 }
 
 void RimeWithWeaselHandler::SelectCandidateOnCurrentPage(
     size_t index,
     WeaselSessionId ipc_id) {
-  auto& z=m_zephyr[ipc_id];auto slot=z.page*5+index;if(slot<z.rimeIndices.size()&&z.rimeIndices[slot]==-2)return;
+  auto& z=m_zephyr[ipc_id];auto slot=z.page*5+index;
   _ZephyrChoose(ipc_id,slot);_ZephyrRefresh(ipc_id);z.refreshPending=true;
 }
 

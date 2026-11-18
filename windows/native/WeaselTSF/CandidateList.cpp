@@ -368,6 +368,10 @@ void CCandidateList::_MakeUIWindow() {
 
 void WeaselTSF::_UpdateUI(const Context& ctx, const Status& status) {
   _cand->UpdateUI(ctx, status);
+  if (_zephyrAiSnapshotRead) {
+    _zephyrAiRefreshPending = false;
+    _zephyrAiSnapshotRead = false;
+  }
 }
 
 void WeaselTSF::_StartUI() {
@@ -396,7 +400,10 @@ void WeaselTSF::_DeleteCandidateList() {
 
 void WeaselTSF::_SelectCandidateOnCurrentPage(size_t index) {
   m_client.SelectCandidateOnCurrentPage(index);
-  if(m_client.ProcessKeyEvent(weasel::KeyEvent(0,0)))_UpdateComposition(_pEditSessionContext);
+  if (m_client.ProcessKeyEvent(weasel::KeyEvent(0, 0))) {
+    _zephyrAiRefreshPending = true;
+    _UpdateComposition(_pEditSessionContext);
+  }
 }
 
 void WeaselTSF::_HandleMousePageEvent(bool* const nextPage,
@@ -441,6 +448,7 @@ void WeaselTSF::HandleUICallback(size_t* const sel,
                                  size_t* const hov,
                                  bool* const next,
                                  bool* const scroll_next) {
+  if (_zephyrAiRefreshPending) return;
   if (sel)
     _SelectCandidateOnCurrentPage(*sel);
   else if (hov)

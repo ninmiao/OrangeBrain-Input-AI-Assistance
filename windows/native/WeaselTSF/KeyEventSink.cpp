@@ -23,10 +23,15 @@ static GUID ZephyrCandidateKeyGuid(UINT slot) {
 
 void WeaselTSF::_CheckInputContext(ITfContext* context) {
   // Some hosts change their TSF context without changing document managers.
-  if (_pEditSessionContext && context != _pEditSessionContext) {
-    if (_status.composing || _IsComposing() || _hasPendingUI) _AbortComposition(true);
-    else m_client.ClearComposition(); // Also reset an idle Shift tap.
-  }
+  if (_pEditSessionContext && context != _pEditSessionContext)
+    _ClearForContextChange();
+}
+
+bool WeaselTSF::_ShouldDeferCandidateKey(weasel::KeyEvent key) {
+  if (!_zephyrAiRefreshPending || !_status.composing) return false;
+  const auto prefs = zephyr::currentKeyPreferences();
+  return zephyr::candidateListKey(key.keycode, key.mask, prefs && prefs->enterOriginal,
+                                  prefs && (prefs->spaceOriginal || prefs->wordSegmentation));
 }
 
 void WeaselTSF::_ProcessKeyEvent(WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
@@ -38,15 +43,23 @@ void WeaselTSF::_ProcessKeyEvent(WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
     return;
   }
 
+  weasel::KeyEvent ke;
+  GetKeyboardState(_lpbKeyState);
+  const bool converted = ConvertKeyEvent(static_cast<UINT>(wParam), lParam, _lpbKeyState, ke);
+  // An echo writes into the response buffer too. Keep the AI snapshot intact
+  // when this key will not be sent to the server.
+  if (_zephyrAiRefreshPending && (!converted || _ShouldDeferCandidateKey(ke))) {
+    *pfEaten = converted;
+    return;
+  }
+
   // if server connection is Not OK, don't eat it.
   if (!_EnsureServerConnected()) {
     if(_status.composing)_AbortComposition(true);
     *pfEaten = FALSE;
     return;
   }
-  weasel::KeyEvent ke;
-  GetKeyboardState(_lpbKeyState);
-  if (!ConvertKeyEvent(static_cast<UINT>(wParam), lParam, _lpbKeyState, ke)) {
+  if (!converted) {
     /* Unknown key event */
     *pfEaten = FALSE;
   } else {
@@ -57,12 +70,17 @@ void WeaselTSF::_ProcessKeyEvent(WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
       else if (ke.keycode == ibus::Down)
         ke.keycode = ibus::Up;
     }
-    if (_status.composing && (lParam & (1LL << 30)) && !(ke.mask & ibus::RELEASE_MASK) &&
+    const bool aiShortcut = (ke.keycode == ibus::F8 || ke.keycode == ibus::F9 || ke.keycode == ibus::F10) &&
         zephyr::shortcutChord(zephyr::currentKeyPreferences().value_or(zephyr::KeyPreferences{}).aiShortcut,
-                             ke.keycode, ke.mask))
+                              ke.keycode, ke.mask);
+    if (_status.composing && (lParam & (1LL << 30)) && aiShortcut)
       *pfEaten = TRUE;  // Holding the shortcut must not flood the AI service.
-    else if (!keyCountToSimulate)
+    else if (!keyCountToSimulate) {
       *pfEaten = (BOOL)m_client.ProcessKeyEvent(ke);
+      // Retrying can remove the existing AI prefix before the replacement arrives.
+      if (*pfEaten && aiShortcut) _zephyrAiRefreshPending = true;
+      if (_zephyrAiRefreshPending) _zephyrAiSnapshotRead = false;
+    }
 
     if (ke.keycode == ibus::Caps_Lock) {
       if (prevKeyEvent.keycode == ibus::Caps_Lock && prevfEaten == TRUE &&
@@ -184,9 +202,15 @@ STDMETHODIMP WeaselTSF::OnPreservedKey(ITfContext* pContext,
   *pfEaten = FALSE;
   for (UINT slot = 0; slot < 5; ++slot) {
     if (IsEqualGUID(rguid, ZephyrCandidateKeyGuid(slot))) {
-      if (_status.composing && !_IsKeyboardDisabled() && _EnsureServerConnected()) {
-        *pfEaten = m_client.ProcessKeyEvent(weasel::KeyEvent('1' + slot, ibus::ALT_MASK));
-        _UpdateComposition(pContext);
+      if (_status.composing && !_IsKeyboardDisabled()) {
+        const weasel::KeyEvent key('1' + slot, ibus::ALT_MASK);
+        if (_ShouldDeferCandidateKey(key)) {
+          *pfEaten = TRUE;
+          _UpdateComposition(pContext);
+        } else if (_EnsureServerConnected()) {
+          *pfEaten = m_client.ProcessKeyEvent(key);
+          _UpdateComposition(pContext);
+        }
       }
       return S_OK;
     }

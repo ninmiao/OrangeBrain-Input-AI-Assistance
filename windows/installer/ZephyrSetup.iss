@@ -4,9 +4,6 @@
 #ifndef Version
   #define Version "1.9.1"
 #endif
-#ifndef TargetArch
-  #define TargetArch "x64"
-#endif
 [Setup]
 AppId={{EBA0B59B-4AD5-46C9-9F26-1C517208A753}
 AppName=Zephyr Input
@@ -19,16 +16,11 @@ DisableProgramGroupPage=yes
 DisableWelcomePage=no
 DisableReadyPage=yes
 PrivilegesRequired=admin
-#if TargetArch == "arm64"
-ArchitecturesAllowed=arm64
-ArchitecturesInstallIn64BitMode=arm64
-#else
 ArchitecturesAllowed=x64os
 ArchitecturesInstallIn64BitMode=x64os
-#endif
 MinVersion=10.0
 OutputDir={#Output}
-OutputBaseFilename=Zephyr-Input-Windows-{#Version}-Setup-{#TargetArch}
+OutputBaseFilename=Zephyr-Input-Windows-{#Version}-Setup-x64
 Compression=lzma2/fast
 SolidCompression=yes
 WizardStyle=modern
@@ -46,11 +38,9 @@ Name: "chinesesimp"; MessagesFile: "{#ChineseMessages}"
 Name: "chinesesimp"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 #endif
 [Files]
-Source: "{#Image}\*"; DestDir: "{app}"; Excludes: "ZephyrTSFx64.dll,ZephyrTSFx86.dll,ZephyrTSFarm64.dll,install.ps1,uninstall.ps1,Install.cmd,install.log,installation.json"; Flags: ignoreversion overwritereadonly recursesubdirs createallsubdirs uninsrestartdelete
-Source: "{#Image}\ZephyrTSF{#TargetArch}.dll"; DestDir: "{app}"; DestName: "{#Dll64}"; Flags: ignoreversion overwritereadonly onlyifdoesntexist uninsrestartdelete
-#if TargetArch == "x64"
+Source: "{#Image}\*"; DestDir: "{app}"; Excludes: "ZephyrTSFx64.dll,ZephyrTSFx86.dll,install.ps1,uninstall.ps1,Install.cmd,install.log,installation.json"; Flags: ignoreversion overwritereadonly recursesubdirs createallsubdirs uninsrestartdelete
+Source: "{#Image}\ZephyrTSFx64.dll"; DestDir: "{app}"; DestName: "{#Dll64}"; Flags: ignoreversion overwritereadonly onlyifdoesntexist uninsrestartdelete
 Source: "{#Image}\ZephyrTSFx86.dll"; DestDir: "{app}"; DestName: "{#Dll32}"; Flags: ignoreversion overwritereadonly onlyifdoesntexist uninsrestartdelete
-#endif
 Source: "{#Meta}\installation.json"; DestDir: "{app}"; Flags: ignoreversion overwritereadonly
 Source: "setup-helper.ps1"; DestDir: "{app}"; Flags: ignoreversion overwritereadonly; AfterInstall: RegisterIme
 Source: "setup-helper.ps1"; Flags: dontcopy

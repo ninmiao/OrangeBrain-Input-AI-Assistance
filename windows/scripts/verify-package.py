@@ -17,22 +17,18 @@ def machine_type(path: Path) -> int:
         return machine
 
 
-def verify(image: Path, arch: str) -> None:
-    native_type = {"x64": 0x8664, "arm64": 0xAA64}[arch]
+def verify(image: Path) -> None:
     required = {
         "ZephyrSettings.exe", "ZephyrBroker.exe", "ZephyrServer.exe",
         "ZephyrDeployer.exe", "ZephyrDataDeploy.exe", "rime.dll",
-        f"ZephyrTSF{arch}.dll",
+        "ZephyrTSFx64.dll", "ZephyrTSFx86.dll",
     }
-    compatibility_dll = "ZephyrTSFx86.dll"
-    if arch == "x64":
-        required.add(compatibility_dll)
     files = sorted(p for p in image.iterdir() if p.is_file() and p.suffix.lower() in {".exe", ".dll"})
     missing = required - {p.name for p in files}
     if missing:
         raise ValueError(f"Missing image components: {sorted(missing)}")
     for path in files:
-        expected = 0x014C if arch == "x64" and path.name == compatibility_dll else native_type
+        expected = 0x014C if path.name == "ZephyrTSFx86.dll" else 0x8664
         actual = machine_type(path)
         if actual != expected:
             raise ValueError(f"{path.name}: PE machine {actual:04x}, expected {expected:04x}")
@@ -42,6 +38,5 @@ def verify(image: Path, arch: str) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("image", type=Path)
-    parser.add_argument("architecture", choices=("x64", "arm64"))
     args = parser.parse_args()
-    verify(args.image, args.architecture)
+    verify(args.image)

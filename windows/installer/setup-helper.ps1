@@ -38,14 +38,9 @@ if($Action -eq 'Stop'){
  exit 0
 }
 $state=Get-Content -LiteralPath (Join-Path $target 'installation.json') -Raw | ConvertFrom-Json
-$architectures=switch ([string]$state.architecture) {
- 'arm64' {'arm64'}
- 'x64' {'x64';'x86'}
- '' {'x64';'x86'} # Installers before architecture metadata used the two x86-family DLLs.
- default {throw 'Invalid installation architecture'}
-}
-$views=@([Microsoft.Win32.RegistryView]::Registry64)
-if($architectures -contains 'x86'){$views+=[Microsoft.Win32.RegistryView]::Registry32}
+if($state.architecture -and $state.architecture -ne 'x64'){throw 'Invalid installation architecture'}
+$architectures=@('x64','x86')
+$views=@([Microsoft.Win32.RegistryView]::Registry64,[Microsoft.Win32.RegistryView]::Registry32)
 function Register-Dll([string]$name,[string]$arch,[bool]$remove) {
  if($name -notmatch ('^ZephyrTSF'+$arch+'-[a-f0-9]{12}\.dll$')){throw 'Invalid DLL name'}
  $dll=Join-Path $target $name
@@ -92,7 +87,7 @@ if($Action -eq 'Register') {
  }
  # Only old product DLLs that preceded the tracked installer are cleaned here.
  Add-Type -TypeDefinition 'using System;using System.Runtime.InteropServices;public class ZephyrRemove{[DllImport("kernel32.dll",CharSet=CharSet.Unicode,SetLastError=true)]public static extern bool MoveFileEx(string a,IntPtr b,int flags);}'
- Get-ChildItem -LiteralPath $target -File | Where-Object { $_.Name -match '^ZephyrTSF(x64|x86|arm64)(-[a-f0-9]{12})?\.dll$' } | ForEach-Object {
+ Get-ChildItem -LiteralPath $target -File | Where-Object { $_.Name -match '^ZephyrTSF(x64|x86)(-[a-f0-9]{12})?\.dll$' } | ForEach-Object {
   $path=[IO.Path]::GetFullPath($_.FullName)
   if([IO.Path]::GetDirectoryName($path) -ne $target){throw 'Unexpected cleanup path'}
   try {Remove-Item -LiteralPath $path -Force -ErrorAction Stop} catch {

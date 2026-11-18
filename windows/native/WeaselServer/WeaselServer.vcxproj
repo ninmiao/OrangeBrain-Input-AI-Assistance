@@ -133,10 +133,6 @@
     <OutDir>$(SolutionDir)output\</OutDir>
     <IntDir>$(SolutionDir)msbuild\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <OutDir>$(SolutionDir)output\arm64\</OutDir>
-    <IntDir>$(SolutionDir)msbuild\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -384,8 +380,8 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>imm32.lib;usp10.lib;rime.lib;d2d1.lib;dwrite.lib;d3d11.lib;dxgi.lib;dcomp.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\libarm64;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <OutputFile>$(SolutionDir)\output\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>

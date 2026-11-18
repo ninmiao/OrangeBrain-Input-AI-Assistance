@@ -41,7 +41,9 @@ import com.osfans.trime.util.buildIntentFromAction
 import com.osfans.trime.util.buildIntentFromArgument
 import com.osfans.trime.util.customFormatDateTime
 import com.osfans.trime.util.isAsciiPrintable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.inputMethodManager
@@ -154,7 +156,7 @@ class CommonKeyboardActionListener(
                     action.commit.isNotEmpty() -> {
                         service.postRimeJob {
                             if (action.commit.length != 1 || !service.mixedTextKey(this,action.commit[0].code))
-                                service.commitText(action.commit, true)
+                                service.commitTextFromRime(action.commit, true)
                         }
                         false
                     }
@@ -359,9 +361,9 @@ class CommonKeyboardActionListener(
 
                     service.postRimeJob {
                         if (slice.run { startsWith('{') && endsWith('}') }) {
-                            onAction(KeyActionManager.getAction(slice))
+                            withContext(Dispatchers.Main.immediate) { onAction(KeyActionManager.getAction(slice)) }
                         } else if (!slice[0].isAsciiPrintable()) {
-                            service.commitText(slice)
+                            service.commitTextFromRime(slice)
                         } else {
                             if (slice.length==1 && service.mixedTextKey(this,slice[0].code)) return@postRimeJob
                             val escapedSlice = slice.replace("{}", "{braceleft}{braceright}")

@@ -75,9 +75,10 @@ BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,E
   auto& z=m_zephyr[id];int code=key.keycode;
   const auto prefs=zephyr::currentKeyPreferences();
   if(prefs){
-    z.enterOriginal=prefs->enterOriginal;z.spaceOriginal=prefs->spaceOriginal;z.languageShortcut=prefs->languageShortcut;z.scriptShortcut=prefs->scriptShortcut;
-    // Invalidate before processing a digit/selection, including idle poll messages.
-    if(z.applyConfiguration(prefs->revision)) {
+    z.enterOriginal=prefs->enterOriginal;z.spaceOriginal=prefs->spaceOriginal;z.segmentation=prefs->wordSegmentation;z.languageShortcut=prefs->languageShortcut;z.scriptShortcut=prefs->scriptShortcut;
+    // A settings change can remove the AI prefix. Publish that reorder through
+    // the poll so a selection key still refers to the list the user can see.
+    if((code==0||z.input.empty())&&z.applyConfiguration(prefs->revision)) {
       m_zephyr_ai.cancel(id);
       if(prefs->aiEnabled&&!z.input.empty())m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
     }
@@ -91,7 +92,7 @@ BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,E
       if(!z.input.empty()&&current!=z.aiStatus){z.aiStatus=current;_ZephyrRespond(id,eat);return TRUE;}
       return FALSE;
     }
-    z.aiError=result->error;z.segmentation=result->segmentation;z.enterOriginal=result->enterOriginal;z.spaceOriginal=result->spaceOriginal;z.adopt(result->revision,result->candidates,result->assistantEnabled,result->streaming);_ZephyrRespond(id,eat);return TRUE;
+    z.aiError=result->error;z.segmentation=result->segmentation;z.enterOriginal=result->enterOriginal;z.spaceOriginal=result->spaceOriginal;z.adopt(result->revision,result->candidates,result->assistantEnabled);_ZephyrRespond(id,eat);return TRUE;
   }
   if(zephyr::shortcutChord(prefs?prefs->aiShortcut:"f8",code,key.mask)) {
     z.shortcuts.reset();
@@ -113,10 +114,6 @@ BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,E
   // Modifier key-down is not a shortcut by itself. Keep pending text until
   // the actual chord arrives (Ctrl+Enter, Alt+digit, Ctrl+Shift+Space, etc.).
   if(code>=ibus::Shift_L && code<=ibus::Hyper_R) {_ZephyrRespond(id,eat);return FALSE;}
-  size_t requestedSlot=z.selected;
-  bool selecting=(code==ibus::Tab || (code==ibus::Return&&!z.enterOriginal) || (code==' '&&!z.segmentation&&!z.spaceOriginal));
-  if(!ctrl&&!(key.mask&ibus::SHIFT_MASK)&&code>='1'&&code<='5') {requestedSlot=z.page*5+size_t(code-'1');selecting=true;}
-  if(selecting && requestedSlot<z.rimeIndices.size() && z.rimeIndices[requestedSlot]==-2) {_ZephyrRespond(id,eat);return TRUE;}
   bool changed=false,handled=true;
   if(ctrl&&code==ibus::Return&&!z.input.empty()) {z.commit=u8tow(z.input);z.clear();changed=true;}
   else if(alt&&!ctrl&&!(key.mask&(ibus::SHIFT_MASK|ibus::SUPER_MASK))&&code>='1'&&code<='5'&&!z.input.empty()&&_ZephyrChoose(id,z.page*5+size_t(code-'1'))) {changed=true;}

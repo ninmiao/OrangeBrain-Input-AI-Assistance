@@ -9,7 +9,6 @@ ROOT=Path(__file__).resolve().parents[2]
 PACKAGES={
  'x64':('1.17.0','rime-33e7814-Windows-msvc-x64.7z','7478c7caa4ff6b37de86daba1f7ce4a994a4f5ba24872a820fb2b3a9b01fed15','lib64'),
  'x86':('1.17.0','rime-33e7814-Windows-msvc-x86.7z','af235c26c06152ce09ceb8fe9d9ab9fba7ab43ce30aa952b40174d806f5cc3d9','lib'),
- 'arm64':('latest','rime-bb56876-Windows-msvc-arm64.7z','448cbf4dae4af8f490f3cead363eccca6099c90ec0af64fdbe246c9019b72800','libarm64'),
 }
 BOOST_LIBS=('thread','serialization','filesystem','locale','date_time','chrono','regex')
 def download(url,path,sha):
@@ -29,12 +28,11 @@ def run(skip_boost=False, architecture='both', reuse_boost=False):
         subprocess.run([seven,'x','-y',str(archive),'-o'+str(archives/arch)],check=True,stdout=subprocess.DEVNULL)
         lib=native/library_dir;lib.mkdir(exist_ok=True)
         shutil.copy2(archives/arch/'dist/lib/rime.lib',lib/'rime.lib')
-        if arch!='x86':
-            output=native/'output'/('arm64' if arch=='arm64' else '')
+        if arch=='x64':
+            output=native/'output'
             output.mkdir(exist_ok=True,parents=True)
             shutil.copy2(archives/arch/'dist/lib/rime.dll',output/'rime.dll')
-            if arch=='x64':
-                for p in (archives/arch/'dist/include').glob('*.h'):shutil.copy2(p,native/'include'/p.name)
+            for p in (archives/arch/'dist/include').glob('*.h'):shutil.copy2(p,native/'include'/p.name)
     if skip_boost:return
     boost=ROOT/'android/app/src/main/jni/boost'
     if not (boost/'boost/version.hpp').exists() and not (boost/'libs/config/include/boost/version.hpp').exists():
@@ -54,12 +52,11 @@ def run(skip_boost=False, architecture='both', reuse_boost=False):
     vs=subprocess.check_output([str(vswhere),'-latest','-products','*','-requires','Microsoft.VisualStudio.Component.VC.Tools.x86.x64','-property','installationPath'],text=True).strip()
     if not vs:raise RuntimeError('Install Visual Studio 2022 C++ Build Tools and ATL')
     for arch in architectures:
-        bits={'x64':'64','x86':'32','arm64':'arm64'}[arch]
+        bits={'x64':'64','x86':'32'}[arch]
         cmd=archives/f'build-boost-{bits}.cmd';stage=ROOT/f'.tools/boost-win{bits}'
-        host_bits='32' if arch=='x86' else '64'
-        text=f'@echo off\ncall "{vs}/VC/Auxiliary/Build/vcvars{host_bits}.bat"\nif errorlevel 1 exit /b 1\ncd /d "{boost}"\nif not exist b2.exe call .\\bootstrap.bat vc143\nif errorlevel 1 exit /b 1\n.\\b2.exe headers\nif errorlevel 1 exit /b 1\n'
+        text=f'@echo off\ncall "{vs}/VC/Auxiliary/Build/vcvars{bits}.bat"\nif errorlevel 1 exit /b 1\ncd /d "{boost}"\nif not exist b2.exe call .\\bootstrap.bat vc143\nif errorlevel 1 exit /b 1\n.\\b2.exe headers\nif errorlevel 1 exit /b 1\n'
         if not reuse_boost or not all(any((stage/'lib').glob(f'libboost_{name}-*.lib')) for name in BOOST_LIBS):
-            target={'x64':'architecture=x86 address-model=64','x86':'architecture=x86 address-model=32','arm64':'architecture=arm address-model=64'}[arch]
+            target=f'architecture=x86 address-model={bits}'
             libraries=' '.join(f'--with-{name}' for name in BOOST_LIBS)
             text+=f'.\\b2.exe -j4 toolset=msvc-14.3 {target} variant=release link=static runtime-link=static threading=multi {libraries} --stagedir="{stage}" stage\n'
         cmd.write_text(text,encoding='utf-8');subprocess.run([str(cmd)],check=True)

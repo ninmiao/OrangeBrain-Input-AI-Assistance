@@ -64,10 +64,12 @@ import com.osfans.trime.util.monitorCursorAnchor
 import com.osfans.trime.util.styledFloat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import splitties.bitflags.hasFlag
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.inputMethodManager
@@ -466,7 +468,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             postRimeJob { clearComposition() }
         }
         inputView?.updateSelection(newSelStart, newSelEnd)
-        aiController?.selectionChanged()
+        aiController?.selectionChanged(newSelStart, newSelEnd, candidatesStart, candidatesEnd)
     }
 
     private val inputViewLocation = intArrayOf(0, 0)
@@ -659,6 +661,13 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     // 直接commit不做任何处理
+    internal suspend fun commitTextFromRime(text: CharSequence, clearMetaKeyState: Boolean = false) {
+        val connection = currentInputConnection ?: return
+        withContext(Dispatchers.Main.immediate) {
+            if (connection === currentInputConnection) commitText(text, clearMetaKeyState)
+        }
+    }
+
     fun commitText(
         text: CharSequence,
         clearMeatKeyState: Boolean = false,
@@ -666,6 +675,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         val ic = currentInputConnection ?: return
         if (ic.commitText(text, 1)) {
             lastCommittedText = text
+            if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper())
+                aiController?.textCommitted(ic, text.toString())
         }
         InputFeedbackManager.textCommitSpeak(text.toString())
         if (clearMeatKeyState) {

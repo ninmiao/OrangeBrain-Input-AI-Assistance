@@ -63,8 +63,6 @@ STDMETHODIMP WeaselTSF::QueryInterface(REFIID riid, void** ppvObject) {
     *ppvObject = (ITfKeyEventSink*)this;
   else if (IsEqualIID(riid, IID_ITfCompositionSink))
     *ppvObject = (ITfCompositionSink*)this;
-  else if (IsEqualIID(riid, IID_ITfEditSession))
-    *ppvObject = (ITfEditSession*)this;
   else if (IsEqualIID(riid, IID_ITfThreadFocusSink))
     *ppvObject = (ITfThreadFocusSink*)this;
   else if (IsEqualIID(riid, IID_ITfDisplayAttributeProvider))
@@ -285,7 +283,15 @@ LRESULT CALLBACK WeaselTSF::_ZephyrPollProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l
     com_ptr<ITfDocumentMgr> doc;com_ptr<ITfContext> ctx;
     if(SUCCEEDED(self->_pThreadMgr->GetFocus(&doc))&&doc&&SUCCEEDED(doc->GetTop(&ctx))&&ctx==self->_pEditSessionContext) {
       weasel::KeyEvent poll(0,0);
-      if(self->m_client.ProcessKeyEvent(poll))self->_UpdateComposition(ctx);
+      if (self->_zephyrAiRefreshPending) {
+        // Retry a rejected edit session without replacing the buffered response.
+        // If only the caret extent is delayed, publish at the current position.
+        if (self->_zephyrAiSnapshotRead) self->_FlushPendingUI();
+        else self->_UpdateComposition(ctx);
+      } else if (self->m_client.ProcessKeyEvent(poll)) {
+        self->_zephyrAiRefreshPending = true;
+        self->_UpdateComposition(ctx);
+      }
     }
     return 0;
   }

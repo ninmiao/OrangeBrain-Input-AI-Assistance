@@ -1,6 +1,6 @@
 # Zephyr Input · 微风输入法
 
-[Windows 1.12.4 x64](dist/Zephyr-Input-Windows-1.12.4-Setup-x64.exe) · [Android 1.10.3 ARM64](dist/Zephyr-Input-1.10.3-arm64-v8a-demo.apk) · [GPL-3.0-or-later](LICENSE)
+[Windows 1.12.5 x64](dist/Zephyr-Input-Windows-1.12.5-Setup-x64.exe) · [Android 1.10.3 ARM64](dist/Zephyr-Input-1.10.3-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
@@ -30,10 +30,10 @@ Cloud assistance supports **OpenAI, OpenRouter, and Google Gemini**, with separa
 ## Quickstart · 快速开始
 
 1. **Windows**：下载安装器，运行并允许 UAC。选择 **Zephyr Input** 输入法，从开始菜单打开设置。
-2. **Android**：下载 ARM64 APK，安装后按引导启用键盘，等待首次词库部署。
+2. **Android**：下载 ARM64 APK，先按引导授予存储权限，再启用键盘，等待首次词库部署。
 3. **在线 AI**：在 Policy 中填 API Key 并选模型，在 **AI 增强（自动）** 里选模式。Windows 点 **保存并生效**，Android 允许使用云端 AI。组字时按 **F8**（Windows）或点 **星光**（Android）也可手动请求。
 
-Run Setup and approve UAC on **Windows**, or install the ARM64 APK and enable the keyboard on **Android**. For online AI, add a key and model to your policy and choose a mode under **Automatic AI**. Save on Windows and grant cloud permission on Android. While composing, press **F8** or tap the **sparkle** for help on demand.
+Run Setup and approve UAC on **Windows**, or install the ARM64 APK, grant storage access, and enable the keyboard on **Android**. For online AI, add a key and model to your policy and choose a mode under **Automatic AI**. Save on Windows and grant cloud permission on Android. While composing, press **F8** or tap the **sparkle** for help on demand.
 
 ## 词表、本地模型与在线 AI · Local data and online AI
 
@@ -225,7 +225,7 @@ Android 基于 Trime，保留 Kotlin 界面和系统、网络适配，通过 JNI
 | `shared/native-core/` | 共享 C++ AI 核心及 JNI / Shared C++ AI core and JNI |
 | `shared/ai-core/` | Android 适配和共享资源 / Android adapters and shared resources |
 | `tests/corpus/` | 中英错输语料与生成器 / Typo corpus and generator |
-| `dist/` | 最新两端安装包 / Current installers |
+| `dist/` | 最新两端云构建安装包及校验值 / Current cloud-built installers and checksums |
 
 [开发环境与构建 / Build instructions](docs/DEVELOPMENT.md)
 

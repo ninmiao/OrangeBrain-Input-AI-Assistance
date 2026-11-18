@@ -33,32 +33,59 @@ struct Composition {
   }
   void backspace() { if(caret) { input.erase(--caret, 1); changed(); } }
   void erase() { if(caret<input.size()) { input.erase(caret,1); changed(); } }
-  void clear() { shortcuts.reset(); input.clear(); caret=0; partialSelection=false; preedit.clear(); changed(); }
+  void clear() {
+    shortcuts.reset();
+    input.clear();
+    before.clear();
+    after.clear();
+    caret = 0;
+    partialSelection = false;
+    preedit.clear();
+    changed();
+  }
+  void cancel() {
+    clear();
+    commit.clear();
+    refreshPending = false;
+  }
   void language() { chinese=!chinese;changed(); }
   void add(const std::wstring& text,const std::wstring& source, int rimeIndex = -1) {
     if(!text.empty() && std::find(candidates.begin(),candidates.end(),text)==candidates.end()) {
       candidates.push_back(text);comments.push_back(source);rimeIndices.push_back(rimeIndex);
     }
   }
-  bool adopt(uint64_t expected, const std::vector<std::wstring>& values, bool assistant = false, bool streaming = false) {
-    if(expected!=revision || input.empty()) return false;
-    auto old=candidates, labels=comments;auto indices=rimeIndices;
-    candidates.clear(); comments.clear(); rimeIndices.clear();
-    for(size_t i=0;i<values.size();++i) if(!values[i].empty()) {
-      if(!assistant) { add(values[i],L"AI"); continue; }
-      candidates.push_back(values[i]);
-      comments.push_back(assistant ? (i==0 ? L"AI 纠错" : L"AI 助手") : L"AI");
-      rimeIndices.push_back(-1);
+  bool adopt(uint64_t expected, const std::vector<std::wstring>& values, bool assistant = false) {
+    if (expected != revision || input.empty()) return false;
+    const auto firstLocal = std::find_if(comments.begin(), comments.end(), [](const auto& label) {
+      return label.rfind(L"AI", 0) != 0;
+    });
+    const size_t published = firstLocal - comments.begin();
+    if (values.empty()) {
+      candidates.erase(candidates.begin(), candidates.begin() + published);
+      comments.erase(comments.begin(), firstLocal);
+      rimeIndices.erase(rimeIndices.begin(), rimeIndices.begin() + published);
+      selected = selected >= published ? selected - published : 0;
+      page = selected / 5;
+      return true;
     }
-    if(assistant && values.size()==1) {
-      candidates.push_back(streaming?L"助手生成中…":L"助手未完成");comments.push_back(L"AI 助手");rimeIndices.push_back(-2);
+    // Only completed AI suggestions precede the native choices. Preserve each
+    // choice's action, even if a Rime prefix and an AI result have the same text.
+    const bool localSelected = selected >= published && selected < candidates.size();
+    size_t slot = 0;
+    size_t inserted = 0;
+    for (size_t i = 0; i < values.size(); ++i) {
+      const auto& text = values[i];
+      if (text.empty() || (!assistant && std::find(values.begin(), values.begin() + i, text) != values.begin() + i))
+        continue;
+      if (slot++ < published) continue;
+      const auto position = published + inserted++;
+      candidates.insert(candidates.begin() + position, text);
+      comments.insert(comments.begin() + position, assistant ? (i == 0 ? L"AI 纠错" : L"AI 助手") : L"AI");
+      rimeIndices.insert(rimeIndices.begin() + position, -1);
     }
-    for(size_t i=0;i<old.size();++i) if(labels[i].rfind(L"AI",0)!=0) add(old[i],labels[i],indices[i]);
-    // A later streaming update must not reset a user's highlighted slot.
-    bool updating=!labels.empty()&&labels[0].rfind(L"AI",0)==0&&!values.empty();
-    if(!updating)selected=page=0;
-    if(selected>=candidates.size())selected=0;
-    page=selected/5;return true;
+    if (localSelected) selected += inserted;
+    page = selected / 5;
+    return true;
   }
   bool applyConfiguration(uint64_t value) {
     if(value==configurationRevision)return false;
@@ -75,7 +102,7 @@ struct Composition {
     return !input.empty() && ((enter && enterOriginal) || (space && spaceOriginal));
   }
   void choose(size_t index) {
-    if(index>=candidates.size() || (index<rimeIndices.size() && rimeIndices[index]==-2)) return;
+    if(index>=candidates.size()) return;
     commit=candidates[index];clear();
   }
 };

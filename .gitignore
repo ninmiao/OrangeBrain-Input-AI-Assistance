@@ -193,7 +193,7 @@ secrets.properties
 # Store-listing screenshots and descriptions are not required to build the app.
 /android/fastlane/
 
-# User-requested release artifacts: only the two current packages belong in Git.
+# Only current installers and their checksum file belong in dist/.
 !/dist/
 /dist/*
 !/docs/ai/number-row-providers-1.4.0.md
@@ -247,7 +247,8 @@ secrets.properties
 
 
 
-!/dist/Zephyr-Input-Windows-1.12.4-Setup-x64.exe
+!/dist/Zephyr-Input-Windows-1.12.5-Setup-x64.exe
 !/dist/Zephyr-Input-1.10.3-arm64-v8a-demo.apk
+!/dist/SHA256SUMS
 
 !/docs/ai/streaming-validation.md

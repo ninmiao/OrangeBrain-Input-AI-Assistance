@@ -49,12 +49,24 @@ int main() {
   check(!shortcutChord("f8",ibus::F8,U));
   check(!shortcutChord("f8",ibus::F8,C|S));
   check(!shortcutChord("disabled",ibus::F8,0));
+  check(candidateListKey('1',0,true,true));
+  check(candidateListKey('5',ibus::ALT_MASK,true,true));
+  check(!candidateListKey('1',S,true,true));
+  check(!candidateListKey('1',U,true,true));
+  check(candidateListKey(ibus::Tab,S,true,true));
+  check(candidateListKey(ibus::Down,0,true,true));
+  check(candidateListKey(ibus::Return,0,false,true));
+  check(!candidateListKey(ibus::Return,0,true,true));
+  check(!candidateListKey(ibus::Return,C,false,false));
+  check(candidateListKey(' ',0,true,false));
+  check(!candidateListKey(' ',0,true,true));
+  check(!candidateListKey(ibus::KP_1,0,false,false));
   const std::filesystem::path path="shortcut-fixture.json";
   {std::ofstream f(path);f<<R"({"languageShortcut":"ctrl_space","scriptShortcut":"ctrl_shift_f"})";}
   auto prefs=readKeyPreferences(path);check(prefs&&prefs->languageShortcut=="ctrl_space"&&prefs->scriptShortcut=="ctrl_shift_f");
   check(prefs&&prefs->aiShortcut=="f8");
-  {std::ofstream f(path);f<<R"({"languageShortcut":"shift","enabled":false,"settingsRevision":3,"assistantEnabled":true,"aiShortcut":"f9"})";}
-  prefs=readKeyPreferences(path);check(prefs&&prefs->aiEnabled&&prefs->aiShortcut=="f9");
+  {std::ofstream f(path);f<<R"({"languageShortcut":"shift","enabled":false,"settingsRevision":3,"assistantEnabled":true,"aiShortcut":"f9","wordSegmentation":false})";}
+  prefs=readKeyPreferences(path);check(prefs&&prefs->aiEnabled&&prefs->aiShortcut=="f9"&&!prefs->wordSegmentation);
   std::filesystem::remove(path);
   std::cout<<checks<<" shortcut checks passed\n";
 }
