@@ -38,7 +38,9 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     private var candidateScroll: HorizontalScrollView? = null
     private var renderedCandidates: AiState.Ready? = null
     private var label: TextView? = null
-    private var scriptButton: Button? = null
+    private var scriptToggle: LinearLayout? = null
+    private var simplifiedSegment: TextView? = null
+    private var traditionalSegment: TextView? = null
     private var candidateTextSize = 18.15f
     private var candidateHeightDp = 28
     private var state: AiState = AiState.Idle
@@ -72,18 +74,27 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         candidateHeightDp = style.candidateViewHeight.coerceAtLeast(28)
         fun dp(n: Int) = (n * service.resources.displayMetrics.density).toInt()
         val root = LinearLayout(context).apply { id = View.generateViewId(); orientation = LinearLayout.HORIZONTAL; gravity = android.view.Gravity.CENTER_VERTICAL; setBackgroundColor(0xffd1d3d9.toInt()) }
-        scriptButton = Button(context).apply {
-            textSize = 14f; isAllCaps = false; minWidth = 0; minimumWidth = 0
-            setTextColor(0xff525966.toInt())
+        // Segmented switch: both scripts stay visible and the active one is filled.
+        fun segment(text: String) = TextView(context).apply {
+            this.text = text; textSize = 13f; gravity = android.view.Gravity.CENTER
+            includeFontPadding = false; isSingleLine = true
             typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
-            elevation = 0f; stateListAnimator = null
+        }
+        simplifiedSegment = segment("简"); traditionalSegment = segment("繁")
+        scriptToggle = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL; gravity = android.view.Gravity.CENTER_VERTICAL
+            setPadding(dp(2), dp(2), dp(2), dp(2))
+            val track = android.graphics.drawable.GradientDrawable().apply {
+                setColor(0x26525966); cornerRadius = dp(13).toFloat()
+            }
             val mask = android.graphics.drawable.GradientDrawable().apply {
-                setColor(android.graphics.Color.WHITE); cornerRadius = dp(6).toFloat()
+                setColor(android.graphics.Color.WHITE); cornerRadius = dp(13).toFloat()
             }
             background = android.graphics.drawable.RippleDrawable(
-                android.content.res.ColorStateList.valueOf(0x24525966), null, mask)
-            minHeight = 0; minimumHeight = 0; includeFontPadding = false; isSingleLine = true
-            setPadding(0, 0, 0, 0)
+                android.content.res.ColorStateList.valueOf(0x30525966), track, mask)
+            isClickable = true; isFocusable = true
+            addView(simplifiedSegment, LinearLayout.LayoutParams(0, -1, 1f))
+            addView(traditionalSegment, LinearLayout.LayoutParams(0, -1, 1f))
             setOnClickListener { scope.launch { withContext(Dispatchers.IO) { store.update { it.copy(traditional = !it.traditional) } } } }
         }
         val content = LinearLayout(context).apply { gravity = android.view.Gravity.CENTER_VERTICAL }
@@ -124,7 +135,9 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             background=android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(0x24525966),null,android.graphics.drawable.ColorDrawable(android.graphics.Color.WHITE))
             setPadding(dp(8),dp(3),dp(8),dp(3));setOnClickListener {openClipboard()}
         },LinearLayout.LayoutParams(dp(36),dp(candidateHeightDp)))
-        root.addView(scriptButton, LinearLayout.LayoutParams(dp(48), dp(candidateHeightDp)))
+        root.addView(FrameLayout(context).apply {
+            addView(scriptToggle, FrameLayout.LayoutParams(dp(52), dp(26), android.view.Gravity.CENTER))
+        }, LinearLayout.LayoutParams(dp(60), dp(candidateHeightDp)))
         panel = root
         render()
         return root
@@ -151,8 +164,15 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     private fun notice(message: String) = Toast.makeText(service, message, Toast.LENGTH_SHORT).show()
     private fun render() {
         val c = store.config
-        scriptButton?.text = if (c.traditional) "繁" else "简"
-        scriptButton?.contentDescription = if (c.traditional) "繁体输出，点击切换简体" else "简体输出，点击切换繁体"
+        fun style(segment: TextView?, selected: Boolean) {
+            segment ?: return
+            segment.setTextColor(if (selected) android.graphics.Color.WHITE else 0xff525966.toInt())
+            segment.background = if (selected) android.graphics.drawable.GradientDrawable().apply {
+                setColor(0xff565CC6.toInt()); cornerRadius = 11 * segment.resources.displayMetrics.density
+            } else null
+        }
+        style(simplifiedSegment, !c.traditional); style(traditionalSegment, c.traditional)
+        scriptToggle?.contentDescription = if (c.traditional) "繁体输出，点击切换简体" else "简体输出，点击切换繁体"
         val indicator = when {
             sensitive -> "隐私字段"
             !c.consent -> "未授权"
