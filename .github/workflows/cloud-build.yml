@@ -137,8 +137,8 @@ jobs:
           $out = Join-Path $env:RUNNER_TEMP 'tsf-load'
           New-Item -ItemType Directory -Path $out | Out-Null
           $source = Join-Path $env:GITHUB_WORKSPACE 'windows/tests/tsf_load_test.cpp'
-          foreach ($case in @(@('arm64', 'vcvarsarm64', $state.arm64), @('x64', 'vcvarsarm64_amd64', $state.x64))) {
-            $arch, $vcvars, $expected = $case
+          foreach ($case in @(@('arm64', 'vcvarsarm64', $state.arm64, $state.x64), @('x64', 'vcvarsarm64_amd64', $state.x64, $state.arm64))) {
+            $arch, $vcvars, $expected, $other = $case
             $exe = Join-Path $out "tsf_load_$arch.exe"
             $cmd = Join-Path $out "build_$arch.cmd"
             "@echo off`r`ncall `"$vs/VC/Auxiliary/Build/$vcvars.bat`" >nul`r`nif errorlevel 1 exit /b 1`r`ncl /nologo /utf-8 /EHsc /std:c++17 /MT `"$source`" /Fe`"$exe`" /Fo`"$out/tsf_load_$arch.obj`" /link ole32.lib uuid.lib`r`n" |
@@ -149,7 +149,8 @@ jobs:
             $code = $LASTEXITCODE
             Write-Output "[$arch] $result"
             if ($code) { throw "An $arch process could not activate the input method: exit $code" }
-            if ($result -notmatch [regex]::Escape($expected)) { throw "An $arch process loaded the wrong module (expected $expected)" }
+            if ($result -notmatch [regex]::Escape($expected)) { throw "An $arch process did not load $expected" }
+            if ($result -match [regex]::Escape($other)) { throw "An $arch process also loaded $other" }
           }
 
   android:
