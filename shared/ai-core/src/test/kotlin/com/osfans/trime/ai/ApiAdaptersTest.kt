@@ -81,4 +81,40 @@ class ApiAdaptersTest {
             } finally { http.dispatcher.executorService.shutdownNow();http.connectionPool.evictAll() }
         }
     }
+    private fun tlsPair(): Pair<HandshakeCertificates, HandshakeCertificates> {
+        val cert=HeldCertificate.Builder().addSubjectAlternativeName("localhost").addSubjectAlternativeName("127.0.0.1").build()
+        return HandshakeCertificates.Builder().heldCertificate(cert).build() to HandshakeCertificates.Builder().addTrustedCertificate(cert.certificate).build()
+    }
+    @Test fun unreachableFirstAddressFallsBackWithoutResending()=runBlocking {
+        val (serverTls,clientTls)=tlsPair()
+        MockWebServer().use { server ->
+            server.useHttps(serverTls.sslSocketFactory(),false);server.start(java.net.InetAddress.getByName("127.0.0.1"),0)
+            val live=java.net.InetAddress.getByName("127.0.0.1")
+            val dead=java.net.InetAddress.getByAddress("localhost",byteArrayOf(127,0,0,2))
+            // Production settings: no OkHttp retries, so only the client's own fallback can reach `live`.
+            val http=OkHttpClient.Builder().sslSocketFactory(clientTls.sslSocketFactory(),clientTls.trustManager)
+                .retryOnConnectionFailure(false).dns(object:okhttp3.Dns { override fun lookup(hostname:String)=listOf(dead,live) }).build()
+            try {
+                server.enqueue(MockResponse().setBody("""{"status":"completed","output":[{"type":"message","content":[{"type":"output_text","text":"[\"coffee\"]"}]}]}"""))
+                val url="https://localhost:${server.port}/v1/responses"
+                assertEquals(listOf("coffee"),ChatCompletionsClient(http).request(url,"secret","model",request,timeoutMs=10000,parameters=values).candidates)
+                assertEquals(1,server.requestCount,"The provider receives the request exactly once")
+            } finally { http.dispatcher.executorService.shutdownNow();http.connectionPool.evictAll() }
+        }
+    }
+    @Test fun failureAfterRequestIsSentIsNotRetried()=runBlocking {
+        val (serverTls,clientTls)=tlsPair()
+        MockWebServer().use { server ->
+            server.useHttps(serverTls.sslSocketFactory(),false);server.start(java.net.InetAddress.getByName("127.0.0.1"),0)
+            val live=java.net.InetAddress.getByName("127.0.0.1")
+            val http=OkHttpClient.Builder().sslSocketFactory(clientTls.sslSocketFactory(),clientTls.trustManager)
+                .retryOnConnectionFailure(false).dns(object:okhttp3.Dns { override fun lookup(hostname:String)=listOf(live) }).build()
+            try {
+                server.enqueue(MockResponse().setSocketPolicy(okhttp3.mockwebserver.SocketPolicy.DISCONNECT_AFTER_REQUEST))
+                server.enqueue(MockResponse().setBody("""{"status":"completed","output":[{"type":"message","content":[{"type":"output_text","text":"[\"twice\"]"}]}]}"""))
+                assertFails { ChatCompletionsClient(http).request("https://localhost:${server.port}/v1/responses","secret","model",request,timeoutMs=10000,parameters=values) }
+                assertEquals(1,server.requestCount,"A request the provider already received is never resent")
+            } finally { http.dispatcher.executorService.shutdownNow();http.connectionPool.evictAll() }
+        }
+    }
 }

@@ -70,11 +70,15 @@ jobs:
       # installed file is dated in the future: Rime treats newer data files as
       # modified and redeploys on every start.
       - name: Install west of UTC and check file times
+        timeout-minutes: 5
         run: |
           tzutil /s "Central Standard Time"
           if ($LASTEXITCODE) { throw 'Cannot change the runner time zone' }
           $installer = Get-ChildItem -LiteralPath (Join-Path $env:RUNNER_TEMP 'zephyr-output') -Filter 'Zephyr-Input-Windows-*-Setup-x64.exe'
-          $setup = Start-Process -FilePath $installer.FullName -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-' -Wait -PassThru
+          # Wait for Setup itself only. Start-Process -Wait would also wait for the
+          # broker and input service that Setup leaves running, which never exit.
+          $setup = Start-Process -FilePath $installer.FullName -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-' -PassThru
+          if (!$setup.WaitForExit(180000)) { throw 'Silent install did not finish in 3 minutes' }
           if ($setup.ExitCode) { throw "Silent install failed: $($setup.ExitCode)" }
           $root = Join-Path $env:ProgramFiles 'Zephyr Input'
           $files = @(Get-ChildItem -LiteralPath $root -Recurse -File)

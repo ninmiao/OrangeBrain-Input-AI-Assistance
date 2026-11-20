@@ -40,26 +40,68 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
         val body = payload(model, request, parameters, endpoint, provider).toString()
             .toRequestBody("application/json; charset=utf-8".toMediaType())
         val phase = AtomicReference(RequestPhase.QUEUED)
-        val listener = object : EventListener() {
-            override fun dnsStart(call:Call, domainName:String) { phase.set(RequestPhase.DNS) }
-            override fun connectStart(call:Call, address:java.net.InetSocketAddress, proxy:java.net.Proxy) { phase.set(RequestPhase.CONNECT) }
-            override fun secureConnectStart(call:Call) { phase.set(RequestPhase.TLS) }
-            override fun requestHeadersStart(call:Call) { phase.set(RequestPhase.SENDING) }
-            override fun requestBodyEnd(call:Call, byteCount:Long) { phase.set(RequestPhase.WAITING) }
-            override fun responseHeadersEnd(call:Call, response:Response) { phase.set(RequestPhase.RECEIVING) }
-        }
-        val client = http.newBuilder().eventListener(listener).callTimeout(timeoutMs.toLong(), TimeUnit.MILLISECONDS)
-            .connectTimeout(timeoutMs.toLong(), TimeUnit.MILLISECONDS)
-            .readTimeout(timeoutMs.toLong(), TimeUnit.MILLISECONDS)
-            .writeTimeout(timeoutMs.toLong(), TimeUnit.MILLISECONDS).build()
         val builder = Request.Builder().url(ApiRouting.requestUrl(endpoint)).post(body)
         if (ApiRouting.isGemini(endpoint)) builder.header("x-goog-api-key", key).header("Api-Revision", "2026-05-20")
         else builder.header("Authorization", "Bearer $key")
-        val call = client.newCall(builder.build())
+        val httpRequest = builder.build()
+        val latest = AtomicReference<AiResult?>(null)
+        // A host can resolve to an address that is unreachable from this network while its
+        // other addresses work. Retries stay off (a sent POST must never be resent), so
+        // try the next address only when connecting failed before any request byte left:
+        // the provider never saw that attempt. Each address gets a short connect budget
+        // inside the one overall deadline.
+        val deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeoutMs.toLong())
+        val perConnectMs = (timeoutMs / 3).coerceIn(1000, 3000).toLong()
+        val failed: MutableSet<java.net.InetAddress> = java.util.concurrent.ConcurrentHashMap.newKeySet()
+        var attempt = 0
+        while (true) {
+            val remainingMs = TimeUnit.NANOSECONDS.toMillis(deadline - System.nanoTime())
+            if (remainingMs < 250) throw ApiTimeoutException(phase.get())
+            val sent = java.util.concurrent.atomic.AtomicBoolean(false)
+            val failedBefore = failed.size
+            val listener = object : EventListener() {
+                override fun dnsStart(call:Call, domainName:String) { phase.set(RequestPhase.DNS) }
+                override fun connectStart(call:Call, address:java.net.InetSocketAddress, proxy:java.net.Proxy) { phase.set(RequestPhase.CONNECT) }
+                override fun secureConnectStart(call:Call) { phase.set(RequestPhase.TLS) }
+                override fun connectFailed(call:Call, address:java.net.InetSocketAddress, proxy:java.net.Proxy, protocol:okhttp3.Protocol?, ioe:IOException) {
+                    address.address?.let { failed.add(it) }
+                }
+                override fun requestHeadersStart(call:Call) { sent.set(true); phase.set(RequestPhase.SENDING) }
+                override fun requestBodyEnd(call:Call, byteCount:Long) { phase.set(RequestPhase.WAITING) }
+                override fun responseHeadersEnd(call:Call, response:Response) { phase.set(RequestPhase.RECEIVING) }
+            }
+            val client = http.newBuilder().eventListener(listener).dns(ExcludingDns(http.dns, failed))
+                .callTimeout(remainingMs, TimeUnit.MILLISECONDS)
+                .connectTimeout(perConnectMs, TimeUnit.MILLISECONDS)
+                .readTimeout(timeoutMs.toLong(), TimeUnit.MILLISECONDS)
+                .writeTimeout(timeoutMs.toLong(), TimeUnit.MILLISECONDS).build()
+            try {
+                return attempt(client.newCall(httpRequest), remainingMs, endpoint, request, latest, phase)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                val connectOnly = !sent.get() && failed.size > failedBefore && latest.get() == null
+                val left = TimeUnit.NANOSECONDS.toMillis(deadline - System.nanoTime())
+                if (connectOnly && attempt < 3 && left >= 1000) { attempt++; continue }
+                throw error
+            }
+        }
+    }
+
+    /** Excludes addresses that already failed to connect during this request. */
+    private class ExcludingDns(private val base: Dns, private val failed: Set<java.net.InetAddress>) : Dns {
+        override fun lookup(hostname: String): List<java.net.InetAddress> {
+            val all = base.lookup(hostname)
+            val usable = all.filterNot { it in failed }
+            return usable.ifEmpty { throw java.net.UnknownHostException("No reachable address for $hostname") }
+        }
+    }
+
+    private suspend fun attempt(call: Call, timeoutMs: Long, endpoint: String, request: AiRequest,
+                                latest: AtomicReference<AiResult?>, phase: AtomicReference<RequestPhase>): AiResult {
         // Coroutine deadline also covers a queued call. The cancellation hook below
         // cancels its socket/HTTP2 stream even while the body is still being read.
-        val latest = AtomicReference<AiResult?>(null)
-        return try { withTimeoutOrNull(timeoutMs.toLong()) {
+        return try { withTimeoutOrNull(timeoutMs) {
             suspendCancellableCoroutine { continuation ->
                 continuation.invokeOnCancellation { call.cancel() }
                 call.enqueue(object : Callback {
