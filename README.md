@@ -1,6 +1,6 @@
 # Zephyr Input · 微风输入法
 
-[Windows 1.12.5 x64](dist/Zephyr-Input-Windows-1.12.5-Setup-x64.exe) · [Android 1.10.3 ARM64](dist/Zephyr-Input-1.10.3-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
+[Windows 1.12.6 x64](dist/Zephyr-Input-Windows-1.12.6-Setup-x64.exe) · [Android 1.10.3 ARM64](dist/Zephyr-Input-1.10.3-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
@@ -260,3 +260,9 @@ Zephyr 原创代码与文档采用 **GPL-3.0-or-later**，允许使用、修改�
 Zephyr's original code and documentation use **GPL-3.0-or-later**, permitting use, modification, commercial use, and redistribution. Distribution of GPL-covered works carries corresponding-source and notice obligations. Third-party components retain their own licenses; Rime Ice dictionaries use **GPL-3.0-only**.
 
 [许可证正文 / License text](LICENSE) · [授权范围 / Licensing details](LICENSE-NOTICE.md)
+
+## Windows 安全提示 · SmartScreen
+
+Windows 安装包暂未做代码签名，首次运行时 SmartScreen 可能提示“Windows 已保护你的电脑”。点击“更多信息”，再点“仍要运行”即可继续安装，安装、更新和卸载不受影响。可对照发布附件中的 `SHA256SUMS` 核对文件。
+
+The Windows installer is not code-signed, so SmartScreen may show "Windows protected your PC" on first run. Choose "More info", then "Run anyway". Installing, updating, and uninstalling work normally. Compare the file with `SHA256SUMS` in the release assets.

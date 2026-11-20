@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(ZephyrWindows VERSION 1.12.5 LANGUAGES C CXX RC)
+project(ZephyrWindows VERSION 1.12.6 LANGUAGES C CXX RC)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -14,6 +14,11 @@ add_executable(ZephyrSettings WIN32 main.cpp ui.cpp app.rc)
 add_executable(ZephyrBroker WIN32 main.cpp app.rc)
 target_compile_definitions(ZephyrBroker PRIVATE ZEPHYR_BROKER)
 foreach(target ZephyrSettings ZephyrBroker)
+  # Also read by app.rc, so every signed binary carries the project version.
+  target_compile_definitions(${target} PRIVATE
+    ZEPHYR_VER_MAJOR=${PROJECT_VERSION_MAJOR}
+    ZEPHYR_VER_MINOR=${PROJECT_VERSION_MINOR}
+    ZEPHYR_VER_PATCH=${PROJECT_VERSION_PATCH})
   target_compile_options(${target} PRIVATE /utf-8 /W4 /EHsc)
   target_link_libraries(${target} PRIVATE zephyr_windows comctl32 gdi32)
   target_link_options(${target} PRIVATE /MANIFEST:EMBED "/MANIFESTINPUT:${CMAKE_CURRENT_SOURCE_DIR}/app.manifest")

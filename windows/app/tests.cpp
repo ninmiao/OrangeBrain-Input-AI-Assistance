@@ -188,6 +188,44 @@ int main(int argc, char** argv) {
         },
         "HTTP failure surfaced");
     check(attempts == 1, "HTTP error not retried");
+    {
+      auto ok=[&](const HttpOptions& o){
+        auto send=[&](const J& e){auto bytes="data: "+e.dump()+"\n\n";o.consume(bytes.data(),bytes.size());};
+        send({{"type","response.output_text.delta"},{"delta",u8"[\"你好\"]"}});
+        send({{"type","response.completed"},{"response",{{"usage",J::object()}}}});
+        return HttpResponse{200,""};};
+      attempts = 0;
+      auto retried = requestAi(store, c, p, raw, {}, {}, [&](const HttpOptions& o) {
+        return ++attempts == 1 ? HttpResponse{503, ""} : ok(o);
+      });
+      check(attempts == 2 && retried["candidates"].size() == 1, "Gateway 503 retried once");
+      attempts = 0;
+      requestAi(store, c, p, raw, {}, {}, [&](const HttpOptions& o) -> HttpResponse {
+        if (++attempts == 1) throw Error("network", 12030);
+        return ok(o);
+      });
+      check(attempts == 2, "Connection failure before headers retried once");
+      attempts = 0;
+      rejects([&] { requestAi(store, c, p, raw, {}, {}, [&](const HttpOptions&) {
+        attempts++; return HttpResponse{502, ""}; }); }, "Repeated gateway failure surfaced");
+      check(attempts == 2, "Gateway failure retried at most once");
+      attempts = 0;
+      rejects([&] { requestAi(store, c, p, raw, {}, {}, [&](const HttpOptions&) {
+        attempts++; return HttpResponse{429, ""}; }); }, "Rate limit surfaced");
+      check(attempts == 1, "Rate limit never retried");
+      attempts = 0;
+      rejects([&] { requestAi(store, c, p, raw, {}, {}, [&](const HttpOptions& o) -> HttpResponse {
+        attempts++; HttpResponse h{200, ""}; o.receivedHeaders(h); throw Error("network", 12030); }); },
+        "Failure after response headers surfaced");
+      check(attempts == 1, "Failure after headers not retried (provider may have billed)");
+      attempts = 0; int probes = 0;
+      try {
+        requestAi(store, c, p, raw, {}, [&] { return ++probes < 3; }, [&](const HttpOptions&) {
+          attempts++; return HttpResponse{503, ""}; });
+        check(false, "Cancelled retry must throw");
+      } catch (const Error& e) { check(e.code == "cancelled", "Typing during backoff cancels the retry"); }
+      check(attempts == 1, "No retry after the client disconnects");
+    }
     std::ifstream corpus(argc > 1 ? argv[1] : "");
     check(bool(corpus), "Truncation corpus available");
     std::string line;

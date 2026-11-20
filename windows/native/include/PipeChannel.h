@@ -118,9 +118,11 @@ class PipeChannel : public PipeChannelBase {
   }
 
   _TyRes Transact(Msg& msg) {
-    _Ensure();
-    HANDLE* phandle = _GetPipeHandle();
-    _Send(*phandle, msg);
+    if (!_Ensure()) {
+      ClearBufferStream();
+      throw static_cast<DWORD>(ERROR_PIPE_NOT_CONNECTED);
+    }
+    _Send(*_GetPipeHandle(), msg, true);
     return _ReceiveResponse();
   }
 
@@ -148,7 +150,9 @@ class PipeChannel : public PipeChannelBase {
   }
 
  protected:
-  void _Send(HANDLE pipe, Msg& msg) {
+  // `reconnect` is for client channels only. A server thread that loses its
+  // client must not "reconnect", which would open a client to its own pipe.
+  void _Send(HANDLE pipe, Msg& msg, bool reconnect) {
     auto ctx = _GetContext();
     char* pbuff = ctx->buffer.get();
     DWORD lwritten = 0;
@@ -165,13 +169,28 @@ class PipeChannel : public PipeChannelBase {
     if (data_sz > buff_size)
       data_sz = buff_size;
 
+    // Drop a pending body even when the write throws, so it cannot be
+    // attached to the next message.
+    struct ClearOnExit {
+      PipeChannel* self;
+      ~ClearOnExit() { self->ClearBufferStream(); }
+    } clear{this};
+
     try {
       _WritePipe(pipe, data_sz, pbuff);
     } catch (...) {
+      if (!reconnect)
+        throw;
+      // The old handle is closed by _Reconnect(). Retry only with the new
+      // handle *value*; passing the HANDLE* itself to WriteFile raises
+      // STATUS_INVALID_HANDLE in hosts with strict handle checks (SearchHost,
+      // UWP/XAML apps) and terminates the host application.
       _Reconnect();
-      _WritePipe(_GetPipeHandle(), data_sz, pbuff);
+      HANDLE fresh = *_GetPipeHandle();
+      if (_Invalid(fresh))
+        throw static_cast<DWORD>(ERROR_PIPE_NOT_CONNECTED);
+      _WritePipe(fresh, data_sz, pbuff);
     }
-    ClearBufferStream();
   }
 
   _TyRes _ReceiveResponse() {

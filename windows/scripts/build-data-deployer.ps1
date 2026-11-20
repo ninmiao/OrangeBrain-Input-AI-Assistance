@@ -9,7 +9,13 @@ $batch=Join-Path $work 'build.cmd'
 $source=Join-Path $root 'windows/native/ZephyrDataDeploy.cpp'
 $include=Join-Path $root 'windows/native/include'
 $output=Join-Path $work 'ZephyrDataDeploy.exe'
-$lines=@('@echo off',('call "'+$vs+'\VC\Auxiliary\Build\vcvars64.bat" >nul'),'if errorlevel 1 exit /b 1',('cl /nologo /utf-8 /EHsc /std:c++17 /O2 /MT /I "'+$include+'" "'+$source+'" /Fe:"'+$output+'" /link /SUBSYSTEM:WINDOWS shell32.lib'), 'exit /b %errorlevel%')
+# Same version resource as the other binaries (version from windows/app/CMakeLists.txt).
+$cmake=[IO.File]::ReadAllText((Join-Path $root 'windows/app/CMakeLists.txt'))
+if($cmake -notmatch 'project\(ZephyrWindows VERSION (\d+)\.(\d+)\.(\d+)'){throw 'Cannot read the Windows version'}
+$app=Join-Path $root 'windows/app'
+$res=Join-Path $work 'ZephyrDataDeploy.res'
+$rc='rc /nologo /DZEPHYR_VER_MAJOR='+$Matches[1]+' /DZEPHYR_VER_MINOR='+$Matches[2]+' /DZEPHYR_VER_PATCH='+$Matches[3]+' /I "'+$app+'" /fo "'+$res+'" "'+$app+'\app.rc"'
+$lines=@('@echo off',('call "'+$vs+'\VC\Auxiliary\Build\vcvars64.bat" >nul'),'if errorlevel 1 exit /b 1',$rc,'if errorlevel 1 exit /b 1',('cl /nologo /utf-8 /EHsc /std:c++17 /O2 /MT /I "'+$include+'" "'+$source+'" "'+$res+'" /Fe:"'+$output+'" /link /SUBSYSTEM:WINDOWS shell32.lib'), 'exit /b %errorlevel%')
 [IO.File]::WriteAllLines($batch,$lines,[Text.Encoding]::ASCII)
 Push-Location $work
 try { & $batch; if($LASTEXITCODE){throw 'Data deployer build failed'} } finally {Pop-Location}

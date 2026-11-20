@@ -133,24 +133,58 @@ J requestAi(const Store& store, const J& c, const J& p, const Input& raw,
       if(partial)partial(latest);
     }
   };
-  o.receivedHeaders=[](const HttpResponse& r) {
+  bool headersReceived = false;
+  o.receivedHeaders=[&](const HttpResponse& r) {
+    headersReceived = true;
     if(r.status<200 || r.status>=300)throw Error("HTTP",r.status);
   };
   o.consume=[&](const char* bytes,size_t count){feed(std::string(bytes,count),false);};
   o.complete=[&]{return done;};
-  try {
-    auto response=transport(o);
-    if(response.status<200 || response.status>=300)throw Error("HTTP",response.status);
-    // Injected test transports and compatible gateways may buffer a JSON body.
-    if(!response.body.empty())feed(response.body,false);
-    if (!done) feed({},true);
-    return latest;
-  } catch(const Error& e) {
-    if(e.code=="cancelled" || !latest.is_object())throw;
-    if(cancel)cancel->check();
-    if(connected && !connected())throw Error("cancelled");
-    latest["streaming"]=false;latest["streamError"]=e.code;latest["recovered"]=true;
-    return latest;
+  // One retry, only for failures the provider almost certainly did not
+  // process (no billing, no duplicate output): the connection failed before
+  // any response header, or a gateway answered 502/503/504. Nothing streamed
+  // yet, the request failed fast, and the TSF client is still waiting.
+  // Everything else (4xx, 429, truncation, mid-stream errors) is not retried.
+  const auto firstStart = Clock::now();
+  const int configuredTimeout = o.timeoutMs;
+  for (int attempt = 0;; ++attempt) {
+    try {
+      auto response=transport(o);
+      if(response.status<200 || response.status>=300)throw Error("HTTP",response.status);
+      // Injected test transports and compatible gateways may buffer a JSON body.
+      if(!response.body.empty())feed(response.body,false);
+      if (!done) feed({},true);
+      return latest;
+    } catch(const Error& e) {
+      if(e.code=="cancelled")throw;
+      if(!latest.is_object()) {
+        const bool transient =
+            (e.code=="network" && !headersReceived) ||
+            (e.code=="HTTP" && (e.status==502 || e.status==503 || e.status==504));
+        const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+            Clock::now() - firstStart).count();
+        const long long backoff = 400;
+        // The server-side pipe gives up after 65 s; stay inside 60 s overall.
+        const long long remaining = 60000 - elapsed - backoff;
+        if(attempt==0 && transient && elapsed<5000 && remaining>=1000) {
+          for(long long waited=0;waited<backoff;waited+=20) {
+            if(cancel)cancel->check();
+            if(connected && !connected())throw Error("cancelled");
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+          }
+          if(cancel)cancel->check();
+          if(connected && !connected())throw Error("cancelled");
+          state=J::object();latest=J();published=J();done=false;headersReceived=false;
+          o.timeoutMs=int(std::min<long long>(configuredTimeout,remaining));
+          continue;
+        }
+        throw;
+      }
+      if(cancel)cancel->check();
+      if(connected && !connected())throw Error("cancelled");
+      latest["streaming"]=false;latest["streamError"]=e.code;latest["recovered"]=true;
+      return latest;
+    }
   }
 }
 

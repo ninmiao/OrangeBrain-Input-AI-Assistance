@@ -105,13 +105,13 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "Comments", "Powered by RIME | 中州韵输入法引擎"
-            VALUE "CompanyName", "式恕堂"
-            VALUE "FileDescription", "小狼毫算法服务"
-            VALUE "FileVersion", FILE_VERSION
+            VALUE "CompanyName", "Zephyr Input"
+            VALUE "FileDescription", "Zephyr Input Server"
+            VALUE "FileVersion", STRZ(FILE_VERSION)
             VALUE "InternalName", "WeaselServer"
-            VALUE "LegalCopyright", "式恕堂 版权所无"
-            VALUE "OriginalFilename", "WeaselServer.exe"
-            VALUE "ProductName", "小狼毫"
+            VALUE "LegalCopyright", "Zephyr Input contributors, GPL-3.0-or-later. Based on Weasel by RIME Developers"
+            VALUE "OriginalFilename", "ZephyrServer.exe"
+            VALUE "ProductName", "Zephyr Input"
             VALUE "ProductVersion", STRZ(PRODUCT_VERSION)
         END
     END
@@ -215,13 +215,13 @@ BEGIN
         BLOCK "040404b0"
         BEGIN
             VALUE "Comments", "Powered by RIME | 中州韻輸入法引擎"
-            VALUE "CompanyName", "式恕堂"
-            VALUE "FileDescription", "小狼毫算法服務"
-            VALUE "FileVersion", FILE_VERSION
+            VALUE "CompanyName", "Zephyr Input"
+            VALUE "FileDescription", "Zephyr Input Server"
+            VALUE "FileVersion", STRZ(FILE_VERSION)
             VALUE "InternalName", "WeaselServer"
-            VALUE "LegalCopyright", "式恕堂 版權所無"
-            VALUE "OriginalFilename", "WeaselServer.exe"
-            VALUE "ProductName", "小狼毫"
+            VALUE "LegalCopyright", "Zephyr Input contributors, GPL-3.0-or-later. Based on Weasel by RIME Developers"
+            VALUE "OriginalFilename", "ZephyrServer.exe"
+            VALUE "ProductName", "Zephyr Input"
             VALUE "ProductVersion", STRZ(PRODUCT_VERSION)
         END
     END
@@ -305,13 +305,13 @@ BEGIN
         BLOCK "040404b0"
         BEGIN
             VALUE "Comments", "Powered by RIME | Rime Input Method Engine"
-            VALUE "CompanyName", "Shishutang"
-            VALUE "FileDescription", "Weasel Server"
-            VALUE "FileVersion", FILE_VERSION
+            VALUE "CompanyName", "Zephyr Input"
+            VALUE "FileDescription", "Zephyr Input Server"
+            VALUE "FileVersion", STRZ(FILE_VERSION)
             VALUE "InternalName", "WeaselServer"
-            VALUE "LegalCopyright", "Copyleft RIME Developers"
-            VALUE "OriginalFilename", "WeaselServer.exe"
-            VALUE "ProductName", "Weasel"
+            VALUE "LegalCopyright", "Zephyr Input contributors, GPL-3.0-or-later. Based on Weasel by RIME Developers"
+            VALUE "OriginalFilename", "ZephyrServer.exe"
+            VALUE "ProductName", "Zephyr Input"
             VALUE "ProductVersion", STRZ(PRODUCT_VERSION)
         END
     END

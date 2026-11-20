@@ -451,7 +451,7 @@ void PipeServer::_ProcessPipeThread(HANDLE pipe, ServerHandler const& handler) {
     for (;;) {
       Res msg;
       _Receive(pipe, &msg, sizeof(msg));
-      handler(msg, [this, pipe](Msg resp) { _Send(pipe, resp); });
+      handler(msg, [this, pipe](Msg resp) { _Send(pipe, resp, false); });
     }
   } catch (...) {
     _FinalizePipe(pipe);

@@ -151,37 +151,37 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "Comments", "Powered by RIME | 中州韵输入法引擎"
-            VALUE "CompanyName", "式恕堂"
-            VALUE "FileDescription", "小狼毫TSF"
-            VALUE "FileVersion", FILE_VERSION
+            VALUE "CompanyName", "Zephyr Input"
+            VALUE "FileDescription", "Zephyr Input TSF"
+            VALUE "FileVersion", STRZ(FILE_VERSION)
             VALUE "InternalName", "WeaselTSF"
-            VALUE "LegalCopyright", "式恕堂 版权所无"
+            VALUE "LegalCopyright", "Zephyr Input contributors, GPL-3.0-or-later. Based on Weasel by RIME Developers"
             VALUE "OriginalFilename", FILE_NAME
-            VALUE "ProductName", "小狼毫"
+            VALUE "ProductName", "Zephyr Input"
             VALUE "ProductVersion", STRZ(PRODUCT_VERSION)
         END
         BLOCK "040404b0"
         BEGIN
             VALUE "Comments", "Powered by RIME | 中州韻輸入法引擎"
-            VALUE "CompanyName", "式恕堂"
-            VALUE "FileDescription", "小狼毫TSF"
-            VALUE "FileVersion", FILE_VERSION
+            VALUE "CompanyName", "Zephyr Input"
+            VALUE "FileDescription", "Zephyr Input TSF"
+            VALUE "FileVersion", STRZ(FILE_VERSION)
             VALUE "InternalName", "WeaselTSF"
-            VALUE "LegalCopyright", "式恕堂 版權所無"
+            VALUE "LegalCopyright", "Zephyr Input contributors, GPL-3.0-or-later. Based on Weasel by RIME Developers"
             VALUE "OriginalFilename", FILE_NAME
-            VALUE "ProductName", "小狼毫"
+            VALUE "ProductName", "Zephyr Input"
             VALUE "ProductVersion", STRZ(PRODUCT_VERSION)
         END
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "Powered by RIME | Rime Input Method Engine"
-            VALUE "CompanyName", "Shishutang"
-            VALUE "FileDescription", "Weasel TSF"
-            VALUE "FileVersion", FILE_VERSION
+            VALUE "CompanyName", "Zephyr Input"
+            VALUE "FileDescription", "Zephyr Input TSF"
+            VALUE "FileVersion", STRZ(FILE_VERSION)
             VALUE "InternalName", "WeaselTSF"
-            VALUE "LegalCopyright", "Copyleft RIME Developers"
+            VALUE "LegalCopyright", "Zephyr Input contributors, GPL-3.0-or-later. Based on Weasel by RIME Developers"
             VALUE "OriginalFilename", FILE_NAME
-            VALUE "ProductName", "Weasel"
+            VALUE "ProductName", "Zephyr Input"
             VALUE "ProductVersion", STRZ(PRODUCT_VERSION)
         END
     END
