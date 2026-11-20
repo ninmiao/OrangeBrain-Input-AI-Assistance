@@ -64,7 +64,7 @@ BOOL WeaselTSF::_InitThreadMgrEventSink() {
 
 void WeaselTSF::_UninitThreadMgrEventSink() {
   ITfSource* pSource;
-  if (_dwThreadMgrEventSinkCookie == TF_INVALID_COOKIE)
+  if (_dwThreadMgrEventSinkCookie == TF_INVALID_COOKIE || !_pThreadMgr)
     return;
   if (SUCCEEDED(_pThreadMgr->QueryInterface(IID_ITfSource, (void**)&pSource))) {
     pSource->UnadviseSink(_dwThreadMgrEventSinkCookie);

@@ -146,7 +146,8 @@ class WeaselTSF : public ITfTextInputProcessorEx,
 
   /* Display Attribute */
   void _ClearCompositionDisplayAttributes(TfEditCookie ec,
-                                          _In_ ITfContext* pContext);
+                                          _In_ ITfContext* pContext,
+                                          _In_ ITfComposition* pComposition);
   BOOL _SetCompositionDisplayAttributes(TfEditCookie ec,
                                         _In_ ITfContext* pContext,
                                         ITfRange* pRangeComposition);

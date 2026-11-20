@@ -2,12 +2,21 @@
 
 #include "WeaselTSF.h"
 
-void WeaselTSF::_ClearCompositionDisplayAttributes(TfEditCookie ec,
-                                                   _In_ ITfContext* pContext) {
+void WeaselTSF::_ClearCompositionDisplayAttributes(
+    TfEditCookie ec,
+    _In_ ITfContext* pContext,
+    _In_ ITfComposition* pComposition) {
   ITfRange* pRangeComposition = nullptr;
   ITfProperty* pDisplayAttributeProperty = nullptr;
 
-  if (FAILED(_pComposition->GetRange(&pRangeComposition))) {
+  // Use the composition the caller is ending, never the member _pComposition.
+  // This runs inside an asynchronous end-composition edit session, and by then
+  // _FinalizeComposition() has usually cleared the member; reading it crashed the
+  // host application (null dereference in Chrome, VS Code, ...).
+  if (!pComposition || !pContext)
+    return;
+
+  if (FAILED(pComposition->GetRange(&pRangeComposition)) || !pRangeComposition) {
     return;
   }
 
@@ -27,9 +36,12 @@ BOOL WeaselTSF::_SetCompositionDisplayAttributes(TfEditCookie ec,
   ITfProperty* pDisplayAttributeProperty = nullptr;
   HRESULT hr = S_OK;
 
-  if (pRangeComposition == nullptr)
+  if (pRangeComposition == nullptr) {
+    if (!_pComposition)
+      return FALSE;
     hr = _pComposition->GetRange(&pRangeComposition);
-  if (FAILED(hr)) {
+  }
+  if (FAILED(hr) || !pRangeComposition || !pContext) {
     return FALSE;
   }
 

@@ -99,7 +99,9 @@ STDMETHODIMP CEndCompositionEditSession::DoEditSession(TfEditCookie ec) {
   if (!_pTextService || !_pContext)
     return S_OK;
 
-  _pTextService->_ClearCompositionDisplayAttributes(ec, _pContext);
+  // The composition this session ends, not the text service's current one: the
+  // latter is cleared by _FinalizeComposition() before this session runs.
+  _pTextService->_ClearCompositionDisplayAttributes(ec, _pContext, _pComposition);
 
   com_ptr<ITfRange> pCompositionRange;
   if (_clear && _pComposition->GetRange(&pCompositionRange) == S_OK)
@@ -158,42 +160,52 @@ class CGetTextExtentEditSession : public CEditSession {
 
 STDMETHODIMP CGetTextExtentEditSession::DoEditSession(TfEditCookie ec) {
   com_ptr<ITfInsertAtSelection> pInsertAtSelection;
-  com_ptr<ITfRange> pRangeComposition;
-  ITfRange* pRange;
-  RECT rc;
-  BOOL fClipped;
-  TF_SELECTION selection;
-  ULONG nSelection;
+  // Both ranges are owned here and released on every path. The previous raw
+  // ITfRange* was never released, leaking one COM object per window update.
+  com_ptr<ITfRange> pRange;
+  com_ptr<ITfRange> selectionRange;
+  RECT rc{};
+  BOOL fClipped = FALSE;
+  TF_SELECTION selection{};
+  ULONG nSelection = 0;
 
+  if (!_pContext || !_pContextView || !_pTextService)
+    return E_FAIL;
   if (FAILED(_pContext->QueryInterface(IID_ITfInsertAtSelection,
                                        (LPVOID*)&pInsertAtSelection)))
     return E_FAIL;
   if (FAILED(_pContext->GetSelection(ec, TF_DEFAULT_SELECTION, 1, &selection,
                                      &nSelection)))
     return E_FAIL;
+  if (nSelection == 0)
+    selection.range = nullptr;
+  selectionRange.Attach(selection.range);  // takes the reference GetSelection added
 
-  if (_pComposition != nullptr && _pComposition->GetRange(&pRange) == S_OK) {
+  if (_pComposition != nullptr && _pComposition->GetRange(&pRange) == S_OK &&
+      pRange) {
     pRange->Collapse(ec, TF_ANCHOR_START);
   } else {
     // composition end
     // note: selection.range is always an empty range
-    pRange = selection.range;
+    pRange = selectionRange;
   }
+  if (!pRange)
+    return E_FAIL;
 
   if ((_pContextView->GetTextExt(ec, pRange, &rc, &fClipped)) == S_OK &&
       (rc.left != 0 || rc.top != 0)) {
     // get the foreground window pos and check if rc from GetTextExt is out of
     // window
     if (_enhancedPosition) {
-      HWND hwnd;
-      RECT rcForegroundWindow;
-      hwnd = GetForegroundWindow();
-      ::GetWindowRect(hwnd, &rcForegroundWindow);
-
-      if (rc.left < rcForegroundWindow.left ||
+      RECT rcForegroundWindow{};
+      HWND hwnd = GetForegroundWindow();
+      // With no foreground window the rectangle stays empty: skip the adjustment
+      // instead of comparing against uninitialized stack memory.
+      if (hwnd && ::GetWindowRect(hwnd, &rcForegroundWindow) &&
+          (rc.left < rcForegroundWindow.left ||
           rc.left > rcForegroundWindow.right ||
           rc.top < rcForegroundWindow.top ||
-          rc.top > rcForegroundWindow.bottom) {
+          rc.top > rcForegroundWindow.bottom)) {
         POINT pt;
         bool hasCaret = ::GetCaretPos(&pt);
         int offsetx = rcForegroundWindow.left - rc.left + (hasCaret ? pt.x : 0);
@@ -405,6 +417,10 @@ class CCompositionRefreshEditSession : public CEditSession {
 };
 
 void WeaselTSF::_UpdateComposition(com_ptr<ITfContext> pContext) {
+  // Mouse events on the candidate window pass the remembered context, which is
+  // empty before the first composition or after a context change.
+  if (!pContext)
+    return;
   const auto epoch = _compositionRefreshEpoch;
   const auto serial = ++_compositionRefreshSerial;
   _zephyrRefreshPending = true;
@@ -439,6 +455,10 @@ void WeaselTSF::_ClearForContextChange() {
     _fTestKeyDownPending = _fTestKeyUpPending = FALSE;
     m_client.ClearComposition();
   }
+  // Forget the old field. Keeping it made later mouse events on the candidate
+  // window request edit sessions on a context the host may already have destroyed.
+  // The next key event sets the current one again.
+  _pEditSessionContext = nullptr;
 }
 
 /* Composition State */

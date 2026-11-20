@@ -57,14 +57,17 @@ STDMETHODIMP_(ULONG) CCandidateList::Release(void) {
 }
 
 STDMETHODIMP CCandidateList::GetDescription(BSTR* pbstr) {
-  static auto str = SysAllocString(L"Candidate List");
-  if (pbstr) {
-    *pbstr = str;
-  }
-  return S_OK;
+  if (!pbstr)
+    return E_INVALIDARG;
+  // The caller owns the returned BSTR and frees it with SysFreeString. Handing
+  // out one shared static string corrupted the heap on the second call.
+  *pbstr = SysAllocString(L"Candidate List");
+  return *pbstr ? S_OK : E_OUTOFMEMORY;
 }
 
 STDMETHODIMP CCandidateList::GetGUID(GUID* pguid) {
+  if (!pguid)
+    return E_INVALIDARG;
   /// 36c3c795-7159-45aa-ab12-30229a51dbd3
   *pguid = {0x36c3c795,
             0x7159,
@@ -96,6 +99,8 @@ STDMETHODIMP CCandidateList::GetUpdatedFlags(DWORD* pdwFlags) {
 }
 
 STDMETHODIMP CCandidateList::GetDocumentMgr(ITfDocumentMgr** ppdim) {
+  if (!ppdim)
+    return E_INVALIDARG;
   *ppdim = nullptr;
   auto pThreadMgr = _tsf->_GetThreadMgr();
   if (pThreadMgr == nullptr) {
@@ -108,16 +113,22 @@ STDMETHODIMP CCandidateList::GetDocumentMgr(ITfDocumentMgr** ppdim) {
 }
 
 STDMETHODIMP CCandidateList::GetCount(UINT* pCandidateCount) {
+  if (!pCandidateCount)
+    return E_INVALIDARG;
   *pCandidateCount = static_cast<UINT>(_ui->ctx().cinfo.candies.size());
   return S_OK;
 }
 
 STDMETHODIMP CCandidateList::GetSelection(UINT* pSelectedCandidateIndex) {
+  if (!pSelectedCandidateIndex)
+    return E_INVALIDARG;
   *pSelectedCandidateIndex = _ui->ctx().cinfo.highlighted;
   return S_OK;
 }
 
 STDMETHODIMP CCandidateList::GetString(UINT uIndex, BSTR* pbstr) {
+  if (!pbstr)
+    return E_INVALIDARG;
   *pbstr = nullptr;
   auto& cinfo = _ui->ctx().cinfo;
   if (uIndex >= cinfo.candies.size())

@@ -89,6 +89,8 @@ HRESULT CCompartmentEventSink::_Unadvise() {
 
 BOOL WeaselTSF::_IsKeyboardDisabled() {
   if(_activateFlags & TF_TMF_SECUREMODE)return TRUE;
+  // After Deactivate() there is no thread manager: treat the keyboard as disabled.
+  if(!_pThreadMgr)return TRUE;
   HWND focused=GetFocus();
   wchar_t className[128]{};if(focused)GetClassNameW(focused,className,128);
   if(focused&&(_wcsicmp(className,L"Edit")==0||wcsstr(className,L"RichEdit"))&&(GetWindowLongPtrW(focused,GWL_STYLE)&ES_PASSWORD))return TRUE;

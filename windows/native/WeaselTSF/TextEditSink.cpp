@@ -27,21 +27,27 @@ STDMETHODIMP WeaselTSF::OnEndEdit(ITfContext* pContext,
   /* did the selection change? */
   if (pEditRecord->GetSelectionStatus(&fSelectionChanged) == S_OK &&
       fSelectionChanged) {
-    if (_IsComposing()) {
+    // Hold our own reference: reading the selection can call back into the host,
+    // and the member may be cleared before the range is fetched.
+    com_ptr<ITfComposition> composition = _pComposition;
+    if (composition) {
       /* if the caret moves out of composition range, stop the composition */
-      TF_SELECTION tfSelection;
-      ULONG cFetched;
+      TF_SELECTION tfSelection{};
+      ULONG cFetched = 0;
 
       if (pContext->GetSelection(ecReadOnly, TF_DEFAULT_SELECTION, 1,
                                  &tfSelection, &cFetched) == S_OK &&
           cFetched == 1) {
-        ITfRange* pRangeComposition;
-        if (_pComposition->GetRange(&pRangeComposition) == S_OK) {
-          if (!IsRangeCovered(ecReadOnly, tfSelection.range, pRangeComposition))
+        ITfRange* pRangeComposition = nullptr;
+        if (composition->GetRange(&pRangeComposition) == S_OK &&
+            pRangeComposition) {
+          if (tfSelection.range &&
+              !IsRangeCovered(ecReadOnly, tfSelection.range, pRangeComposition))
             _AbortComposition(true);
           pRangeComposition->Release();
-          tfSelection.range->Release();
         }
+        if (tfSelection.range)
+          tfSelection.range->Release();
       }
     }
   }
@@ -77,13 +83,16 @@ BOOL WeaselTSF::_InitTextEditSink(com_ptr<ITfDocumentMgr> pDocMgr) {
 
   /* clear out any previous sink first */
   if (_dwTextEditSinkCookie != TF_INVALID_COOKIE) {
-    _pTextEditSinkContext->QueryInterface(&pSource);
+    if (_pTextEditSinkContext)
+      _pTextEditSinkContext->QueryInterface(&pSource);
     if (pSource != nullptr) {
       pSource->UnadviseSink(_dwTextEditSinkCookie);
-      pSource->UnadviseSink(_dwTextLayoutSinkCookie);
+      if (_dwTextLayoutSinkCookie != TF_INVALID_COOKIE)
+        pSource->UnadviseSink(_dwTextLayoutSinkCookie);
     }
     _pTextEditSinkContext = nullptr;
     _dwTextEditSinkCookie = TF_INVALID_COOKIE;
+    _dwTextLayoutSinkCookie = TF_INVALID_COOKIE;
   }
   if (pDocMgr == NULL)
     return TRUE;

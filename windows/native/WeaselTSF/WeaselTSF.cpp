@@ -111,6 +111,15 @@ STDMETHODIMP WeaselTSF::Deactivate() {
   _UninitCompartment();
 
   _UninitThreadMgrEventSink();
+  // Also unadvise the thread focus sink: it was never removed, so the thread
+  // manager kept calling back into this object after deactivation.
+  _UninitThreadFocusSink();
+
+  // Late edit sessions and candidate-window mouse events must not act on a
+  // context from before deactivation.
+  _pEditSessionContext = nullptr;
+  _pendingUIContext.reset();
+  _hasPendingUI = false;
 
   _pThreadMgr = NULL;
 
@@ -197,11 +206,13 @@ BOOL WeaselTSF::_InitThreadFocusSink() {
   return TRUE;
 }
 void WeaselTSF::_UninitThreadFocusSink() {
+  if (_dwThreadFocusSinkCookie == TF_INVALID_COOKIE || !_pThreadMgr)
+    return;
   com_ptr<ITfSource> pSource;
-  if (FAILED(_pThreadMgr->QueryInterface(&pSource)))
+  if (FAILED(_pThreadMgr->QueryInterface(&pSource)) || !pSource)
     return;
-  if (FAILED(pSource->UnadviseSink(_dwThreadFocusSinkCookie)))
-    return;
+  pSource->UnadviseSink(_dwThreadFocusSinkCookie);
+  _dwThreadFocusSinkCookie = TF_INVALID_COOKIE;
 }
 
 STDMETHODIMP WeaselTSF::OnActivated(REFCLSID clsid,
