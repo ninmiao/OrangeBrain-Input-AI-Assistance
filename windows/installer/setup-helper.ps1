@@ -39,16 +39,37 @@ if($Action -eq 'Stop'){
 }
 $state=Get-Content -LiteralPath (Join-Path $target 'installation.json') -Raw | ConvertFrom-Json
 if($state.architecture -and $state.architecture -ne 'x64'){throw 'Invalid installation architecture'}
-$architectures=@('x64','x86')
+# The system value, not this process: Setup itself may run emulated on Windows on ARM.
+$machine=(Get-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment').PROCESSOR_ARCHITECTURE
+# 64-bit view: the x64 module on x64 PCs; on Windows on ARM the ARM64X forwarder,
+# which sends ARM64 apps to the ARM64 module and x64 apps to the x64 module.
+$architectures=if($machine -eq 'ARM64'){@('arm64x','x86')}else{@('x64','x86')}
+$clsid='{652D71C8-B1E9-41EE-9CA6-7B4D0DE6CB0A}'
 $views=@([Microsoft.Win32.RegistryView]::Registry64,[Microsoft.Win32.RegistryView]::Registry32)
 function Register-Dll([string]$name,[string]$arch,[bool]$remove) {
+ if($remove -and [string]::IsNullOrEmpty($name)){return}
  if($name -notmatch ('^ZephyrTSF'+$arch+'-[a-f0-9]{12}\.dll$')){throw 'Invalid DLL name'}
  $dll=Join-Path $target $name
  if(!(Test-Path -LiteralPath $dll)){if($remove){return};throw 'Missing TSF DLL'}
+ if($arch -eq 'arm64x' -and !$remove) {
+  foreach($forwarded in @($state.arm64,$state.x64)) {
+   if([string]::IsNullOrEmpty($forwarded) -or !(Test-Path -LiteralPath (Join-Path $target $forwarded))){throw 'Missing ARM64X forward target'}
+  }
+ }
  $reg=Join-Path $env:WINDIR $(if($arch -eq 'x86'){'SysWOW64/regsvr32.exe'}else{'System32/regsvr32.exe'})
  $args=@('/s');if($remove){$args+='/u'};$args+='"'+$dll+'"'
  $p=Start-Process -FilePath $reg -ArgumentList $args -WindowStyle Hidden -Wait -PassThru
  if($p.ExitCode){throw "TSF $arch registration failed: $($p.ExitCode)"}
+ if($arch -eq 'arm64x' -and !$remove) {
+  # Registration ran inside the ARM64 module and wrote its own path. COM must load
+  # the forwarder instead, or x64 apps could not load the input method.
+  $base=[Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,[Microsoft.Win32.RegistryView]::Registry64)
+  try {
+   $key=$base.OpenSubKey("SOFTWARE\Classes\CLSID\$clsid\InprocServer32",$true)
+   if(!$key){throw 'TSF server was not registered'}
+   try{$key.SetValue('',$dll)}finally{$key.Close()}
+  } finally {$base.Close()}
+ }
 }
 if($Action -eq 'Register') {
  # Reinstalling before reboot must not leave the active DLL queued for deletion.
@@ -57,7 +78,7 @@ if($Action -eq 'Register') {
   $pending=@($sessionKey.GetValue('PendingFileRenameOperations',$null))
   if($pending.Count -gt 0 -and $pending.Count%2 -eq 0) {
    $keep=[Collections.Generic.List[string]]::new()
-   $own=@($architectures | ForEach-Object {Join-Path $target $state.$_})
+   $own=@(@('x64','x86','arm64','arm64x') | Where-Object { $state.$_ } | ForEach-Object {Join-Path $target $state.$_})
    for($i=0;$i -lt $pending.Count;$i+=2) {
     $src=$pending[$i] -replace '^\\\?\?\\',''
     if($src -in $own -and [string]::IsNullOrEmpty($pending[$i+1])){continue}
@@ -87,7 +108,7 @@ if($Action -eq 'Register') {
  }
  # Only old product DLLs that preceded the tracked installer are cleaned here.
  Add-Type -TypeDefinition 'using System;using System.Runtime.InteropServices;public class ZephyrRemove{[DllImport("kernel32.dll",CharSet=CharSet.Unicode,SetLastError=true)]public static extern bool MoveFileEx(string a,IntPtr b,int flags);}'
- Get-ChildItem -LiteralPath $target -File | Where-Object { $_.Name -match '^ZephyrTSF(x64|x86)(-[a-f0-9]{12})?\.dll$' } | ForEach-Object {
+ Get-ChildItem -LiteralPath $target -File | Where-Object { $_.Name -match '^ZephyrTSF(x64|x86|arm64|arm64x)(-[a-f0-9]{12})?\.dll$' } | ForEach-Object {
   $path=[IO.Path]::GetFullPath($_.FullName)
   if([IO.Path]::GetDirectoryName($path) -ne $target){throw 'Unexpected cleanup path'}
   try {Remove-Item -LiteralPath $path -Force -ErrorAction Stop} catch {

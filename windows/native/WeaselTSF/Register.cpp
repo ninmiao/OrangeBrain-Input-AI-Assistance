@@ -180,23 +180,12 @@ BOOL RegisterServer() {
     if (fRet &=
         RegCreateKeyExA(hKey, c_szInProcSvr32, 0, NULL, REG_OPTION_NON_VOLATILE,
                         KEY_WRITE, NULL, &hSubKey, &dw) == ERROR_SUCCESS) {
+      // On Windows on ARM the registered server is an ARM64X forwarder that
+      // sends ARM64 processes to the ARM64 module and x64 processes to the x64
+      // one. Registration runs inside the ARM64 module, so this writes that
+      // module's path; setup-helper.ps1 then points InprocServer32 at the
+      // forwarder, whose versioned file name only the installer knows.
       dw = GetModuleFileNameA(g_hInst, achFileName, ARRAYSIZE(achFileName));
-
-#ifdef _M_ARM64
-      {
-        // On ARM64 we use ARM64X redirection DLL.
-        // When loaded, ZephyrTSFx86.dll will be redirected to weaselARM64.dll on
-        // ARM64 processes, and ZephyrTSFx64.dll on x64 processes.
-        //
-        // But GetModuleFileNameA will return the actual loaded DLL name aka
-        // weaselARM64.dll Rewrite the path to point to the redirector.
-
-        char wrapperPath[MAX_PATH];
-        StringCbCatA(achFileName, MAX_PATH, "\\..\\ZephyrTSFx86.dll");
-        GetFullPathNameA(achFileName, MAX_PATH, wrapperPath, NULL);
-        memcpy(achFileName, wrapperPath, MAX_PATH);
-      }
-#endif
 
       fRet &= RegSetValueExA(hSubKey, NULL, 0, REG_SZ, (BYTE*)achFileName,
                              (strlen(achFileName) + 1) * sizeof(char)) ==

@@ -44,12 +44,16 @@ Name: "chinesesimp"; MessagesFile: "{#ChineseMessages}"
 Name: "chinesesimp"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 #endif
 [CustomMessages]
-english.Arm64Warning=This is the x64 build of Zephyr Input and this PC runs Windows on ARM.%n%nIt installs and works in x64/x86 apps through Windows emulation. Native ARM64 apps may not show the Zephyr keyboard, and input can be slower than on an x64 PC.%n%nContinue installing?
-chinesesimp.Arm64Warning=这是 Zephyr Input 的 x64 安装包，当前电脑是 ARM64 版 Windows。%n%n安装后可通过 Windows 兼容（仿真）模式在 x64/x86 应用中使用。原生 ARM64 应用中可能无法调出 Zephyr 输入法，输入响应也可能比 x64 电脑慢。%n%n是否继续安装？
+english.Arm64Warning=This PC runs Windows on ARM. Support for it is experimental.%n%nThe keyboard module runs natively in ARM64 apps and in x64/x86 apps. The background service runs through Windows emulation, so the first start can be slow.%n%nContinue installing?
+chinesesimp.Arm64Warning=当前电脑是 ARM64 版 Windows，对它的支持仍是实验性的。%n%n输入法模块在 ARM64 原生应用和 x64/x86 应用中都能加载；后台服务通过 Windows 兼容（仿真）模式运行，首次启动可能较慢。%n%n是否继续安装？
 [Files]
-Source: "{#Image}\*"; DestDir: "{app}"; Excludes: "ZephyrTSFx64.dll,ZephyrTSFx86.dll,install.ps1,uninstall.ps1,Install.cmd,install.log,installation.json"; Flags: ignoreversion overwritereadonly recursesubdirs createallsubdirs uninsrestartdelete
+Source: "{#Image}\*"; DestDir: "{app}"; Excludes: "ZephyrTSFx64.dll,ZephyrTSFx86.dll,ZephyrTSFarm64.dll,install.ps1,uninstall.ps1,Install.cmd,install.log,installation.json"; Flags: ignoreversion overwritereadonly recursesubdirs createallsubdirs uninsrestartdelete
 Source: "{#Image}\ZephyrTSFx64.dll"; DestDir: "{app}"; DestName: "{#Dll64}"; Flags: ignoreversion overwritereadonly onlyifdoesntexist uninsrestartdelete
 Source: "{#Image}\ZephyrTSFx86.dll"; DestDir: "{app}"; DestName: "{#Dll32}"; Flags: ignoreversion overwritereadonly onlyifdoesntexist uninsrestartdelete
+; Windows on ARM: native ARM64 module plus the ARM64X forwarder that is registered.
+; The forwarder sends ARM64 apps to {#DllArm64} and x64 apps to {#Dll64}.
+Source: "{#Image}\ZephyrTSFarm64.dll"; DestDir: "{app}"; DestName: "{#DllArm64}"; Check: IsArm64; Flags: ignoreversion overwritereadonly onlyifdoesntexist uninsrestartdelete
+Source: "{#Meta}\ZephyrTSFarm64x.dll"; DestDir: "{app}"; DestName: "{#DllArm64x}"; Check: IsArm64; Flags: ignoreversion overwritereadonly onlyifdoesntexist uninsrestartdelete
 Source: "{#Meta}\installation.json"; DestDir: "{app}"; Flags: ignoreversion overwritereadonly
 Source: "setup-helper.ps1"; DestDir: "{app}"; Flags: ignoreversion overwritereadonly; AfterInstall: RegisterIme
 Source: "setup-helper.ps1"; Flags: dontcopy

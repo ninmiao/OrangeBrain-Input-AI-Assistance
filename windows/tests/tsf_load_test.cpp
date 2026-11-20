@@ -17,6 +17,12 @@ int wmain(int argc,wchar_t** argv) {
   GUID profile={0x91ebc2a4,0x2b8e,0x4781,{0xba,0x20,0x1c,0x92,0x67,0x52,0x94,0x67}};
   IClassFactory* creator=nullptr;ITfTextInputProcessorEx* service=nullptr;
   if(!factory||FAILED(factory(clsid,IID_IClassFactory,reinterpret_cast<void**>(&creator))))return 5;
+  // Report which module really serves the class. Through the ARM64X forwarder this is
+  // the ARM64 module in an ARM64 process and the x64 module in an x64 process.
+  HMODULE owner=nullptr;wchar_t ownerPath[MAX_PATH]{};
+  if(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                        reinterpret_cast<LPCWSTR>(factory),&owner)&&GetModuleFileNameW(owner,ownerPath,MAX_PATH))
+    std::wcout<<L"Class served by: "<<ownerPath<<L"\n";
   hr=creator->CreateInstance(nullptr,IID_ITfTextInputProcessorEx,reinterpret_cast<void**>(&service));creator->Release();if(FAILED(hr))return 6;
   ITfKeyEventSink* sink=nullptr;hr=service->QueryInterface(IID_ITfKeyEventSink,reinterpret_cast<void**>(&sink));if(FAILED(hr))return 7;
   sink->Release();service->Release();

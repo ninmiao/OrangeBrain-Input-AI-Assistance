@@ -11,10 +11,17 @@ if(!(Test-Path -LiteralPath $Compiler)){throw 'Install Inno Setup 6.7.1 or later
 $Compiler=(Resolve-Path -LiteralPath $Compiler).Path
 $meta=Join-Path $root '.tools/setup-meta';New-Item -ItemType Directory -Force -Path $meta | Out-Null
 $names=@{}
-foreach($arch in @('x64','x86')) {
- $hash=(Get-FileHash -LiteralPath "$Image/ZephyrTSF$arch.dll" -Algorithm SHA256).Hash.Substring(0,12).ToLowerInvariant()
- $names[$arch]="ZephyrTSF$arch-$hash.dll"
+function Get-VersionedName([string]$path,[string]$arch) {
+ $hash=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.Substring(0,12).ToLowerInvariant()
+ return "ZephyrTSF$arch-$hash.dll"
 }
+foreach($arch in @('x64','x86','arm64')) { $names[$arch]=Get-VersionedName "$Image/ZephyrTSF$arch.dll" $arch }
+# Windows on ARM registers an ARM64X forwarder: ARM64 apps load the ARM64 module,
+# x64 apps the x64 one. It forwards to the versioned names above, so build it here.
+$forwarder=Join-Path $meta 'ZephyrTSFarm64x.dll'
+Remove-Item -LiteralPath $forwarder -ErrorAction SilentlyContinue
+& "$PSScriptRoot/build-arm64x.ps1" -Arm64Target $names.arm64 -X64Target $names.x64 -Output $forwarder
+$names['arm64x']=Get-VersionedName $forwarder 'arm64x'
 $state=@{version=$Version;architecture='x64'}+ $names
 [IO.File]::WriteAllText("$meta/installation.json",($state|ConvertTo-Json),[Text.UTF8Encoding]::new($false))
 $messages = Join-Path (Split-Path -Parent $Compiler) 'Languages/ChineseSimplified.isl'
@@ -27,5 +34,5 @@ if (!(Test-Path -LiteralPath $messages)) {
     }
     if ((Get-FileHash -LiteralPath $messages).Hash -ne $expected) { throw 'Inno Setup language file checksum mismatch' }
 }
-& $Compiler "/DChineseMessages=$messages" "/DImage=$Image" "/DVersion=$Version" "/DOutput=$OutputDirectory" "/DMeta=$meta" "/DDll64=$($names.x64)" "/DDll32=$($names.x86)" "$root/windows/installer/ZephyrSetup.iss"
+& $Compiler "/DChineseMessages=$messages" "/DImage=$Image" "/DVersion=$Version" "/DOutput=$OutputDirectory" "/DMeta=$meta" "/DDll64=$($names.x64)" "/DDll32=$($names.x86)" "/DDllArm64=$($names.arm64)" "/DDllArm64x=$($names.arm64x)" "$root/windows/installer/ZephyrSetup.iss"
 if($LASTEXITCODE){throw 'Installer compilation failed'}

@@ -3,7 +3,7 @@ $ErrorActionPreference='Stop'
 $root=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 if(!$Destination){$Destination=Join-Path $root 'dist/windows'}
 $native=Join-Path $root 'windows/native/output'
-foreach($file in @('WeaselServer.exe','WeaselDeployer.exe','weaselx64.dll','weasel.dll','rime.dll')) {
+foreach($file in @('WeaselServer.exe','WeaselDeployer.exe','weaselx64.dll','weasel.dll','weaselARM64.dll','rime.dll')) {
  if(!(Test-Path "$native/$file")){throw "Build native components first: missing $file"}
 }
 & "$PSScriptRoot/build-app.ps1"
@@ -16,7 +16,7 @@ New-Item -ItemType Directory -Path $image -Force | Out-Null
 foreach($name in @('ZephyrSettings.exe','ZephyrBroker.exe')) {
  Copy-Item -LiteralPath "$root/windows/build/native-app/Release/$name" -Destination $image
 }
-foreach($pair in @(@('WeaselServer.exe','ZephyrServer.exe'),@('WeaselDeployer.exe','ZephyrDeployer.exe'),@('weaselx64.dll','ZephyrTSFx64.dll'),@('weasel.dll','ZephyrTSFx86.dll'),@('rime.dll','rime.dll'))) {
+foreach($pair in @(@('WeaselServer.exe','ZephyrServer.exe'),@('WeaselDeployer.exe','ZephyrDeployer.exe'),@('weaselx64.dll','ZephyrTSFx64.dll'),@('weasel.dll','ZephyrTSFx86.dll'),@('weaselARM64.dll','ZephyrTSFarm64.dll'),@('rime.dll','rime.dll'))) {
  Copy-Item -LiteralPath (Join-Path $native $pair[0]) -Destination (Join-Path $image $pair[1])
 }
 Copy-Item -LiteralPath "$root/windows/build/data-deployer/ZephyrDataDeploy.exe" -Destination $image

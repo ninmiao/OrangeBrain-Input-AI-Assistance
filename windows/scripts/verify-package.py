@@ -21,14 +21,16 @@ def verify(image: Path) -> None:
     required = {
         "ZephyrSettings.exe", "ZephyrBroker.exe", "ZephyrServer.exe",
         "ZephyrDeployer.exe", "ZephyrDataDeploy.exe", "rime.dll",
-        "ZephyrTSFx64.dll", "ZephyrTSFx86.dll",
+        "ZephyrTSFx64.dll", "ZephyrTSFx86.dll", "ZephyrTSFarm64.dll",
     }
+    # Everything else is x64 (services run emulated on Windows on ARM).
+    special = {"ZephyrTSFx86.dll": 0x014C, "ZephyrTSFarm64.dll": 0xAA64}
     files = sorted(p for p in image.iterdir() if p.is_file() and p.suffix.lower() in {".exe", ".dll"})
     missing = required - {p.name for p in files}
     if missing:
         raise ValueError(f"Missing image components: {sorted(missing)}")
     for path in files:
-        expected = 0x014C if path.name == "ZephyrTSFx86.dll" else 0x8664
+        expected = special.get(path.name, 0x8664)
         actual = machine_type(path)
         if actual != expected:
             raise ValueError(f"{path.name}: PE machine {actual:04x}, expected {expected:04x}")
