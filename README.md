@@ -1,6 +1,6 @@
 # Zephyr Input · 微风输入法
 
-[Windows 1.12.6 x64](dist/Zephyr-Input-Windows-1.12.6-Setup-x64.exe) · [Android 1.10.3 ARM64](dist/Zephyr-Input-1.10.3-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
+[Windows 1.12.7 x64](dist/Zephyr-Input-Windows-1.12.7-Setup-x64.exe) · [Android 1.10.4 ARM64](dist/Zephyr-Input-1.10.4-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
