@@ -38,6 +38,9 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     private var candidateScroll: HorizontalScrollView? = null
     private var renderedCandidates: AiState.Ready? = null
     private var label: TextView? = null
+    private var statusButton: AiStatusButton? = null
+    // True from a manual tap until the request is visible as Loading, so the button reacts at once.
+    private var awaitingStart = false
     private var scriptToggle: LinearLayout? = null
     private var simplifiedSegment: TextView? = null
     private var traditionalSegment: TextView? = null
@@ -52,7 +55,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         require(config.generation == request.stamp.apiGeneration)
         val key = withContext(Dispatchers.IO) { store.credentialsFor(config).read(config.endpoint) } ?: error("Missing credential")
         client.request(config.endpoint, key, config.model, request, config.timeoutMs, store.parameters(config), config.provider)
-    }, { update -> state = update; ready = update as? AiState.Ready; render() })
+    }, { update -> state = update; ready = update as? AiState.Ready; if (update !is AiState.Idle) awaitingStart = false; render() })
     private val configJob = scope.launch {
         store.changes.collect { changed ->
             revision++
@@ -98,14 +101,12 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             setOnClickListener { scope.launch { withContext(Dispatchers.IO) { store.update { it.copy(traditional = !it.traditional) } } } }
         }
         val content = LinearLayout(context).apply { gravity = android.view.Gravity.CENTER_VERTICAL }
-        root.addView(ImageButton(context).apply {
-            contentDescription = "AI 重试或召唤助手"
-            setImageResource(com.osfans.trime.R.drawable.ic_ai_sparkle_24)
-            scaleType = ImageView.ScaleType.FIT_CENTER
-            setPadding(dp(8), dp(4), dp(8), dp(4))
+        statusButton = AiStatusButton(context).apply {
+            setPadding(dp(4), dp(2), dp(4), dp(2))
             background = android.graphics.drawable.RippleDrawable(
                 android.content.res.ColorStateList.valueOf(0x24565CC6), null,
                 android.graphics.drawable.ColorDrawable(android.graphics.Color.WHITE))
+            isClickable = true; isFocusable = true
             setOnClickListener {
                 when {
                     !active || sensitive -> notice("此输入框不允许发送到 AI")
@@ -113,10 +114,23 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
                         notice("请先在设置里允许使用云端 AI")
                         openSettings()
                     }
-                    else -> { revision++; refresh(true) }
+                    // A running request keeps running; pressing again used to cancel and resend it.
+                    requestBusy() -> { refuse(); notice("AI 请求中，请稍候（长按可取消）") }
+                    else -> {
+                        nudge(); awaitingStart = true
+                        postDelayed({ if (awaitingStart) { awaitingStart = false; render() } }, 2500)
+                        revision++; refresh(true); render()
+                    }
                 }
             }
-        }, LinearLayout.LayoutParams(dp(36), dp(candidateHeightDp)))
+            setOnLongClickListener {
+                if (!requestBusy()) return@setOnLongClickListener false
+                awaitingStart = false; captureJob?.cancel(); coordinator.invalidate()
+                notice("已取消 AI 请求")
+                true
+            }
+        }
+        root.addView(statusButton, LinearLayout.LayoutParams(dp(36), dp(candidateHeightDp)))
         label = TextView(context).apply { gravity = android.view.Gravity.CENTER; setPadding(0, 0, dp(5), 0); textSize = 9f }
         root.addView(label,LinearLayout.LayoutParams(-2,dp(candidateHeightDp)))
         candidateRow = LinearLayout(context)
@@ -162,6 +176,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     }
     private fun openSettings() { service.startActivity(Intent(service, AiSettingsActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
     private fun notice(message: String) = Toast.makeText(service, message, Toast.LENGTH_SHORT).show()
+    private fun requestBusy() = awaitingStart || state is AiState.Loading || ready?.result?.streaming == true
     private fun render() {
         val c = store.config
         fun style(segment: TextView?, selected: Boolean) {
@@ -184,6 +199,15 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             !c.automatic || (!c.enabled && !c.assistantEnabled) -> "手动触发"
             else -> "待请求"
         }
+        statusButton?.setPhase(when {
+            sensitive || !c.consent -> AiStatusButton.Phase.IDLE
+            state is AiState.Failed || ready?.result?.streamError?.isNotEmpty() == true -> AiStatusButton.Phase.FAILED
+            state is AiState.Loading || awaitingStart -> AiStatusButton.Phase.WAITING
+            ready?.result?.streaming == true -> AiStatusButton.Phase.STREAMING
+            ready != null -> AiStatusButton.Phase.DONE
+            else -> AiStatusButton.Phase.IDLE
+        })
+        statusButton?.contentDescription = "AI 助手，状态：$indicator。" + if (requestBusy()) "长按取消请求" else "点击重试或召唤助手"
         label?.text = "●"
         label?.contentDescription = "AI 状态：$indicator"
         label?.setTextColor(when {
@@ -381,6 +405,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             target = capture(manual)
             val snapshot = target?.takeIf { it.input.input.isNotBlank() } ?: run {
                 if (manual && active) notice("请先输入或选中文字")
+                awaitingStart = false; render()
                 return@launch
             }
             val assistant = manual || c.assistantEnabled
