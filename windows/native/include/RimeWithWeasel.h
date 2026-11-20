@@ -114,6 +114,10 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
   weasel::UI* m_ui;  // reference
   DWORD m_active_session;
   bool m_disabled;
+  // At most one automatic Rime maintenance per server process. Resuming the
+  // service after it must not start another, or data that always looks
+  // modified (e.g. future file times) redeploys on every session request.
+  bool m_auto_maintenance_done = false;
   std::string m_last_schema_id;
   std::string m_last_app_name;
   weasel::UIStyle m_base_style;

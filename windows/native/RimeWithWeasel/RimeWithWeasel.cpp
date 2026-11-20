@@ -109,11 +109,16 @@ void RimeWithWeaselHandler::Initialize() {
   LOG(INFO) << "Initializing la rime.";
   LOG(INFO) << "calling rime_api->initialize";
   rime_api->initialize(NULL);
-  LOG(INFO) << "starting Rime maintenance";
-  if (rime_api->start_maintenance(/*full_check = */ False)) {
-    m_disabled = true;
-    LOG(INFO) << "waiting for Rime maintenance";
-    rime_api->join_maintenance_thread();
+  if (!m_auto_maintenance_done) {
+    m_auto_maintenance_done = true;
+    LOG(INFO) << "starting Rime maintenance";
+    if (rime_api->start_maintenance(/*full_check = */ False)) {
+      m_disabled = true;
+      LOG(INFO) << "waiting for Rime maintenance";
+      rime_api->join_maintenance_thread();
+    }
+  } else {
+    LOG(INFO) << "Rime maintenance already ran in this process; resuming without another";
   }
 
   RimeConfig config = {NULL};

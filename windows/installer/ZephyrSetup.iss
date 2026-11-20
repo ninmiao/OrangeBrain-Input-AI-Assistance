@@ -25,6 +25,10 @@ OutputDir={#Output}
 OutputBaseFilename=Zephyr-Input-Windows-{#Version}-Setup-x64
 Compression=lzma2/fast
 SolidCompression=yes
+; Store file times in UTC. The default keeps the build machine's local time, so a
+; cloud (UTC) build installed west of UTC got future-dated data files and Rime
+; redeployed on every start ("Deployed" loop, no candidates).
+TimeStampsInUTC=yes
 WizardStyle=modern
 CloseApplications=no
 RestartApplications=no
