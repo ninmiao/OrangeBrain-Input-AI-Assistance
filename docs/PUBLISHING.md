@@ -25,7 +25,7 @@ SDK、JDK、模拟器、VS/Boost 缓存、生成语料、截图、测试日志�
 
 两端均内置万象、雾凇词表，可从官方 GitHub 更新。约 407 MB 的万象语法模型单独下载。两端共用 C++ AI 核心，使用流式 JSON 候选数组、默认前 50 / 后 0 字上下文和 token 软预算。Windows 手动保存，Android 设置自动生效，一键测速选择已有 Policy。
 
-在 GitHub Actions 手动运行 OrangeCell cloud builds，两端通过后下载同一个 `dist` 附件并核对校验值。发布到仓库之前，用本地既有 Demo 证书给云端 APK 重签，并重新生成 `SHA256SUMS`，保证已有 Demo 用户可覆盖安装。环境与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。Windows 先使用 `windows/scripts/package.ps1` 生成 app-image，再使用 `build-installer.ps1` 生成包含原生程序和词表的 Setup EXE（不含 JVM/Kotlin），只发布这个安装器；Android 发布 ARM64 demo APK。各版本的构建和验证结果见 [更新日志](../UPDATE_LOG.md)。
+在本机构建：Android 运行 `android/script/build-orangecell.ps1`，Windows 运行 `windows/scripts/build-release.ps1`（内部先 `package.ps1` 生成 app-image，再 `build-installer.ps1` 生成包含原生程序和词表的 Setup EXE，不含 JVM/Kotlin），核对两个产物的校验值后复制到仓库 `dist/` 并更新 `SHA256SUMS`。Android 必须用同一个本机 Demo 证书（`%USERPROFILE%\.android\debug.keystore`）签名，才能覆盖安装已有的 Demo。只发布一个 Windows 安装器（x86 / x64 / ARM64）和一个 ARM64 demo APK。环境与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。各版本的构建和验证结果见 [更新日志](../UPDATE_LOG.md)。
 
 新库仍需保留项目及第三方源码许可证、版权和来源信息。不将手机或 Windows 用户数据放入项目；不将本地加密凭据作为“安全文件”发布。
 

@@ -245,7 +245,7 @@ Android 基于 Trime，保留 Kotlin 界面和系统、网络适配，通过 JNI
 | `shared/native-core/` | 共享 C++ AI 核心及 JNI / Shared C++ AI core and JNI |
 | `shared/ai-core/` | Android 适配和共享资源 / Android adapters and shared resources |
 | `tests/corpus/` | 中英错输语料与生成器 / Typo corpus and generator |
-| `dist/` | 最新两端云构建安装包及校验值 / Current cloud-built installers and checksums |
+| `dist/` | 最新两端安装包及校验值 / Current installers and checksums |
 
 [开发环境与构建 / Build instructions](docs/DEVELOPMENT.md)
 

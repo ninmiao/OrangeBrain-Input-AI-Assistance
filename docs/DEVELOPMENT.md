@@ -4,7 +4,7 @@
 
 ## 共用工具
 
-在 [GitHub Actions](https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/workflows/cloud-build.yml) 运行 OrangeCell cloud builds，选择要编译的分支。Windows x64 Setup 和 Android ARM64 Demo APK 并行构建，两项通过后汇总成一个 `dist` 构建附件，内含两个安装包和 `SHA256SUMS`。附件保留七天。云端 Demo 使用运行器测试证书，发布到仓库 `dist/` 前用本地既有 Demo 证书重签，以便覆盖安装。
+两端都在本机编译，不再使用云编译。Android 用 `./android/script/build-orangecell.ps1 -Variant demo -Abis arm64-v8a`，Windows 用 `./windows/scripts/build-release.ps1`（依赖、x64 / x86 / ARM64 模块、测试、打包、架构检查和安装包一步完成，输出在 `.tools/release-output/`）。发布时把两个安装包和 `SHA256SUMS` 放进仓库 `dist/`。**签名**：Android Demo 用本机 `%USERPROFILE%\.android\debug.keystore` 签名，必须一直使用同一个文件，否则手机上已装的版本无法覆盖安装（`INSTALL_FAILED_UPDATE_INCOMPATIBLE`）；该文件已备份到 `%USERPROFILE%\.orangecell\backup\`，不要提交到 Git。
 
 
 Python 3.12+、Git。Android 另外需要 JDK 17 和仓库中的 Gradle wrapper；Windows 使用 MSVC 和 CMake。将 Python 放入 PATH，仅 Android 构建需要设置 `JAVA_HOME`。JDK / SDK / VS / Gradle 缓存都是本机工具，不上传到 Git。脚本也支持忽略目录 `.tools/jdk/<JDK>/`。无需全局安装 Kotlin 或 Gradle。

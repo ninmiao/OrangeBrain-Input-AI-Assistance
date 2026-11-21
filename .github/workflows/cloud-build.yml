@@ -1,9 +1,8 @@
 name: OrangeCell cloud builds
 
+# Local builds are the supported path; this workflow runs only when started by hand.
 on:
   workflow_dispatch:
-  push:
-    branches: [build/cloud-test]
 
 permissions:
   contents: read

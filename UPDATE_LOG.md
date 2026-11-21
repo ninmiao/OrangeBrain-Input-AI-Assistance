@@ -6,8 +6,8 @@
 
 | 项目 | 当前状态 |
 | --- | --- |
-| Windows 本地安装包 | 1.13.0 x64（橘脑一颗 OrangeCell）已在 `dist/`；本机仍是 1.12.9（Zephyr Input） |
-| Android 本地安装包 | 1.11.0 ARM64 demo（橘脑一颗 OrangeCell，应用 ID `io.github.ninmiao.orangecell`）已在 `dist/`；S26 上仍是 1.10.4（Zephyr Input） |
+| Windows 本地安装包 | 1.14.0（`OrangeCell-Windows-1.14.0-Setup-x86-arm64.exe`，x86 / x64 / ARM64）已在 `dist/`，本机已用本地构建的安装包覆盖安装；ARM64 真机打字尚未验证 |
+| Android 本地安装包 | 1.12.0 ARM64 demo 已在 `dist/`，已装入本地模拟器；S26 上仍是 1.10.4（Zephyr Input，未升级） |
 | 源码提示词 | 纠错模式返回一个候选；助手模式以单次流式请求返回纠错和助手两个候选；前后文默认 50 / 0 |
 | 安装包提示词 | Windows 1.12.5 与 Android 1.10.3 使用独立的纠错和助手提示词 |
 | LLM 接入 | OpenAI、OpenRouter、Google Gemini 在线 API，始终发送完整提示词；Preset 已移除 |
@@ -32,6 +32,10 @@
 - README：“原名 Zephyr Input”的说明移到文末，改为一句话。
 - AI 表情只返回 2 个候选（模拟器实测发现）：原生流式解码在助手模式下把候选数写死为 2（纠错 + 助手），表情请求也被截断。请求新增“最大候选数”，表情传 5，其他请求不变；原生测试新增“表情请求保留 5 个、助手模式仍为 2 个”。用同一提示词直接调用 OpenRouter 确认模型本身返回 5 个。
 - Android ⋯ 菜单样式统一：功能键原来是“图标+文字”横排，下面 Rime 开关是“方块+大字”，两套风格割裂。现在功能键也用同样的 48 dp 键背景方块、名称在下方、每格 96 dp、每行 4 个，和下面的开关连成一个可滚动网格，去掉了“功能”小标题。
+- 构建方式改为只在本机编译，不再使用云编译：Android 用 `android/script/build-orangecell.ps1`，Windows 新增 `windows/scripts/build-release.ps1`（依赖、x64 / x86 / ARM64 模块、组件与 TSF 测试、打包、架构检查、安装包一步完成）。云流程只保留手动触发。原因：云端每次用不同的临时证书给 Demo APK 签名，手机上已装版本无法覆盖安装。
+- 签名一致：Android Demo 使用本机 `%USERPROFILE%\.android\debug.keystore`（2026-11-06 创建，也是之前手机上版本使用的证书），本次本地构建的 APK 证书 SHA-256 为 61:7C:19:1C:08:C6:1B:7C:C6:3E:8C:47:A7:08:36:37:0F:7E:09:01:01:0B:A7:6D:4F:AB:6D:8A:AE:D8:59:11，与该密钥库一致；已备份到 `%USERPROFILE%\.orangecellackup\`。该文件不能丢，也不能提交。
+- 本地构建结果：Android arm64 demo（含 `:ai-core:test`，APK 内 AI 核心与提示词资源校验通过）；Windows 组件测试通过（111 个组合检查、2705 个高亮范围检查、63 个快捷键检查、12 个流式管道检查、6 个管道重连检查），x64、x86、ARM64 三个 TSF 模块都已编译。`dist/` 现为这两个本地产物，SHA-256 已校验。
+- 模拟器实测（Android 15 x86_64，ARM 翻译）：真实设置界面保存 OpenRouter Key、延迟测试连通；候选栏功能键、简繁翻牌、AI 表情（等待动画、返回多于 2 个候选）、剪贴板卡片面板、⋯ 菜单统一网格均正常。Windows 本机：迁移、新皮肤、徽章状态行、AI 纠错候选在测试窗口正常；真实应用里状态行曾显示为方块的问题已加防御，待重新安装后复测。
 - 验证：本机已卸载 Zephyr Input 1.12.9，并安装 1.14.0（退出码 0）。数据迁移在真机上通过：`%APPDATA%\ZephyrInput` 整体改名，三个加密 Key、用户词库、下载的词表和语法模型都在，一次部署完成，Key 无需重新输入。新皮肤、徽章状态行和 AI 纠错候选在测试窗口中正常显示（`nihoa` → 你好）。Android 1.12.0 已装入本地模拟器，功能待测。
 
 ### 2026-11-21 · Android 1.12.0 功能键区与表情、Windows 1.14.0 候选窗新皮肤
