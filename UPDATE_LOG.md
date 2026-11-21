@@ -7,7 +7,7 @@
 | 项目 | 当前状态 |
 | --- | --- |
 | Windows 本地安装包 | 1.14.0（`OrangeCell-Windows-1.14.0-Setup-x86-arm64.exe`，x86 / x64 / ARM64）已在 `dist/`，本机已用本地构建的安装包覆盖安装；ARM64 真机打字尚未验证 |
-| Android 本地安装包 | 1.12.1 ARM64 demo 已在 `dist/`（表情键接管 AI 请求、无存储权限时不再闪退）；S26 待装 1.12.1（当前 1.12.0），旧的 Zephyr Input 已卸载 |
+| Android 本地安装包 | 1.12.1 ARM64 demo 已在 `dist/`（表情键接管 AI 请求、无存储权限时不再闪退）；S26 已覆盖安装 1.12.1（Key 和设置保留），旧的 Zephyr Input 已卸载 |
 | 源码提示词 | 纠错模式返回一个候选；助手模式以单次流式请求返回纠错和助手两个候选；前后文默认 50 / 0 |
 | 安装包提示词 | Windows 1.12.5 与 Android 1.10.3 使用独立的纠错和助手提示词 |
 | LLM 接入 | OpenAI、OpenRouter、Google Gemini 在线 API，始终发送完整提示词；Preset 已移除 |
