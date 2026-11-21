@@ -1,12 +1,12 @@
-# Zephyr Input for Windows
+# OrangeCell for Windows
 
 Windows 客户端完全使用 C++。标准 Win32 设置窗口、WinHTTP 网络层、DPAPI 凭据存储和基于 Weasel 的 TSF 输入服务，共用 C++17 AI 核心。安装包不包含 JVM、Kotlin、JAR、Qt 或 WebView，不需要安装 Java、.NET 桌面运行时或 VC++ Redistributable。目标为 Windows 10/11 x64，包含供 32 位应用使用的 TSF DLL；本轮在当前 Windows 11 机器验证。
 
 ## 安装与运行
 
-双击 `Zephyr-Input-Windows-1.12.4-Setup-x64.exe`，完成 Windows 管理员授权。安装程序自动定位 `%ProgramFiles%\Zephyr Input`，注册独立的 x64/x86 TSF 组件、开始菜单和登录启动项。运行新版 Setup 即可覆盖更新，保留当前用户的设置、Key 和词库。安装后注销再登录，从 Windows 输入法菜单选择 **Zephyr Input**。如未显示，在中文（简体，中国）的语言选项中添加 Zephyr Input。
+双击 `OrangeCell-Windows-1.12.4-Setup-x64.exe`，完成 Windows 管理员授权。安装程序自动定位 `%ProgramFiles%\OrangeCell`，注册独立的 x64/x86 TSF 组件、开始菜单和登录启动项。运行新版 Setup 即可覆盖更新，保留当前用户的设置、Key 和词库。安装后注销再登录，从 Windows 输入法菜单选择 **OrangeCell**。如未显示，在中文（简体，中国）的语言选项中添加 OrangeCell。
 
-开始菜单 **Zephyr Input** 打开设置；`ZephyrSettings.exe` 也可直接运行。`start_service.bat` 启动当前用户的 AI Broker 和本地输入服务。从 Windows“设置 → 应用 → 已安装的应用 → Zephyr Input”卸载，或运行安装目录的 `unins*.exe（具体编号以系统卸载入口为准）`。卸载程序注销输入法、清理程序文件、开始菜单和启动项；被其他应用占用的旧 TSF DLL 在重启时删除。用户数据默认保留在 `%APPDATA%\ZephyrInput`，便于重装恢复。
+开始菜单 **OrangeCell** 打开设置；`OrangeCellSettings.exe` 也可直接运行。`start_service.bat` 启动当前用户的 AI Broker 和本地输入服务。从 Windows“设置 → 应用 → 已安装的应用 → OrangeCell”卸载，或运行安装目录的 `unins*.exe（具体编号以系统卸载入口为准）`。卸载程序注销输入法、清理程序文件、开始菜单和启动项；被其他应用占用的旧 TSF DLL 在重启时删除。用户数据默认保留在 `%APPDATA%\OrangeCell`，便于重装恢复。
 
 系统接入与桌面应用兼容性验收状态以项目 `docs/windows/VALIDATION.md` 为准；编译通过不代表所有文本框已验证。Windows ARM64、Windows 10、远程桌面尚不在已验证范围。
 
@@ -47,7 +47,7 @@ Windows 客户端完全使用 C++。标准 Win32 设置窗口、WinHTTP 网络�
 
 每次一键测速从现有 Policy 勾选 1–5 项并点击运行，逐项追加全部成功或失败结果。使用各自的模型、Key 和参数，发送含前后文的长输入样例。它会发送实际请求并产生 API 用量。网络请求在独立后台进程执行，失败保留本地候选；默认读取前 50 / 后 0 字，可关闭上下文。
 
-配置位于 `%APPDATA%\ZephyrInput\settings.json`，凭据经当前 Windows 用户的 DPAPI 加密，分别绑定 Policy 和 HTTPS 来源；接口域名或端口改变后必须重新保存对应 Key。Key 留空表示保留。用户词库位于 `%APPDATA%\ZephyrInput\rime`。源代码、安装包和测试报告不包含真实 Key。
+配置位于 `%APPDATA%\OrangeCell\settings.json`，凭据经当前 Windows 用户的 DPAPI 加密，分别绑定 Policy 和 HTTPS 来源；接口域名或端口改变后必须重新保存对应 Key。Key 留空表示保留。用户词库位于 `%APPDATA%\OrangeCell\rime`。源代码、安装包和测试报告不包含真实 Key。
 
 ## 开发与验证
 
@@ -58,7 +58,7 @@ python windows/scripts/prepare-deps.py
 ./windows/scripts/build-native.ps1
 ./windows/scripts/build-app.ps1
 ./windows/scripts/package.ps1 -Destination ./.tools/release-image
-./windows/scripts/build-installer.ps1 -Image ./.tools/release-image/ZephyrSettings
+./windows/scripts/build-installer.ps1 -Image ./.tools/release-image/OrangeCellSettings
 python tests/corpus/generate.py
 python -m unittest discover -s tests/corpus -p test_corpus.py
 ./windows/scripts/test-components.ps1
@@ -66,16 +66,16 @@ python -m unittest discover -s tests/corpus -p test_corpus.py
 ./windows/scripts/test-native.ps1 -Platform x86
 ```
 
-运行中的本地服务与 Broker 关闭云端 AI 后，可执行 `test-components.ps1 -Ipc` 及 `-Corpus tests/corpus/generated/native-sample.tsv`。系统安装后使用 `test-native.ps1 -Registered -InstalledPath 'C:\Program Files\Zephyr Input'` 单独验证 OS 管理的 TSF 激活；它仅影响测试进程。
+运行中的本地服务与 Broker 关闭云端 AI 后，可执行 `test-components.ps1 -Ipc` 及 `-Corpus tests/corpus/generated/native-sample.tsv`。系统安装后使用 `test-native.ps1 -Registered -InstalledPath 'C:\Program Files\OrangeCell'` 单独验证 OS 管理的 TSF 激活；它仅影响测试进程。
 
 真实 API 回归显式执行，默认不会把大语料发到云端：
 
 ```powershell
 # 原生程序；最后一个参数选择已保存的 Policy。
-./ZephyrSettings.exe --evaluate <gold.jsonl的完整路径> <report.json的完整路径> 60 openai
-./ZephyrSettings.exe --evaluate <gold.jsonl的完整路径> <report.json的完整路径> 60 openrouter
+./OrangeCellSettings.exe --evaluate <gold.jsonl的完整路径> <report.json的完整路径> 60 openai
+./OrangeCellSettings.exe --evaluate <gold.jsonl的完整路径> <report.json的完整路径> 60 openrouter
 ```
 
 保留上游许可证及来源，见 `THIRD-PARTY.md`、`native/UPSTREAM.json`。
 
-覆盖升级会关闭 Zephyr 自身设置与后台进程，请先保存编辑。TSF DLL 按内容版本命名，其他应用持有的旧 DLL 保留到卸载清理；新启动应用加载新版本。
+覆盖升级会关闭 OrangeCell 自身设置与后台进程，请先保存编辑。TSF DLL 按内容版本命名，其他应用持有的旧 DLL 保留到卸载清理；新启动应用加载新版本。

@@ -1,3 +1,3 @@
-﻿# Compatibility alias; use test-zephyr.ps1 for Zephyr Input.
-& "$PSScriptRoot\test-zephyr.ps1" @args
+﻿# Compatibility alias; use test-orangecell.ps1 for OrangeCell.
+& "$PSScriptRoot\test-orangecell.ps1" @args
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

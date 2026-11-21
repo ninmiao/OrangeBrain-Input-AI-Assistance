@@ -32,16 +32,16 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     http=ThreadingHTTPServer(('127.0.0.1',0),Handler)
     threading.Thread(target=http.serve_forever,daemon=True).start()
-    with tempfile.TemporaryDirectory(prefix='zephyr-native-integration-') as tmp:
+    with tempfile.TemporaryDirectory(prefix='orangecell-native-integration-') as tmp:
         tmp=Path(tmp)
         for filename,entries in [('good.zip',{'dicts/zi.dict.yaml':'词库测试\n'}),('unsafe.zip',{'../escape':'unsafe','dicts/zi.dict.yaml':'x'}),('missing.zip',{'other':'x'})]:
             with zipfile.ZipFile(tmp/filename,'w',compression=zipfile.ZIP_DEFLATED) as z:
                 for name,value in entries.items():z.writestr(name,value)
         bad=bytearray((tmp/'good.zip').read_bytes());bad[bad.index(b'PK\x01\x02')+16]^=1;(tmp/'bad-crc.zip').write_bytes(bad)
-        env=os.environ.copy();env['ZEPHYR_TEST_ZIPS']=str(tmp)
-        subprocess.run([str(BIN/'zephyr_windows_test.exe'),str(ROOT/'tests/corpus/truncated-output.jsonl'),f'http://127.0.0.1:{http.server_port}'],env=env,check=True,timeout=30)
-        pipe='\\\\.\\pipe\\Zephyr-native-test-'+str(os.getpid())
-        broker=subprocess.Popen([str(BIN/'ZephyrBroker.exe'),'--data-dir',str(tmp/'data'),'--test-pipe',pipe],creationflags=subprocess.CREATE_NO_WINDOW)
+        env=os.environ.copy();env['ORANGECELL_TEST_ZIPS']=str(tmp)
+        subprocess.run([str(BIN/'orangecell_windows_test.exe'),str(ROOT/'tests/corpus/truncated-output.jsonl'),f'http://127.0.0.1:{http.server_port}'],env=env,check=True,timeout=30)
+        pipe='\\\\.\\pipe\\OrangeCell-native-test-'+str(os.getpid())
+        broker=subprocess.Popen([str(BIN/'OrangeCellBroker.exe'),'--data-dir',str(tmp/'data'),'--test-pipe',pipe],creationflags=subprocess.CREATE_NO_WINDOW)
         k=C.WinDLL('kernel32',use_last_error=True)
         k.CreateFileW.argtypes=[W.LPCWSTR,W.DWORD,W.DWORD,W.LPVOID,W.DWORD,W.DWORD,W.HANDLE];k.CreateFileW.restype=W.HANDLE
         k.WaitNamedPipeW.argtypes=[W.LPCWSTR,W.DWORD];k.WaitNamedPipeW.restype=W.BOOL

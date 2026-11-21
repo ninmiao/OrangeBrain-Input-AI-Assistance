@@ -60,7 +60,7 @@ static int CustomInstall(bool installing) {
   bool silent = false;
   std::wstring user_dir;
 
-  const WCHAR KEY[] = L"Software\\ZephyrInput";
+  const WCHAR KEY[] = L"Software\\OrangeCell";
   HKEY hKey;
   LSTATUS ret = RegOpenKey(HKEY_CURRENT_USER, KEY, &hKey);
   if (ret == ERROR_SUCCESS) {
@@ -112,7 +112,7 @@ static int CustomInstall(bool installing) {
   if (user_dir.empty()) {
     // default user dir %APPDATA%\Rime
     WCHAR _path[MAX_PATH] = {0};
-    ExpandEnvironmentStringsW(L"%APPDATA%\\ZephyrInput\\rime", _path, _countof(_path));
+    ExpandEnvironmentStringsW(L"%APPDATA%\\OrangeCell\\rime", _path, _countof(_path));
     user_dir = std::wstring(_path);
   }
   ret = SetRegKeyValue(HKEY_CURRENT_USER, KEY, L"RimeUserDir", user_dir.c_str(),
@@ -140,13 +140,13 @@ static int CustomInstall(bool installing) {
   if (_has_installed) {
     std::wstring dir(install_dir());
     std::thread th([dir]() {
-      ShellExecuteW(NULL, NULL, (dir + L"\\ZephyrServer.exe").c_str(), L"/q",
+      ShellExecuteW(NULL, NULL, (dir + L"\\OrangeCellServer.exe").c_str(), L"/q",
                     NULL, SW_SHOWNORMAL);
       Sleep(500);
-      ShellExecuteW(NULL, NULL, (dir + L"\\ZephyrServer.exe").c_str(), L"",
+      ShellExecuteW(NULL, NULL, (dir + L"\\OrangeCellServer.exe").c_str(), L"",
                     NULL, SW_SHOWNORMAL);
       Sleep(500);
-      ShellExecuteW(NULL, NULL, (dir + L"\\ZephyrDeployer.exe").c_str(),
+      ShellExecuteW(NULL, NULL, (dir + L"\\OrangeCellDeployer.exe").c_str(),
                     L"/deploy", NULL, SW_HIDE);
     });
     th.detach();
@@ -206,44 +206,44 @@ static int Run(LPTSTR lpCmdLine) {
   }
 
   if (auto res = GetParamByPrefix(lpCmdLine, L"/userdir:")) {
-    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput",
+    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\OrangeCell",
                           L"RimeUserDir", res, REG_SZ);
   }
 
   if (!wcscmp(L"/ls", lpCmdLine)) {
-    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput",
+    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\OrangeCell",
                           L"Language", L"chs", REG_SZ);
   } else if (!wcscmp(L"/lt", lpCmdLine)) {
-    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput",
+    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\OrangeCell",
                           L"Language", L"cht", REG_SZ);
   } else if (!wcscmp(L"/le", lpCmdLine)) {
-    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput",
+    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\OrangeCell",
                           L"Language", L"eng", REG_SZ);
   }
 
   if (!wcscmp(L"/eu", lpCmdLine)) {
-    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput\\Updates",
+    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\OrangeCell\\Updates",
                           L"CheckForUpdates", L"1", REG_SZ);
   }
   if (!wcscmp(L"/du", lpCmdLine)) {
-    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput\\Updates",
+    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\OrangeCell\\Updates",
                           L"CheckForUpdates", L"0", REG_SZ);
   }
 
   if (!wcscmp(L"/toggleime", lpCmdLine)) {
-    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput",
+    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\OrangeCell",
                           L"ToggleImeOnOpenClose", L"yes", REG_SZ);
   }
   if (!wcscmp(L"/toggleascii", lpCmdLine)) {
-    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput",
+    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\OrangeCell",
                           L"ToggleImeOnOpenClose", L"no", REG_SZ);
   }
   if (!wcscmp(L"/testing", lpCmdLine)) {
-    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput",
+    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\OrangeCell",
                           L"UpdateChannel", L"testing", REG_SZ);
   }
   if (!wcscmp(L"/release", lpCmdLine)) {
-    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput",
+    return SetRegKeyValue(HKEY_CURRENT_USER, L"Software\\OrangeCell",
                           L"UpdateChannel", L"release", REG_SZ);
   }
 

@@ -19,12 +19,12 @@ def machine_type(path: Path) -> int:
 
 def verify(image: Path) -> None:
     required = {
-        "ZephyrSettings.exe", "ZephyrBroker.exe", "ZephyrServer.exe",
-        "ZephyrDeployer.exe", "ZephyrDataDeploy.exe", "rime.dll",
-        "ZephyrTSFx64.dll", "ZephyrTSFx86.dll", "ZephyrTSFarm64.dll",
+        "OrangeCellSettings.exe", "OrangeCellBroker.exe", "OrangeCellServer.exe",
+        "OrangeCellDeployer.exe", "OrangeCellDataDeploy.exe", "rime.dll",
+        "OrangeCellTSFx64.dll", "OrangeCellTSFx86.dll", "OrangeCellTSFarm64.dll",
     }
     # Everything else is x64 (services run emulated on Windows on ARM).
-    special = {"ZephyrTSFx86.dll": 0x014C, "ZephyrTSFarm64.dll": 0xAA64}
+    special = {"OrangeCellTSFx86.dll": 0x014C, "OrangeCellTSFarm64.dll": 0xAA64}
     files = sorted(p for p in image.iterdir() if p.is_file() and p.suffix.lower() in {".exe", ".dll"})
     missing = required - {p.name for p in files}
     if missing:

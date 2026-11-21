@@ -1,12 +1,22 @@
-# Zephyr Input · 微风输入法
+<p align="center"><img src="docs/images/orangecell-logo.png" alt="橘脑一颗的图标：一只半睁着眼、露出一颗虎牙的像素橘猫" width="160"></p>
 
-[Windows 1.12.9 x64](dist/Zephyr-Input-Windows-1.12.9-Setup-x64.exe) · [Android 1.10.4 ARM64](dist/Zephyr-Input-1.10.4-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
+# 🐈 橘脑一颗 · OneOrangeBraincell
 
-我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了 Zephyr，自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
+**尽量让单脑细胞橘猫也能用的输入法。**
+
+*An input method simple enough for a cat with one orange braincell.*
+
+[Windows 1.13.0 x64](dist/OrangeCell-Windows-1.13.0-Setup-x64.exe) · [Android 1.11.0 ARM64](dist/OrangeCell-1.11.0-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
+
+> 本项目原名 **Zephyr Input（微风输入法）**，自 Windows 1.13.0 / Android 1.11.0 起更名为 **橘脑一颗（OrangeCell）**。旧版用户请看[从 Zephyr Input 升级](#从-zephyr-input-升级--upgrading-from-zephyr-input)。
+>
+> Formerly **Zephyr Input**; renamed **OrangeCell** from Windows 1.13.0 and Android 1.11.0. See [Upgrading from Zephyr Input](#从-zephyr-input-升级--upgrading-from-zephyr-input).
+
+我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了橘脑一颗（OrangeCell），自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
 **目前还是原型，请谨慎使用。** 虽然我已经在日常使用，但还有不少地方要打磨。已精简提示词和候选输出，但长输入和模型思考的 token 消耗仍可能比较大，建议先用小型模型试试。我用 Luna 和 Qwen3.8 27B 测下来效果还不错。
 
-Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 Android** 两个版本。自带万象和雾凇两套离线词表，默认使用万象，支持从 GitHub 一键更新及单独下载万象语法模型；联网后调用 **在线 LLM API**，通过提示词补足词库匹配：修正漏输、重复、错序和邻键误触，处理长拼音和中英文混输，还能在候选栏里给出简短答案、建议、续写、术语和颜表情。
+橘脑一颗是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 Android** 两个版本。自带万象和雾凇两套离线词表，默认使用万象，支持从 GitHub 一键更新及单独下载万象语法模型；联网后调用 **在线 LLM API**，通过提示词补足词库匹配：修正漏输、重复、错序和邻键误触，处理长拼音和中英文混输，还能在候选栏里给出简短答案、建议、续写、术语和颜表情。
 
 在线 AI 的中文模式将拼音转为汉字，英语保留并纠错；英文模式优先纠正英语，把中文、拼音或混输转成英文。自动纠错给出一个候选，助手模式还会给出第二个候选。你也可以只在需要时手动召唤助手。
 
@@ -16,11 +26,11 @@ Zephyr 是基于 **Rime** 的中文拼音输入法，目前有 **Windows 和 And
 
 ### English
 
-I built Zephyr for my own daily typing: fast pinyin input, clear privacy controls, and some tolerance for clumsy fingers. You're welcome to be a guinea pig too—open an issue when something feels off.
+I built OrangeCell for my own daily typing: fast pinyin input, clear privacy controls, and some tolerance for clumsy fingers. You're welcome to be a guinea pig too—open an issue when something feels off.
 
 **This is still a prototype; please use it with care.** I use it daily, but there is plenty left to improve. Prompts and output are now shorter, but long input and model reasoning can still use plenty of tokens. Start with a smaller model; Luna and Qwen3.8 27B have worked fairly well in my own testing.
 
-**Zephyr Input** is a **Rime-based pinyin keyboard for Windows and Android**. It bundles Wanxiang (the default) and Rime Ice dictionaries for offline typing, updates them from GitHub, offers a separate grammar-model download, and calls **online LLM APIs** for missing letters, repeated characters, swapped letters, nearby-key mistakes, long pinyin, and mixed Chinese–English input. Its assistant can also suggest a brief answer, advice, a continuation, a term, or a kaomoji directly in the candidate bar.
+**OrangeCell** is a **Rime-based pinyin keyboard for Windows and Android**. It bundles Wanxiang (the default) and Rime Ice dictionaries for offline typing, updates them from GitHub, offers a separate grammar-model download, and calls **online LLM APIs** for missing letters, repeated characters, swapped letters, nearby-key mistakes, long pinyin, and mixed Chinese–English input. Its assistant can also suggest a brief answer, advice, a continuation, a term, or a kaomoji directly in the candidate bar.
 
 For online AI, Chinese mode converts pinyin to Chinese while keeping and correcting English. English mode corrects English and translates Chinese, pinyin, or mixed input into English. Auto correction offers one candidate. Assistant mode adds a second candidate, and you can also invoke it on demand.
 
@@ -29,7 +39,7 @@ Cloud assistance supports **OpenAI, OpenRouter, and Google Gemini**, with separa
 
 ## Quickstart · 快速开始
 
-1. **Windows**：下载安装器，运行并允许 UAC。选择 **Zephyr Input** 输入法，从开始菜单打开设置。
+1. **Windows**：下载安装器，运行并允许 UAC。在输入法列表里选择 **橘脑一颗**，从开始菜单打开 **橘脑一颗 OrangeCell** 设置。
 2. **Android**：下载 ARM64 APK，先按引导授予存储权限，再启用键盘，等待首次词库部署。
 3. **在线 AI**：在 Policy 中填 API Key 并选模型，在 **AI 增强（自动）** 里选模式。Windows 点 **保存并生效**，Android 允许使用云端 AI。组字时按 **F8**（Windows）或点 **星光**（Android）也可手动请求。
 
@@ -106,9 +116,21 @@ Examples illustrate the feature; answers and length depend on the model. Kaomoji
 
 ## 安装与更新 · Installation and updates
 
-Windows 支持 Windows 10/11 x64，含 32 位应用使用的 TSF 组件；本机验证使用 Windows 11。安装到 `C:\Program Files\Zephyr Input`。运行新版 Setup 覆盖更新，卸载从系统“已安装的应用”进入，用户设置、Key 和学习词库保留。Android 当前提供 ARM64 APK，安装后在系统输入法设置启用；首次部署词库需稍等。
+Windows 支持 Windows 10/11 x64，含 32 位应用使用的 TSF 组件；本机验证使用 Windows 11。安装到 `C:\Program Files\OrangeCell`，输入法列表里显示为 **橘脑一颗**。运行新版 Setup 覆盖更新，卸载从系统“已安装的应用”进入，用户设置、Key 和学习词库保留。Android 当前提供 ARM64 APK，安装后在系统输入法设置启用；首次部署词库需稍等。
 
 Windows targets Windows 10/11 x64 and includes x86 TSF support for 32-bit apps; testing used Windows 11. Setup installs to Program Files. Run a newer Setup to update, or uninstall through Windows Settings; user settings, keys and learned words are retained. Android provides an ARM64 APK; enable it in system keyboard settings and allow the initial dictionary deployment to finish.
+
+## 从 Zephyr Input 升级 · Upgrading from Zephyr Input
+
+改名后程序、输入法注册和应用 ID 全部换新，但学习词库、设置和 Key 会自动带过来。
+
+- **Windows**：直接运行新版 Setup。安装器会先静默卸载旧的 Zephyr Input（注销旧输入法、删除旧程序文件），再安装橘脑一颗。首次启动时，`%APPDATA%\ZephyrInput` 整体改名为 `%APPDATA%\OrangeCell`，`HKCU\Software\ZephyrInput` 复制到 `HKCU\Software\OrangeCell`，用户词库、下载的万象 / 雾凇词表和语法模型随之改名，然后重新部署一次。之后在输入法列表里选 **橘脑一颗**。正在运行的程序可能还加载着旧输入法模块，注销或重启后才会彻底释放。
+- **Android**：新应用 ID 是 `io.github.ninmiao.orangecell`，会作为新应用安装，旧的 Zephyr Input 不会被覆盖。授予存储权限后，新应用会把 `/sdcard/ZephyrInput` 改名为 `/sdcard/OrangeCell` 继续使用，学习词库保留。在线 AI 的 Policy 和 Key 保存在旧应用的私有存储里，无法转移，需要重新填写。数据目录移走后旧应用就不能再用了，确认新键盘正常后卸载它即可。
+
+Everything was renamed, including the Windows input method registration and the Android application ID; learned words, settings and keys carry over where the platform allows.
+
+- **Windows:** run the new Setup. It silently uninstalls the old Zephyr Input first. On first start, `%APPDATA%\ZephyrInput` becomes `%APPDATA%\OrangeCell`, `HKCU\Software\ZephyrInput` is copied to `HKCU\Software\OrangeCell`, and the user dictionary, downloaded dictionaries and grammar model are renamed before one redeploy. Choose **橘脑一颗** in the input list. Apps that already loaded the old module release it after you sign out or restart.
+- **Android:** the new application ID `io.github.ninmiao.orangecell` installs as a separate app. After you grant storage access, it renames `/sdcard/ZephyrInput` to `/sdcard/OrangeCell` and keeps your learned words. Online AI policies and keys live in the old app's private storage and must be entered again. The old app loses its data folder after the move; uninstall it once the new keyboard works.
 
 ## 更新词表和本地模型 · Updating local data
 
@@ -231,11 +253,11 @@ Android 基于 Trime，保留 Kotlin 界面和系统、网络适配，通过 JNI
 
 ## 开源致谢 · Acknowledgements
 
-感谢 Rime、同文、小狼毫和各个词库及依赖项目的作者。Zephyr 的输入引擎、平台接入和离线词库来自这些项目。
+感谢 Rime、同文、小狼毫和各个词库及依赖项目的作者。橘脑一颗的输入引擎、平台接入和离线词库来自这些项目。
 
 Thanks to the authors and maintainers of Rime, Trime, Weasel, and the dictionaries and libraries below.
 
-| 项目 / Project | 在 Zephyr 中的作用 / Role | 许可证及本地说明 / License & local notices |
+| 项目 / Project | 在橘脑一颗中的作用 / Role | 许可证及本地说明 / License & local notices |
 | --- | --- | --- |
 | [Rime / librime](https://github.com/rime/librime) | 两端离线输入引擎 / Offline input engine | BSD-3-Clause · [LICENSE](android/app/src/main/jni/librime/LICENSE) |
 | [同文 / Trime](https://github.com/osfans/trime) | Android 输入法前端与项目基础 / Android IME foundation | GPL-3.0-or-later · 保留原始源码署名 / Original source headers retained · [LICENSE](LICENSE) |
@@ -255,9 +277,9 @@ The bundled Rime Ice tables come from the official `nightly` release’s `cn_dic
 
 ## 许可证 · License
 
-Zephyr 原创代码与文档采用 **GPL-3.0-or-later**，允许使用、修改、商用和分发。分发受 GPL 覆盖的版本时，须按许可证提供对应源码并保留声明。第三方组件按各自许可证提供，雾凇词库为 **GPL-3.0-only**。
+橘脑一颗（OrangeCell）原创代码与文档采用 **GPL-3.0-or-later**，允许使用、修改、商用和分发。分发受 GPL 覆盖的版本时，须按许可证提供对应源码并保留声明。第三方组件按各自许可证提供，雾凇词库为 **GPL-3.0-only**。
 
-Zephyr's original code and documentation use **GPL-3.0-or-later**, permitting use, modification, commercial use, and redistribution. Distribution of GPL-covered works carries corresponding-source and notice obligations. Third-party components retain their own licenses; Rime Ice dictionaries use **GPL-3.0-only**.
+OrangeCell's original code and documentation use **GPL-3.0-or-later**, permitting use, modification, commercial use, and redistribution. Distribution of GPL-covered works carries corresponding-source and notice obligations. Third-party components retain their own licenses; Rime Ice dictionaries use **GPL-3.0-only**.
 
 [许可证正文 / License text](LICENSE) · [授权范围 / Licensing details](LICENSE-NOTICE.md)
 

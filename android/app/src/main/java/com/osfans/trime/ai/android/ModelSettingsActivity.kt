@@ -179,7 +179,7 @@ class ModelSettingsActivity : AppCompatActivity() {
             dialog.show()
         }
         button("导入模型与参数列表 JSON") { importEndpoint = c.endpoint; importFile.launch(arrayOf("application/json", "text/plain", "application/octet-stream")) }
-        button("导出模型与参数列表 JSON") { exported = c.modelCatalog.export(); exportFile.launch("zephyr-input-models.json") }
+        button("导出模型与参数列表 JSON") { exported = c.modelCatalog.export(); exportFile.launch("orangecell-input-models.json") }
 
     }
 

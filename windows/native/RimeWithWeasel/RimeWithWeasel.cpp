@@ -222,7 +222,7 @@ DWORD RimeWithWeaselHandler::AddSession(LPWSTR buffer, EatLine eat) {
 }
 
 DWORD RimeWithWeaselHandler::RemoveSession(WeaselSessionId ipc_id) {
-  m_zephyr_ai.cancel(ipc_id);m_zephyr.erase(ipc_id);
+  m_orangecell_ai.cancel(ipc_id);m_orangecell.erase(ipc_id);
   if (m_ui)
     m_ui->Hide();
   if (m_disabled)
@@ -273,40 +273,40 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
                                             WeaselSessionId ipc_id,
                                             EatLine eat) {
   if(m_disabled)return FALSE;
-  return _ZephyrKey(keyEvent,ipc_id,eat);
+  return _OrangeCellKey(keyEvent,ipc_id,eat);
 }
 
 void RimeWithWeaselHandler::CommitComposition(WeaselSessionId ipc_id) {
-  auto& z=m_zephyr[ipc_id];
-  _ZephyrChoose(ipc_id,z.selected);_ZephyrRefresh(ipc_id);z.refreshPending=true;
+  auto& z=m_orangecell[ipc_id];
+  _OrangeCellChoose(ipc_id,z.selected);_OrangeCellRefresh(ipc_id);z.refreshPending=true;
 }
 
 void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
-  m_zephyr[ipc_id].cancel();
-  m_zephyr_ai.cancel(ipc_id);
+  m_orangecell[ipc_id].cancel();
+  m_orangecell_ai.cancel(ipc_id);
   if(!m_disabled)rime_api->clear_composition(to_session_id(ipc_id));
 }
 
 void RimeWithWeaselHandler::SelectCandidateOnCurrentPage(
     size_t index,
     WeaselSessionId ipc_id) {
-  auto& z=m_zephyr[ipc_id];auto slot=z.page*5+index;
-  _ZephyrChoose(ipc_id,slot);_ZephyrRefresh(ipc_id);z.refreshPending=true;
+  auto& z=m_orangecell[ipc_id];auto slot=z.page*5+index;
+  _OrangeCellChoose(ipc_id,slot);_OrangeCellRefresh(ipc_id);z.refreshPending=true;
 }
 
 bool RimeWithWeaselHandler::HighlightCandidateOnCurrentPage(
     size_t index,
     WeaselSessionId ipc_id,
     EatLine eat) {
-  auto& z=m_zephyr[ipc_id];if(z.page*5+index<z.candidates.size())z.selected=z.page*5+index;
-  return _ZephyrRespond(ipc_id,eat);
+  auto& z=m_orangecell[ipc_id];if(z.page*5+index<z.candidates.size())z.selected=z.page*5+index;
+  return _OrangeCellRespond(ipc_id,eat);
 }
 
 bool RimeWithWeaselHandler::ChangePage(bool backward,
                                        WeaselSessionId ipc_id,
                                        EatLine eat) {
-  auto& z=m_zephyr[ipc_id];if(backward&&z.page)--z.page;else if(!backward&&(z.page+1)*5<z.candidates.size())++z.page;z.selected=z.page*5;
-  return _ZephyrRespond(ipc_id,eat);
+  auto& z=m_orangecell[ipc_id];if(backward&&z.page)--z.page;else if(!backward&&(z.page+1)*5<z.candidates.size())++z.page;z.selected=z.page*5;
+  return _OrangeCellRespond(ipc_id,eat);
 }
 
 void RimeWithWeaselHandler::FocusIn(DWORD client_caps, WeaselSessionId ipc_id) {
@@ -460,10 +460,10 @@ void RimeWithWeaselHandler::SetOption(WeaselSessionId ipc_id,
                                       bool val) {
   if (opt == "ascii_mode") {
     auto id = ipc_id ? ipc_id : m_active_session;
-    auto it = m_zephyr.find(id);
-    if (it != m_zephyr.end()) {
+    auto it = m_orangecell.find(id);
+    if (it != m_orangecell.end()) {
       auto& z = it->second;
-      if (z.chinese == val) { z.language(); _ZephyrRefresh(id); }
+      if (z.chinese == val) { z.language(); _OrangeCellRefresh(id); }
     }
   }
   // from no-session client, not actual typing session
@@ -719,7 +719,7 @@ inline std::string _GetLabelText(const std::vector<Text>& labels,
 }
 
 bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
-  return _ZephyrRespond(ipc_id,eat);
+  return _OrangeCellRespond(ipc_id,eat);
 }
 
 // Blend foreground and background ARGB colors taking alpha into account.
@@ -1286,4 +1286,4 @@ void RimeWithWeaselHandler::_UpdateInlinePreeditStatus(WeaselSessionId ipc_id) {
   rime_api->set_option(session_id, "soft_cursor", Bool(!inline_preedit));
 }
 
-#include "ZephyrHandler.inc"
+#include "OrangeCellHandler.inc"

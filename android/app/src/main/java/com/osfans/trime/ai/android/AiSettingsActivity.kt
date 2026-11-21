@@ -44,7 +44,7 @@ class AiSettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-        title = "Zephyr Input"
+        title = "OrangeCell"
         lifecycleScope.launch { AiRuntimeStatus.state.collect { value -> serviceStatusView?.text="AI 状态：$value" } }
         setContentView(TextView(this).apply { text = "加载设置…" })
         lifecycleScope.launch { store = withContext(Dispatchers.IO) { AiStore.get(this@AiSettingsActivity) }; render() }
@@ -278,7 +278,7 @@ class AiSettingsActivity : AppCompatActivity() {
         val manager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         if (!manager.isDeviceSecure) { report("请先设置系统锁屏 PIN、图案或密码"); return }
         authenticated = action
-        auth.launch(manager.createConfirmDeviceCredentialIntent("Zephyr Input 凭据", "验证身份以修改 Policy 密钥") ?: return)
+        auth.launch(manager.createConfirmDeviceCredentialIntent("OrangeCell 凭据", "验证身份以修改 Policy 密钥") ?: return)
     }
     private fun label(text: String, size: Float = 14f) = TextView(this).apply { this.text = text; textSize = size; setPadding(0, dp(8), 0, dp(8)); page.addView(this) }
     private fun field(name: String, value: String, numeric: Boolean = false, multiline: Boolean = false): EditText {

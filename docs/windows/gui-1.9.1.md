@@ -21,8 +21,8 @@
 
 ## 构建与安装结果
 
-正式安装包已覆盖更新至本机 `C:\Program Files\Zephyr Input`，安装器退出码 0。原 settings.json 和三份加密 Key 的 SHA-256 不变；安装程序与最终发布镜像一致。安装后实测缩小窗口的上下滚动，没有旧位置文字叠影；重新打开后恢复默认大小。本轮没有测量屏幕帧率。
+正式安装包已覆盖更新至本机 `C:\Program Files\OrangeCell`，安装器退出码 0。原 settings.json 和三份加密 Key 的 SHA-256 不变；安装程序与最终发布镜像一致。安装后实测缩小窗口的上下滚动，没有旧位置文字叠影；重新打开后恢复默认大小。本轮没有测量屏幕帧率。
 
-安装包为 `dist/Zephyr-Input-Windows-1.9.1-Setup-x64.exe`，大小 38,770,220 字节，SHA-256 `20c16a062670d6e77d8fd429eb593ccc85fda2d50305a236bb2e34cce81af0bf`。旧包保留在本地忽略目录，dist 只保留 Windows 1.9.1 和 Android 1.7.1；Android APK、生成语料均未更改，未提交或推送。
+安装包为 `dist/OrangeCell-Windows-1.9.1-Setup-x64.exe`，大小 38,770,220 字节，SHA-256 `20c16a062670d6e77d8fd429eb593ccc85fda2d50305a236bb2e34cce81af0bf`。旧包保留在本地忽略目录，dist 只保留 Windows 1.9.1 和 Android 1.7.1；Android APK、生成语料均未更改，未提交或推送。
 
 原始本机日志位于忽略目录 `.tools/windows-1.9.1-*`，不提交凭据或个人输入。

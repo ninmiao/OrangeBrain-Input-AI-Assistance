@@ -31,7 +31,7 @@ static int ShowHelp() {
                MB_ICONINFORMATION | MB_OK);
   } else {
     MessageBox(NULL,
-               L"Usage: ZephyrDeployer.exe [options]\n"
+               L"Usage: OrangeCellDeployer.exe [options]\n"
                L"/? or /help\t\t- Show this help message\n"
                L"/deploy\t\t- Update Workspace\n"
                L"/dict\t\t- Manage dictionary\n"
@@ -97,7 +97,7 @@ int wmain(int argc, wchar_t* argv[]) {
   CreateDirectory(WeaselUserDataPath().c_str(), NULL);
 
   int ret = 0;
-  HANDLE hMutex = CreateMutex(NULL, TRUE, L"ZephyrDeployerExclusiveMutex");
+  HANDLE hMutex = CreateMutex(NULL, TRUE, L"OrangeCellDeployerExclusiveMutex");
   if (!hMutex) {
     ret = 1;
   } else if (GetLastError() == ERROR_ALREADY_EXISTS) {

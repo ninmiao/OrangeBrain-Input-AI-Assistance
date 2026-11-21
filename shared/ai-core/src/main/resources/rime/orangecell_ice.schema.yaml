@@ -1,13 +1,13 @@
 # SPDX-License-Identifier: GPL-3.0-only
-# Zephyr Input simplified full-pinyin schema using the unmodified rime-ice dictionaries.
+# OrangeCell simplified full-pinyin schema using the unmodified rime-ice dictionaries.
 # Spelling rules adapted from https://github.com/iDvel/rime-ice (see bundled NOTICE).
 schema:
   schema_id: rime_ai_simp
   name: 雾凇拼音
   version: '@@VERSION@@'
-  author: [Zephyr Input, Dvel]
+  author: [OrangeCell, Dvel]
   description: |
-    雾凇简体词库 + Zephyr Input 全拼方案，默认直接输出简体。
+    雾凇简体词库 + 橘脑一颗全拼方案，默认直接输出简体。
     使用原始字表、基础、扩展、腾讯和杂项词库；不包含雾凇的 Lua 扩展功能包。
     https://github.com/iDvel/rime-ice
 

@@ -7,9 +7,9 @@
 #include <chrono>
 #include <optional>
 #include <sstream>
-#include "ZephyrComposition.h"
+#include "OrangeCellComposition.h"
 
-namespace zephyr {
+namespace orangecell {
 inline std::string hex(const std::string& s) {
   const char* h="0123456789abcdef";std::string out;
   for(unsigned char c:s) { out+=h[c>>4];out+=h[c&15]; }return out;
@@ -61,7 +61,7 @@ class AiPipe {
     if(GetTickCount64()-checkedAt>1000) {
       checkedAt=GetTickCount64();wchar_t user[256];DWORD n=256;
       if(GetUserNameW(user,&n)) {
-        auto name=nameOverride.empty()?L"\\\\.\\pipe\\ZephyrAI-"+std::wstring(user):nameOverride;
+        auto name=nameOverride.empty()?L"\\\\.\\pipe\\OrangeCellAI-"+std::wstring(user):nameOverride;
         BOOL available=WaitNamedPipeW(name.c_str(),1);auto error=GetLastError();
         missing=!available&&(error==ERROR_FILE_NOT_FOUND||error==ERROR_PATH_NOT_FOUND);
       }
@@ -94,7 +94,7 @@ class AiPipe {
         if(token==generation)statusText=L"无法连接后台";
         continue;
       }
-      std::wstring name=nameOverride.empty()?L"\\\\.\\pipe\\ZephyrAI-"+std::wstring(username):nameOverride;
+      std::wstring name=nameOverride.empty()?L"\\\\.\\pipe\\OrangeCellAI-"+std::wstring(username):nameOverride;
       auto open=[&] { return CreateFileW(name.c_str(),GENERIC_READ|GENERIC_WRITE,
                                         0,nullptr,OPEN_EXISTING,FILE_FLAG_OVERLAPPED,nullptr); };
       HANDLE h=open();

@@ -14,10 +14,10 @@ const std::vector<std::string> wanxiangTables = {"zi",     "jichu",  "cuoyin",
                                iceTables = {"8105", "base", "ext", "tencent",
                                             "others"};
 const std::vector<std::string> snapshots = {
-    "default.custom.yaml", "user.yaml", "zephyr_wanxiang.schema.yaml",
-    ".zephyr-wanxiang/state.json", "rime_ai_simp.schema.yaml"};
+    "default.custom.yaml", "user.yaml", "orangecell_wanxiang.schema.yaml",
+    ".orangecell-wanxiang/state.json", "rime_ai_simp.schema.yaml"};
 std::string name(const J& release, const std::string& prefix) {
-  return "zephyr_" + prefix + "_" +
+  return "orangecell_" + prefix + "_" +
          release.at("asset").at("sha256").get<std::string>().substr(0, 12);
 }
 std::string replace(std::string s, const std::string& before,
@@ -44,7 +44,7 @@ bool allowed(const std::string& url) {
                       "releases.githubusercontent.com)/[^\\r\\n]*"));
 }
 HttpResponse github(HttpOptions options) {
-  options.headers.emplace_back("User-Agent", "Zephyr-Input/1.12.4");
+  options.headers.emplace_back("User-Agent", "OrangeCell/1.12.4");
   for (int i = 0; i < 6; i++) {
     require(allowed(options.url), "Unexpected GitHub download host");
     auto r = http(options);
@@ -205,7 +205,7 @@ J Dictionary::state() const {
                {"dictionary", nullptr},
                {"model", nullptr},
                {"iceDictionary", nullptr}};
-  auto bp = image_ / L"data/zephyr-dictionaries.json";
+  auto bp = image_ / L"data/orangecell-dictionaries.json";
   if (fs::exists(bp)) bundled.update(J::parse(readFile(bp)));
   auto sp = workspace() / L"state.json";
   if (!fs::exists(sp) && fs::exists(sp.wstring() + L".bak")) sp += L".bak";
@@ -222,7 +222,7 @@ J Dictionary::state() const {
     if (!fs::exists(user) && fs::exists(custom)) {
       auto text = readFile(custom);
       if (text.find("schema: rime_ai_simp") != text.npos &&
-          text.find("schema: zephyr_wanxiang") == text.npos)
+          text.find("schema: orangecell_wanxiang") == text.npos)
         saved["enabled"] = false;
     }
   }
@@ -246,10 +246,10 @@ std::string Dictionary::summary() const {
               : u8" · 当前停用");
 }
 void Dictionary::deploy(const std::string& schema) {
-  auto helper = image_ / L"ZephyrDataDeploy.exe",
-       server = image_ / L"ZephyrServer.exe";
+  auto helper = image_ / L"OrangeCellDataDeploy.exe",
+       server = image_ / L"OrangeCellServer.exe";
   require(fs::exists(helper), "Native dictionary deployer is missing");
-  Handle gate(CreateMutexW(nullptr, FALSE, L"ZephyrDeployerExclusiveMutex"));
+  Handle gate(CreateMutexW(nullptr, FALSE, L"OrangeCellDeployerExclusiveMutex"));
   require(gate.value && GetLastError() != ERROR_ALREADY_EXISTS,
           "Another installation or deployment is running");
   bool running = processRunning(server);
@@ -284,8 +284,8 @@ void Dictionary::recover() {
   auto t = J::parse(readFile(pending));
   auto paths = t.value(
       "paths", std::vector<std::string>{"default.custom.yaml", "user.yaml",
-                                        "zephyr_wanxiang.schema.yaml",
-                                        ".zephyr-wanxiang/state.json"});
+                                        "orangecell_wanxiang.schema.yaml",
+                                        ".orangecell-wanxiang/state.json"});
   for (size_t i = 0; i < paths.size(); i++) {
     require(std::find(snapshots.begin(), snapshots.end(), paths[i]) !=
                 snapshots.end(),
@@ -297,10 +297,10 @@ void Dictionary::recover() {
     else
       fs::remove(dir_ / wide(paths[i]));
   }
-  for (auto id : {L"zephyr_wanxiang", L"rime_ai_simp"})
+  for (auto id : {L"orangecell_wanxiang", L"rime_ai_simp"})
     fs::remove(dir_ / L"build" / (std::wstring(id) + L".schema.yaml"));
   std::string schema = t.at("previousSchema");
-  require(schema == "zephyr_wanxiang" || schema == "rime_ai_simp",
+  require(schema == "orangecell_wanxiang" || schema == "rime_ai_simp",
           "Invalid recovery schema");
   deploy(schema);
   fs::remove(pending);
@@ -341,14 +341,14 @@ void Dictionary::activate(const J& next) {
   atomicWrite(
       journal / L"pending.json",
       J{{"previousSchema",
-         previous["enabled"].get<bool>() ? "zephyr_wanxiang" : "rime_ai_simp"},
+         previous["enabled"].get<bool>() ? "orangecell_wanxiang" : "rime_ai_simp"},
         {"existing", existing},
         {"paths", snapshots}}
           .dump());
   try {
     if (!next["dictionary"].is_null()) {
       auto schema =
-          readFile(image_ / L"resources/rime/zephyr_wanxiang.schema.yaml");
+          readFile(image_ / L"resources/rime/orangecell_wanxiang.schema.yaml");
       schema = replace(
           replace(schema, "@@DICT@@", name(next["dictionary"], "wanxiang_d")),
           "@@VERSION@@", "1000.0");
@@ -365,18 +365,18 @@ void Dictionary::activate(const J& next) {
               "collocation_penalty: -14\n  non_collocation_penalty: -6\n  "
               "weak_collocation_penalty: -100\n  rear_penalty: -18\n";
       }
-      atomicWrite(dir_ / L"zephyr_wanxiang.schema.yaml", schema);
+      atomicWrite(dir_ / L"orangecell_wanxiang.schema.yaml", schema);
     }
     if (!next["iceDictionary"].is_null()) {
-      auto schema = readFile(image_ / L"resources/rime/zephyr_ice.schema.yaml");
+      auto schema = readFile(image_ / L"resources/rime/orangecell_ice.schema.yaml");
       atomicWrite(dir_ / L"rime_ai_simp.schema.yaml",
                   replace(replace(schema, "@@DICT@@",
                                   name(next["iceDictionary"], "ice_d")),
                           "@@VERSION@@", "1000.0"));
     }
-    for (auto id : {L"zephyr_wanxiang", L"rime_ai_simp"})
+    for (auto id : {L"orangecell_wanxiang", L"rime_ai_simp"})
       fs::remove(dir_ / L"build" / (std::wstring(id) + L".schema.yaml"));
-    deploy(next["enabled"].get<bool>() ? "zephyr_wanxiang" : "rime_ai_simp");
+    deploy(next["enabled"].get<bool>() ? "orangecell_wanxiang" : "rime_ai_simp");
     atomicWrite(workspace() / L"state.json", next.dump(2));
     fs::remove(journal / L"pending.json");
     progress(u8"已启用 / Ready\n" + summary(), false);

@@ -31,7 +31,7 @@ class Dictionary {
   fs::path dir_, image_;
   ProgressFn progress_;
   std::shared_ptr<Cancel> cancel_;
-  fs::path workspace() const { return dir_ / L".zephyr-wanxiang"; }
+  fs::path workspace() const { return dir_ / L".orangecell-wanxiang"; }
   void progress(const std::string& message, bool cancelable = true) const;
   void deploy(const std::string& schema);
   void recover();

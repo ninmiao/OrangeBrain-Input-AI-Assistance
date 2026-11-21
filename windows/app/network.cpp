@@ -50,7 +50,7 @@ void CALLBACK callback(HINTERNET, DWORD_PTR context, DWORD status, LPVOID info,
 }
 HINTERNET session() {
   static Internet s(WinHttpOpen(
-      L"Zephyr-Input/1.12.4", WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
+      L"OrangeCell/1.12.4", WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
       WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, WINHTTP_FLAG_ASYNC));
   require(s.h != nullptr, "Cannot initialize WinHTTP");
   return s.h;

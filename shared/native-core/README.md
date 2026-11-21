@@ -1,6 +1,6 @@
-# Zephyr native AI core
+# OrangeCell native AI core
 
-C++17 owns input/context encoding, prompt composition, provider payloads, reasoning/model capability rules, parameter validation, model/provider-list parsing, candidate parsing and token-budget decisions and incremental SSE decoding. Android loads `libzephyr_core.so`; Windows statically links `core.cpp` into its native settings and broker executables; it has no JNI or JVM dependency.
+C++17 owns input/context encoding, prompt composition, provider payloads, reasoning/model capability rules, parameter validation, model/provider-list parsing, candidate parsing and token-budget decisions and incremental SSE decoding. Android loads `liborangecell_core.so`; Windows statically links `core.cpp` into its native settings and broker executables; it has no JNI or JVM dependency.
 
 `shared/ai-core` supplies Android JVM adapters and common resources. Android retains Kotlin UI and platform integration. Windows 1.9.0 uses native Win32 controls, asynchronous WinHTTP, DPAPI, and a C++ dictionary updater. Windows source and builds no longer use Kotlin, Gradle, JDK, or a bundled JVM. iOS is not implemented.
 
@@ -26,4 +26,4 @@ Windows: `powershell -File windows/scripts/build-app.ps1`; CMake compiles and te
 
 `tests/corpus/truncated-output.jsonl` has 24 cases, including 18 explicitly truncated outputs. Native tests, JVM bridge tests and Android instrumentation exercise these cases. The large generated correction corpus remains in `tests/corpus/generated/` and is not removed or submitted to APIs.
 
-`third_party/nlohmann/json.hpp` is version 3.12.0 under MIT; see `third_party/nlohmann/LICENSE.MIT`. Zephyr source is GPL-3.0-or-later.
+`third_party/nlohmann/json.hpp` is version 3.12.0 under MIT; see `third_party/nlohmann/LICENSE.MIT`. OrangeCell source is GPL-3.0-or-later.

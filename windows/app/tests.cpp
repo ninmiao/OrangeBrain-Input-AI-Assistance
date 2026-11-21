@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     check(rejected, label);
   };
   auto dir =
-      fs::temp_directory_path() / wide("zephyr-native-test-" + uniqueId());
+      fs::temp_directory_path() / wide("orangecell-native-test-" + uniqueId());
   try {
     Store store(dir);
     auto c = store.load();
@@ -308,7 +308,7 @@ int main(int argc, char** argv) {
       check(streamed == "data: first\n\n", "Completed stream stops before waiting for more bytes");
     }
     wchar_t zipEnv[32768];
-    if (GetEnvironmentVariableW(L"ZEPHYR_TEST_ZIPS", zipEnv, 32768)) {
+    if (GetEnvironmentVariableW(L"ORANGECELL_TEST_ZIPS", zipEnv, 32768)) {
       fs::path fixtures(zipEnv);
       extractDictionaryZip(fixtures / L"good.zip", dir / L"zip-good",
                            {"dicts/zi.dict.yaml"});

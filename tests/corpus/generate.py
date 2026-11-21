@@ -55,7 +55,7 @@ def english_seeds():
         for a in actions:
             for o in objects:
                 for t in times:entries.add(f'{p} {a} {o} {t}.')
-    for text in sorted(entries):yield 'en',text,[text],'zephyr-authored'
+    for text in sorted(entries):yield 'en',text,[text],'orangecell-authored'
 
 def build(limit,out,overwrite=False):
     existing=[name for name in ('typos.jsonl','gold.jsonl','manifest.json') if (out/name).exists()]
@@ -75,7 +75,7 @@ def build(limit,out,overwrite=False):
                 encoded=json.dumps(row,ensure_ascii=False,separators=(',',':'))+'\n';f.write(encoded);digest.update(encoded.encode());stats[language+'/'+category]+=1;total+=1
     with (out/'gold.jsonl').open('w',encoding='utf-8',newline='\n') as f:
         for i,row in enumerate(csv.DictReader((HERE/'gold.tsv').open(encoding='utf-8'),delimiter='\t')):
-            row['expected']=row['expected'].split('|');row.update(id='gold-'+str(i+1),reviewed=True,split='regression',source='zephyr-authored')
+            row['expected']=row['expected'].split('|');row.update(id='gold-'+str(i+1),reviewed=True,split='regression',source='orangecell-authored')
             f.write(json.dumps(row,ensure_ascii=False)+'\n')
     report=dict(schema=1,total=total,seed_families=families,sha256=digest.hexdigest(),counts=dict(sorted(stats.items())),note='Synthetic expected alternatives are source-derived references, not verified unique intended meanings. Report live model quality separately.')
     (out/'manifest.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print(json.dumps(report,ensure_ascii=False,indent=2))

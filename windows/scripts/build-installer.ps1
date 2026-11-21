@@ -2,7 +2,7 @@ param([Parameter(Mandatory=$true)][string]$Image,[string]$Version,[string]$Compi
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $Image=(Resolve-Path -LiteralPath $Image).Path
-if(!$Version){$Version=(Get-Item -LiteralPath "$Image/ZephyrSettings.exe").VersionInfo.ProductVersion.Trim()}
+if(!$Version){$Version=(Get-Item -LiteralPath "$Image/OrangeCellSettings.exe").VersionInfo.ProductVersion.Trim()}
 if($Version -notmatch '^\d+\.\d+\.\d+$'){throw 'Invalid installer version'}
 if(!$Compiler){$Compiler=Join-Path $root '.tools/inno/ISCC.exe'}
 if(!$OutputDirectory){$OutputDirectory=Join-Path $root 'dist'}
@@ -13,12 +13,12 @@ $meta=Join-Path $root '.tools/setup-meta';New-Item -ItemType Directory -Force -P
 $names=@{}
 function Get-VersionedName([string]$path,[string]$arch) {
  $hash=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.Substring(0,12).ToLowerInvariant()
- return "ZephyrTSF$arch-$hash.dll"
+ return "OrangeCellTSF$arch-$hash.dll"
 }
-foreach($arch in @('x64','x86','arm64')) { $names[$arch]=Get-VersionedName "$Image/ZephyrTSF$arch.dll" $arch }
+foreach($arch in @('x64','x86','arm64')) { $names[$arch]=Get-VersionedName "$Image/OrangeCellTSF$arch.dll" $arch }
 # Windows on ARM registers an ARM64X forwarder: ARM64 apps load the ARM64 module,
 # x64 apps the x64 one. It forwards to the versioned names above, so build it here.
-$forwarder=Join-Path $meta 'ZephyrTSFarm64x.dll'
+$forwarder=Join-Path $meta 'OrangeCellTSFarm64x.dll'
 Remove-Item -LiteralPath $forwarder -ErrorAction SilentlyContinue
 & "$PSScriptRoot/build-arm64x.ps1" -Arm64Target $names.arm64 -X64Target $names.x64 -Output $forwarder
 $names['arm64x']=Get-VersionedName $forwarder 'arm64x'
@@ -34,5 +34,5 @@ if (!(Test-Path -LiteralPath $messages)) {
     }
     if ((Get-FileHash -LiteralPath $messages).Hash -ne $expected) { throw 'Inno Setup language file checksum mismatch' }
 }
-& $Compiler "/DChineseMessages=$messages" "/DImage=$Image" "/DVersion=$Version" "/DOutput=$OutputDirectory" "/DMeta=$meta" "/DDll64=$($names.x64)" "/DDll32=$($names.x86)" "/DDllArm64=$($names.arm64)" "/DDllArm64x=$($names.arm64x)" "$root/windows/installer/ZephyrSetup.iss"
+& $Compiler "/DChineseMessages=$messages" "/DImage=$Image" "/DVersion=$Version" "/DOutput=$OutputDirectory" "/DMeta=$meta" "/DDll64=$($names.x64)" "/DDll32=$($names.x86)" "/DDllArm64=$($names.arm64)" "/DDllArm64x=$($names.arm64x)" "$root/windows/installer/OrangeCellSetup.iss"
 if($LASTEXITCODE){throw 'Installer compilation failed'}

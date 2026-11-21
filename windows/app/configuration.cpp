@@ -240,7 +240,7 @@ void Store::saveKey(const std::string& id, const std::string& key,
           "Invalid API key");
   auto raw = J{{"origin", origin(endpoint)}, {"key", key}}.dump();
   DATA_BLOB in{DWORD(raw.size()), reinterpret_cast<BYTE*>(raw.data())}, out{};
-  bool ok = CryptProtectData(&in, L"Zephyr Input", nullptr, nullptr, nullptr,
+  bool ok = CryptProtectData(&in, L"OrangeCell", nullptr, nullptr, nullptr,
                              CRYPTPROTECT_UI_FORBIDDEN, &out) != 0;
   SecureZeroMemory(raw.data(), raw.size());
   require(ok, "Windows cannot encrypt this key");

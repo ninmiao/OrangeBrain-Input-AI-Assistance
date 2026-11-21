@@ -1,4 +1,4 @@
-# Zephyr Input 隐私说明 / Privacy
+# OrangeCell 隐私说明 / Privacy
 
 本地 Rime 输入不发送输入内容。万象、雾凇和已下载的万象语法模型都在设备上运行。点击词表或模型更新时，客户端连接对应项目的 GitHub 下载地址。
 

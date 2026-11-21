@@ -16,7 +16,7 @@ struct Msg { DWORD command, wparam, lparam; };
 int checks = 0;
 void check(bool value, const char* message) { ++checks; if (!value) throw std::runtime_error(message); }
 
-const wchar_t* kPipe = L"\\\\.\\pipe\\ZephyrPipeReconnectTest";
+const wchar_t* kPipe = L"\\\\.\\pipe\\OrangeCellPipeReconnectTest";
 
 class TestClient : public weasel::PipeChannel<Msg, DWORD> {
  public:

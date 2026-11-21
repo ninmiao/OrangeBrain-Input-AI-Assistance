@@ -1,10 +1,10 @@
 #define UNICODE
 #define _UNICODE
-#include "ZephyrAiPipe.h"
+#include "OrangeCellAiPipe.h"
 #include <iostream>
 #include <atomic>
 int main() {
-  auto name=L"\\\\.\\pipe\\Zephyr-stream-fixture-"+std::to_wstring(GetCurrentProcessId());
+  auto name=L"\\\\.\\pipe\\OrangeCell-stream-fixture-"+std::to_wstring(GetCurrentProcessId());
   HANDLE ready=CreateEventW(nullptr,TRUE,FALSE,nullptr);
   std::atomic<int> served{0};
   std::atomic<bool> manualReceived{false}, updatedContextReceived{false};
@@ -18,13 +18,13 @@ int main() {
           const std::string wire(request,n), suffix="\tassistant";
           if(wire.size()>=suffix.size()&&wire.compare(wire.size()-suffix.size(),suffix.size(),suffix)==0)
             manualReceived=true;
-          if(i==0 && wire.find("\t"+zephyr::hex("updated before")+"\t")!=wire.npos)
+          if(i==0 && wire.find("\t"+orangecell::hex("updated before")+"\t")!=wire.npos)
             updatedContextReceived=true;
           ++served;
-          std::string first="Z1\t1\t50\t1\t0\t1\t1\n"+zephyr::hex("corrected")+"\n";
+          std::string first="Z1\t1\t50\t1\t0\t1\t1\n"+orangecell::hex("corrected")+"\n";
           WriteFile(pipe,first.data(),DWORD(first.size()),&n,nullptr);
           Sleep(350);
-          std::string last="Z1\t1\t50\t1\t0\t1\t0\n"+zephyr::hex("corrected")+"\n"+zephyr::hex("assistant")+"\n";
+          std::string last="Z1\t1\t50\t1\t0\t1\t0\n"+orangecell::hex("corrected")+"\n"+orangecell::hex("assistant")+"\n";
           WriteFile(pipe,last.data(),DWORD(last.size()),&n,nullptr);
           // Wait for the reader only on successful, non-cancelled requests.
           FlushFileBuffers(pipe);
@@ -35,7 +35,7 @@ int main() {
   });
   int checks=0;bool failed=false;
   {
-    zephyr::AiPipe client(name);
+    orangecell::AiPipe client(name);
     auto take=[&](int revision,int size) {
       for(int i=0;i<100;++i) {
         Sleep(20);auto r=client.take(123);
@@ -61,7 +61,7 @@ int main() {
   }
   server.join();CloseHandle(ready);
   {
-    zephyr::AiPipe missing(name+L"-missing");
+    orangecell::AiPipe missing(name+L"-missing");
     if(missing.status(9,1)!=L"后台未连接")failed=true;else ++checks;
   }
   if(failed||served!=3||!manualReceived||!updatedContextReceived)return 1;

@@ -16,7 +16,7 @@
     <ProjectName>WeaselSetup</ProjectName>
   </PropertyGroup>
   <Import Project="..\weasel.props" />
-  <PropertyGroup><ZephyrArch Condition="'$(Platform)'=='x64'">x64</ZephyrArch><ZephyrArch Condition="'$(Platform)'=='Win32'">x86</ZephyrArch><ZephyrBits Condition="'$(Platform)'=='x64'">64</ZephyrBits><ZephyrBits Condition="'$(Platform)'=='Win32'">32</ZephyrBits></PropertyGroup><Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup><OrangeCellArch Condition="'$(Platform)'=='x64'">x64</OrangeCellArch><OrangeCellArch Condition="'$(Platform)'=='Win32'">x86</OrangeCellArch><OrangeCellBits Condition="'$(Platform)'=='x64'">64</OrangeCellBits><OrangeCellBits Condition="'$(Platform)'=='Win32'">32</OrangeCellBits></PropertyGroup><Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>

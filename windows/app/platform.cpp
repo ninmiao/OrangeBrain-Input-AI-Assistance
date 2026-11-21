@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "platform.h"
+#include "../native/include/OrangeCellMigration.h"
 
 #include <bcrypt.h>
 #include <shlobj.h>
@@ -73,18 +74,19 @@ fs::path appDirectory() {
   return fs::path(path).parent_path();
 }
 fs::path userDirectory() {
+  orangecell::MigrateLegacyUserData();
   PWSTR p = nullptr;
   require(
       SUCCEEDED(SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &p)),
       "Cannot find AppData");
-  fs::path dir = fs::path(p) / L"ZephyrInput";
+  fs::path dir = fs::path(p) / L"OrangeCell";
   CoTaskMemFree(p);
   return dir;
 }
 fs::path rimeDirectory() {
   wchar_t data[32768];
   DWORD size = sizeof(data);
-  if (RegGetValueW(HKEY_CURRENT_USER, L"Software\\ZephyrInput", L"RimeUserDir",
+  if (RegGetValueW(HKEY_CURRENT_USER, L"Software\\OrangeCell", L"RimeUserDir",
                    RRF_RT_REG_SZ, nullptr, data, &size) == ERROR_SUCCESS &&
       data[0])
     return data;
@@ -231,7 +233,7 @@ void stopUserProcess(const fs::path& exe) {
 }
 J core(const std::string& op, const J& args) {
   auto response =
-      J::parse(zephyr::invoke(J{{"op", op}, {"args", args}}.dump()));
+      J::parse(orangecell::invoke(J{{"op", op}, {"args", args}}.dump()));
   if (response.contains("error"))
     throw Error(response["error"], response.value("status", 0));
   return response.at("ok");

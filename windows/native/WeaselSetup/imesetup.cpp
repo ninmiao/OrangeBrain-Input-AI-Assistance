@@ -23,7 +23,7 @@ static const GUID c_guidProfile = {
 
 #define WEASEL_WER_KEY                            \
   L"SOFTWARE\\Microsoft\\Windows\\Windows Error " \
-  L"Reporting\\LocalDumps\\ZephyrServer.exe"
+  L"Reporting\\LocalDumps\\OrangeCellServer.exe"
 
 BOOL copy_file(const std::wstring& src, const std::wstring& dest) {
   BOOL ret = CopyFile(src.c_str(), dest.c_str(), FALSE);
@@ -262,9 +262,9 @@ int install_ime_file(std::wstring& srcPath,
       }
 
       // Then install the ARM64 (and x64) version.
-      // On ARM64 ZephyrTSFx86.dll(ime) is an ARM64X redirection DLL (weaselARM64X).
+      // On ARM64 OrangeCellTSFx86.dll(ime) is an ARM64X redirection DLL (weaselARM64X).
       // When loaded, it will be redirected to weaselARM64.dll(ime) on ARM64
-      // processes, and ZephyrTSFx64.dll(ime) on x64 processes. So we need a total
+      // processes, and OrangeCellTSFx64.dll(ime) on x64 processes. So we need a total
       // of three files.
 
       std::wstring srcPathX64 = srcPath;
@@ -471,7 +471,7 @@ int install(const std::wstring& profile, bool silent) {
     return 1;
   }
 
-  const std::wstring executable = L"ZephyrServer.exe";
+  const std::wstring executable = L"OrangeCellServer.exe";
   ret = SetRegKeyValue(HKEY_LOCAL_MACHINE, WEASEL_REG_KEY, L"ServerExecutable",
                        executable.c_str(), REG_SZ);
   if (FAILED(HRESULT_FROM_WIN32(ret))) {
@@ -481,7 +481,7 @@ int install(const std::wstring& profile, bool silent) {
   }
 
   // persist the installing profile so that uninstall removes the right one
-  const WCHAR PROFILE_KEY[] = L"Software\\ZephyrInput";
+  const WCHAR PROFILE_KEY[] = L"Software\\OrangeCell";
   ret = SetRegKeyValue(HKEY_CURRENT_USER, PROFILE_KEY, L"Profile",
                        profile.c_str(), REG_SZ);
   if (FAILED(HRESULT_FROM_WIN32(ret))) {
@@ -538,7 +538,7 @@ int uninstall(bool silent) {
   // 注销输入法
   int retval = 0;
 
-  const WCHAR KEY[] = L"Software\\ZephyrInput";
+  const WCHAR KEY[] = L"Software\\OrangeCell";
   HKEY hKey;
   std::wstring profile = L"hans";
   LSTATUS ret = RegOpenKey(HKEY_CURRENT_USER, KEY, &hKey);
@@ -578,7 +578,7 @@ int uninstall(bool silent) {
 
   // delete WER register,
   // "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\Windows Error
-  // Reporting\\LocalDumps\\ZephyrServer.exe" no WOW64 redirect
+  // Reporting\\LocalDumps\\OrangeCellServer.exe" no WOW64 redirect
 
   auto flag_wow64 = is_wow64() ? KEY_WOW64_64KEY : 0;
   RegDeleteKeyEx(HKEY_LOCAL_MACHINE, WEASEL_WER_KEY, flag_wow64, 0);
@@ -595,7 +595,7 @@ bool has_installed() {
   WCHAR path[MAX_PATH];
   GetSystemDirectory(path, _countof(path));
   std::wstring sysPath(path);
-  DWORD attr = GetFileAttributesW((sysPath + L"\\ZephyrTSFx86.dll").c_str());
+  DWORD attr = GetFileAttributesW((sysPath + L"\\OrangeCellTSFx86.dll").c_str());
   return (attr != INVALID_FILE_ATTRIBUTES &&
           !(attr & FILE_ATTRIBUTE_DIRECTORY));
 }

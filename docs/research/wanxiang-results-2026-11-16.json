@@ -16,7 +16,7 @@
     "Top 1/top 7 exact full-result match ignores whitespace and Unicode punctuation.",
     "set_input + get_context per prefix, single run per schema, not UI latency or Android measurements.",
     "All Base dependencies and default config deployed before final run; no new ERROR log in final run.",
-    "Grammar-less adaptation is a Zephyr design, not upstream Lite or full Wanxiang.",
+    "Grammar-less adaptation is a OrangeCell design, not upstream Lite or full Wanxiang.",
     "Prefixes end at UTF-8 codepoint boundaries; performance metadata is from the final complete run."
   ],
   "results": {
@@ -1153,7 +1153,7 @@
         "peak_mib": 57.0938
       }
     },
-    "zephyr_wanxiang_nogram": {
+    "orangecell_wanxiang_nogram": {
       "groups": {
         "all": {
           "n": 60,
@@ -2287,7 +2287,7 @@
         "peak_mib": 63.1484
       }
     },
-    "zephyr_wanxiang": {
+    "orangecell_wanxiang": {
       "groups": {
         "all": {
           "n": 60,

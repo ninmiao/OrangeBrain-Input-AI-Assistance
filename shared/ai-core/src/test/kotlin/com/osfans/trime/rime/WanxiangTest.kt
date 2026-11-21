@@ -97,7 +97,7 @@ class WanxiangTest {
         assertEquals(8,File(dir,WanxiangUpdater.dictName(release)+"_data").walkTopDown().count { it.isFile })
         assertTrue(File(updater.workspace,"CC-BY-4.0.txt").length()>1000)
         val schema=WanxiangUpdater.schema(release,null)
-        assertContains(schema,"user_dict: zephyr_wanxiang");assertContains(schema,"traditionalization");assertContains(schema,"/base/全拼")
+        assertContains(schema,"user_dict: orangecell_wanxiang");assertContains(schema,"traditionalization");assertContains(schema,"/base/全拼")
         assertFalse(schema.contains("grammar:"));assertFalse(schema.contains("@@"))
     }
     @Test fun zipTraversalIsRejectedEvenForAnIgnoredEntry() {
@@ -127,7 +127,7 @@ class WanxiangTest {
             assertFailsWith<IllegalStateException> { updater.update(false) }
             assertEquals(listOf(WanxiangUpdater.SCHEMA,WanxiangUpdater.FALLBACK),activations)
             assertEquals("custom settings",custom.readText());assertEquals("learned words",File(db,"words").readText())
-            assertNull(updater.state().dictionary);assertFalse(File(dir,"zephyr_wanxiang.schema.yaml").exists())
+            assertNull(updater.state().dictionary);assertFalse(File(dir,"orangecell_wanxiang.schema.yaml").exists())
         }
     }
     @Test fun defaultUpdateDownloadsModelAndSameLtsTagWithNewDigestUpdates()=runBlocking {
@@ -139,19 +139,19 @@ class WanxiangTest {
             val updater=WanxiangUpdater(dir,WanxiangActivator { activated+=it },net(),{if(it)model else dict})
             server.enqueue(MockResponse().setBody(Buffer().write(bytes)));server.enqueue(MockResponse().setBody("model 1"))
             updater.update()
-            assertTrue(updater.state().grammar);assertTrue(File(dir,"zephyr_wanxiang.schema.yaml").readText().contains(WanxiangUpdater.modelName(model)))
+            assertTrue(updater.state().grammar);assertTrue(File(dir,"orangecell_wanxiang.schema.yaml").readText().contains(WanxiangUpdater.modelName(model)))
             updater.update();assertEquals(2,activated.size) // reselect even after an external schema change; no download
             model=WanxiangRelease("LTS",asset(server,"model 2".toByteArray()));server.enqueue(MockResponse().setBody("model 2"))
             updater.update();assertEquals(3,activated.size);assertEquals(model,updater.state().model)
             assertTrue(File(dir,WanxiangUpdater.modelName(m1)+".gram").exists()) // one rollback generation kept
             updater.useFallback();assertFalse(updater.state().enabled)
             updater.update(false);assertTrue(updater.state().enabled);assertFalse(updater.state().grammar)
-            assertFalse(File(dir,"zephyr_wanxiang.schema.yaml").readText().contains("grammar:"))
+            assertFalse(File(dir,"orangecell_wanxiang.schema.yaml").readText().contains("grammar:"))
         }
     }
     @Test fun journalFromInterruptedDeploymentIsRecoveredBeforeNetworkRequest()=runBlocking {
         val dir=File(temp,"user").apply { mkdirs() }
-        val journal=File(dir,".zephyr-wanxiang/transaction").apply { mkdirs() }
+        val journal=File(dir,".orangecell-wanxiang/transaction").apply { mkdirs() }
         File(dir,"default.custom.yaml").writeText("interrupted change")
         File(journal,"0.backup").writeText("previous settings")
         File(journal,"pending.json").writeText("""{"previousSchema":"rime_ai_simp","existing":["default.custom.yaml"]}""")

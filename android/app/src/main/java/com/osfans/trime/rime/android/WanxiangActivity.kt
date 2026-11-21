@@ -87,7 +87,7 @@ class WanxiangDownloadService:Service() {
         val open=PendingIntent.getActivity(this,0,Intent(this,WanxiangActivity::class.java),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val stop=PendingIntent.getService(this,1,Intent(this,WanxiangDownloadService::class.java).setAction("cancel"),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         return NotificationCompat.Builder(this,CHANNEL).setSmallIcon(R.drawable.ic_baseline_sync_24)
-            .setContentTitle("Zephyr · 词库与模型").setContentText(p.message).setContentIntent(open).setOnlyAlertOnce(true).setOngoing(true)
+            .setContentTitle("OrangeCell · 词库与模型").setContentText(p.message).setContentIntent(open).setOnlyAlertOnce(true).setOngoing(true)
             .setProgress(100,if(p.total>0)(p.done*100/p.total).toInt() else 0,p.total==0L)
             .apply { if(p.canCancel)addAction(0,"暂停 / Pause",stop) }.build()
     }

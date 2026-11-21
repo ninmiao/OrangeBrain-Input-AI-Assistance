@@ -8,8 +8,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 <resources xmlns:xliff="urn:oasis:names:en:xliff:document:1.2">
     <!-- Input Method Platform Tittle  -->
-    <string name="app_name_release">Zephyr Input</string>
-    <string name="app_name_debug">Zephyr Input (Debug)</string>
+    <string name="trime_app_name">OrangeCell</string>
+    <string name="app_name_release">OrangeCell</string>
+    <string name="app_name_debug">OrangeCell (Debug)</string>
     <!-- Preference settings -->
     <string name="settings__help_title">Help</string>
     <string name="pref_wiki">Upstream user guide</string>
@@ -95,7 +96,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <string name="system_default">System default</string>
     <string name="keyboard__key_swipe_travel_title">Min travel for gesture</string>
     <string name="keyboard__hook_candidate">Click candidate</string>c
-    <string name="trime_app_slogan">微风输入法 · Zephyr</string>
+    <string name="trime_app_slogan">橘脑一颗 · OneOrangeBraincell</string>
     <string name="external_storage_permission_not_available">External storage permission is not available</string>
     <string name="external_storage_permission_granted">External storage permission is granted</string>
     <string name="external_storage_permission_denied">External storage permission was denied, deployment or reading schemas and config may not be available</string>
@@ -104,8 +105,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <string name="clipboard_draft_output_title">Draft Filter</string>
     <string name="setup__next">Next</string>
     <string name="setup__done">Done</string>
-    <string name="setup__enable_ime_hint">Enable <b>Zephyr Input</b> in Language and input settings</string>
-    <string name="setup__select_ime_hint">Select <b>Zephyr Input</b> as your default input method</string>
+    <string name="setup__enable_ime_hint">Enable <b>OrangeCell</b> in Language and input settings</string>
+    <string name="setup__select_ime_hint">Select <b>OrangeCell</b> as your default input method</string>
     <string name="setup__enable_ime">Enable Input Method</string>
     <string name="setup__select_ime">Select Input Method</string>
     <string name="setup__prev">Prev</string>
@@ -179,7 +180,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <string name="keyboard__landscape_mode_title">Enable Landscape Mode</string>
     <string name="keyboard__split_space_title">Auto Split Keyboard Space Ratio</string>
     <string name="setup__step_three">Setup 3</string>
-    <string name="setup__request_permmision_hint">Zephyr Input needs storage access for its dictionaries and editable configuration.</string>
+    <string name="setup__request_permmision_hint">OrangeCell needs storage access for its dictionaries and editable configuration.</string>
     <string name="setup__request_permmision">Request storage permmision</string>
     <string name="grant_permission">Grant permission</string>
     <string name="notification_permission_title">No Notification Permission</string>
@@ -228,5 +229,5 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <string name="keyboard__height_title">Keyboard height</string>
     <string name="ai_settings_title">AI assistant settings</string>
     <string name="ai_settings_summary">Cloud candidates, policies, models, prompts and speed test</string>
-    <string name="zephyr_product_summary">微风输入法 · Zephyr — based on Trime and Rime</string>
+    <string name="orangecell_product_summary">橘脑一颗 · OrangeCell — based on Trime and Rime</string>
 </resources>

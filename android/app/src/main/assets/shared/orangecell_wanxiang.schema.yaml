@@ -1,11 +1,11 @@
-# Zephyr Input adaptation of Wanxiang full-pinyin data and algebra (CC BY 4.0).
+# OrangeCell adaptation of Wanxiang full-pinyin data and algebra (CC BY 4.0).
 # https://github.com/amzxyz/rime-wanxiang · amzxyz and contributors.
-# Layout, script switching and candidate selection use the existing Zephyr interface.
+# Layout, script switching and candidate selection use the existing OrangeCell interface.
 schema:
-  schema_id: zephyr_wanxiang
-  name: 万象拼音 · Zephyr
+  schema_id: orangecell_wanxiang
+  name: 万象拼音 · 橘脑一颗
   version: '1.0'
-  author: [amzxyz, Zephyr Input]
+  author: [amzxyz, OrangeCell]
 switches:
   - name: ascii_mode
     reset: 0
@@ -33,11 +33,11 @@ speller:
   delimiter: " '"
   algebra:
     __patch:
-      - zephyr_wanxiang_d_2a94c48aa51e_algebra:/base/全拼
+      - orangecell_wanxiang_d_2a94c48aa51e_algebra:/base/全拼
 translator:
-  dictionary: zephyr_wanxiang_d_2a94c48aa51e
-  prism: zephyr_wanxiang_d_2a94c48aa51e
-  user_dict: zephyr_wanxiang
+  dictionary: orangecell_wanxiang_d_2a94c48aa51e
+  prism: orangecell_wanxiang_d_2a94c48aa51e
+  user_dict: orangecell_wanxiang
   contextual_suggestions: false
   max_homophones: 8
   enable_user_dict: true
@@ -60,4 +60,4 @@ key_binder:
 recognizer:
   import_preset: default
 __patch:
-  - zephyr_wanxiang.custom:/patch?
+  - orangecell_wanxiang.custom:/patch?

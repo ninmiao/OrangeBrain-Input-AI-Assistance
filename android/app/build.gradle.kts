@@ -23,15 +23,15 @@ android {
     buildToolsVersion = "35.0.0"
 
     defaultConfig {
-        applicationId = "com.osfans.trime.ai"
+        applicationId = "io.github.ninmiao.orangecell"
         minSdk = 23
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         targetSdk = 35
-        versionCode = 20261213
-        versionName = "1.10.4"
+        versionCode = 20261214
+        versionName = "1.11.0"
 
         multiDexEnabled = true
-        setProperty("archivesBaseName", "Zephyr-Input-${versionName}")
+        setProperty("archivesBaseName", "OrangeCell-${versionName}")
         buildConfigField("String", "BUILDER", "\"${project.builder}\"")
         buildConfigField("long", "BUILD_TIMESTAMP", project.buildTimestamp)
         buildConfigField("String", "BUILD_COMMIT_HASH", "\"${project.buildCommitHash}\"")
@@ -56,8 +56,6 @@ android {
                         keyPassword = project.signKeyPwd
                     }
                 }
-
-            resValue("string", "trime_app_name", "Zephyr Input")
         }
         create("demo") {
             initWith(getByName("debug"))
@@ -65,12 +63,9 @@ android {
             matchingFallbacks.add("release")
             isDebuggable = false
             signingConfig = signingConfigs.getByName("debug")
-            resValue("string", "trime_app_name", "Zephyr Input")
         }
         debug {
             applicationIdSuffix = ".debug"
-
-            resValue("string", "trime_app_name", "Zephyr Input")
         }
         all {
             // remove META-INF/version-control-info.textproto

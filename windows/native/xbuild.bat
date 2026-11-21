@@ -121,10 +121,10 @@ if %build_commands% == 0 (
   set build_weasel=1
 ))))))
 rem 
-rem quit ZephyrServer.exe before building
+rem quit OrangeCellServer.exe before building
 cd /d %WEASEL_ROOT%
-if exist output\ZephyrServer.exe (
-  output\ZephyrServer.exe /q
+if exist output\OrangeCellServer.exe (
+  output\OrangeCellServer.exe /q
 )
 
 rem build booost

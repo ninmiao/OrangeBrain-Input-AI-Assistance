@@ -10,16 +10,16 @@ foreach($file in @('WeaselServer.exe','WeaselDeployer.exe','weaselx64.dll','weas
 & "$PSScriptRoot/build-data-deployer.ps1"
 & $Python "$PSScriptRoot/prepare-data.py"
 if($LASTEXITCODE){throw 'Dictionary preparation failed'}
-$image=Join-Path $Destination 'ZephyrSettings'
+$image=Join-Path $Destination 'OrangeCellSettings'
 if(Test-Path -LiteralPath $image){throw "Output already exists: $image. Choose a fresh -Destination directory."}
 New-Item -ItemType Directory -Path $image -Force | Out-Null
-foreach($name in @('ZephyrSettings.exe','ZephyrBroker.exe')) {
+foreach($name in @('OrangeCellSettings.exe','OrangeCellBroker.exe')) {
  Copy-Item -LiteralPath "$root/windows/build/native-app/Release/$name" -Destination $image
 }
-foreach($pair in @(@('WeaselServer.exe','ZephyrServer.exe'),@('WeaselDeployer.exe','ZephyrDeployer.exe'),@('weaselx64.dll','ZephyrTSFx64.dll'),@('weasel.dll','ZephyrTSFx86.dll'),@('weaselARM64.dll','ZephyrTSFarm64.dll'),@('rime.dll','rime.dll'))) {
+foreach($pair in @(@('WeaselServer.exe','OrangeCellServer.exe'),@('WeaselDeployer.exe','OrangeCellDeployer.exe'),@('weaselx64.dll','OrangeCellTSFx64.dll'),@('weasel.dll','OrangeCellTSFx86.dll'),@('weaselARM64.dll','OrangeCellTSFarm64.dll'),@('rime.dll','rime.dll'))) {
  Copy-Item -LiteralPath (Join-Path $native $pair[0]) -Destination (Join-Path $image $pair[1])
 }
-Copy-Item -LiteralPath "$root/windows/build/data-deployer/ZephyrDataDeploy.exe" -Destination $image
+Copy-Item -LiteralPath "$root/windows/build/data-deployer/OrangeCellDataDeploy.exe" -Destination $image
 Copy-Item -LiteralPath "$native/data" -Destination "$image/data" -Recurse
 New-Item -ItemType Directory -Path "$image/resources" -Force | Out-Null
 Copy-Item -LiteralPath "$root/shared/ai-core/src/main/resources/rime" -Destination "$image/resources/rime" -Recurse

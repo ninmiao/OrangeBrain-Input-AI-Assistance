@@ -2,10 +2,12 @@
 #include <filesystem>
 #include <string>
 #include <WeaselUtility.h>
+#include <OrangeCellMigration.h>
 
 fs::path WeaselUserDataPath() {
+  orangecell::MigrateLegacyUserData();
   WCHAR _path[MAX_PATH] = {0};
-  const WCHAR KEY[] = L"Software\\ZephyrInput";
+  const WCHAR KEY[] = L"Software\\OrangeCell";
   HKEY hKey;
   LSTATUS ret = RegOpenKey(HKEY_CURRENT_USER, KEY, &hKey);
   if (ret == ERROR_SUCCESS) {
@@ -20,7 +22,7 @@ fs::path WeaselUserDataPath() {
     }
   }
   // default location
-  ExpandEnvironmentStringsW(L"%AppData%\\ZephyrInput\\rime", _path, _countof(_path));
+  ExpandEnvironmentStringsW(L"%AppData%\\OrangeCell\\rime", _path, _countof(_path));
   return fs::path(_path);
 }
 

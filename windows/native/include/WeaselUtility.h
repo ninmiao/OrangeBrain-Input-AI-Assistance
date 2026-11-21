@@ -187,7 +187,8 @@ inline std::basic_string<CharT> unescape_string(
 // resource
 std::string GetCustomResource(const char* name, const char* type);
 
-inline std::wstring get_weasel_ime_name() { return L"Zephyr Input";
+// Shown in the Windows input list and tray: the Chinese product name of OrangeCell.
+inline std::wstring get_weasel_ime_name() { return L"橘脑一颗";
 }
 
 inline LONG RegGetStringValue(HKEY key,
@@ -207,7 +208,7 @@ inline LONG RegGetStringValue(HKEY key,
 
 inline LANGID get_language_id() {
   std::wstring lang{};
-  if (RegGetStringValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput",
+  if (RegGetStringValue(HKEY_CURRENT_USER, L"Software\\OrangeCell",
                         L"Language", lang) == ERROR_SUCCESS) {
     if (lang == L"chs")
       return MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED);
@@ -251,7 +252,7 @@ inline void SetWeaselLogLevel(int level) {
 }
 
 inline void LoadWeaselLogLevelFromRegistry() {
-  constexpr const LPCWSTR key = L"Software\\ZephyrInput";
+  constexpr const LPCWSTR key = L"Software\\OrangeCell";
   constexpr const LPCWSTR value = L"LogLevel";
   DWORD type = 0;
   DWORD data = 0;

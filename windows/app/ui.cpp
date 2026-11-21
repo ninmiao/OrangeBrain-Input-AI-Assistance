@@ -154,7 +154,7 @@ class App {
   HWND control(int id) const { return controls_.at(id); }
   void serviceState() {
     auto dir=appDirectory();
-    bool broker=processRunning(dir/L"ZephyrBroker.exe"),server=processRunning(dir/L"ZephyrServer.exe");
+    bool broker=processRunning(dir/L"OrangeCellBroker.exe"),server=processRunning(dir/L"OrangeCellServer.exe");
     std::string value=std::string(u8"AI 后台：")+(broker?u8"运行":u8"未运行")+u8" · 输入服务："+(server?u8"运行":u8"未运行");
     const auto config = store_.load();
     value+=(config["enabled"].get<bool>() || config["assistantEnabled"].get<bool>())
@@ -169,7 +169,7 @@ class App {
     auto target=window_;auto dir=appDirectory();
     workers_.emplace_back([target,dir] {
       auto d=std::make_unique<Done>();d->kind=SERVICE_RESTART;
-      try {stopUserProcess(dir/L"ZephyrServer.exe");stopUserProcess(dir/L"ZephyrBroker.exe");zw::run(dir/L"ZephyrBroker.exe",{});}
+      try {stopUserProcess(dir/L"OrangeCellServer.exe");stopUserProcess(dir/L"OrangeCellBroker.exe");zw::run(dir/L"OrangeCellBroker.exe",{});}
       catch(const std::exception& e){d->error=errorText(e);}
       if(PostMessageW(target,JOB_DONE,0,reinterpret_cast<LPARAM>(d.get())))d.release();
     });
@@ -376,7 +376,7 @@ class App {
       ReleaseDC(window_, dc);
     }
     fonts();
-    make(window_, L"STATIC", L"Zephyr Input", SS_LEFT, ACTIVE);
+    make(window_, L"STATIC", L"OrangeCell", SS_LEFT, ACTIVE);
     auto policies = make(window_, L"LISTBOX", L"",
                          WS_TABSTOP | WS_BORDER | WS_VSCROLL | LBS_NOTIFY |
                              LBS_OWNERDRAWFIXED | LBS_HASSTRINGS,
@@ -398,7 +398,7 @@ class App {
     make(window_, L"STATIC", L"", SS_LEFT, STATUS);
     make(window_, L"BUTTON", L"保存并生效 / Save", WS_TABSTOP | BS_DEFPUSHBUTTON, SAVE);
     for (auto& p : pages_)
-      p.window = CreateWindowExW(WS_EX_CONTROLPARENT, L"ZephyrNativePage", L"",
+      p.window = CreateWindowExW(WS_EX_CONTROLPARENT, L"OrangeCellNativePage", L"",
                                  WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 0, 0,
                                  window_, nullptr, instance_, this);
     column_ = 0;
@@ -708,7 +708,7 @@ class App {
     } catch (const std::exception& e) {
       status(u8"待完成设置 / Complete setting: " + errorText(e));
       if (!quiet)
-        MessageBoxW(window_, wide(errorText(e)).c_str(), L"Zephyr Input",
+        MessageBoxW(window_, wide(errorText(e)).c_str(), L"OrangeCell",
                     MB_OK | MB_ICONINFORMATION);
       return false;
     }
@@ -1003,7 +1003,7 @@ class App {
       if(id==DELETE_POLICY) {
         if(config_["policies"].size()==1) return;
         if(MessageBoxW(window_,L"删除此方案？点击保存后生效。\nDelete this policy when saved?",
-                       L"Zephyr Input",MB_YESNO|MB_ICONQUESTION)!=IDYES) return;
+                       L"OrangeCell",MB_YESNO|MB_ICONQUESTION)!=IDYES) return;
         auto& list=config_["policies"];
         list.erase(std::remove_if(list.begin(),list.end(),[&](const J& p){return p["id"]==editing_;}),list.end());
         auto key=pendingKeys_.find(editing_);
@@ -1177,7 +1177,7 @@ class App {
       return;
     }
     if(dirty_) {
-      int result=MessageBoxW(window_,L"保存修改后关闭？\nSave changes before closing?",L"Zephyr Input",MB_YESNOCANCEL|MB_ICONQUESTION);
+      int result=MessageBoxW(window_,L"保存修改后关闭？\nSave changes before closing?",L"OrangeCell",MB_YESNOCANCEL|MB_ICONQUESTION);
       if(result==IDCANCEL) return;
       if(result==IDYES && !save(false)) return;
       if(dictBusy_) return;
@@ -1323,16 +1323,16 @@ class App {
     WNDCLASSW wc{};
     wc.lpfnWndProc = proc;
     wc.hInstance = instance_;
-    wc.lpszClassName = L"ZephyrNativeSettings";
+    wc.lpszClassName = L"OrangeCellNativeSettings";
     wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
     wc.hIcon = LoadIconW(instance_, MAKEINTRESOURCEW(101));
     wc.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_BTNFACE + 1);
     RegisterClassW(&wc);
     wc.lpfnWndProc = pageProc;
-    wc.lpszClassName = L"ZephyrNativePage";
+    wc.lpszClassName = L"OrangeCellNativePage";
     RegisterClassW(&wc);
-    auto h = CreateWindowExW(WS_EX_CONTROLPARENT, L"ZephyrNativeSettings",
-                             L"Zephyr Input · 微风输入法", WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+    auto h = CreateWindowExW(WS_EX_CONTROLPARENT, L"OrangeCellNativeSettings",
+                             L"OrangeCell · 微风输入法", WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                              CW_USEDEFAULT, CW_USEDEFAULT, px(1000), px(740), nullptr,
                              nullptr, instance_, this);
     require(h != nullptr, "Cannot open settings window");

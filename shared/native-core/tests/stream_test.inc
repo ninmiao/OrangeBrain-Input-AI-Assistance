@@ -1,6 +1,6 @@
 // All split points include UTF-8 bytes, SSE CRLF, JSON escapes and role order.
 {
-  auto invoke=[](const J& args) {auto r=J::parse(zephyr::invoke(J{{"op","stream"},{"args",args}}.dump()));if(r.contains("error"))throw std::runtime_error(r.dump());return r.at("ok");};
+  auto invoke=[](const J& args) {auto r=J::parse(orangecell::invoke(J{{"op","stream"},{"args",args}}.dump()));if(r.contains("error"))throw std::runtime_error(r.dump());return r.at("ok");};
   auto hex=[](const std::string& v) {std::string h;for(unsigned char c:v){h+="0123456789abcdef"[c>>4];h+="0123456789abcdef"[c&15];}return h;};
   auto event=[](const J& e){return "data: "+e.dump()+"\r\n\r\n";};
   for(const auto& endpoint: {"https://api.openai.com/v1/responses","https://openrouter.ai/api/v1/chat/completions","https://generativelanguage.googleapis.com/v1beta/interactions"}) {
@@ -40,7 +40,7 @@
     auto r=invoke({{"endpoint",endpoint},{"assistantEnabled",true},{"chunkHex",hex(first+event({{"error",{{"message","secret"}}}}))}});
     if(r["result"]["candidates"]!=J::array({u8"你好🍜"}) || r["result"]["streamError"]!="provider")throw std::runtime_error("provider error lost correction");++count;
     if (gemini) {
-      auto noOutput = J::parse(zephyr::invoke(J{{"op","stream"},{"args",{
+      auto noOutput = J::parse(orangecell::invoke(J{{"op","stream"},{"args",{
           {"endpoint",endpoint},{"chunkHex",hex(event({{"event_type","interaction.completed"},
               {"interaction",{{"status","incomplete"}}}}))}}}}.dump()));
       if (noOutput.value("error", "") != "truncated")

@@ -41,12 +41,12 @@ class WanxiangAndroidTest {
                     clearComposition();for(c in "rgzn")processKey(c.code)
                     assertTrue("人工智能" in getCandidates(0,10).map {it.text});clearComposition()
                 }
-                assertFalse(File(DataManager.userDataDir,"zephyr_wanxiang.schema.yaml").readText().contains("grammar:"))
+                assertFalse(File(DataManager.userDataDir,"orangecell_wanxiang.schema.yaml").readText().contains("grammar:"))
             }
             updater.selectDictionary(true,true)
             updater.selectDictionary(false);assertTrue(updater.state().grammar)
             updater.selectDictionary(true);assertTrue(updater.state().grammar)
-            if(old.model!=null) assertTrue(File(DataManager.userDataDir,"zephyr_wanxiang.schema.yaml").readText().contains("grammar:"))
+            if(old.model!=null) assertTrue(File(DataManager.userDataDir,"orangecell_wanxiang.schema.yaml").readText().contains("grammar:"))
         } finally {session.runOnReady {clearComposition()};RimeDaemon.destroySession("dual-bundled-test");updater.selectDictionary(old.enabled,old.grammar)}
     }
     @Test fun realWanxiangDeploymentGrammarAndSegmentedSelection()=runBlocking {
@@ -62,7 +62,7 @@ class WanxiangAndroidTest {
             store.update {it.copy(enabled=false)}
             updater.update()
             assertTrue(updater.state().grammar)
-            assertTrue(File(user,"build/zephyr_wanxiang.schema.yaml").readText().contains(WanxiangUpdater.modelName(model)))
+            assertTrue(File(user,"build/orangecell_wanxiang.schema.yaml").readText().contains(WanxiangUpdater.modelName(model)))
             assertTrue("Grammar model must be mapped by Rime",File("/proc/self/maps").readText().contains(WanxiangUpdater.modelName(model)))
             session.runOnReady {assertEquals(WanxiangUpdater.SCHEMA,selectedSchemaId());setRuntimeOption("ascii_mode",false)}
             for((input,expected) in listOf("nihao" to "你好","ruanjian" to "软件","nihoa" to "你好","shurufa" to "输入法","zhongguo" to "中国")) {

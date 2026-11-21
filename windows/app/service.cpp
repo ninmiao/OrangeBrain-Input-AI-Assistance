@@ -280,7 +280,7 @@ void runBroker(const Store& store, bool startServer,
   if (!LockFileEx(lock, LOCKFILE_EXCLUSIVE_LOCK | LOCKFILE_FAIL_IMMEDIATELY, 0,
                   1, 0, &ov))
     return;
-  auto server = appDirectory() / L"ZephyrServer.exe";
+  auto server = appDirectory() / L"OrangeCellServer.exe";
   if (startServer && fs::exists(server) && !processRunning(server))
     run(server, {});
   Handle token;
@@ -307,7 +307,7 @@ void runBroker(const Store& store, bool startServer,
   DWORD length = 256;
   require(GetUserNameW(username, &length) != 0, "Cannot read username");
   std::wstring name = testPipe.empty()
-                          ? L"\\\\.\\pipe\\ZephyrAI-" + std::wstring(username)
+                          ? L"\\\\.\\pipe\\OrangeCellAI-" + std::wstring(username)
                           : testPipe;
   // Four bounded workers; each request is cancelled when its TSF client
   // disconnects.

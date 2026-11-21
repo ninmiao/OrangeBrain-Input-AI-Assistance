@@ -7,7 +7,7 @@ MODELS=[dict(id='gemini-3.8-flash',reasoning='low',api='gemini'),dict(id='gpt-6-
 LOCK=threading.Lock()
 def key_for(platform):
     class Blob(ctypes.Structure):_fields_=[('size',wt.DWORD),('data',ctypes.POINTER(ctypes.c_ubyte))]
-    raw=(Path(os.environ['APPDATA'])/'ZephyrInput'/f'credential-{platform}.bin').read_bytes()
+    raw=(Path(os.environ['APPDATA'])/'OrangeCell'/f'credential-{platform}.bin').read_bytes()
     buf=(ctypes.c_ubyte*len(raw)).from_buffer_copy(raw);source=Blob(len(raw),buf);dest=Blob()
     crypt=ctypes.WinDLL('crypt32',use_last_error=True)
     crypt.CryptUnprotectData.argtypes=[ctypes.POINTER(Blob),ctypes.c_void_p,ctypes.c_void_p,ctypes.c_void_p,ctypes.c_void_p,wt.DWORD,ctypes.POINTER(Blob)]

@@ -6,8 +6,8 @@
 #include <memory>
 #include <KeyEvent.h>
 
-#define WEASEL_IPC_WINDOW L"ZephyrIPCWindow_1.0"
-#define WEASEL_IPC_PIPE_NAME L"ZephyrInputPipe"
+#define WEASEL_IPC_WINDOW L"OrangeCellIPCWindow_1.0"
+#define WEASEL_IPC_PIPE_NAME L"OrangeCellPipe"
 
 #define WEASEL_IPC_METADATA_SIZE 1024
 #define WEASEL_IPC_BUFFER_SIZE (64 * 1024)

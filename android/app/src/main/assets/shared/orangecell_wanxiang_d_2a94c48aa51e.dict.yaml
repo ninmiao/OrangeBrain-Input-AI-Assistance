@@ -1,0 +1,14 @@
+---
+name: orangecell_wanxiang_d_2a94c48aa51e
+version: "2a94c48aa51e"
+sort: by_weight
+use_preset_vocabulary: false
+import_tables:
+  - orangecell_wanxiang_d_2a94c48aa51e_data/dicts/zi
+  - orangecell_wanxiang_d_2a94c48aa51e_data/dicts/jichu
+  - orangecell_wanxiang_d_2a94c48aa51e_data/dicts/cuoyin
+  - orangecell_wanxiang_d_2a94c48aa51e_data/dicts/duoyin
+  - orangecell_wanxiang_d_2a94c48aa51e_data/dicts/diming
+  - orangecell_wanxiang_d_2a94c48aa51e_data/dicts/mingren
+  - orangecell_wanxiang_d_2a94c48aa51e_data/dicts/yiren
+...

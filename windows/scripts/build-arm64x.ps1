@@ -10,7 +10,7 @@ param(
 )
 $ErrorActionPreference='Stop'
 foreach($name in @($Arm64Target,$X64Target)) {
-    if($name -notmatch '^ZephyrTSF(arm64|x64)-[a-f0-9]{12}\.dll$'){throw "Invalid loader target: $name"}
+    if($name -notmatch '^OrangeCellTSF(arm64|x64)-[a-f0-9]{12}\.dll$'){throw "Invalid loader target: $name"}
 }
 $root=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $vswhere="${env:ProgramFiles(x86)}/Microsoft Visual Studio/Installer/vswhere.exe"
@@ -22,8 +22,8 @@ if(Test-Path -LiteralPath $work){Remove-Item -LiteralPath $work -Recurse -Force}
 New-Item -ItemType Directory -Force -Path $work | Out-Null
 $arm64Header=Join-Path $work 'arm64_target.h'
 $x64Header=Join-Path $work 'x64_target.h'
-[IO.File]::WriteAllText($arm64Header,"#define ZEPHYR_TARGET `"$Arm64Target`"`r`n",[Text.Encoding]::ASCII)
-[IO.File]::WriteAllText($x64Header,"#define ZEPHYR_TARGET `"$X64Target`"`r`n",[Text.Encoding]::ASCII)
+[IO.File]::WriteAllText($arm64Header,"#define ORANGECELL_TARGET `"$Arm64Target`"`r`n",[Text.Encoding]::ASCII)
+[IO.File]::WriteAllText($x64Header,"#define ORANGECELL_TARGET `"$X64Target`"`r`n",[Text.Encoding]::ASCII)
 $exports=@('EXPORTS')+(@('DllGetClassObject','DllCanUnloadNow','DllRegisterServer','DllUnregisterServer') | ForEach-Object { "`t$_ PRIVATE" })
 [IO.File]::WriteAllLines((Join-Path $work 'exports.def'),$exports,[Text.Encoding]::ASCII)
 $source=Join-Path $root 'windows/native/arm64x_wrapper/forwarder.c'

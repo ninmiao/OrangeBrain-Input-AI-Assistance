@@ -10,9 +10,9 @@ k.WaitNamedPipeW.argtypes=[W.LPCWSTR,W.DWORD];k.WaitNamedPipeW.restype=W.BOOL
 k.WriteFile.argtypes=[W.HANDLE,W.LPCVOID,W.DWORD,C.POINTER(W.DWORD),W.LPVOID];k.WriteFile.restype=W.BOOL
 k.ReadFile.argtypes=[W.HANDLE,W.LPVOID,W.DWORD,C.POINTER(W.DWORD),W.LPVOID];k.ReadFile.restype=W.BOOL
 k.CloseHandle.argtypes=[W.HANDLE]
-with tempfile.TemporaryDirectory(prefix='zephyr-pipe-lifetime-') as folder:
- pipe='\\\\.\\pipe\\Zephyr-lifetime-'+str(os.getpid())
- broker=subprocess.Popen([str(ROOT/'windows/build/native-app/Release/ZephyrBroker.exe'),'--data-dir',folder,'--test-pipe',pipe],creationflags=subprocess.CREATE_NO_WINDOW)
+with tempfile.TemporaryDirectory(prefix='orangecell-pipe-lifetime-') as folder:
+ pipe='\\\\.\\pipe\\OrangeCell-lifetime-'+str(os.getpid())
+ broker=subprocess.Popen([str(ROOT/'windows/build/native-app/Release/OrangeCellBroker.exe'),'--data-dir',folder,'--test-pipe',pipe],creationflags=subprocess.CREATE_NO_WINDOW)
  handles=[]
  def connect():
   until=time.monotonic()+5

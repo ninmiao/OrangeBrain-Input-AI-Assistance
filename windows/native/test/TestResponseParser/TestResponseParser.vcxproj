@@ -40,7 +40,7 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="..\..\weasel.props" />
-  <PropertyGroup><ZephyrArch Condition="'$(Platform)'=='x64'">x64</ZephyrArch><ZephyrArch Condition="'$(Platform)'=='Win32'">x86</ZephyrArch><ZephyrBits Condition="'$(Platform)'=='x64'">64</ZephyrBits><ZephyrBits Condition="'$(Platform)'=='Win32'">32</ZephyrBits></PropertyGroup><Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup><OrangeCellArch Condition="'$(Platform)'=='x64'">x64</OrangeCellArch><OrangeCellArch Condition="'$(Platform)'=='Win32'">x86</OrangeCellArch><OrangeCellBits Condition="'$(Platform)'=='x64'">64</OrangeCellBits><OrangeCellBits Condition="'$(Platform)'=='Win32'">32</OrangeCellBits></PropertyGroup><Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
@@ -160,7 +160,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -181,7 +181,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -205,7 +205,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -228,7 +228,7 @@
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -253,7 +253,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib64;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib64;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -301,7 +301,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib64;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib64;$(BOOST_ROOT)\stage\lib;$(SolutionDir)\librime\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">

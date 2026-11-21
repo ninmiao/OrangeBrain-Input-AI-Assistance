@@ -1,8 +1,8 @@
-#include "ZephyrShortcuts.h"
-#include "ZephyrKeySettings.h"
+#include "OrangeCellShortcuts.h"
+#include "OrangeCellKeySettings.h"
 #include <iostream>
 #include <stdexcept>
-using namespace zephyr;
+using namespace orangecell;
 int main() {
   int checks=0;auto check=[&](bool ok){++checks;if(!ok)throw std::runtime_error("shortcut regression");};
   constexpr int S=ibus::SHIFT_MASK,C=ibus::CONTROL_MASK,U=ibus::RELEASE_MASK;

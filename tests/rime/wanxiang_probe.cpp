@@ -30,7 +30,7 @@ int main(int argc,char** argv) {
  const std::string data=root+"/data", user=root+"/user",logs=root+"/logs";
  const char* modules[]={"default","deployer","lua","octagram",nullptr};
  RIME_STRUCT(RimeTraits,t);t.shared_data_dir=data.c_str();t.user_data_dir=user.c_str();
- t.app_name="rime.zephyr-wanxiang-study";t.distribution_name="Zephyr study";
+ t.app_name="rime.orangecell-wanxiang-study";t.distribution_name="OrangeCell study";
  t.modules=modules;t.min_log_level=0;t.log_dir=logs.c_str();
  api->setup(&t);api->initialize(&t);
  std::cout<<"version="<<api->get_version()<<" grammar_module="<<(api->find_module("grammar")!=nullptr)<<" lua_module="<<(api->find_module("lua")!=nullptr)<<std::endl;
@@ -56,7 +56,7 @@ int main(int argc,char** argv) {
    }
    out<<line<<'\t'<<times.back()<<'\t'<<*std::max_element(times.begin(),times.end());for(auto& w:words)out<<'\t'<<w;out<<'\n';out.flush();
  }
- // Reproduce Zephyr's native selection API and subsequent refresh with identical raw input.
+ // Reproduce OrangeCell's native selection API and subsequent refresh with identical raw input.
  api->clear_composition(session);const char* raw="xianzaishurufahouxuanyouwenti";api->set_input(session,raw);
  auto before=candidates(api,session);auto found=std::find(before.begin(),before.end(),"现在");
  bool partial=false,committed=false;std::string pre;

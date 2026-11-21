@@ -1,15 +1,15 @@
-# Zephyr Input licensing notice · 许可证声明
+# OrangeCell licensing notice · 许可证声明
 
 SPDX-License-Identifier: GPL-3.0-or-later
 
-Copyright (C) 2026 Zephyr Input contributors, for their respective original contributions.
+Copyright (C) 2026 OrangeCell contributors, for their respective original contributions.
 Original upstream copyrights and attribution remain with their respective holders.
 
 ## Project grant / 项目授权
 
-Except where a file or component states otherwise, Zephyr Input's original code and original documentation are licensed under the GNU General Public License, version 3 or, at your option, any later version published by the Free Software Foundation (**GPL-3.0-or-later**). The complete GPL version 3 text is in [LICENSE](LICENSE). This notice applies the license to Zephyr's original contributions; it does not replace the license text or relicense third-party material.
+Except where a file or component states otherwise, OrangeCell's original code and original documentation are licensed under the GNU General Public License, version 3 or, at your option, any later version published by the Free Software Foundation (**GPL-3.0-or-later**). The complete GPL version 3 text is in [LICENSE](LICENSE). This notice applies the license to OrangeCell's original contributions; it does not replace the license text or relicense third-party material.
 
-除文件或组件另有声明外，Zephyr Input 的原创代码和原创文档采用 **GNU GPL 第 3 版或任何后续版本（GPL-3.0-or-later）**。完整 GPL 第 3 版正文见 [LICENSE](LICENSE)。本声明明确原创贡献的授权范围，不修改 GPL 正文，也不重新授权第三方材料。
+除文件或组件另有声明外，OrangeCell 的原创代码和原创文档采用 **GNU GPL 第 3 版或任何后续版本（GPL-3.0-or-later）**。完整 GPL 第 3 版正文见 [LICENSE](LICENSE)。本声明明确原创贡献的授权范围，不修改 GPL 正文，也不重新授权第三方材料。
 
 The software is provided without warranty, to the extent permitted by applicable law, as set out in the GPL. The following notes summarize the license; the license itself governs.
 
@@ -40,9 +40,9 @@ This repository is not uniformly licensed under a single license. Preserve every
 | Boost | BSL-1.0 | [LICENSE](android/app/src/main/jni/boost/LICENSE_1_0.txt) |
 | Other libraries, data, and bundled runtime / 其他库、数据和运行时 | Their respective licenses / 各自许可证 | [README acknowledgements](README.md), [Windows third-party notes](windows/THIRD-PARTY.md), component LICENSE/NOTICE files and bundled runtime legal directory |
 
-**The Rime Ice files remain GPL-3.0-only.** “Or later” in Zephyr's own grant does not extend to those files. Where a combined covered work includes GPL-3.0-only material, GPL version 3 is the common version; do not assume that the whole combination can be distributed under a later GPL version. Mere aggregation and combined works are distinguished by the GPL.
+**The Rime Ice files remain GPL-3.0-only.** “Or later” in OrangeCell's own grant does not extend to those files. Where a combined covered work includes GPL-3.0-only material, GPL version 3 is the common version; do not assume that the whole combination can be distributed under a later GPL version. Mere aggregation and combined works are distinguished by the GPL.
 
-**雾凇词库仍为 GPL-3.0-only。** Zephyr 原创部分的“或后续版本”不扩大这些文件的授权；若构成包含 GPL-3.0-only 材料的受覆盖组合作品，共同适用版本为 GPL 第 3 版，不能据此宣称整套组合作品自动获得后续版本授权。单纯集合与组合作品的区别以 GPL 为准。
+**雾凇词库仍为 GPL-3.0-only。** OrangeCell 原创部分的“或后续版本”不扩大这些文件的授权；若构成包含 GPL-3.0-only 材料的受覆盖组合作品，共同适用版本为 GPL 第 3 版，不能据此宣称整套组合作品自动获得后续版本授权。单纯集合与组合作品的区别以 GPL 为准。
 
 API services and remote model access are subject to their providers' terms. This project license does not grant rights to OpenAI/OpenRouter services, third-party model weights, trademarks, or other third-party assets beyond their own grants.
 

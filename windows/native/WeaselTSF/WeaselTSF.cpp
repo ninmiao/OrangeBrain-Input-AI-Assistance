@@ -96,7 +96,7 @@ STDMETHODIMP WeaselTSF::Activate(ITfThreadMgr* pThreadMgr,
 }
 
 STDMETHODIMP WeaselTSF::Deactivate() {
-  if(_zephyrPollWindow){DestroyWindow(_zephyrPollWindow);_zephyrPollWindow=nullptr;}
+  if(_orangecellPollWindow){DestroyWindow(_orangecellPollWindow);_orangecellPollWindow=nullptr;}
   m_client.EndSession();
 
   _InitTextEditSink(com_ptr<ITfDocumentMgr>());
@@ -136,21 +136,21 @@ STDMETHODIMP WeaselTSF::ActivateEx(ITfThreadMgr* pThreadMgr,
   LoadWeaselLogLevelFromRegistry();
   com_ptr<ITfDocumentMgr> pDocMgrFocus;
   _activateFlags = dwFlags;
-  WNDCLASSW wc{};wc.hInstance=g_hInst;wc.lpfnWndProc=_ZephyrPollProc;wc.lpszClassName=L"ZephyrCandidateRefresh";RegisterClassW(&wc);
-  _zephyrPollWindow=CreateWindowExW(0,wc.lpszClassName,L"",0,0,0,0,0,HWND_MESSAGE,nullptr,g_hInst,this);
-  if(_zephyrPollWindow)SetTimer(_zephyrPollWindow,1,80,nullptr);
+  WNDCLASSW wc{};wc.hInstance=g_hInst;wc.lpfnWndProc=_OrangeCellPollProc;wc.lpszClassName=L"OrangeCellCandidateRefresh";RegisterClassW(&wc);
+  _orangecellPollWindow=CreateWindowExW(0,wc.lpszClassName,L"",0,0,0,0,0,HWND_MESSAGE,nullptr,g_hInst,this);
+  if(_orangecellPollWindow)SetTimer(_orangecellPollWindow,1,80,nullptr);
 
   _pThreadMgr = pThreadMgr;
   _tfClientId = tfClientId;
 
-  if (!_InitThreadMgrEventSink()) { std::fprintf(stderr, "Zephyr TSF initialization failed: _InitThreadMgrEventSink\n");goto ExitError; }
+  if (!_InitThreadMgrEventSink()) { std::fprintf(stderr, "OrangeCell TSF initialization failed: _InitThreadMgrEventSink\n");goto ExitError; }
 
   if ((_pThreadMgr->GetFocus(&pDocMgrFocus) == S_OK) &&
       (pDocMgrFocus != NULL)) {
     _InitTextEditSink(pDocMgrFocus);
   }
 
-  if (!_InitKeyEventSink()) { std::fprintf(stderr, "Zephyr TSF initialization failed: _InitKeyEventSink\n");goto ExitError; }
+  if (!_InitKeyEventSink()) { std::fprintf(stderr, "OrangeCell TSF initialization failed: _InitKeyEventSink\n");goto ExitError; }
 
   // if (!_InitDisplayAttributeGuidAtom())
   //	goto ExitError;
@@ -158,15 +158,15 @@ STDMETHODIMP WeaselTSF::ActivateEx(ITfThreadMgr* pThreadMgr,
   // like some opengl stuff
   _InitDisplayAttributeGuidAtom();
 
-  if (!_InitPreservedKey()) { std::fprintf(stderr, "Zephyr TSF initialization failed: _InitPreservedKey\n");goto ExitError; }
+  if (!_InitPreservedKey()) { std::fprintf(stderr, "OrangeCell TSF initialization failed: _InitPreservedKey\n");goto ExitError; }
 
-  if (!_InitLanguageBar()) { std::fprintf(stderr, "Zephyr TSF initialization failed: _InitLanguageBar\n");goto ExitError; }
+  if (!_InitLanguageBar()) { std::fprintf(stderr, "OrangeCell TSF initialization failed: _InitLanguageBar\n");goto ExitError; }
 
   if (!_IsKeyboardOpen())
     _SetKeyboardOpen(TRUE);
 
-  if (!_InitCompartment()) { std::fprintf(stderr, "Zephyr TSF initialization failed: _InitCompartment\n");goto ExitError; }
-  if (!_InitThreadFocusSink()) { std::fprintf(stderr, "Zephyr TSF initialization failed: _InitThreadFocusSink\n");goto ExitError; }
+  if (!_InitCompartment()) { std::fprintf(stderr, "OrangeCell TSF initialization failed: _InitCompartment\n");goto ExitError; }
+  if (!_InitThreadFocusSink()) { std::fprintf(stderr, "OrangeCell TSF initialization failed: _InitThreadFocusSink\n");goto ExitError; }
 
   _EnsureServerConnected();
 
@@ -179,7 +179,7 @@ ExitError:
 
 STDMETHODIMP WeaselTSF::OnSetThreadFocus() {
   std::wstring _ToggleImeOnOpenClose{};
-  RegGetStringValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput",
+  RegGetStringValue(HKEY_CURRENT_USER, L"Software\\OrangeCell",
                     L"ToggleImeOnOpenClose", _ToggleImeOnOpenClose);
   _isToOpenClose = (_ToggleImeOnOpenClose == L"yes");
   if (m_client.Echo()) {
@@ -250,7 +250,7 @@ bool WeaselTSF::_EnsureServerConnected() {
     _Reconnect();
     retry++;
     if (retry >= 6) {
-      HANDLE hMutex = CreateMutex(NULL, TRUE, L"ZephyrDeployerExclusiveMutex");
+      HANDLE hMutex = CreateMutex(NULL, TRUE, L"OrangeCellDeployerExclusiveMutex");
       // Capture immediately: IPC may change the thread's last-error value.
       const bool deploymentActive = !hMutex || GetLastError() == ERROR_ALREADY_EXISTS;
       const auto count_server_process = []() -> int {
@@ -262,7 +262,7 @@ bool WeaselTSF::_EnsureServerConnected() {
         pe.dwSize = sizeof(pe);
         if (Process32First(snap, &pe)) {
           do {
-            if (_wcsicmp(pe.szExeFile, L"ZephyrServer.exe") == 0)
+            if (_wcsicmp(pe.szExeFile, L"OrangeCellServer.exe") == 0)
               count++;
           } while (Process32Next(snap, &pe));
         }
@@ -272,7 +272,7 @@ bool WeaselTSF::_EnsureServerConnected() {
       if (!deploymentActive && !m_client.Echo() &&
           !count_server_process()) {
         std::wstring dir = _GetRootDir();
-        ShellExecuteW(NULL,L"open",(dir+L"\\ZephyrServer.exe").c_str(),NULL,dir.c_str(),SW_HIDE);
+        ShellExecuteW(NULL,L"open",(dir+L"\\OrangeCellServer.exe").c_str(),NULL,dir.c_str(),SW_HIDE);
         // Reconnect on a later input event on this TSF apartment; never use a detached this pointer.
 
       }
@@ -287,20 +287,20 @@ bool WeaselTSF::_EnsureServerConnected() {
   }
 }
 
-LRESULT CALLBACK WeaselTSF::_ZephyrPollProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
+LRESULT CALLBACK WeaselTSF::_OrangeCellPollProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
   auto self=reinterpret_cast<WeaselTSF*>(GetWindowLongPtrW(hwnd,GWLP_USERDATA));
   if(msg==WM_NCCREATE) { self=static_cast<WeaselTSF*>(reinterpret_cast<CREATESTRUCTW*>(l)->lpCreateParams);SetWindowLongPtrW(hwnd,GWLP_USERDATA,reinterpret_cast<LONG_PTR>(self)); }
-  if(msg==WM_TIMER&&self&&self->_status.composing&&!self->_zephyrRefreshPending&&self->_pThreadMgr&&!self->_IsKeyboardDisabled()) {
+  if(msg==WM_TIMER&&self&&self->_status.composing&&!self->_orangecellRefreshPending&&self->_pThreadMgr&&!self->_IsKeyboardDisabled()) {
     com_ptr<ITfDocumentMgr> doc;com_ptr<ITfContext> ctx;
     if(SUCCEEDED(self->_pThreadMgr->GetFocus(&doc))&&doc&&SUCCEEDED(doc->GetTop(&ctx))&&ctx==self->_pEditSessionContext) {
       weasel::KeyEvent poll(0,0);
-      if (self->_zephyrAiRefreshPending) {
+      if (self->_orangecellAiRefreshPending) {
         // Retry a rejected edit session without replacing the buffered response.
         // If only the caret extent is delayed, publish at the current position.
-        if (self->_zephyrAiSnapshotRead) self->_FlushPendingUI();
+        if (self->_orangecellAiSnapshotRead) self->_FlushPendingUI();
         else self->_UpdateComposition(ctx);
       } else if (self->m_client.ProcessKeyEvent(poll)) {
-        self->_zephyrAiRefreshPending = true;
+        self->_orangecellAiRefreshPending = true;
         self->_UpdateComposition(ctx);
       }
     }

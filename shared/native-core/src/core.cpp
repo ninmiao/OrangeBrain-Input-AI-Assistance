@@ -8,7 +8,7 @@
 #include <regex>
 #include <set>
 #include <stdexcept>
-namespace zephyr {
+namespace orangecell {
 using J = nlohmann::ordered_json;
 struct Failure : std::runtime_error {
   int status;
@@ -788,4 +788,4 @@ std::string invoke(const std::string& cmd) noexcept {
     return R"({"error":"response"})";
   }
 }
-}  // namespace zephyr
+}  // namespace orangecell

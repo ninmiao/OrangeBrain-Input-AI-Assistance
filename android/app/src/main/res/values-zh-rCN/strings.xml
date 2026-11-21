@@ -8,8 +8,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- 输入法平台名称  -->
-    <string name="app_name_release">Zephyr Input</string>
-    <string name="app_name_debug">Zephyr Input (Debug)</string>
+    <string name="trime_app_name">橘脑一颗</string>
+    <string name="app_name_release">橘脑一颗</string>
+    <string name="app_name_debug">橘脑一颗 (Debug)</string>
     <string name="settings__help_title">寻求帮助</string>
     <string name="pref_wiki">上游使用指南</string>
     <string name="pref_issues">上游问题反馈（Trime）</string>
@@ -91,7 +92,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <string name="system_default">系统默认</string>
     <string name="keyboard__key_swipe_travel_title">触发按键滑动手势的距离</string>
     <string name="keyboard__hook_candidate">点击候选词</string>
-    <string name="trime_app_slogan">微风输入法 · Zephyr</string>
+    <string name="trime_app_slogan">橘脑一颗 · OneOrangeBraincell</string>
     <string name="external_storage_permission_not_available">存储权限不可用</string>
     <string name="external_storage_permission_granted">已授予存储权限</string>
     <string name="external_storage_permission_denied">已拒绝授权存储权限，部署或读取方案和配置功能或不可用</string>
@@ -100,8 +101,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <string name="clipboard_draft_output_title">草稿箱过滤规则</string>
     <string name="setup__next">下一步</string>
     <string name="setup__done">完成</string>
-    <string name="setup__enable_ime_hint">在语言和输入设置中启用 <b>Zephyr Input</b></string>
-    <string name="setup__select_ime_hint">选择 <b>Zephyr Input</b> 作为默认输入法</string>
+    <string name="setup__enable_ime_hint">在语言和输入设置中启用 <b>橘脑一颗</b></string>
+    <string name="setup__select_ime_hint">选择 <b>橘脑一颗</b> 作为默认输入法</string>
     <string name="setup__enable_ime">启用输入法</string>
     <string name="setup__select_ime">选择输入法</string>
     <string name="setup__prev">上一步</string>
@@ -178,7 +179,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <string name="keyboard__landscape_mode_title">启用横屏模式</string>
     <string name="keyboard__split_space_title">自动分割键盘比例</string>
     <string name="setup__step_three">第 3 步</string>
-    <string name="setup__request_permmision_hint">Zephyr Input 需要存储权限以访问词库和可编辑的配置。</string>
+    <string name="setup__request_permmision_hint">橘脑一颗 需要存储权限以访问词库和可编辑的配置。</string>
     <string name="setup__request_permmision">请求存储权限</string>
     <string name="grant_permission">授予权限</string>
     <string name="notification_permission_title">没有通知权限</string>
@@ -227,5 +228,5 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <string name="keyboard__height_title">键盘高度</string>
     <string name="ai_settings_title">AI 辅助设置</string>
     <string name="ai_settings_summary">云端候选、Policy、模型、提示词与一键测速</string>
-    <string name="zephyr_product_summary">微风输入法 · Zephyr，基于 Trime 与 Rime</string>
+    <string name="orangecell_product_summary">橘脑一颗 · OrangeCell，基于 Trime 与 Rime</string>
 </resources>

@@ -22,7 +22,7 @@ class WanxiangNetwork internal constructor(
             url.host=="github-releases.githubusercontent.com"))
 
     private suspend fun <T> request(url:String, offset:Long=0, consume:suspend (Response)->T):T=coroutineScope {
-        var next=Request.Builder().url(url).header("User-Agent","Zephyr-Input-Wanxiang")
+        var next=Request.Builder().url(url).header("User-Agent","OrangeCell-Wanxiang")
             .header("Accept-Encoding","identity").apply { if(offset>0)header("Range","bytes=$offset-") }.build()
         repeat(6) {
             require(allowed(next.url)) { "不允许的下载地址" }

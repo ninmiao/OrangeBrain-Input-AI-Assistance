@@ -1,7 +1,7 @@
-#include "ZephyrKeySettings.h"
+#include "OrangeCellKeySettings.h"
 // Included in RimeWithWeasel.cpp; all entry points already serialized by upstream IPC.
-void RimeWithWeaselHandler::_ZephyrRefresh(WeaselSessionId id) {
-  auto& z=m_zephyr[id];z.candidates.clear();z.comments.clear();z.rimeIndices.clear();z.preedit.clear();
+void RimeWithWeaselHandler::_OrangeCellRefresh(WeaselSessionId id) {
+  auto& z=m_orangecell[id];z.candidates.clear();z.comments.clear();z.rimeIndices.clear();z.preedit.clear();
   auto session=to_session_id(id);
   if(z.input.empty() || !z.chinese)rime_api->clear_composition(session);
   if(z.chinese&&!z.input.empty()) {
@@ -21,12 +21,12 @@ void RimeWithWeaselHandler::_ZephyrRefresh(WeaselSessionId id) {
   }
   if(!z.input.empty()) {
     z.add(u8tow(z.input),z.chinese?L"原文":L"Original");
-    if(auto prefs=zephyr::currentKeyPreferences();prefs&&prefs->aiEnabled)
-      m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
-  } else m_zephyr_ai.cancel(id);
+    if(auto prefs=orangecell::currentKeyPreferences();prefs&&prefs->aiEnabled)
+      m_orangecell_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
+  } else m_orangecell_ai.cancel(id);
 }
-bool RimeWithWeaselHandler::_ZephyrChoose(WeaselSessionId id,size_t index) {
-  auto& z=m_zephyr[id];
+bool RimeWithWeaselHandler::_OrangeCellChoose(WeaselSessionId id,size_t index) {
+  auto& z=m_orangecell[id];
   if(index>=z.candidates.size())return false;
   const int nativeIndex=z.rimeIndices[index];
   if(nativeIndex<0) {z.choose(index);return true;}
@@ -41,11 +41,11 @@ bool RimeWithWeaselHandler::_ZephyrChoose(WeaselSessionId id,size_t index) {
   }
   return true;
 }
-bool RimeWithWeaselHandler::_ZephyrRespond(WeaselSessionId id,EatLine eat) {
+bool RimeWithWeaselHandler::_OrangeCellRespond(WeaselSessionId id,EatLine eat) {
   if(!eat)return false;
-  auto& z=m_zephyr[id];auto& session=get_session_status(id);
-  const auto prefs=zephyr::currentKeyPreferences().value_or(zephyr::KeyPreferences{});
-  z.aiStatus=(prefs.aiEnabled||z.manualAi)?m_zephyr_ai.status(id,z.revision):L"手动";
+  auto& z=m_orangecell[id];auto& session=get_session_status(id);
+  const auto prefs=orangecell::currentKeyPreferences().value_or(orangecell::KeyPreferences{});
+  z.aiStatus=(prefs.aiEnabled||z.manualAi)?m_orangecell_ai.status(id,z.revision):L"手动";
   weasel::CandidateInfo info;info.is_last_page=(z.page+1)*5>=z.candidates.size();
   info.currentPage=int(z.page);info.totalPages=int((z.candidates.size()+4)/5);info.highlighted=int(z.selected%5);
   for(size_t i=z.page*5;i<z.candidates.size()&&i<(z.page+1)*5;i++) {
@@ -58,12 +58,12 @@ bool RimeWithWeaselHandler::_ZephyrRespond(WeaselSessionId id,EatLine eat) {
   const auto display=z.preedit.empty()?u8tow(z.input):z.preedit;
   const auto cursor=z.preedit.empty()?z.caret:z.preeditCaret;
   std::wstring body=L"status.ascii_mode="+std::wstring(z.chinese?L"0":L"1")+L"\nstatus.disabled=0\nstatus.composing="+std::wstring(z.input.empty()?L"0":L"1")+
-    L"\nstatus.schema_id=zephyr\nctx.preedit="+escape_string(display)+L"\nctx.preedit.cursor=0,"+
+    L"\nstatus.schema_id=orangecell\nctx.preedit="+escape_string(display)+L"\nctx.preedit.cursor=0,"+
     std::to_wstring(display.size())+L","+std::to_wstring(cursor)+L"\nctx.aux="+
     std::wstring(z.chinese?(z.traditional?L"繁":L"简"):L"EN")+
-    (zephyr::shortcutLabel(z.languageShortcut).empty()?L"":L" · "+zephyr::shortcutLabel(z.languageShortcut)+(z.chinese?L" → EN":L" → 中"))+
+    (orangecell::shortcutLabel(z.languageShortcut).empty()?L"":L" · "+orangecell::shortcutLabel(z.languageShortcut)+(z.chinese?L" → EN":L" → 中"))+
     L" · AI "+escape_string(z.aiStatus)+
-    (zephyr::shortcutLabel(prefs.aiShortcut).empty()?L"":L" ("+zephyr::shortcutLabel(prefs.aiShortcut)+L")")+
+    (orangecell::shortcutLabel(prefs.aiShortcut).empty()?L"":L" ("+orangecell::shortcutLabel(prefs.aiShortcut)+L")")+
     (z.aiError.empty()?L"":L" · "+escape_string(z.aiError))+
     L"\nctx.cand="+cs.str()+L"\nconfig.inline_preedit=0\n";
   auto style=session.style;style.inline_preedit=false;
@@ -71,56 +71,56 @@ bool RimeWithWeaselHandler::_ZephyrRespond(WeaselSessionId id,EatLine eat) {
   if(!z.commit.empty()){body+=L"commit="+escape_string(z.commit)+L"\n";z.commit.clear();}
   body+=L".\n";return eat(header)&&eat(body);
 }
-BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,EatLine eat) {
-  auto& z=m_zephyr[id];int code=key.keycode;
-  const auto prefs=zephyr::currentKeyPreferences();
+BOOL RimeWithWeaselHandler::_OrangeCellKey(weasel::KeyEvent key,WeaselSessionId id,EatLine eat) {
+  auto& z=m_orangecell[id];int code=key.keycode;
+  const auto prefs=orangecell::currentKeyPreferences();
   if(prefs){
     z.enterOriginal=prefs->enterOriginal;z.spaceOriginal=prefs->spaceOriginal;z.segmentation=prefs->wordSegmentation;z.languageShortcut=prefs->languageShortcut;z.scriptShortcut=prefs->scriptShortcut;
     // A settings change can remove the AI prefix. Publish that reorder through
     // the poll so a selection key still refers to the list the user can see.
     if((code==0||z.input.empty())&&z.applyConfiguration(prefs->revision)) {
-      m_zephyr_ai.cancel(id);
-      if(prefs->aiEnabled&&!z.input.empty())m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
+      m_orangecell_ai.cancel(id);
+      if(prefs->aiEnabled&&!z.input.empty())m_orangecell_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,z.chinese,z.traditional,z.before,z.after});
     }
   }
   if(code==0) {
-    if(!z.commit.empty()||z.refreshPending){z.refreshPending=false;_ZephyrRespond(id,eat);return TRUE;}
-    auto result=m_zephyr_ai.take(id);
+    if(!z.commit.empty()||z.refreshPending){z.refreshPending=false;_OrangeCellRespond(id,eat);return TRUE;}
+    auto result=m_orangecell_ai.take(id);
     if(!result||result->revision!=z.revision||z.input.empty()) {
-      auto current=m_zephyr_ai.status(id,z.revision);
+      auto current=m_orangecell_ai.status(id,z.revision);
       if(!z.manualAi&&(!prefs||!prefs->aiEnabled))current=L"手动";
-      if(!z.input.empty()&&current!=z.aiStatus){z.aiStatus=current;_ZephyrRespond(id,eat);return TRUE;}
+      if(!z.input.empty()&&current!=z.aiStatus){z.aiStatus=current;_OrangeCellRespond(id,eat);return TRUE;}
       return FALSE;
     }
-    z.aiError=result->error;z.segmentation=result->segmentation;z.enterOriginal=result->enterOriginal;z.spaceOriginal=result->spaceOriginal;z.adopt(result->revision,result->candidates,result->assistantEnabled);_ZephyrRespond(id,eat);return TRUE;
+    z.aiError=result->error;z.segmentation=result->segmentation;z.enterOriginal=result->enterOriginal;z.spaceOriginal=result->spaceOriginal;z.adopt(result->revision,result->candidates,result->assistantEnabled);_OrangeCellRespond(id,eat);return TRUE;
   }
-  if(zephyr::shortcutChord(prefs?prefs->aiShortcut:"f8",code,key.mask)) {
+  if(orangecell::shortcutChord(prefs?prefs->aiShortcut:"f8",code,key.mask)) {
     z.shortcuts.reset();
     if(z.input.empty())return FALSE;
     z.retryAi();
-    m_zephyr_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,
+    m_orangecell_ai.submit({id,z.revision,z.partialSelection&&!z.preedit.empty()?wtou8(z.preedit):z.input,
                         z.chinese,z.traditional,z.before,z.after,true});
-    _ZephyrRespond(id,eat);
+    _OrangeCellRespond(id,eat);
     return TRUE;
   }
   bool ctrl=(key.mask&ibus::CONTROL_MASK)!=0,alt=(key.mask&ibus::MOD1_MASK)!=0;
   auto shortcut=z.shortcuts.process(code,key.mask,GetTickCount64(),z.languageShortcut,z.scriptShortcut);
-  if(shortcut!=zephyr::ShortcutAction::None) {
-    if(shortcut==zephyr::ShortcutAction::Language)z.language();
+  if(shortcut!=orangecell::ShortcutAction::None) {
+    if(shortcut==orangecell::ShortcutAction::Language)z.language();
     else {z.traditional=!z.traditional;z.changed();}
-    _ZephyrRefresh(id);_ZephyrRespond(id,eat);return TRUE;
+    _OrangeCellRefresh(id);_OrangeCellRespond(id,eat);return TRUE;
   }
-  if(key.mask&ibus::RELEASE_MASK){_ZephyrRespond(id,eat);return FALSE;}
+  if(key.mask&ibus::RELEASE_MASK){_OrangeCellRespond(id,eat);return FALSE;}
   // Modifier key-down is not a shortcut by itself. Keep pending text until
   // the actual chord arrives (Ctrl+Enter, Alt+digit, Ctrl+Shift+Space, etc.).
-  if(code>=ibus::Shift_L && code<=ibus::Hyper_R) {_ZephyrRespond(id,eat);return FALSE;}
+  if(code>=ibus::Shift_L && code<=ibus::Hyper_R) {_OrangeCellRespond(id,eat);return FALSE;}
   bool changed=false,handled=true;
   if(ctrl&&code==ibus::Return&&!z.input.empty()) {z.commit=u8tow(z.input);z.clear();changed=true;}
-  else if(alt&&!ctrl&&!(key.mask&(ibus::SHIFT_MASK|ibus::SUPER_MASK))&&code>='1'&&code<='5'&&!z.input.empty()&&_ZephyrChoose(id,z.page*5+size_t(code-'1'))) {changed=true;}
+  else if(alt&&!ctrl&&!(key.mask&(ibus::SHIFT_MASK|ibus::SUPER_MASK))&&code>='1'&&code<='5'&&!z.input.empty()&&_OrangeCellChoose(id,z.page*5+size_t(code-'1'))) {changed=true;}
   else if(ctrl||alt||(key.mask&ibus::SUPER_MASK)) {if(!z.input.empty()){z.clear();changed=true;}handled=false;}
   // Number row selects an existing slot only while composing. No global
   // preserved digit keys: idle digits must reach the host application normally.
-  else if(!(key.mask&ibus::SHIFT_MASK)&&code>='1'&&code<='5'&&!z.input.empty()&&_ZephyrChoose(id,z.page*5+size_t(code-'1'))) {changed=true;}
+  else if(!(key.mask&ibus::SHIFT_MASK)&&code>='1'&&code<='5'&&!z.input.empty()&&_OrangeCellChoose(id,z.page*5+size_t(code-'1'))) {changed=true;}
   else if(code>='0'&&code<='9'&&z.input.empty()) handled=false;
   // The numeric keypad remains a way to enter literal digits into composition.
   else if(code>=ibus::KP_0&&code<=ibus::KP_9) {
@@ -138,15 +138,15 @@ BOOL RimeWithWeaselHandler::_ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,E
     z.selected=(z.selected+z.candidates.size()+(code==ibus::Down?1:-1))%z.candidates.size();z.page=z.selected/5;
   }
   else if(z.originalKey(code==ibus::Return,code==' ')) {z.commit=u8tow(z.input)+(code==' '?L" ":L"");z.clear();changed=true;}
-  else if((code==ibus::Return||code==ibus::Tab||(code==' '&&!z.segmentation))&&!z.input.empty()) {_ZephyrChoose(id,z.selected);changed=true;}
+  else if((code==ibus::Return||code==ibus::Tab||(code==' '&&!z.segmentation))&&!z.input.empty()) {_OrangeCellChoose(id,z.selected);changed=true;}
   else if(code>=32&&code<=126&&(code!=' '||!z.input.empty()||z.segmentation)) {z.insert(char(code));changed=true;}
   else handled=false;
-  if(changed)_ZephyrRefresh(id);
-  _ZephyrRespond(id,eat);return handled?TRUE:FALSE;
+  if(changed)_OrangeCellRefresh(id);
+  _OrangeCellRespond(id,eat);return handled?TRUE:FALSE;
 }
 
 void RimeWithWeaselHandler::UpdateTextContext(const std::wstring& data,DWORD id) {
-  auto found=m_zephyr.find(id);if(found==m_zephyr.end())return;
+  auto found=m_orangecell.find(id);if(found==m_orangecell.end())return;
   auto split=data.find(L'\t');if(split==data.npos)return;
   auto decode=[](const std::wstring& hex){std::wstring out;if(hex.size()%4||hex.size()>4000)throw std::runtime_error("context");for(size_t i=0;i<hex.size();i+=4){unsigned n=0;for(size_t j=0;j<4;++j){auto c=hex[i+j];int v=c>=L'0'&&c<=L'9'?c-L'0':c>=L'a'&&c<=L'f'?c-L'a'+10:-1;if(v<0)throw std::runtime_error("context");n=(n<<4)|v;}out+=wchar_t(n);}return wtou8(out);};
   try {
@@ -154,6 +154,6 @@ void RimeWithWeaselHandler::UpdateTextContext(const std::wstring& data,DWORD id)
     if(z.before==before&&z.after==after)return;z.before=before;z.after=after;
     // Refresh the queued snapshot without resetting that keypress's debounce.
     // Once sent, the request keeps the snapshot it started with.
-    m_zephyr_ai.updateContext(id,z.revision,z.before,z.after);
+    m_orangecell_ai.updateContext(id,z.revision,z.before,z.after);
   }catch(...){ /* Optional editor context must not cancel the current request. */ }
 }

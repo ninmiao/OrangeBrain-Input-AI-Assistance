@@ -1,23 +1,23 @@
 # 万象拼音接入评估
 
-日期：2026-11-16。评估对象：Zephyr Input Windows 1.6.3 / Android 1.5.3。
+日期：2026-11-16。评估对象：OrangeCell Windows 1.6.3 / Android 1.5.3。
 
 > 后续决定（2026-11-16）：按用户要求，语法模型改为默认开启、点击后下载，不内置安装包。两端更新功能与验证见 [万象更新说明](../rime/wanxiang-updates.md)。下文保留本次独立研究时的结论与数据。
 
 ## 结论
 
-**可以接入，也适合成为 Zephyr 的默认本地拼音来源。建议默认接入万象 Base 的词库与全拼转写规则，保留 Zephyr 的界面和操作方式；大体积语法模型作为可选增强，雾凇保留为可切换方案。**
+**可以接入，也适合成为 OrangeCell 的默认本地拼音来源。建议默认接入万象 Base 的词库与全拼转写规则，保留 OrangeCell 的界面和操作方式；大体积语法模型作为可选增强，雾凇保留为可切换方案。**
 
-这不是建议把万象完整发布包直接覆盖到用户目录。本次已用 Zephyr 现有 Windows librime 实际编译、加载和比较四种方案，确认词库、全拼纠错规则、Grammar 模型和分段选词能够运行。尚未修改两端应用默认方案，尚未构建新 APK/Setup，也没有修改当前安装、Policy、Key 或云端请求逻辑。Android 本轮完成源码兼容性检查，尚未进行新词库的模拟器测试。
+这不是建议把万象完整发布包直接覆盖到用户目录。本次已用 OrangeCell 现有 Windows librime 实际编译、加载和比较四种方案，确认词库、全拼纠错规则、Grammar 模型和分段选词能够运行。尚未修改两端应用默认方案，尚未构建新 APK/Setup，也没有修改当前安装、Policy、Key 或云端请求逻辑。Android 本轮完成源码兼容性检查，尚未进行新词库的模拟器测试。
 
 ## 1. 万象实际提供了什么
 
-| 部分 | 作用 | 对 Zephyr 的价值 |
+| 部分 | 作用 | 对 OrangeCell 的价值 |
 | --- | --- | --- |
 | 字词库、读音、词频 | 决定本地能选到哪些字词，以及基本顺序 | 可替换当前雾凇词库，改善部分日常表达、专名和读音 |
 | 全拼转写规则 | 将带调字典编码转换为用户键入的普通拼音，也派生简拼和部分错拼 | 无需用户输入声调；能修复规则覆盖的字母错序 |
 | Octagram `.gram` 模型 | 对当前拼音所组成的词语路径进行本地统计评分 | 改善部分同音歧义、口语片段和整句排序 |
-| Lua 功能 | 英文处理、反查、声调筛选、计算器、日期、用户排序等 | 可以分项选用，需要与 Zephyr 前端适配 |
+| Lua 功能 | 英文处理、反查、声调筛选、计算器、日期、用户排序等 | 可以分项选用，需要与 OrangeCell 前端适配 |
 
 这里的 Grammar 是本地统计语言模型，并不是要部署一个 Gemini、Qwen 或 DeepSeek。它通过 Rime 的 Octagram 插件和内存映射文件参与候选评分，不需要 API Key、GPU 或逐次网络调用。本轮离线对比没有调用任何模型 API。[词库与模型说明](https://github.com/amzxyz/rime-wanxiang/blob/wanxiang/docs/doc/dict_gram.md)、[模型项目](https://github.com/amzxyz/rime-wanxiang-data)。
 
@@ -46,25 +46,25 @@ Base ZIP SHA256
 d4f64356231764ff27b79c9b0db79cd9d665013464cf5544e2fbd9a71e0f1c5a
 ```
 
-上游把 Grammar 列为完整万象发行方案的必装组件。本文提出的“默认词库和规则、模型可选”是 **Zephyr 自己的适配方式**，不能宣称等同完整万象体验，也不能把它误称为上游 Lite。Base/Lite/Pure/Pro 的侧重点分别是完整常规方案、裁剪部分功能的无调方案、无 Lua 的兼容方案、双拼辅助码增强方案；“Pure”并不自动意味着不需要 Grammar。[版本选择](https://github.com/amzxyz/rime-wanxiang#readme)。
+上游把 Grammar 列为完整万象发行方案的必装组件。本文提出的“默认词库和规则、模型可选”是 **OrangeCell 自己的适配方式**，不能宣称等同完整万象体验，也不能把它误称为上游 Lite。Base/Lite/Pure/Pro 的侧重点分别是完整常规方案、裁剪部分功能的无调方案、无 Lua 的兼容方案、双拼辅助码增强方案；“Pure”并不自动意味着不需要 Grammar。[版本选择](https://github.com/amzxyz/rime-wanxiang#readme)。
 
 ## 3. 已完成的实测
 
 ### 方法与范围
 
-- 在独立目录中使用 Zephyr 当前 Windows `rime.dll`，实际版本 1.17.0；未访问已安装输入法的用户词库。
+- 在独立目录中使用 OrangeCell 当前 Windows `rime.dll`，实际版本 1.17.0；未访问已安装输入法的用户词库。
 - DLL SHA256：`86b4c7357d4c6d293ce5589b234d8859ca2ac30923a03bedfa3926eeaf97fb0b`。
 - 30 条专门对照输入，加现有人工回归集中的 30 条中文输入，共 60 条记录。其中 11 条超过 50 个字符，最长 149 个字符。部分输入重复，用于延续旧回归；这不是 60 个独立随机样本。
 - 对每条输入逐步调用 `set_input`，每次读取候选，模拟 Windows 当前刷新方式。每个方案累计 2,100 个前缀状态，共四个方案。
 - 空格统一转换为分词用的单引号，符合当前 Windows 适配器；主翻译器关闭用户词频学习，避免个人历史影响结果。
 - 直接比较整条首选文本，评分忽略空白和 Unicode 标点；有多个期望结果时接受其一。这个标准对本来需要分段选择的输入较严格。
-- **没有运行在线 AI，也不是整套输入法 UI 测试。** 原版 Base 的比较同样通过 Zephyr 使用的 `set_input` 路径，不等于逐项测试原版的键盘 Lua 功能。这个集合刻意包含错拼、混输和历史难例，不能当成日常输入的总体准确率。
+- **没有运行在线 AI，也不是整套输入法 UI 测试。** 原版 Base 的比较同样通过 OrangeCell 使用的 `set_input` 路径，不等于逐项测试原版的键盘 Lua 功能。这个集合刻意包含错拼、混输和历史难例，不能当成日常输入的总体准确率。
 
 ### 汇总
 
 | 本地方案 | 首选整句匹配 | 前七候选有完整期望 | 每次刷新 P50 | P95 | 本轮最大值 | 结束时工作集 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| 当前 Zephyr 雾凇 | 21 / 60 | 24 / 60 | 0.46 ms | 11.12 ms | 24.91 ms | 48.0 MiB |
+| 当前 OrangeCell 雾凇 | 21 / 60 | 24 / 60 | 0.46 ms | 11.12 ms | 24.91 ms | 48.0 MiB |
 | 万象词库＋全拼规则，无 Grammar | 26 / 60 | 28 / 60 | 1.64 ms | 37.81 ms | 61.29 ms | 58.5 MiB |
 | 同一适配方案＋Grammar | 25 / 60 | 27 / 60 | 1.91 ms | 41.77 ms | 65.40 ms | 188.7 MiB |
 | 上游 Base＋Grammar＋Lua | 25 / 60 | 27 / 60 | 4.01 ms | 44.47 ms | 66.75 ms | 262.8 MiB |
@@ -89,7 +89,7 @@ d4f64356231764ff27b79c9b0db79cd9d665013464cf5544e2fbd9a71e0f1c5a
 
 四个方案都能通过原生 API 选择“现在”，不立刻提交整条输入；随后用同样的原始输入刷新，预编辑仍保留“现在＋后续拼音”。这证明之前修复的“先选一段，保留后面输入”路径在引擎层能够兼容万象。
 
-适配方案保留 `traditionalization` 开关，切换后 `ruanjian` 得到“軟件”。原版 Base 使用 `s2t/s2hk/s2tw`，向它发送 Zephyr 现有的 `traditionalization` 不会产生同样效果，需要适配。分段选择兼容通过不代表同音排序正确，两者分别检查。
+适配方案保留 `traditionalization` 开关，切换后 `ruanjian` 得到“軟件”。原版 Base 使用 `s2t/s2hk/s2tw`，向它发送 OrangeCell 现有的 `traditionalization` 不会产生同样效果，需要适配。分段选择兼容通过不代表同音排序正确，两者分别检查。
 
 原生探针源码保留在 [wanxiang_probe.cpp](../../tests/rime/wanxiang_probe.cpp)。其中所有输入前缀在 UTF-8 字符边界截断，包含人工集里的直接汉字输入。原始候选、逐条耗时和评分见 [结果 JSON](wanxiang-results-2026-11-16.json)；完整输入记录另存于 [测试集](../../tests/corpus/wanxiang-evaluation-2026-11-16.tsv)。现有 464,693 条生成语料未修改，SHA256 仍为 `d1a3d880eb3ca85d2a204b100b77b7d884817c31752294cf6ecdf1722d777e5d`。
 
@@ -97,23 +97,23 @@ d4f64356231764ff27b79c9b0db79cd9d665013464cf5544e2fbd9a71e0f1c5a
 
 | 位置 | 当前情况 | 集成时需要做什么 |
 | --- | --- | --- |
-| Android `assets/shared/rime_ai_simp.schema.yaml` | 引用雾凇词库，只有较少简拼和 ü/v 规则 | 新增独立 `zephyr_wanxiang` 方案，使用万象词典及匹配的转写规则 |
+| Android `assets/shared/rime_ai_simp.schema.yaml` | 引用雾凇词库，只有较少简拼和 ü/v 规则 | 新增独立 `orangecell_wanxiang` 方案，使用万象词典及匹配的转写规则 |
 | Android `jni/cmake/Rime.cmake`、`librime_jni/rime_jni.cc` | 已编入并引用 Lua、Octagram；librime 源码版本 1.14.0 | 核心依赖已有；仍要验证 Android 编译数据、首次部署、内存和长输入，不把 Windows 测试冒充 Android 测试 |
 | Android `DefaultSchemaInstaller.kt` | 只迁移早期朙月默认列表，不会自动迁移当前雾凇列表 | 加入精确识别旧官方默认配置的迁移，先备份；自定义方案列表保持原样 |
 | Android `AiKeyboardController.syncScript()` | 固定写入 `traditionalization` | 新方案继续提供同名开关，避免本地候选和 AI 字形不一致 |
 | Windows `scripts/prepare-data.py` | 从 Android assets 生成 Windows 数据 | 两端统一引用固定版本资源；避免手工维护两份词典 |
 | Windows `data/default.yaml` | 默认 `rime_ai_simp` | 新安装默认万象；升级还要处理用户已有的方案列表和上次选择，不能只改共享文件 |
-| Windows `RimeWithWeasel/ZephyrHandler.inc` | 前端维护输入串，用 `set_input` 刷新，原生 `select_candidate` 分段选择 | 保留此交互和 AI 候选机制；对数字、空格、Shift、回车、撤销逐项回归 |
+| Windows `RimeWithWeasel/OrangeCellHandler.inc` | 前端维护输入串，用 `set_input` 刷新，原生 `select_candidate` 分段选择 | 保留此交互和 AI 候选机制；对数字、空格、Shift、回车、撤销逐项回归 |
 
 Windows 目前不是把所有按键原样交给 Rime，所以把完整上游 schema 放进去，并不会自动获得它所有 Lua 快捷键。上游带调词库也不能只替换 `dictionary:` 一行：必须配套转写，才能把 `nǐ/hǎo` 等编码对应到用户输入的 `ni/hao`。
 
-万象 Base 的字母表含数字，数字又可用于声调；我们的 Windows 顶部数字用于选词，Android 数字用于混合输入。首版适配保持现有约定，不启用数字声调输入。中英切换、英文模式输入界面、空格分词、回车输出原文、繁简按钮、长按空格移动光标和在线 AI 行继续由 Zephyr 管理。日期、计算器、输入统计、额外上下文学习和辅助码等 Lua 功能不默认引入。[Base 配置](https://github.com/amzxyz/rime-wanxiang/blob/v18.1.13/wanxiang.schema.yaml)。
+万象 Base 的字母表含数字，数字又可用于声调；我们的 Windows 顶部数字用于选词，Android 数字用于混合输入。首版适配保持现有约定，不启用数字声调输入。中英切换、英文模式输入界面、空格分词、回车输出原文、繁简按钮、长按空格移动光标和在线 AI 行继续由 OrangeCell 管理。日期、计算器、输入统计、额外上下文学习和辅助码等 Lua 功能不默认引入。[Base 配置](https://github.com/amzxyz/rime-wanxiang/blob/v18.1.13/wanxiang.schema.yaml)。
 
 ## 5. 建议的正式落地方案
 
 ### 默认方案
 
-1. 用 `zephyr_wanxiang` 作为新方案 ID，显示“万象拼音”，默认简体、全拼、简拼和经过回归的错序规则。
+1. 用 `orangecell_wanxiang` 作为新方案 ID，显示“万象拼音”，默认简体、全拼、简拼和经过回归的错序规则。
 2. 采用 Base 核心七份词表和对应的转写，不把所有上游 Lua 和主题整体打包。未来可以在同一数据体系上加双拼。
 3. 两端共用一个资源清单，固定上游版本、来源、SHA256、许可和改动记录。建议资源源头放 `shared/rime/`，由构建步骤分别生成 Android assets 和 Windows data。
 4. 保留雾凇供切换。两个方案使用独立学习词库，保留旧 `*.userdb` 和自定义短语；不要直接把雾凇二进制学习库改名成万象库，因为编码不同。
@@ -143,11 +143,11 @@ Windows 目前不是把所有按键原样交给 Rime，所以把完整上游 sch
 
 ## 6. 许可与来源
 
-万象方案仓库当前根许可证为 **CC BY 4.0**，数据仓库明确将原创词库、拼音数据和文档纳入同一许可。该许可允许复制、修改和再分发，需要保留署名、许可证链接及修改说明；Zephyr 自身的 GPL 授权不替代这些数据的许可。[方案许可证](https://github.com/amzxyz/rime-wanxiang/blob/wanxiang/LICENSE)、[数据授权范围](https://github.com/amzxyz/rime-wanxiang-data/blob/wanxiang/LICENSE-SCOPE.md)、[CC BY 4.0 条款摘要](https://creativecommons.org/licenses/by/4.0/)。
+万象方案仓库当前根许可证为 **CC BY 4.0**，数据仓库明确将原创词库、拼音数据和文档纳入同一许可。该许可允许复制、修改和再分发，需要保留署名、许可证链接及修改说明；OrangeCell 自身的 GPL 授权不替代这些数据的许可。[方案许可证](https://github.com/amzxyz/rime-wanxiang/blob/wanxiang/LICENSE)、[数据授权范围](https://github.com/amzxyz/rime-wanxiang-data/blob/wanxiang/LICENSE-SCOPE.md)、[CC BY 4.0 条款摘要](https://creativecommons.org/licenses/by/4.0/)。
 
-需要区分数据和工具：`rime-wanxiang-data` 的 `LICENSE-SCOPE.md` 明确说明其原创 Python、Kotlin、Shell、PowerShell 等程序代码目前没有独立授予复制、修改、再分发或商业使用许可。因此本方案只采用已授权的数据，不直接复制那里的更新器 App、后台工具或构建脚本。更新下载逻辑由 Zephyr 自己实现。第三方组件继续按各自许可证处理。[第三方声明](https://github.com/amzxyz/rime-wanxiang-data/blob/wanxiang/NOTICE.md)。
+需要区分数据和工具：`rime-wanxiang-data` 的 `LICENSE-SCOPE.md` 明确说明其原创 Python、Kotlin、Shell、PowerShell 等程序代码目前没有独立授予复制、修改、再分发或商业使用许可。因此本方案只采用已授权的数据，不直接复制那里的更新器 App、后台工具或构建脚本。更新下载逻辑由 OrangeCell 自己实现。第三方组件继续按各自许可证处理。[第三方声明](https://github.com/amzxyz/rime-wanxiang-data/blob/wanxiang/NOTICE.md)。
 
-正式打包时附上万象与模型的来源、版本和完整许可证，在 README/关于页署名并注明 Zephyr 适配了 schema；当前研究下载的发布 ZIP 没有替代这一分发步骤。
+正式打包时附上万象与模型的来源、版本和完整许可证，在 README/关于页署名并注明 OrangeCell 适配了 schema；当前研究下载的发布 ZIP 没有替代这一分发步骤。
 
 ## 7. 本次完成状态
 

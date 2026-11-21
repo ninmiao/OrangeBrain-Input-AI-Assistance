@@ -27,7 +27,7 @@
 
 ## 状态
 
-Windows 1.10.0 已覆盖安装到 `C:\Program Files\Zephyr Input`，文件哈希与构建一致，三个 Policy 的 Key 保留，无需重启；32/64 位注册与系统激活检查通过。Android 1.8.0 ARM64 与 x86_64 APK 已构建，模拟器调试版已更新至 1.8.0；未更新手机，未推送 GitHub。
+Windows 1.10.0 已覆盖安装到 `C:\Program Files\OrangeCell`，文件哈希与构建一致，三个 Policy 的 Key 保留，无需重启；32/64 位注册与系统激活检查通过。Android 1.8.0 ARM64 与 x86_64 APK 已构建，模拟器调试版已更新至 1.8.0；未更新手机，未推送 GitHub。
 
 SHA-256：
 

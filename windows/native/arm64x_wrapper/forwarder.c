@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ARM64X TSF loader for Windows on ARM. Built twice from this file: the ARM64 half
 // (used by native ARM64 apps) and the ARM64EC half (used by emulated x64 apps), each
-// with ZEPHYR_TARGET naming the module it serves. A pure forwarder would make the
+// with ORANGECELL_TARGET naming the module it serves. A pure forwarder would make the
 // loader search for the target on the default DLL path, which does not include this
 // module's directory, so this loads the target by full path from its own folder.
 //
@@ -12,18 +12,18 @@
 #include <objbase.h>
 #include <olectl.h>
 
-#ifndef ZEPHYR_TARGET
-#error ZEPHYR_TARGET (the target module file name) is required
+#ifndef ORANGECELL_TARGET
+#error ORANGECELL_TARGET (the target module file name) is required
 #endif
-#define ZEPHYR_WIDEN2(x) L##x
-#define ZEPHYR_WIDEN(x) ZEPHYR_WIDEN2(x)
+#define ORANGECELL_WIDEN2(x) L##x
+#define ORANGECELL_WIDEN(x) ORANGECELL_WIDEN2(x)
 
 static HMODULE volatile target;
 
 static HMODULE load_target(void) {
   HMODULE self = NULL, loaded;
   wchar_t path[MAX_PATH];
-  const wchar_t* name = ZEPHYR_WIDEN(ZEPHYR_TARGET);
+  const wchar_t* name = ORANGECELL_WIDEN(ORANGECELL_TARGET);
   DWORD length, slash = 0, i, j;
   if (target) return target;
   if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |

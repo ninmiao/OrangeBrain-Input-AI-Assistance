@@ -259,7 +259,7 @@ HRESULT WeaselTSF::_HandleCompartment(REFGUID guidCompartment) {
       _EnableLanguageBar(isOpen);
       _UpdateLanguageBar(_status);
     } else {
-      // Zephyr keeps its IME interface open in both languages. OS open/close
+      // OrangeCell keeps its IME interface open in both languages. OS open/close
       // notifications are not language toggles (reopening sends another one).
       if (!_IsKeyboardOpen()) _SetKeyboardOpen(true);
       if (_pLangBarButton && _pLangBarButton->IsLangBarDisabled()) _EnableLanguageBar(true);

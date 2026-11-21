@@ -20,7 +20,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Zephyr Input"
+rootProject.name = "OrangeCell"
 include(":app")
 include(":codegen")
 include(":ai-core")

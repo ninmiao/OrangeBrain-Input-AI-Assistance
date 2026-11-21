@@ -19,9 +19,9 @@ class WeaselTSF : public ITfTextInputProcessorEx,
                   public ITfActiveLanguageProfileNotifySink,
                   public ITfDisplayAttributeProvider {
  public:
-  bool _zephyrRefreshPending=false;
-  HWND _zephyrPollWindow=nullptr;
-  static LRESULT CALLBACK _ZephyrPollProc(HWND,UINT,WPARAM,LPARAM);
+  bool _orangecellRefreshPending=false;
+  HWND _orangecellPollWindow=nullptr;
+  static LRESULT CALLBACK _OrangeCellPollProc(HWND,UINT,WPARAM,LPARAM);
   WeaselTSF();
   ~WeaselTSF();
 
@@ -185,8 +185,8 @@ class WeaselTSF : public ITfTextInputProcessorEx,
   void _UninitKeyEventSink();
   void _ProcessKeyEvent(WPARAM wParam, LPARAM lParam, BOOL* pfEaten);
   bool _ShouldDeferCandidateKey(weasel::KeyEvent key);
-  bool _zephyrAiRefreshPending = false;
-  bool _zephyrAiSnapshotRead = false;
+  bool _orangecellAiRefreshPending = false;
+  bool _orangecellAiSnapshotRead = false;
 
   BOOL _InitPreservedKey();
   void _UninitPreservedKey();

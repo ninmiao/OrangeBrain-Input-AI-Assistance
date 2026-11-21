@@ -34,7 +34,7 @@ RimeLeversApi* GetLeversApi() {
 }
 
 void PrintDictCliUsage() {
-  std::wcerr << L"Usage: ZephyrDeployer.exe /dict <command> [arguments]\n"
+  std::wcerr << L"Usage: OrangeCellDeployer.exe /dict <command> [arguments]\n"
              << L"Commands:\n"
              << L"  list\n"
              << L"  backup <dict-name>\n"

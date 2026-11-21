@@ -4,17 +4,17 @@
 #include "WeaselTSF.h"
 #include <KeyEvent.h>
 #include "CandidateList.h"
-#include "ZephyrKeySettings.h"
-#include "ZephyrShortcuts.h"
+#include "OrangeCellKeySettings.h"
+#include "OrangeCellShortcuts.h"
 
 static weasel::KeyEvent prevKeyEvent;
-static GUID ZephyrShiftSpaceGuid() { GUID g=GUID_IME_MODE_PRESERVED_KEY;g.Data1+=1;return g; }
+static GUID OrangeCellShiftSpaceGuid() { GUID g=GUID_IME_MODE_PRESERVED_KEY;g.Data1+=1;return g; }
 static BOOL prevfEaten = FALSE;
 static int keyCountToSimulate = 0;
 
 // ALT chords may be consumed as host system-key messages before ordinary
 // OnKeyDown. Register their TSF command path as well. Each slot has its own ID.
-static GUID ZephyrCandidateKeyGuid(UINT slot) {
+static GUID OrangeCellCandidateKeyGuid(UINT slot) {
   GUID value = {0x7f26d4b0, 0x317c, 0x47ed,
                 {0xb9, 0x56, 0x18, 0xcf, 0x44, 0x90, 0xac, 0x10}};
   value.Data1 += slot;
@@ -28,9 +28,9 @@ void WeaselTSF::_CheckInputContext(ITfContext* context) {
 }
 
 bool WeaselTSF::_ShouldDeferCandidateKey(weasel::KeyEvent key) {
-  if (!_zephyrAiRefreshPending || !_status.composing) return false;
-  const auto prefs = zephyr::currentKeyPreferences();
-  return zephyr::candidateListKey(key.keycode, key.mask, prefs && prefs->enterOriginal,
+  if (!_orangecellAiRefreshPending || !_status.composing) return false;
+  const auto prefs = orangecell::currentKeyPreferences();
+  return orangecell::candidateListKey(key.keycode, key.mask, prefs && prefs->enterOriginal,
                                   prefs && (prefs->spaceOriginal || prefs->wordSegmentation));
 }
 
@@ -48,7 +48,7 @@ void WeaselTSF::_ProcessKeyEvent(WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
   const bool converted = ConvertKeyEvent(static_cast<UINT>(wParam), lParam, _lpbKeyState, ke);
   // An echo writes into the response buffer too. Keep the AI snapshot intact
   // when this key will not be sent to the server.
-  if (_zephyrAiRefreshPending && (!converted || _ShouldDeferCandidateKey(ke))) {
+  if (_orangecellAiRefreshPending && (!converted || _ShouldDeferCandidateKey(ke))) {
     *pfEaten = converted;
     return;
   }
@@ -71,15 +71,15 @@ void WeaselTSF::_ProcessKeyEvent(WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
         ke.keycode = ibus::Up;
     }
     const bool aiShortcut = (ke.keycode == ibus::F8 || ke.keycode == ibus::F9 || ke.keycode == ibus::F10) &&
-        zephyr::shortcutChord(zephyr::currentKeyPreferences().value_or(zephyr::KeyPreferences{}).aiShortcut,
+        orangecell::shortcutChord(orangecell::currentKeyPreferences().value_or(orangecell::KeyPreferences{}).aiShortcut,
                               ke.keycode, ke.mask);
     if (_status.composing && (lParam & (1LL << 30)) && aiShortcut)
       *pfEaten = TRUE;  // Holding the shortcut must not flood the AI service.
     else if (!keyCountToSimulate) {
       *pfEaten = (BOOL)m_client.ProcessKeyEvent(ke);
       // Retrying can remove the existing AI prefix before the replacement arrives.
-      if (*pfEaten && aiShortcut) _zephyrAiRefreshPending = true;
-      if (_zephyrAiRefreshPending) _zephyrAiSnapshotRead = false;
+      if (*pfEaten && aiShortcut) _orangecellAiRefreshPending = true;
+      if (_orangecellAiRefreshPending) _orangecellAiSnapshotRead = false;
     }
 
     if (ke.keycode == ibus::Caps_Lock) {
@@ -201,7 +201,7 @@ STDMETHODIMP WeaselTSF::OnPreservedKey(ITfContext* pContext,
   _CheckInputContext(pContext);
   *pfEaten = FALSE;
   for (UINT slot = 0; slot < 5; ++slot) {
-    if (IsEqualGUID(rguid, ZephyrCandidateKeyGuid(slot))) {
+    if (IsEqualGUID(rguid, OrangeCellCandidateKeyGuid(slot))) {
       if (_status.composing && !_IsKeyboardDisabled()) {
         const weasel::KeyEvent key('1' + slot, ibus::ALT_MASK);
         if (_ShouldDeferCandidateKey(key)) {
@@ -215,10 +215,10 @@ STDMETHODIMP WeaselTSF::OnPreservedKey(ITfContext* pContext,
       return S_OK;
     }
   }
-  if ((IsEqualGUID(rguid, GUID_IME_MODE_PRESERVED_KEY)||IsEqualGUID(rguid,ZephyrShiftSpaceGuid())) && !_IsKeyboardDisabled() && _EnsureServerConnected()) {
-    int mask=ibus::CONTROL_MASK|(IsEqualGUID(rguid,ZephyrShiftSpaceGuid())?ibus::SHIFT_MASK:0);
-    auto prefs=zephyr::currentKeyPreferences().value_or(zephyr::KeyPreferences{});
-    if(!zephyr::shortcutChord(prefs.languageShortcut,' ',mask))return S_OK;
+  if ((IsEqualGUID(rguid, GUID_IME_MODE_PRESERVED_KEY)||IsEqualGUID(rguid,OrangeCellShiftSpaceGuid())) && !_IsKeyboardDisabled() && _EnsureServerConnected()) {
+    int mask=ibus::CONTROL_MASK|(IsEqualGUID(rguid,OrangeCellShiftSpaceGuid())?ibus::SHIFT_MASK:0);
+    auto prefs=orangecell::currentKeyPreferences().value_or(orangecell::KeyPreferences{});
+    if(!orangecell::shortcutChord(prefs.languageShortcut,' ',mask))return S_OK;
     *pfEaten = m_client.ProcessKeyEvent(weasel::KeyEvent(' ', mask));
     _UpdateComposition(pContext);
   }
@@ -253,13 +253,13 @@ BOOL WeaselTSF::_InitPreservedKey() {
   if (FAILED(_pThreadMgr->QueryInterface(&manager))) return FALSE;
   TF_PRESERVEDKEY key{VK_SPACE, TF_MOD_CONTROL};
   HRESULT language = manager->PreserveKey(_tfClientId, GUID_IME_MODE_PRESERVED_KEY,
-                                          &key, L"Zephyr language", 15);
+                                          &key, L"OrangeCell language", 15);
   TF_PRESERVEDKEY shiftSpace{VK_SPACE, TF_MOD_CONTROL|TF_MOD_SHIFT};
-  manager->PreserveKey(_tfClientId,ZephyrShiftSpaceGuid(),&shiftSpace,L"Zephyr language",15);
+  manager->PreserveKey(_tfClientId,OrangeCellShiftSpaceGuid(),&shiftSpace,L"OrangeCell language",15);
   for (UINT slot = 0; slot < 5; ++slot) {
     TF_PRESERVEDKEY candidate{'1' + slot, TF_MOD_ALT};
-    manager->PreserveKey(_tfClientId, ZephyrCandidateKeyGuid(slot),
-                        &candidate, L"Zephyr candidate", 16);
+    manager->PreserveKey(_tfClientId, OrangeCellCandidateKeyGuid(slot),
+                        &candidate, L"OrangeCell candidate", 16);
   }
   return SUCCEEDED(language);
 }
@@ -270,10 +270,10 @@ void WeaselTSF::_UninitPreservedKey() {
     TF_PRESERVEDKEY key{VK_SPACE, TF_MOD_CONTROL};
     manager->UnpreserveKey(GUID_IME_MODE_PRESERVED_KEY, &key);
     TF_PRESERVEDKEY shiftSpace{VK_SPACE,TF_MOD_CONTROL|TF_MOD_SHIFT};
-    manager->UnpreserveKey(ZephyrShiftSpaceGuid(),&shiftSpace);
+    manager->UnpreserveKey(OrangeCellShiftSpaceGuid(),&shiftSpace);
     for (UINT slot = 0; slot < 5; ++slot) {
       TF_PRESERVEDKEY candidate{'1' + slot, TF_MOD_ALT};
-      manager->UnpreserveKey(ZephyrCandidateKeyGuid(slot), &candidate);
+      manager->UnpreserveKey(OrangeCellCandidateKeyGuid(slot), &candidate);
     }
   }
 }

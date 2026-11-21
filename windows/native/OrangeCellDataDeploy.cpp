@@ -18,7 +18,7 @@ int WINAPI wWinMain(HINSTANCE,HINSTANCE,PWSTR,int) {
   int argc=0;wchar_t** argv=CommandLineToArgvW(GetCommandLineW(),&argc);
   if(argc!=5){LocalFree(argv);return 2;}
   std::wstring dll=argv[1];std::string shared=utf8(argv[2]),user=utf8(argv[3]),schema=utf8(argv[4]);LocalFree(argv);
-  if(schema!="zephyr_wanxiang" && schema!="rime_ai_simp")return 3;
+  if(schema!="orangecell_wanxiang" && schema!="rime_ai_simp")return 3;
   HANDLE mutex=CreateMutexW(nullptr,TRUE,L"WeaselDeployerMutex");
   if(!mutex || GetLastError()==ERROR_ALREADY_EXISTS){if(mutex)CloseHandle(mutex);return 4;}
   HMODULE library=LoadLibraryExW(dll.c_str(),nullptr,LOAD_WITH_ALTERED_SEARCH_PATH);
@@ -27,11 +27,11 @@ int WINAPI wWinMain(HINSTANCE,HINSTANCE,PWSTR,int) {
   auto api=entry();int result=0;
   const char* modules[]={"default","deployer","lua","octagram",nullptr};
   RIME_STRUCT(RimeTraits,t);t.shared_data_dir=shared.c_str();t.user_data_dir=user.c_str();
-  const std::string staging=user+"/build", logs=user+"/.zephyr-wanxiang";
+  const std::string staging=user+"/build", logs=user+"/.orangecell-wanxiang";
   std::filesystem::create_directories(std::filesystem::u8path(staging));
   std::filesystem::create_directories(std::filesystem::u8path(logs));
   t.prebuilt_data_dir=shared.c_str();t.staging_dir=staging.c_str();
-  t.app_name="rime.zephyr-data";t.distribution_name="Zephyr Input";t.modules=modules;t.min_log_level=2;t.log_dir=logs.c_str();
+  t.app_name="rime.orangecell-data";t.distribution_name="OrangeCell";t.modules=modules;t.min_log_level=2;t.log_dir=logs.c_str();
   api->setup(&t);api->initialize(&t);api->deployer_initialize(&t);
   auto module=api->find_module("levers");
   if(!module)result=7;
@@ -45,7 +45,7 @@ int WINAPI wWinMain(HINSTANCE,HINSTANCE,PWSTR,int) {
         if(!list.list[i].schema_id || selected.front()==list.list[i].schema_id)continue;
         const std::string id=list.list[i].schema_id;
         // Rollback before first installation may remove our unpublished schema.
-        if(id=="zephyr_wanxiang" && !std::filesystem::exists(std::filesystem::u8path(user+"/"+id+".schema.yaml")))continue;
+        if(id=="orangecell_wanxiang" && !std::filesystem::exists(std::filesystem::u8path(user+"/"+id+".schema.yaml")))continue;
         selected.push_back(id);
       }
       levers->schema_list_destroy(&list);

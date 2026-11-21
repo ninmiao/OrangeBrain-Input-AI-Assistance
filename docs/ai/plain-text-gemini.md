@@ -13,7 +13,7 @@ OpenAI 官方接口使用独立 Responses 请求：instructions + input + store:
 ## OpenRouter Preset
 
 1. 在 OpenRouter 后台分别建立简体、繁体、英文 Preset，复制 README 对应提示词，简体与繁体填入实际字形要求。
-2. Windows 1.6.1 / Android 1.5.1 起，Policy 的 Preset 开关默认关闭，使用完整本地提示词。开启后显示三个默认引用：@preset/zephyr-zh-hans、@preset/zephyr-zh-hant、@preset/zephyr-en，可按需修改；该模式不发送本地系统提示词。
+2. Windows 1.6.1 / Android 1.5.1 起，Policy 的 Preset 开关默认关闭，使用完整本地提示词。开启后显示三个默认引用：@preset/orangecell-zh-hans、@preset/orangecell-zh-hant、@preset/orangecell-en，可按需修改；该模式不发送本地系统提示词。
 3. 客户端模型、思考、速度和供应商参数优先。使用 Preset 时，本地附加提示词不参与该模式的请求。
 4. 更新后台 Preset 后，后续请求自动使用更新内容。普通推理密钥用于调用；API 创建和管理 Preset 需要独立管理密钥，不在客户端保存该管理密钥。
 

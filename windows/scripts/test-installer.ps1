@@ -3,11 +3,11 @@ $ErrorActionPreference='Stop'
 $root=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 if(!$Report){$Report=Join-Path $root '.tools/installer-validation.json'}
 $setupPath=(Resolve-Path -LiteralPath $Setup).Path
-if([IO.Path]::GetFileName($setupPath) -notmatch '^Zephyr-Input-Windows-(?<version>[0-9]+\.[0-9]+\.[0-9]+)-Setup-x64\.exe$'){throw 'Unexpected installer'}
+if([IO.Path]::GetFileName($setupPath) -notmatch '^OrangeCell-Windows-(?<version>[0-9]+\.[0-9]+\.[0-9]+)-Setup-x64\.exe$'){throw 'Unexpected installer'}
 $expectedVersion=$Matches.version
-$target=Join-Path $env:ProgramFiles 'Zephyr Input'
-$uninstallKey='HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{EBA0B59B-4AD5-46C9-9F26-1C517208A753}_is1'
-$data=Join-Path $env:APPDATA 'ZephyrInput'
+$target=Join-Path $env:ProgramFiles 'OrangeCell'
+$uninstallKey='HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{26046138-D37D-49AE-880A-0FA896024DB1}_is1'
+$data=Join-Path $env:APPDATA 'OrangeCell'
 $before=@{};if(Test-Path -LiteralPath $data){Get-ChildItem -LiteralPath $data -File | Where-Object {$_.Name -eq 'settings.json' -or $_.Name -like 'credential-*.bin'} | ForEach-Object {$before[$_.Name]=(Get-FileHash -LiteralPath $_.FullName).Hash}}
 $checks=[Collections.Generic.List[string]]::new()
 function Get-Uninstaller {
@@ -29,7 +29,7 @@ function Install-Check([string]$label) {
  # Silent installation must bring up the real per-user broker pipe as well.
  $deadline=[DateTime]::UtcNow.AddSeconds(15);$brokerReady=$false
  do {
-  $probe=[IO.Pipes.NamedPipeClientStream]::new('.',('ZephyrAI-'+$env:USERNAME),[IO.Pipes.PipeDirection]::InOut)
+  $probe=[IO.Pipes.NamedPipeClientStream]::new('.',('OrangeCellAI-'+$env:USERNAME),[IO.Pipes.PipeDirection]::InOut)
   try {$probe.Connect(500);$brokerReady=$true} catch {} finally {$probe.Dispose()}
   if(!$brokerReady){Start-Sleep -Milliseconds 200}
  } while(!$brokerReady -and [DateTime]::UtcNow -lt $deadline)
@@ -49,8 +49,8 @@ try {
  $p=Start-Process -FilePath (Get-Uninstaller) -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',('/LOG="'+(Join-Path $root '.tools/installer-uninstall.log')+'"')) -WindowStyle Hidden -Wait -PassThru
  if($p.ExitCode -notin @(0,3010)){throw "Uninstall failed: $($p.ExitCode)"}
  if(Test-Path $uninstallKey){throw 'Uninstall registry entry remains'}
- if(Test-Path 'HKLM:\Software\ZephyrInput'){throw 'Product registry remains'}
- if(Test-Path -LiteralPath "$target/ZephyrSettings.exe"){throw 'Program remains after uninstall'}
+ if(Test-Path 'HKLM:\Software\OrangeCell'){throw 'Product registry remains'}
+ if(Test-Path -LiteralPath "$target/OrangeCellSettings.exe"){throw 'Program remains after uninstall'}
  $checks.Add('uninstall')
  Install-Check 'reinstall'
  foreach($name in $before.Keys){if((Get-FileHash -LiteralPath (Join-Path $data $name)).Hash -ne $before[$name]){throw 'User config or credential changed'}}
@@ -65,5 +65,5 @@ try {
  throw
 } finally {
  # Always restore a working installation, even if an uninstall assertion fails.
- if(!(Test-Path -LiteralPath "$target/ZephyrSettings.exe")){try{Install-Check 'recovery'}catch{}}
+ if(!(Test-Path -LiteralPath "$target/OrangeCellSettings.exe")){try{Install-Check 'recovery'}catch{}}
 }

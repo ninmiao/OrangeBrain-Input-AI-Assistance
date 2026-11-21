@@ -8,7 +8,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 root=Path(__file__).resolve().parents[2]
 (root/'.tools').mkdir(exist_ok=True)
 key=rsa.generate_private_key(public_exponent=65537,key_size=2048)
-name=x509.Name([x509.NameAttribute(NameOID.COMMON_NAME,'Zephyr Input local test only')])
+name=x509.Name([x509.NameAttribute(NameOID.COMMON_NAME,'OrangeCell local test only')])
 now=datetime.datetime.now(datetime.timezone.utc)
 cert=(x509.CertificateBuilder().subject_name(name).issuer_name(name).public_key(key.public_key()).serial_number(x509.random_serial_number())
     .not_valid_before(now-datetime.timedelta(days=1)).not_valid_after(now+datetime.timedelta(days=365))

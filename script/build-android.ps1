@@ -1,1 +1,1 @@
-& "$PSScriptRoot/../android/script/build-zephyr.ps1" @args
+& "$PSScriptRoot/../android/script/build-orangecell.ps1" @args

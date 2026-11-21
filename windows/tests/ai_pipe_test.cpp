@@ -1,10 +1,10 @@
 #define UNICODE
 #define _UNICODE
 #include <windows.h>
-#include "ZephyrAiPipe.h"
+#include "OrangeCellAiPipe.h"
 #include <iostream>
 int main() {
-  zephyr::AiPipe client;
+  orangecell::AiPipe client;
   client.submit({123,7,"hello world",false,false});
   for(int i=0;i<60;++i) {
     Sleep(50);auto result=client.take(123);

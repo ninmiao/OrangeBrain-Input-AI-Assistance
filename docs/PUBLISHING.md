@@ -1,4 +1,4 @@
-# 发布 Zephyr Input
+# 发布 OrangeCell
 
 以项目根目录建库。`.gitignore` 使用根目录允许清单，并进一步排除缓存、编译输出、本机凭据、旧截图和历史测试输出。
 
@@ -25,7 +25,7 @@ SDK、JDK、模拟器、VS/Boost 缓存、生成语料、截图、测试日志�
 
 两端均内置万象、雾凇词表，可从官方 GitHub 更新。约 407 MB 的万象语法模型单独下载。两端共用 C++ AI 核心，使用流式 JSON 候选数组、默认前 50 / 后 0 字上下文和 token 软预算。Windows 手动保存，Android 设置自动生效，一键测速选择已有 Policy。
 
-在 GitHub Actions 手动运行 Zephyr cloud builds，两端通过后下载同一个 `dist` 附件并核对校验值。发布到仓库之前，用本地既有 Demo 证书给云端 APK 重签，并重新生成 `SHA256SUMS`，保证已有 Demo 用户可覆盖安装。环境与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。Windows 先使用 `windows/scripts/package.ps1` 生成 app-image，再使用 `build-installer.ps1` 生成包含原生程序和词表的 Setup EXE（不含 JVM/Kotlin），只发布这个安装器；Android 发布 ARM64 demo APK。各版本的构建和验证结果见 [更新日志](../UPDATE_LOG.md)。
+在 GitHub Actions 手动运行 OrangeCell cloud builds，两端通过后下载同一个 `dist` 附件并核对校验值。发布到仓库之前，用本地既有 Demo 证书给云端 APK 重签，并重新生成 `SHA256SUMS`，保证已有 Demo 用户可覆盖安装。环境与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。Windows 先使用 `windows/scripts/package.ps1` 生成 app-image，再使用 `build-installer.ps1` 生成包含原生程序和词表的 Setup EXE（不含 JVM/Kotlin），只发布这个安装器；Android 发布 ARM64 demo APK。各版本的构建和验证结果见 [更新日志](../UPDATE_LOG.md)。
 
 新库仍需保留项目及第三方源码许可证、版权和来源信息。不将手机或 Windows 用户数据放入项目；不将本地加密凭据作为“安全文件”发布。
 

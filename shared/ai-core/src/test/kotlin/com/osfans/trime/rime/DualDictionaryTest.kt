@@ -18,7 +18,7 @@ class DualDictionaryTest {
     private fun release(id:Char)=WanxiangRelease("bundled",WanxiangAsset("data","",1,id.toString().repeat(64)))
     private fun bundle():File {
         val dir=File(root,"bundle").apply {mkdirs()};val wx=release('a');val ice=release('b')
-        File(dir,"zephyr-dictionaries.json").writeText(wanxiangJson.encodeToString(WanxiangState(dictionary=wx,iceDictionary=ice)))
+        File(dir,"orangecell-dictionaries.json").writeText(wanxiangJson.encodeToString(WanxiangState(dictionary=wx,iceDictionary=ice)))
         File(dir,WanxiangUpdater.dictName(wx)+".dict.yaml").writeText("manifest")
         File(dir,WanxiangUpdater.dictName(wx)+"_algebra.yaml").writeText("algebra")
         File(dir,WanxiangUpdater.iceName(ice)+".dict.yaml").writeText("manifest")
@@ -37,7 +37,7 @@ class DualDictionaryTest {
         val u=updater();assertTrue(u.state().enabled);assertTrue(u.state().grammar)
         assertNotNull(u.state().dictionary);assertNotNull(u.state().iceDictionary)
         u.selectDictionary(true)
-        assertFalse(File(u.directory,"zephyr_wanxiang.schema.yaml").readText().contains("grammar:"))
+        assertFalse(File(u.directory,"orangecell_wanxiang.schema.yaml").readText().contains("grammar:"))
         u.selectDictionary(false);assertFalse(u.state().enabled);assertTrue(u.state().grammar)
         assertContains(File(u.directory,"rime_ai_simp.schema.yaml").readText(),"user_dict: rime_ice")
         u.selectDictionary(true);assertTrue(u.state().enabled);assertTrue(u.state().grammar)
@@ -62,10 +62,10 @@ class DualDictionaryTest {
             val u=WanxiangUpdater(File(root,"user"),WanxiangActivator {},WanxiangNetwork(OkHttpClient(),true),{calls+=it;assertTrue(it);model},bundledDirectory=bundle())
             u.selectDictionary(false);server.enqueue(MockResponse().setBody(Buffer().write(bytes)));u.updateModel()
             assertFalse(u.state().enabled);assertEquals(listOf(true),calls)
-            assertFalse(File(u.directory,"zephyr_wanxiang.schema.yaml").readText().contains("grammar:"))
-            u.selectDictionary(true);assertContains(File(u.directory,"zephyr_wanxiang.schema.yaml").readText(),WanxiangUpdater.modelName(model))
+            assertFalse(File(u.directory,"orangecell_wanxiang.schema.yaml").readText().contains("grammar:"))
+            u.selectDictionary(true);assertContains(File(u.directory,"orangecell_wanxiang.schema.yaml").readText(),WanxiangUpdater.modelName(model))
             u.selectDictionary(false);u.selectDictionary(true,false)
-            assertFalse(File(u.directory,"zephyr_wanxiang.schema.yaml").readText().contains("grammar:"))
+            assertFalse(File(u.directory,"orangecell_wanxiang.schema.yaml").readText().contains("grammar:"))
             assertTrue(File(u.directory,WanxiangUpdater.modelName(model)+".gram").exists())
         }
     }

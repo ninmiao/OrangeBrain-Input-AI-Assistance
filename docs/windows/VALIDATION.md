@@ -51,11 +51,11 @@ JSONL SHA256：`d1a3d880eb3ca85d2a204b100b77b7d884817c31752294cf6ecdf1722d777e5d
 
 ## 系统接入与界面验收
 
-测试系统 build **26300.9711 / 26H2，x64**。用户允许安装后，程序位于 `C:\Program Files\Zephyr Input`，独立注册表、x64/x86 DLL 和启动快捷方式已建立。两种位数均通过 OS 管理的真实 Profile 激活及五个候选快捷键注册检查。首次直接调用未注册 TIP 的 ActivateEx 失败是测试路径错误，随后改为 Windows Profile Manager 激活，并保留 KeyEventSink 检查。
+测试系统 build **26300.9711 / 26H2，x64**。用户允许安装后，程序位于 `C:\Program Files\OrangeCell`，独立注册表、x64/x86 DLL 和启动快捷方式已建立。两种位数均通过 OS 管理的真实 Profile 激活及五个候选快捷键注册检查。首次直接调用未注册 TIP 的 ActivateEx 失败是测试路径错误，随后改为 Windows Profile Manager 激活，并保留 KeyEventSink 检查。
 
-覆盖升级已实际完成。TSF DLL 使用内容哈希文件名，避免覆盖被其他应用加载的 DLL；安装程序只停止 Zephyr 安装目录内的进程，不关闭其他应用，保留用户词库和 DPAPI 凭据。
+覆盖升级已实际完成。TSF DLL 使用内容哈希文件名，避免覆盖被其他应用加载的 DLL；安装程序只停止 OrangeCell 安装目录内的进程，不关闭其他应用，保留用户词库和 DPAPI 凭据。
 
-使用专用 `Zephyr TSF Test Host`（x64）和电脑操作工具逐键操作，实际观察候选窗口和文本框值；没有用粘贴代替键盘路径。测试宿主源码随项目提供。
+使用专用 `OrangeCell TSF Test Host`（x64）和电脑操作工具逐键操作，实际观察候选窗口和文本框值；没有用粘贴代替键盘路径。测试宿主源码随项目提供。
 
 | 真实 UI 项目 | 观察结果 |
 | --- | --- |
@@ -83,6 +83,6 @@ JSONL SHA256：`d1a3d880eb3ca85d2a204b100b77b7d884817c31752294cf6ecdf1722d777e5d
 
 第一次链路检查将英文结果限定为不带标点的小写 `hello world`，导致 OpenAI 的标点变体被错判；已将链路断言改为候选来源、输出语言、保留组合区及提交一致性，未改 44 条质量回归分数。OpenRouter 初次英文链路无 AI 候选，后续复测通过；该失败仍保留在本地日志，不能据复测声称无瞬时失败。
 
-失败诊断文件 `%APPDATA%\ZephyrInput\last-request-status.json` 仅保存时间及错误类别/HTTP 状态，不保存输入、候选、Key 或请求正文。空白组合不会发送云端。
+失败诊断文件 `%APPDATA%\OrangeCell\last-request-status.json` 仅保存时间及错误类别/HTTP 状态，不保存输入、候选、Key 或请求正文。空白组合不会发送云端。
 
 按语言的严格结果：OpenAI 中文 Top-1/Top-3 为 20/22，英文 21/22；OpenRouter 中文 Top-1 为 19/22、Top-3 为 20/22，英文均为 19/22。

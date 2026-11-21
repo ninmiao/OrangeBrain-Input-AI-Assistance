@@ -89,7 +89,7 @@ class TrimeApplication : Application() {
         }
         instance = this
         try {
-            if (false) { // Input-bearing debug logging is disabled for Zephyr Input.
+            if (false) { // Input-bearing debug logging is disabled for OrangeCell.
                 Timber.plant(
                     object : Timber.DebugTree() {
                         override fun createStackElementTag(element: StackTraceElement): String = "${super.createStackElementTag(element)}|${element.fileName}:${element.lineNumber}"

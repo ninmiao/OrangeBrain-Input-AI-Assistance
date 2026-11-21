@@ -1,6 +1,6 @@
 # Windows 1.9.0 原生版安装与输入验证
 
-日期：2026-11-16。最终版本已安装到本机 `C:\Program Files\Zephyr Input`，输入服务和 AI 后台正在运行；本轮未提交或推送 GitHub。测试系统为 Windows 11 build 26300，Windows 10 仍是构建兼容目标，本轮没有在 Windows 10 上实测。
+日期：2026-11-16。最终版本已安装到本机 `C:\Program Files\OrangeCell`，输入服务和 AI 后台正在运行；本轮未提交或推送 GitHub。测试系统为 Windows 11 build 26300，Windows 10 仍是构建兼容目标，本轮没有在 Windows 10 上实测。
 
 ## 安装与本轮修复
 
@@ -35,7 +35,7 @@
 
 ## 实际窗口与完整 AI 链路
 
-在 Zephyr TSF Test Host 中用实际按键输入：Win32 Edit 的 `nihao` 显示“你好”，数字 `1` 上屏；单按 Shift 切英文，再输入 `hi` 并回车，输入框得到“你好hi”。RichEdit 中原文回车上屏也正常。这部分使用离线后台，没有将用户文档发到云端。
+在 OrangeCell TSF Test Host 中用实际按键输入：Win32 Edit 的 `nihao` 显示“你好”，数字 `1` 上屏；单按 Shift 切英文，再输入 `hi` 并回车，输入框得到“你好hi”。RichEdit 中原文回车上屏也正常。这部分使用离线后台，没有将用户文档发到云端。
 
 安装后的设置窗口实际检查了滚动、Policy 信息、当前 Policy 测速以及从现有 Policy 多选的一键测速；单 Policy 长句测速显示 OpenAI 1958 ms。完整输入链路另用长中文拼音与长英文验证：逐键输入→原生后台→真实模型→AI 候选→Tab 上屏均成功。
 
@@ -61,7 +61,7 @@
 
 Windows 使用 MSVC v143 / Visual Studio 2022、C++17、Win32、静态 CRT；安装目录检查无 JVM、JAR、Kotlin 文件。安装后的 Settings、Broker、Server 与最终发布镜像 SHA-256 一致。
 
-- 安装包：`dist/Zephyr-Input-Windows-1.9.0-Setup-x64.exe`
+- 安装包：`dist/OrangeCell-Windows-1.9.0-Setup-x64.exe`
 - 大小：38,742,117 字节。
 - SHA-256：`bd871c79b0631ca59c49fa331c4c923393bba77135cd4bb8767f00351e524c01`。
 - 生成语料 `tests/corpus/generated/typos.jsonl` 保持 464,693 条，SHA-256 `d1a3d880eb3ca85d2a204b100b77b7d884817c31752294cf6ecdf1722d777e5d`；未删除、覆盖或上传。

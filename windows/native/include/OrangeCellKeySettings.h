@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-namespace zephyr {
+namespace orangecell {
 struct KeyPreferences { bool enterOriginal=true,spaceOriginal=false; std::string languageShortcut="shift",scriptShortcut="ctrl_shift_t"; bool contextEnabled=true,aiEnabled=false; int beforeLength=50,afterLength=0; uint64_t revision=0; std::string aiShortcut="f8"; bool wordSegmentation=true; };
 inline std::optional<KeyPreferences> readKeyPreferences(const std::filesystem::path& path) {
   try {
@@ -30,7 +30,7 @@ inline std::optional<KeyPreferences> currentKeyPreferences() {
   static std::mutex guard;std::lock_guard<std::mutex> lock(guard);
   static std::filesystem::path path=[] {
     wchar_t appdata[32768];DWORD n=GetEnvironmentVariableW(L"APPDATA",appdata,32768);
-    return n&&n<32768?std::filesystem::path(appdata)/L"ZephyrInput"/L"settings.json":std::filesystem::path();
+    return n&&n<32768?std::filesystem::path(appdata)/L"OrangeCell"/L"settings.json":std::filesystem::path();
   }();
   static std::optional<KeyPreferences> value;
   static FILETIME previous{};static bool initialized=false;

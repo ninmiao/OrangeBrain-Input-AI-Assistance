@@ -1,5 +1,5 @@
-#include "ZephyrComposition.h"
-#include "ZephyrKeySettings.h"
+#include "OrangeCellComposition.h"
+#include "OrangeCellKeySettings.h"
 #include <iostream>
 #include <stdexcept>
 
@@ -9,16 +9,16 @@ int main() {
   try {
     const std::filesystem::path settings="keyprefs-fixture.json";
     {std::ofstream f(settings);f<<R"({"enabled":true,"enterOriginal":false,"spaceOriginal":true})";}
-    auto prefs=zephyr::readKeyPreferences(settings);
+    auto prefs=orangecell::readKeyPreferences(settings);
     check(prefs&&!prefs->enterOriginal&&prefs->spaceOriginal,"local shortcut settings ignore cloud state");
     {std::ofstream f(settings);f<<R"({"candidateCount":3})";}
-    check(!zephyr::readKeyPreferences(settings),"legacy settings keep pipe compatibility");
+    check(!orangecell::readKeyPreferences(settings),"legacy settings keep pipe compatibility");
     {std::ofstream f(settings);f<<"invalid";}
-    check(!zephyr::readKeyPreferences(settings),"invalid local settings never crash typing");
+    check(!orangecell::readKeyPreferences(settings),"invalid local settings never crash typing");
     std::filesystem::remove(settings);
 
     for(bool chinese:{true,false}) {
-      zephyr::Composition z;z.chinese=chinese;
+      orangecell::Composition z;z.chinese=chinese;
       for(char c:std::string("hanbaowang haochi"))z.insert(c);
       check(z.originalKey(true,false),"Enter defaults to literal input");check(!z.originalKey(false,true),"Space defaults to boundary");
       z.enterOriginal=false;z.spaceOriginal=true;
@@ -34,9 +34,9 @@ int main() {
       z.clear();check(z.caret==0&&z.candidates.empty(),"cancel clears all candidate state");
       for(int i=0;i<301;i++)z.insert('a');check(z.input.size()==300,"input bounded to 300");
     }
-    zephyr::Composition z;z.insert('x');z.add(L"x",L"Original");z.adopt(z.revision,{L"one",L"one",L"two"});
+    orangecell::Composition z;z.insert('x');z.add(L"x",L"Original");z.adopt(z.revision,{L"one",L"one",L"two"});
     check(z.candidates==std::vector<std::wstring>({L"one",L"two",L"x"}),"AI is first and deduplicates within its own results");
-    zephyr::Composition mapped;mapped.insert('x');mapped.add(L"现在",L"Rime",2);
+    orangecell::Composition mapped;mapped.insert('x');mapped.add(L"现在",L"Rime",2);
     auto previous=mapped.revision;mapped.adopt(previous,{L"现在"},true);
     check(mapped.rimeIndices==std::vector<int>({-1,2}),"same-text AI keeps the native partial choice and its index");
     mapped.partialSelection=true;mapped.changed();
@@ -45,13 +45,13 @@ int main() {
     z.choose(50);check(z.input=="x","out of bounds selection is ignored");
     for(bool chinese:{true,false}) {
       for(int slot=1;slot<=5;++slot) {
-        zephyr::Composition choice;choice.chinese=chinese;choice.insert('x');
+        orangecell::Composition choice;choice.chinese=chinese;choice.insert('x');
         for(int i=0;i<8;++i)choice.add(L"candidate"+std::to_wstring(i),L"AI");
         check(choice.chooseDigit(slot),"direct digit selects existing slot");
         check(choice.commit==L"candidate"+std::to_wstring(slot-1),"digit selects correct rank");
         check(choice.input.empty(),"selection clears pending input");
       }
-      zephyr::Composition choice;choice.chinese=chinese;choice.insert('x');
+      orangecell::Composition choice;choice.chinese=chinese;choice.insert('x');
       for(int i=0;i<8;++i)choice.add(L"candidate"+std::to_wstring(i),L"Rime");
       choice.page=1;
       check(!choice.chooseDigit(4)&&!choice.chooseDigit(0)&&!choice.chooseDigit(6),"missing slot does not consume a digit");
@@ -60,19 +60,19 @@ int main() {
       check(!choice.chooseDigit(1),"idle digit is not consumed");
     }
     for(bool chinese:{true,false}) {
-      zephyr::Composition mixed;mixed.chinese=chinese;
+      orangecell::Composition mixed;mixed.chinese=chinese;
       for(char c:std::string("hello123world2026"))mixed.insert(c);
       check(mixed.input=="hello123world2026"&&mixed.commit.empty(),"literal keypad digits remain in mixed composition");
       mixed.add(L"hello123world2026",L"Original");mixed.choose(0);
       check(mixed.commit==L"hello123world2026","mixed numbers commit without loss");
     }
-    zephyr::Composition errorState;errorState.insert('n');errorState.add(L"你好",L"Rime");
+    orangecell::Composition errorState;errorState.insert('n');errorState.add(L"你好",L"Rime");
     errorState.aiError=L"Preset unavailable";
     check(errorState.candidates.size()==1&&errorState.commit.empty(),"preset error is never a selectable candidate");
     errorState.insert('i');check(errorState.aiError.empty(),"new input clears stale preset failure");
     errorState.aiError=L"Preset unavailable";errorState.clear();check(errorState.aiError.empty(),"cancel clears preset failure");
     {
-    zephyr::Composition pending;pending.insert('a');pending.add(L"本地",L"Rime",2);
+    orangecell::Composition pending;pending.insert('a');pending.add(L"本地",L"Rime",2);
     auto previous=pending.revision;pending.adopt(previous,{L"旧 AI"});
     check(pending.applyConfiguration(123),"new configuration invalidates");check(pending.refreshPending,"configuration requests redraw");
     check(pending.candidates.size()==1&&pending.candidates[0]==L"本地","local candidate survives settings change");
@@ -80,7 +80,7 @@ int main() {
     check(pending.applyConfiguration(124),"second configuration applies");check(pending.input=="a","configuration preserves pending input");
   }
   {
-    zephyr::Composition roles;roles.insert('x');roles.add(L"local",L"Rime",0);
+    orangecell::Composition roles;roles.insert('x');roles.add(L"local",L"Rime",0);
     check(roles.adopt(roles.revision,{L"same",L"same"},true),"dual response adopted");
     check(roles.candidates.size()==3&&roles.comments[0]!=roles.comments[1],"identical role candidates retained");
     roles.applyConfiguration(1);
@@ -89,7 +89,7 @@ int main() {
     check(roles.commit==L"answer","assistant selection inserts only content");
   }
   {
-    zephyr::Composition stream;stream.insert('x');
+    orangecell::Composition stream;stream.insert('x');
     for(int i=0;i<7;++i) stream.add(L"local "+std::to_wstring(i),L"Rime",i);
     stream.add(L"x",L"Original");
     check(stream.candidates[0]==L"local 0"&&stream.candidates[1]==L"local 1",
@@ -116,7 +116,7 @@ int main() {
     stream.chooseDigit(1);check(stream.commit==L"corrected","digit one selects the displayed correction");
   }
   {
-    zephyr::Composition context;
+    orangecell::Composition context;
     context.insert('a');
     context.before = "first field";
     context.after = "end of first field";

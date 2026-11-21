@@ -40,7 +40,7 @@
     <RootNamespace>WeaselTSF</RootNamespace>
   </PropertyGroup>
   <Import Project="..\weasel.props" />
-  <PropertyGroup><ZephyrArch Condition="'$(Platform)'=='x64'">x64</ZephyrArch><ZephyrArch Condition="'$(Platform)'=='Win32'">x86</ZephyrArch><ZephyrBits Condition="'$(Platform)'=='x64'">64</ZephyrBits><ZephyrBits Condition="'$(Platform)'=='Win32'">32</ZephyrBits></PropertyGroup><Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup><OrangeCellArch Condition="'$(Platform)'=='x64'">x64</OrangeCellArch><OrangeCellArch Condition="'$(Platform)'=='Win32'">x86</OrangeCellArch><OrangeCellBits Condition="'$(Platform)'=='x64'">64</OrangeCellBits><OrangeCellBits Condition="'$(Platform)'=='Win32'">32</OrangeCellBits></PropertyGroup><Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
@@ -177,7 +177,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(SolutionDir)output\weasel$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -207,7 +207,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(SolutionDir)output\weasel$(Platform)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>WeaselTSF.def</ModuleDefinitionFile>
@@ -235,7 +235,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(SolutionDir)output\weasel$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -269,7 +269,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(SolutionDir)output\weasel$(Platform)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -304,7 +304,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(SolutionDir)output\weasel$(Platform)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
@@ -337,7 +337,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(SolutionDir)output\weasel$(Platform)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>WeaselTSF.def</ModuleDefinitionFile>
@@ -372,7 +372,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(SolutionDir)output\weasel$(Platform)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -407,7 +407,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(SolutionDir)output\weasel$(Platform)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(ZephyrArch);$(SolutionDir)..\..\.tools\boost-win$(ZephyrBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\.tools\windows-atl\lib\$(OrangeCellArch);$(SolutionDir)..\..\.tools\boost-win$(OrangeCellBits)\lib;$(SolutionDir)\lib;$(BOOST_ROOT)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>

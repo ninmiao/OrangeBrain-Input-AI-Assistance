@@ -34,7 +34,7 @@ static void HMENU2ITfMenu(HMENU hMenu, ITfMenu* pTfMenu) {
   }
 }
 
-static LPCWSTR GetWeaselRegName() { return L"Software\\ZephyrInput"; }
+static LPCWSTR GetWeaselRegName() { return L"Software\\OrangeCell"; }
 
 static bool open(const std::wstring& path) {
   return (uintptr_t)ShellExecuteW(NULL, L"open", path.c_str(), NULL, NULL,
@@ -302,11 +302,11 @@ void WeaselTSF::_HandleLangBarMenuSelect(UINT wID) {
       }
       break;
     case ID_WEASELTRAY_USERCONFIG:
-      if (FAILED(RegGetStringValue(HKEY_CURRENT_USER, L"Software\\ZephyrInput",
+      if (FAILED(RegGetStringValue(HKEY_CURRENT_USER, L"Software\\OrangeCell",
                                    L"RimeUserDir", dir)) ||
           dir.empty()) {
         WCHAR _path[MAX_PATH] = {0};
-        ExpandEnvironmentStringsW(L"%AppData%\\ZephyrInput\\rime", _path, _countof(_path));
+        ExpandEnvironmentStringsW(L"%AppData%\\OrangeCell\\rime", _path, _countof(_path));
         dir = std::wstring(_path);
       }
       if (!dir.empty() && fs::exists(dir))

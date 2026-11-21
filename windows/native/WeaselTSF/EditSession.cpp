@@ -2,7 +2,7 @@
 #include "WeaselTSF.h"
 #include "CandidateList.h"
 #include "ResponseParser.h"
-#include "ZephyrKeySettings.h"
+#include "OrangeCellKeySettings.h"
 
 bool WeaselTSF::_HasFocusedEditContext(ITfContext* context) {
   com_ptr<ITfDocumentMgr> focused;
@@ -21,9 +21,9 @@ HRESULT WeaselTSF::_DoCompositionEditSession(TfEditCookie ec, ITfContext* editor
     return S_OK;
   if (!focused) {
     if (serial == _compositionRefreshSerial) {
-      _zephyrRefreshPending = false;
-      _zephyrAiRefreshPending = false;
-      _zephyrAiSnapshotRead = false;
+      _orangecellRefreshPending = false;
+      _orangecellAiRefreshPending = false;
+      _orangecellAiSnapshotRead = false;
     }
     return S_OK;
   }
@@ -35,7 +35,7 @@ HRESULT WeaselTSF::_DoCompositionEditSession(TfEditCookie ec, ITfContext* editor
                                 &_cand->style());
 
   bool ok = m_client.GetResponseData(std::ref(parser));
-  if (ok && _zephyrAiRefreshPending) _zephyrAiSnapshotRead = true;
+  if (ok && _orangecellAiRefreshPending) _orangecellAiSnapshotRead = true;
 
   _UpdateLanguageBar(_status);
 
@@ -93,7 +93,7 @@ HRESULT WeaselTSF::_DoCompositionEditSession(TfEditCookie ec, ITfContext* editor
   // Cache the current composition's context locally so a manual AI shortcut
   // can use it immediately. The broker only sends it with an AI request.
   try {
-    auto prefs=zephyr::currentKeyPreferences().value_or(zephyr::KeyPreferences{});
+    auto prefs=orangecell::currentKeyPreferences().value_or(orangecell::KeyPreferences{});
     std::wstring before,after;
     if(_status.composing && prefs.contextEnabled &&
        (prefs.aiEnabled || prefs.aiShortcut!="disabled") && !_IsKeyboardDisabled()) {
@@ -127,6 +127,6 @@ HRESULT WeaselTSF::_DoCompositionEditSession(TfEditCookie ec, ITfContext* editor
   } catch(...) { /* Context is optional. Never unwind through the host editor. */ }
 
   if (epoch == _compositionRefreshEpoch && serial == _compositionRefreshSerial)
-    _zephyrRefreshPending = false;
+    _orangecellRefreshPending = false;
   return TRUE;
 }

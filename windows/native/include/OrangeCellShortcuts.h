@@ -3,7 +3,7 @@
 #include <windows.h>
 #include <KeyEvent.h>
 #include <string>
-namespace zephyr {
+namespace orangecell {
 inline bool candidateListKey(int key, int mask, bool enterOriginal, bool spaceIsLiteral) {
   if (mask & (ibus::RELEASE_MASK | ibus::CONTROL_MASK | ibus::SUPER_MASK))
     return false;

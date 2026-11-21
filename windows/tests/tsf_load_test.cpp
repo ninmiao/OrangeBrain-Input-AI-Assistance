@@ -14,18 +14,18 @@ int wmain(int argc,wchar_t** argv) {
   HMODULE module=LoadLibraryW(argv[1]);if(!module){std::cerr<<"LoadLibrary: "<<GetLastError()<<"\n";return 4;}
   using Factory=HRESULT(STDAPICALLTYPE*)(REFCLSID,REFIID,void**);
   auto factory=reinterpret_cast<Factory>(GetProcAddress(module,"DllGetClassObject"));
-  CLSID clsid={0x652d71c8,0xb1e9,0x41ee,{0x9c,0xa6,0x7b,0x4d,0x0d,0xe6,0xcb,0x0a}};
-  GUID profile={0x91ebc2a4,0x2b8e,0x4781,{0xba,0x20,0x1c,0x92,0x67,0x52,0x94,0x67}};
+  CLSID clsid={0x7a61ac12,0xaf2d,0x4810,{0x89,0x5e,0x09,0xdb,0x95,0xc0,0xd3,0xb2}};
+  GUID profile={0xc6be1eb4,0x0700,0x4ace,{0xb9,0x86,0xd1,0x49,0xc5,0x38,0x5e,0xcb}};
   IClassFactory* creator=nullptr;ITfTextInputProcessorEx* service=nullptr;
   if(!factory){std::cerr<<"GetProcAddress(DllGetClassObject): "<<GetLastError()<<"\n";return 5;}
   hr=factory(clsid,IID_IClassFactory,reinterpret_cast<void**>(&creator));
   if(FAILED(hr)){std::cerr<<"DllGetClassObject: "<<std::hex<<hr<<std::dec<<"\n";return 5;}
-  // List the Zephyr modules this process loaded. Through the ARM64X loader an ARM64
+  // List the OrangeCell modules this process loaded. Through the ARM64X loader an ARM64
   // process gets the ARM64 module and an x64 process the x64 module.
   if(HANDLE snapshot=CreateToolhelp32Snapshot(TH32CS_SNAPMODULE,0);snapshot!=INVALID_HANDLE_VALUE) {
     MODULEENTRY32W entry{sizeof(entry)};
     for(BOOL more=Module32FirstW(snapshot,&entry);more;more=Module32NextW(snapshot,&entry))
-      if(_wcsnicmp(entry.szModule,L"ZephyrTSF",9)==0||_wcsnicmp(entry.szModule,L"weasel",6)==0)
+      if(_wcsnicmp(entry.szModule,L"OrangeCellTSF",9)==0||_wcsnicmp(entry.szModule,L"weasel",6)==0)
         std::wcout<<L"Loaded module: "<<entry.szExePath<<L"\n";
     CloseHandle(snapshot);
   }

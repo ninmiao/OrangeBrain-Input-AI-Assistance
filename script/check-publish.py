@@ -33,7 +33,7 @@ def main():
         "windows/native/UPSTREAM.json", "windows/THIRD-PARTY.md",
         "windows/scripts/package.ps1", "windows/scripts/prepare-deps.py",
         "windows/scripts/build-installer.ps1", "windows/scripts/test-installer.ps1",
-        "windows/installer/ZephyrSetup.iss", "windows/installer/setup-helper.ps1",
+        "windows/installer/OrangeCellSetup.iss", "windows/installer/setup-helper.ps1",
         "docs/windows/VALIDATION.md", "docs/windows/1.4.2-short-prompts.md",
         "docs/ai/models-example.json", "docs/ai/evaluation-cases.json",
         "docs/ai/submodules.lock", "tests/corpus/gold.tsv",

@@ -13,9 +13,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
         app:title="@string/about__app_info"
         app:iconSpaceReserved="false">
 
-        <Preference app:key="zephyr_product_name"
+        <Preference app:key="orangecell_product_name"
             app:title="@string/trime_app_name"
-            app:summary="@string/zephyr_product_summary"
+            app:summary="@string/orangecell_product_summary"
             app:iconSpaceReserved="false" />
 
         <Preference app:key="about__changelog"

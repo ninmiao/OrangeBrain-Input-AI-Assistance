@@ -212,13 +212,14 @@ secrets.properties
 !/docs/images/
 /docs/images/*
 !/docs/images/android-keyboard.png
+!/docs/images/orangecell-logo.png
 !/docs/images/windows-input.png
 
 !/docs/ai/plain-text-gemini.md
 
 # Downloaded local language models never belong in the repository.
 *.gram
-**/.zephyr-wanxiang/
+**/.orangecell-wanxiang/
 
 # Retain Wanxiang feasibility findings; large downloaded models stay outside Git.
 !/docs/research/
@@ -241,8 +242,8 @@ secrets.properties
 
 
 
-!/dist/Zephyr-Input-Windows-1.12.9-Setup-x64.exe
-!/dist/Zephyr-Input-1.10.4-arm64-v8a-demo.apk
+!/dist/OrangeCell-Windows-1.13.0-Setup-x64.exe
+!/dist/OrangeCell-1.11.0-arm64-v8a-demo.apk
 !/dist/SHA256SUMS
 
 !/docs/ai/streaming-validation.md

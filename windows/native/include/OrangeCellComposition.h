@@ -4,9 +4,9 @@
 #include <vector>
 #include <algorithm>
 #include <cstdint>
-#include "ZephyrShortcuts.h"
+#include "OrangeCellShortcuts.h"
 
-namespace zephyr {
+namespace orangecell {
 // Both language modes share this buffer. Space is a boundary, not a commit.
 struct Composition {
   std::string input,before,after;

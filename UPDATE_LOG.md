@@ -1,13 +1,13 @@
-# Zephyr Input 更新日志
+# 橘脑一颗 OrangeCell 更新日志
 
-这份日志记录 Zephyr 的功能、问题修复、提示词、安装包和文档变化，按时间倒序维护。Android 与 Windows 分别编号。根目录 `CHANGELOG.md` 保留同文上游的历史记录。
+这份日志记录橘脑一颗（OrangeCell，原名 Zephyr Input）的功能、问题修复、提示词、安装包和文档变化，按时间倒序维护。Android 与 Windows 分别编号。根目录 `CHANGELOG.md` 保留同文上游的历史记录。
 
 ## 当前版本
 
 | 项目 | 当前状态 |
 | --- | --- |
-| Windows 本地安装包 | 1.12.9 x64 已在 `dist/` 并覆盖安装到本机，修复 Chrome、VS Code 空指针崩溃，含 Windows on ARM 的 ARM64X 输入法模块（ARM64 真机打字尚未验证） |
-| Android 本地安装包 | 1.10.4 ARM64 demo 已在 `dist/` 并安装到 S26，包含 AI 按钮状态动画、简繁分段开关和多地址回退 |
+| Windows 本地安装包 | 1.13.0 x64：更名为橘脑一颗 OrangeCell，云构建结果见下方条目；此前的 1.12.9（Zephyr Input）已安装到本机 |
+| Android 本地安装包 | 1.11.0 ARM64 demo：更名为橘脑一颗 OrangeCell，新应用 ID `io.github.ninmiao.orangecell`；S26 上仍是旧的 1.10.4（Zephyr Input） |
 | 源码提示词 | 纠错模式返回一个候选；助手模式以单次流式请求返回纠错和助手两个候选；前后文默认 50 / 0 |
 | 安装包提示词 | Windows 1.12.5 与 Android 1.10.3 使用独立的纠错和助手提示词 |
 | LLM 接入 | OpenAI、OpenRouter、Google Gemini 在线 API，始终发送完整提示词；Preset 已移除 |
@@ -22,6 +22,17 @@
 - 不记录 Key、设备密码、个人输入内容或其他凭据。
 
 ## 待发布
+
+### 2026-11-21 · 全面更名为橘脑一颗 OrangeCell（Windows 1.13.0 / Android 1.11.0）
+
+- 名称：项目 Zephyr Input（微风输入法）更名为 **橘脑一颗 · OneOrangeBraincell**，英文名 OrangeCell，口号“尽量让单脑细胞橘猫也能用的输入法”。GitHub 仓库已改名为 `ninmiao/OrangeBrain-Input-AI-Assistance`，文档和构建脚本中的链接同步更新。
+- 图标：换成像素橘猫（半睁眼、一颗虎牙、虎斑和白胸口）。Windows `.ico` 含 16–256 七个尺寸，16/24/32 为逐像素手绘；Android 自适应图标为奶油底，附主题图标单色层和旧版圆形 / 方形图标。
+- Windows 标识：程序改名为 `OrangeCellSettings.exe`、`OrangeCellBroker.exe`、`OrangeCellServer.exe` 等，输入法模块改名为 `OrangeCellTSF*.dll`；输入法 CLSID、Profile、语言栏和显示属性 GUID 以及安装器 AppId 全部重新生成；安装目录 `Program Files\OrangeCell`，注册表 `Software\OrangeCell`，数据目录 `%APPDATA%\OrangeCell`，AI 管道和互斥体同步改名。输入法列表与托盘显示“橘脑一颗”，安装器显示“橘脑一颗 OrangeCell”。
+- Android 标识：应用 ID 从 `com.osfans.trime.ai` 改为 `io.github.ninmiao.orangecell`（demo / debug 后缀不变），应用名简体“橘脑一颗”、繁体“橘腦一顆”、英文“OrangeCell”，原生库改名为 `orangecell_core`。Kotlin 源码包名 `com.osfans.trime` 是同文上游的命名空间，未改。
+- Rime：方案 `zephyr_wanxiang` 改为 `orangecell_wanxiang`，下载词表与语法模型前缀改为 `orangecell_`，更新器工作目录改为 `.orangecell-wanxiang`，方案显示名改为“万象拼音 · 橘脑一颗”。
+- 旧数据迁移：Windows 新安装器在安装前静默运行旧 Zephyr Input 的卸载程序（注销旧输入法、删除旧程序，用户数据保留）。Broker 和 Rime 服务首次启动时，把 `%APPDATA%\ZephyrInput` 改名为 `%APPDATA%\OrangeCell`，把 `HKCU\Software\ZephyrInput` 复制到新键，并把 Rime 用户目录里 `zephyr_` / `.zephyr-` 开头的用户词库、词表、模型和更新器状态改名，同时改写其中的标识；`build\` 里旧的编译产物删除后重新部署。Android 在取得存储权限后把 `/sdcard/ZephyrInput` 改名为 `/sdcard/OrangeCell`，做同样的改名。迁移完成后写入 `.orangecell-migrated` 标记，之后不再扫描。Android 的 AI Policy 与 Key 存在旧应用的私有存储里，无法转移，需要重新填写。
+- 测试：新增 Windows `migration_test` 和 Kotlin `LegacyRenameTest`。本机已编译并通过 `migration_test`（MSVC `/W4` 无警告）；其余构建与测试结果见云构建记录。
+- 清理：删除 `branding/` 中落选的候选图和脚本，只保留最终图标与生成脚本（该目录不进 Git）。
 
 ### 2026-11-20 · 迁移前清理（文档更新）
 

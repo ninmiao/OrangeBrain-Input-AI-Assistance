@@ -2,7 +2,7 @@ package com.osfans.trime.ai
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 @Serializable data class LanguageRules(val chinese:String="",val non_chinese:String="")
-@Serializable data class PromptPackage(val schema_version:Int=3,val package_id:String="zephyr-input",val version:String="5.0.0",val revision:Long=14,val response_schema_version:Int=3,val keyboard_language_rules:LanguageRules=LanguageRules()) {
+@Serializable data class PromptPackage(val schema_version:Int=3,val package_id:String="orangecell-input",val version:String="5.0.0",val revision:Long=14,val response_schema_version:Int=3,val keyboard_language_rules:LanguageRules=LanguageRules()) {
  fun upgraded():PromptPackage=if(revision<14||response_schema_version<3)PromptPackage(package_id=package_id) else this
  fun compose(chinese:Boolean,traditional:Boolean=false,assistantEnabled:Boolean=false):String {
   val rules=upgraded().keyboard_language_rules

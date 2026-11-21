@@ -12,7 +12,7 @@ $path=Join-Path $root "windows/native/output/$dll"
 if($InstalledPath){
     $statePath=Join-Path $InstalledPath 'installation.json'
     if(Test-Path -LiteralPath $statePath){$state=Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json;$dll=if($bits -eq '64'){$state.x64}else{$state.x86}}
-    else {$dll=if($bits -eq '64'){'ZephyrTSFx64.dll'}else{'ZephyrTSFx86.dll'}}
+    else {$dll=if($bits -eq '64'){'OrangeCellTSFx64.dll'}else{'OrangeCellTSFx86.dll'}}
     $path=Join-Path $InstalledPath $dll
 }
 $flag=if($Registered){'--registered'}else{''}

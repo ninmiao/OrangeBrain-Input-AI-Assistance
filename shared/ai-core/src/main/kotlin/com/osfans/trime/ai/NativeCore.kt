@@ -3,12 +3,12 @@ import kotlinx.serialization.json.*
 /** JNI boundary only. All provider payloads, prompts and candidate parsing live in native-core. */
 object NativeCore {
     init {
-        if(System.getProperty("java.vm.name").contains("Dalvik")) System.loadLibrary("zephyr_core")
+        if(System.getProperty("java.vm.name").contains("Dalvik")) System.loadLibrary("orangecell_core")
         else {
-            val explicit=System.getProperty("zephyr.native.path")
+            val explicit=System.getProperty("orangecell.native.path")
             if(explicit!=null) System.load(explicit) else {
-                val file=java.io.File.createTempFile("zephyr-core-", ".dll").apply { deleteOnExit() }
-                requireNotNull(javaClass.getResourceAsStream("/native/zephyr_core.dll")) { "Native backend missing" }.use { input -> file.outputStream().use { input.copyTo(it) } }
+                val file=java.io.File.createTempFile("orangecell-core-", ".dll").apply { deleteOnExit() }
+                requireNotNull(javaClass.getResourceAsStream("/native/orangecell_core.dll")) { "Native backend missing" }.use { input -> file.outputStream().use { input.copyTo(it) } }
                 System.load(file.absolutePath)
             }
         }

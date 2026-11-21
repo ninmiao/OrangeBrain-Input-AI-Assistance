@@ -423,7 +423,7 @@ void WeaselTSF::_UpdateComposition(com_ptr<ITfContext> pContext) {
     return;
   const auto epoch = _compositionRefreshEpoch;
   const auto serial = ++_compositionRefreshSerial;
-  _zephyrRefreshPending = true;
+  _orangecellRefreshPending = true;
   _pEditSessionContext = pContext;
   com_ptr<CCompositionRefreshEditSession> session;
   session.Attach(new CCompositionRefreshEditSession(this, pContext, epoch, serial));
@@ -433,17 +433,17 @@ void WeaselTSF::_UpdateComposition(com_ptr<ITfContext> pContext) {
   if (epoch != _compositionRefreshEpoch || serial != _compositionRefreshSerial)
     return;
   if (FAILED(requested) || FAILED(hr)) {
-    _zephyrRefreshPending = false;
-    _zephyrAiRefreshPending = false;
+    _orangecellRefreshPending = false;
+    _orangecellAiRefreshPending = false;
   }
   _async_edit = SUCCEEDED(requested) && (hr == TF_S_ASYNC);
 }
 
 void WeaselTSF::_InvalidateCompositionRefresh() {
   ++_compositionRefreshEpoch;
-  _zephyrRefreshPending = false;
-  _zephyrAiRefreshPending = false;
-  _zephyrAiSnapshotRead = false;
+  _orangecellRefreshPending = false;
+  _orangecellAiRefreshPending = false;
+  _orangecellAiSnapshotRead = false;
   _async_edit = false;
 }
 

@@ -46,8 +46,17 @@ object DataManager {
     // Preserve existing dictionaries and user configuration when upgrading the renamed app.
     val defaultDataDir: File = run {
         val storage = Environment.getExternalStorageDirectory()
-        val legacy = File(storage, if (com.osfans.trime.BuildConfig.DEBUG) "rime-ai-debug" else "rime-ai")
-        if (legacy.exists()) legacy else File(storage, if (com.osfans.trime.BuildConfig.DEBUG) "ZephyrInput-debug" else "ZephyrInput")
+        val debug = com.osfans.trime.BuildConfig.DEBUG
+        val legacy = File(storage, if (debug) "rime-ai-debug" else "rime-ai")
+        val current = File(storage, if (debug) "OrangeCell-debug" else "OrangeCell")
+        // Data from the product's former name (Zephyr Input) moves over once storage access is granted.
+        val former = File(storage, if (debug) "ZephyrInput-debug" else "ZephyrInput")
+        when {
+            legacy.exists() -> legacy
+            current.exists() -> current
+            former.exists() && !former.renameTo(current) -> former
+            else -> current
+        }
     }
 
     val sharedDataDir = File(appContext.getExternalFilesDir(null), "shared").also { it.mkdirs() }
@@ -101,6 +110,7 @@ object DataManager {
 
         ResourceUtils.copyFile(DATA_CHECKSUMS_NAME, dataDir.resolve(DATA_CHECKSUMS_NAME).absolutePath)
 
+        com.osfans.trime.rime.LegacyRename.migrate(userDataDir)
         DefaultSchemaInstaller.install(userDataDir)
         val themePrefs = com.osfans.trime.data.theme.ThemeManager.prefs
         if (themePrefs.selectedTheme.getValue() == "trime") themePrefs.selectedTheme.setValue("rime_ai_ios")

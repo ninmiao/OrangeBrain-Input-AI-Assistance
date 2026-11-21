@@ -18,7 +18,7 @@ namespace fs = std::filesystem;
 class WeaselServerApp {
  public:
   static bool execute(const fs::path& cmd, const std::wstring& args) {
-    const int show = cmd.filename().wstring() == L"ZephyrDeployer.exe"
+    const int show = cmd.filename().wstring() == L"OrangeCellDeployer.exe"
                          ? SW_HIDE
                          : SW_SHOWNORMAL;
     return (uintptr_t)ShellExecuteW(NULL, NULL, cmd.c_str(), args.c_str(), NULL,

@@ -6,8 +6,8 @@
 #include <mutex>
 
 #include <rime_api.h>
-#include "ZephyrComposition.h"
-#include "ZephyrAiPipe.h"
+#include "OrangeCellComposition.h"
+#include "OrangeCellAiPipe.h"
 
 struct CaseInsensitiveCompare {
   bool operator()(const std::string& str1, const std::string& str2) const {
@@ -75,12 +75,12 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
   void OnUpdateUI(std::function<void()> const& cb);
 
  private:
-  void _ZephyrRefresh(WeaselSessionId id);
-  bool _ZephyrChoose(WeaselSessionId id, size_t index);
-  bool _ZephyrRespond(WeaselSessionId id,EatLine eat);
-  BOOL _ZephyrKey(weasel::KeyEvent key,WeaselSessionId id,EatLine eat);
-  std::map<DWORD,zephyr::Composition> m_zephyr;
-  zephyr::AiPipe m_zephyr_ai;
+  void _OrangeCellRefresh(WeaselSessionId id);
+  bool _OrangeCellChoose(WeaselSessionId id, size_t index);
+  bool _OrangeCellRespond(WeaselSessionId id,EatLine eat);
+  BOOL _OrangeCellKey(weasel::KeyEvent key,WeaselSessionId id,EatLine eat);
+  std::map<DWORD,orangecell::Composition> m_orangecell;
+  orangecell::AiPipe m_orangecell_ai;
   void _Setup();
   bool _IsDeployerRunning();
   void _UpdateUI(WeaselSessionId ipc_id);

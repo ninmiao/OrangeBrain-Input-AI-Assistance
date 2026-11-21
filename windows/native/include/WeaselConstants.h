@@ -1,7 +1,7 @@
 #pragma once
 
-#define WEASEL_CODE_NAME "Zephyr Input"
-#define WEASEL_REG_KEY L"Software\\ZephyrInput"
+#define WEASEL_CODE_NAME "OrangeCell"
+#define WEASEL_REG_KEY L"Software\\OrangeCell"
 #define RIME_REG_KEY L"Software\\Rime"
 
 #define STRINGIZE(x) #x

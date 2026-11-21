@@ -16,7 +16,7 @@ LRESULT CALLBACK proc(HWND window,UINT msg,WPARAM w,LPARAM l) {
       HWND c=CreateWindowExW(0,cls,text,WS_CHILD|WS_VISIBLE|style,x,y,width,height,window,(HMENU)(INT_PTR)id,GetModuleHandle(nullptr),nullptr);
       SendMessage(c,WM_SETFONT,(WPARAM)font,TRUE);return c;
     };
-    make(L"STATIC",L"Zephyr Input: real TSF / Win32 Edit / RichEdit integration",0,20,15,820,30,0);
+    make(L"STATIC",L"OrangeCell: real TSF / Win32 Edit / RichEdit integration",0,20,15,820,30,0);
     make(L"STATIC",L"A: Win32 Edit — pending input stays in the candidate panel",0,20,60,820,30,0);
     first=make(L"EDIT",L"",WS_BORDER|WS_TABSTOP|ES_MULTILINE|ES_AUTOVSCROLL,20,95,820,125,101);
     make(L"STATIC",L"B: RichEdit — use to check focus changes",0,20,235,820,30,0);
@@ -30,15 +30,15 @@ LRESULT CALLBACK proc(HWND window,UINT msg,WPARAM w,LPARAM l) {
 }
 int WINAPI wWinMain(HINSTANCE instance,HINSTANCE,LPWSTR,int) {
   CoInitializeEx(nullptr,COINIT_APARTMENTTHREADED);LoadLibraryW(L"Msftedit.dll");
-  WNDCLASSW wc{};wc.hInstance=instance;wc.lpfnWndProc=proc;wc.lpszClassName=L"ZephyrTsfTestHost";wc.hCursor=LoadCursor(nullptr,IDC_ARROW);wc.hbrBackground=(HBRUSH)(COLOR_WINDOW+1);RegisterClassW(&wc);
-  HWND window=CreateWindowExW(0,wc.lpszClassName,L"Zephyr TSF Test Host",WS_OVERLAPPEDWINDOW,CW_USEDEFAULT,CW_USEDEFAULT,885,585,nullptr,nullptr,instance,nullptr);
+  WNDCLASSW wc{};wc.hInstance=instance;wc.lpfnWndProc=proc;wc.lpszClassName=L"OrangeCellTsfTestHost";wc.hCursor=LoadCursor(nullptr,IDC_ARROW);wc.hbrBackground=(HBRUSH)(COLOR_WINDOW+1);RegisterClassW(&wc);
+  HWND window=CreateWindowExW(0,wc.lpszClassName,L"OrangeCell TSF Test Host",WS_OVERLAPPEDWINDOW,CW_USEDEFAULT,CW_USEDEFAULT,885,585,nullptr,nullptr,instance,nullptr);
   HRESULT hr=CoCreateInstance(CLSID_TF_ThreadMgr,nullptr,CLSCTX_INPROC_SERVER,IID_ITfThreadMgr,(void**)&manager);TfClientId client=TF_CLIENTID_NULL;
   if(SUCCEEDED(hr))hr=manager->Activate(&client);
   if(SUCCEEDED(hr))hr=manager->QueryInterface(IID_ITfKeystrokeMgr,(void**)&keys);
   if(SUCCEEDED(hr))hr=manager->QueryInterface(IID_ITfMessagePump,(void**)&pump);
   if(SUCCEEDED(hr))hr=CoCreateInstance(CLSID_TF_InputProcessorProfiles,nullptr,CLSCTX_INPROC_SERVER,IID_ITfInputProcessorProfileMgr,(void**)&profiles);
-  CLSID clsid={0x652d71c8,0xb1e9,0x41ee,{0x9c,0xa6,0x7b,0x4d,0x0d,0xe6,0xcb,0x0a}};
-  GUID profile={0x91ebc2a4,0x2b8e,0x4781,{0xba,0x20,0x1c,0x92,0x67,0x52,0x94,0x67}};
+  CLSID clsid={0x7a61ac12,0xaf2d,0x4810,{0x89,0x5e,0x09,0xdb,0x95,0xc0,0xd3,0xb2}};
+  GUID profile={0xc6be1eb4,0x0700,0x4ace,{0xb9,0x86,0xd1,0x49,0xc5,0x38,0x5e,0xcb}};
   if(SUCCEEDED(hr))hr=profiles->ActivateProfile(TF_PROFILETYPE_INPUTPROCESSOR,0x0804,clsid,profile,nullptr,TF_IPPMF_DONTCARECURRENTINPUTLANGUAGE|TF_IPPMF_FORPROCESS);
   wchar_t message[128];swprintf_s(message,L"TSF profile activation: 0x%08lx · Tap Shift changes language (default)",hr);SetWindowTextW(status,message);
   ShowWindow(window,SW_SHOW);UpdateWindow(window);SetFocus(first);

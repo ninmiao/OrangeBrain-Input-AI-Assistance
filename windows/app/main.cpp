@@ -44,7 +44,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, LPWSTR, int) {
                                .dump(2));
       return 0;
     }
-#ifdef ZEPHYR_BROKER
+#ifdef ORANGECELL_BROKER
     std::wstring testPipe;
     if (args.size() == 2 && args[0] == L"--test-pipe") testPipe = args[1];
     runBroker(store, testPipe.empty(), testPipe);
@@ -57,8 +57,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, LPWSTR, int) {
     return settings(instance, store, !args.empty() && args[0] == L"--ui-smoke");
 #endif
   } catch (const std::exception& e) {
-#ifndef ZEPHYR_BROKER
-    MessageBoxW(nullptr, wide(errorText(e)).c_str(), L"Zephyr Input",
+#ifndef ORANGECELL_BROKER
+    MessageBoxW(nullptr, wide(errorText(e)).c_str(), L"OrangeCell",
                 MB_OK | MB_ICONERROR);
 #endif
     return 1;
