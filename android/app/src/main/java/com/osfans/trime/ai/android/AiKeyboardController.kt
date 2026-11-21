@@ -45,6 +45,8 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     private enum class RequestKind { AUTO, ASSISTANT, EMOJI }
     private var lastKind = RequestKind.AUTO
     private var emojiStamp: RequestStamp? = null
+    // A manual request (assistant or emoji key) owns the bar until real user input.
+    private var manualHold = false
     // True from a manual tap until the request is visible as Loading, so the button reacts at once.
     private var awaitingStart = false
     private var candidateTextSize = 18.15f
@@ -140,10 +142,14 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
                 notice("请先在设置里允许使用云端 AI")
                 openSettings()
             }
-            // A running request keeps running; pressing again used to cancel and resend it.
-            requestBusy() -> { button?.refuse(); notice("AI 请求中，请稍候（长按可取消）") }
+            // The same key again keeps its running request. Any other key takes over: the running
+            // correction / assistant / emoji request is cancelled and its late replies are dropped.
+            requestBusy() && kind == lastKind -> { button?.refuse(); notice("AI 请求中，请稍候（长按可取消）") }
             else -> {
                 button?.nudge(); lastKind = kind; awaitingStart = true
+                // Until the person types, edits or moves the caret, background Rime and editor
+                // events must not start an automatic request that would replace this one.
+                manualHold = true
                 panel?.postDelayed({ if (awaitingStart) { awaitingStart = false; render() } }, 2500)
                 revision++; refresh(true, emoji = kind == RequestKind.EMOJI); render()
             }
@@ -152,7 +158,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
 
     private fun cancelRequest(): Boolean {
         if (!requestBusy()) return false
-        awaitingStart = false; captureJob?.cancel(); coordinator.invalidate()
+        awaitingStart = false; manualHold = false; captureJob?.cancel(); coordinator.invalidate()
         notice("已取消 AI 请求")
         return true
     }
@@ -315,7 +321,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     }
 
     fun start(info: EditorInfo) {
-        session++; revision++; active = true; suppress = false; applying = false
+        session++; revision++; active = true; suppress = false; applying = false; manualHold = false
         directTarget = null; target = null; captureJob?.cancel()
         observedSelection = Selection(info.initialSelStart, info.initialSelEnd).takeIf { it.start >= 0 && it.end >= 0 }
         chinese = !rime.run { statusCached.isAsciiMode }
@@ -332,7 +338,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
 
     fun finish() {
         clipboard.close()
-        active = false; session++; revision++
+        active = false; session++; revision++; manualHold = false
         captureJob?.cancel(); coordinator.invalidate()
         target = null; directTarget = null; observedSelection = null
     }
@@ -345,14 +351,14 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     }
     fun userInput() {
         // A key can be navigation or a modifier. Only a successful text commit arms direct mode.
-        suppress = false; directTarget = null; revision++
+        suppress = false; directTarget = null; revision++; manualHold = false
         captureJob?.cancel(); coordinator.invalidate()
     }
 
     fun textCommitted(connection: InputConnection, text: String) {
         directTarget = null
         val config = store.config
-        if (!active || sensitive || !config.consent || suppress || applying || !config.automatic ||
+        if (!active || sensitive || !config.consent || suppress || applying || manualHold || !config.automatic ||
             (!config.enabled && !config.assistantEnabled) ||
             connection !== service.currentInputConnection || text.isEmpty()) return
         directTarget = captureDirect(readEditor(connection), connection, manual = false)
@@ -368,6 +374,8 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         if (selection == observedSelection) return
         observedSelection = selection
         if (selection == target?.selection || selection == directTarget?.selection) return
+        // The caret really moved, so a manual request no longer matches the text.
+        manualHold = false
         directTarget = null
         revision++
         captureJob?.cancel(); coordinator.invalidate()
@@ -379,7 +387,9 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         }
     }
     fun rimeChanged(message: RimeMessage<*>) {
-        if (applying || !active) return
+        // Keys and candidate taps clear manualHold first (userInput), so what reaches here while it is
+        // set is Rime echoing its own state, which must not replace the manual request.
+        if (applying || !active || manualHold) return
         if (message is RimeMessage.CompositionMessage || message is RimeMessage.StatusMessage ||
             message is RimeMessage.CommitTextMessage || message is RimeMessage.OptionMessage) {
             val language = !rime.run { statusCached.isAsciiMode }
@@ -477,6 +487,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
 
     private fun adopt(result: AiState.Ready, text: String) {
         val snapshot = target ?: return
+        manualHold = false
         if (ready?.request?.stamp != result.request.stamp || !valid(result, snapshot)) { coordinator.invalidate(); return }
         val connection = service.currentInputConnection ?: return
         if (snapshot.composing) {

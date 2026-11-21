@@ -77,7 +77,10 @@ object DataManager {
     @JvmStatic
     fun resolveDeployedResourcePath(resourceId: String): String {
         val defaultPath = File(stagingDir, "$resourceId.yaml")
-        if (!defaultPath.exists()) {
+        // A user directory left by an uninstalled build can still list its files while this
+        // app lacks storage access; reading them would crash the keyboard on start. File.canRead()
+        // still says yes there (the storage layer refuses only the open), so try opening it.
+        if (!runCatching { defaultPath.inputStream().close() }.isSuccess) {
             val fallbackPath = File(prebuiltDataDir, "$resourceId.yaml")
             if (fallbackPath.exists()) return fallbackPath.absolutePath
         }

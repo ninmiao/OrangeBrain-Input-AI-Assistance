@@ -53,7 +53,8 @@ data class Theme(
             val file = File(DataManager.resolveDeployedResourcePath(configId))
             // The IME can be enabled before the asynchronous Rime startup has deployed themes.
             // Keep a bundled keyboard usable until the compiled theme is available.
-            val content = if (file.isFile) file.readText() else
+            // The same holds when the file is there but unreadable (no storage access yet).
+            val content = runCatching { file.takeIf { it.isFile }?.readText() }.getOrNull() ?:
                 com.osfans.trime.util.appContext.assets.open(if (configId == "rime_ai_ios") "shared/rime_ai_ios.yaml" else "shared/trime.yaml").bufferedReader().use { it.readText() }
             val root = yaml.parseToYamlNode(content).yamlMap
             return Theme(
