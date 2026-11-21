@@ -8,6 +8,7 @@
 #include <rime_api.h>
 #include "OrangeCellComposition.h"
 #include "OrangeCellAiPipe.h"
+#include "OrangeCellKeySettings.h"
 
 struct CaseInsensitiveCompare {
   bool operator()(const std::string& str1, const std::string& str2) const {
@@ -78,6 +79,7 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
   void _OrangeCellRefresh(WeaselSessionId id);
   bool _OrangeCellChoose(WeaselSessionId id, size_t index);
   bool _OrangeCellRespond(WeaselSessionId id,EatLine eat);
+  std::wstring _OrangeCellStatusLine(const orangecell::Composition& z,const orangecell::KeyPreferences& prefs);
   BOOL _OrangeCellKey(weasel::KeyEvent key,WeaselSessionId id,EatLine eat);
   std::map<DWORD,orangecell::Composition> m_orangecell;
   orangecell::AiPipe m_orangecell_ai;

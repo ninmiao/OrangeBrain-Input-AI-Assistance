@@ -117,6 +117,10 @@ HWND WeaselPanel::hwnd() const {
 void WeaselPanel::_ClearTimers() {
   if (!m_hWnd)
     return;
+  if (m_statusTimer) {
+    ::KillTimer(m_hWnd, STATUS_ANIM_TIMER);
+    m_statusTimer = 0;
+  }
   if (m_clickTimer) {
     ::KillTimer(m_hWnd, AUTOREV_TIMER);
     m_clickTimer = 0;
@@ -453,7 +457,10 @@ void WeaselPanel::DoPaint() {
       _DrawPreedit(m_ctx.preedit, true);
     }
     if (!m_ctx.aux.empty()) {
-      _DrawPreedit(m_ctx.aux, false);
+      if (orangecell::IsStatusAux(m_ctx.aux.str))
+        _DrawOrangeCellStatus();
+      else
+        _DrawPreedit(m_ctx.aux, false);
     }
     if (m_candidateCount) {
       _DrawCandidates();
@@ -505,6 +512,25 @@ void WeaselPanel::DoPaint() {
     DEBUG << "Present failed: " << HRESULTToString(hrPresent);
     DeviceResources::Get().Reset();
     m_pD2D->InitDirect2D();
+  }
+}
+
+void WeaselPanel::_DrawOrangeCellStatus() {
+  const auto line = orangecell::StatusLine::Parse(m_ctx.aux.str);
+  if (m_style.layout_type == UIStyle::LAYOUT_VERTICAL_TEXT ||
+      m_style.layout_type == UIStyle::LAYOUT_VERTICAL_TEXT_FULLSCREEN) {
+    _DrawPreedit(Text(line.Plain()), false);
+    return;
+  }
+  m_statusAnim.Observe(line);
+  CRect rc = m_layout->GetAuxiliaryRect();
+  orangecell::Draw(*m_pD2D, line, rc, m_pD2D->pPreeditFormat, m_statusAnim);
+  const bool running = m_statusAnim.Running();
+  if (running && !m_statusTimer)
+    m_statusTimer = ::SetTimer(m_hWnd, STATUS_ANIM_TIMER, 33, NULL);
+  else if (!running && m_statusTimer) {
+    ::KillTimer(m_hWnd, STATUS_ANIM_TIMER);
+    m_statusTimer = 0;
   }
 }
 
@@ -1222,6 +1248,14 @@ LRESULT WeaselPanel::MsgHandler(HWND hwnd,
         m_clickTimer = 0;
         m_bar_scale = 1.0f;
         InvalidateRect(m_hWnd, nullptr, TRUE);
+        return 0;
+      } else if (wParam == STATUS_ANIM_TIMER) {
+        if (!::IsWindowVisible(m_hWnd) || !orangecell::IsStatusAux(m_ctx.aux.str) ||
+            !m_statusAnim.Running()) {
+          ::KillTimer(m_hWnd, STATUS_ANIM_TIMER);
+          m_statusTimer = 0;
+        }
+        InvalidateRect(m_hWnd, nullptr, FALSE);
         return 0;
       } else if (wParam == AUTOHIDE_TIMER) {
         ::KillTimer(m_hWnd, AUTOHIDE_TIMER);

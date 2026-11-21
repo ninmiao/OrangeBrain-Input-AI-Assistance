@@ -38,12 +38,15 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     private var candidateScroll: HorizontalScrollView? = null
     private var renderedCandidates: AiState.Ready? = null
     private var label: TextView? = null
-    private var statusButton: AiStatusButton? = null
+    private var functionBar: LinearLayout? = null
+    private val functionViews = mutableMapOf<FunctionKey, FunctionGlyphView>()
+    private var shownKeys: List<FunctionKey>? = null
+    // Which key shows the running request: automatic correction and the assistant share the sparkle.
+    private enum class RequestKind { AUTO, ASSISTANT, EMOJI }
+    private var lastKind = RequestKind.AUTO
+    private var emojiStamp: RequestStamp? = null
     // True from a manual tap until the request is visible as Loading, so the button reacts at once.
     private var awaitingStart = false
-    private var scriptToggle: LinearLayout? = null
-    private var simplifiedSegment: TextView? = null
-    private var traditionalSegment: TextView? = null
     private var candidateTextSize = 18.15f
     private var candidateHeightDp = 28
     private var state: AiState = AiState.Idle
@@ -70,69 +73,17 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     private data class Target(val input: AiInput, val composing: Boolean, val start: Int, val end: Int,
         val selection: Selection, val documentHash: Int, val manual: Boolean)
 
+    private fun dp(n: Int) = (n * service.resources.displayMetrics.density).toInt()
+
     fun createView(): View {
         val context = ContextThemeWrapper(service, android.R.style.Theme_Material_Light)
         val style = com.osfans.trime.data.theme.ThemeManager.activeTheme.generalStyle
         candidateTextSize = style.candidateTextSize
         candidateHeightDp = style.candidateViewHeight.coerceAtLeast(28)
-        fun dp(n: Int) = (n * service.resources.displayMetrics.density).toInt()
         val root = LinearLayout(context).apply { id = View.generateViewId(); orientation = LinearLayout.HORIZONTAL; gravity = android.view.Gravity.CENTER_VERTICAL; setBackgroundColor(0xffd1d3d9.toInt()) }
-        // Segmented switch: both scripts stay visible and the active one is filled.
-        fun segment(text: String) = TextView(context).apply {
-            this.text = text; textSize = 13f; gravity = android.view.Gravity.CENTER
-            includeFontPadding = false; isSingleLine = true
-            typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
-        }
-        simplifiedSegment = segment("简"); traditionalSegment = segment("繁")
-        scriptToggle = LinearLayout(context).apply {
-            orientation = LinearLayout.HORIZONTAL; gravity = android.view.Gravity.CENTER_VERTICAL
-            setPadding(dp(2), dp(2), dp(2), dp(2))
-            val track = android.graphics.drawable.GradientDrawable().apply {
-                setColor(0x26525966); cornerRadius = dp(13).toFloat()
-            }
-            val mask = android.graphics.drawable.GradientDrawable().apply {
-                setColor(android.graphics.Color.WHITE); cornerRadius = dp(13).toFloat()
-            }
-            background = android.graphics.drawable.RippleDrawable(
-                android.content.res.ColorStateList.valueOf(0x30525966), track, mask)
-            isClickable = true; isFocusable = true
-            addView(simplifiedSegment, LinearLayout.LayoutParams(0, -1, 1f))
-            addView(traditionalSegment, LinearLayout.LayoutParams(0, -1, 1f))
-            setOnClickListener { scope.launch { withContext(Dispatchers.IO) { store.update { it.copy(traditional = !it.traditional) } } } }
-        }
+        label = TextView(context).apply { gravity = android.view.Gravity.CENTER; setPadding(dp(8), 0, dp(4), 0); textSize = 9f }
+        root.addView(label, LinearLayout.LayoutParams(-2, dp(candidateHeightDp)))
         val content = LinearLayout(context).apply { gravity = android.view.Gravity.CENTER_VERTICAL }
-        statusButton = AiStatusButton(context).apply {
-            setPadding(dp(4), dp(2), dp(4), dp(2))
-            background = android.graphics.drawable.RippleDrawable(
-                android.content.res.ColorStateList.valueOf(0x24565CC6), null,
-                android.graphics.drawable.ColorDrawable(android.graphics.Color.WHITE))
-            isClickable = true; isFocusable = true
-            setOnClickListener {
-                when {
-                    !active || sensitive -> notice("此输入框不允许发送到 AI")
-                    !store.config.consent -> {
-                        notice("请先在设置里允许使用云端 AI")
-                        openSettings()
-                    }
-                    // A running request keeps running; pressing again used to cancel and resend it.
-                    requestBusy() -> { refuse(); notice("AI 请求中，请稍候（长按可取消）") }
-                    else -> {
-                        nudge(); awaitingStart = true
-                        postDelayed({ if (awaitingStart) { awaitingStart = false; render() } }, 2500)
-                        revision++; refresh(true); render()
-                    }
-                }
-            }
-            setOnLongClickListener {
-                if (!requestBusy()) return@setOnLongClickListener false
-                awaitingStart = false; captureJob?.cancel(); coordinator.invalidate()
-                notice("已取消 AI 请求")
-                true
-            }
-        }
-        root.addView(statusButton, LinearLayout.LayoutParams(dp(36), dp(candidateHeightDp)))
-        label = TextView(context).apply { gravity = android.view.Gravity.CENTER; setPadding(0, 0, dp(5), 0); textSize = 9f }
-        root.addView(label,LinearLayout.LayoutParams(-2,dp(candidateHeightDp)))
         candidateRow = LinearLayout(context)
         content.addView(candidateRow, LinearLayout.LayoutParams(-2, -1))
         candidateScroll = HorizontalScrollView(context).apply {
@@ -142,19 +93,100 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             addView(content, FrameLayout.LayoutParams(-2, -1))
         }
         root.addView(candidateScroll, LinearLayout.LayoutParams(0, dp(candidateHeightDp), 1f))
-        root.addView(View(context).apply { setBackgroundColor(0x309098a0) }, LinearLayout.LayoutParams(dp(1), dp(14)))
-        root.addView(ImageButton(context).apply {
-            contentDescription="剪贴板";setImageResource(com.osfans.trime.R.drawable.ic_clipboard_24)
-            imageTintList=android.content.res.ColorStateList.valueOf(0xff525966.toInt())
-            background=android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(0x24525966),null,android.graphics.drawable.ColorDrawable(android.graphics.Color.WHITE))
-            setPadding(dp(8),dp(3),dp(8),dp(3));setOnClickListener {openClipboard()}
-        },LinearLayout.LayoutParams(dp(36),dp(candidateHeightDp)))
-        root.addView(FrameLayout(context).apply {
-            addView(scriptToggle, FrameLayout.LayoutParams(dp(52), dp(26), android.view.Gravity.CENTER))
-        }, LinearLayout.LayoutParams(dp(60), dp(candidateHeightDp)))
+        functionBar = LinearLayout(context).apply { gravity = android.view.Gravity.CENTER_VERTICAL }
+        root.addView(functionBar, LinearLayout.LayoutParams(-2, dp(candidateHeightDp)))
         panel = root
+        shownKeys = null
         render()
         return root
+    }
+
+    /** Rebuilds the function keys only when the configured list changed. */
+    private fun buildFunctionBar() {
+        val bar = functionBar ?: return
+        val keys = FunctionKey.parse(store.config.functionKeys)
+        if (keys == shownKeys) return
+        shownKeys = keys
+        bar.removeAllViews(); functionViews.clear()
+        if (keys.isNotEmpty()) bar.addView(View(bar.context).apply { setBackgroundColor(0x309098a0) },
+            LinearLayout.LayoutParams(dp(1), dp(14)).apply { marginEnd = dp(2) })
+        keys.forEach { key ->
+            val view = FunctionGlyphView.create(bar.context, key).apply {
+                setOnClickListener { perform(key) }
+                if (key == FunctionKey.ASSISTANT || key == FunctionKey.EMOJI) setOnLongClickListener { cancelRequest() }
+            }
+            functionViews[key] = view
+            bar.addView(view, LinearLayout.LayoutParams(dp(KEY_WIDTH_DP), dp(candidateHeightDp)))
+        }
+    }
+
+    /** Runs a function key, from the bar or from the function menu. */
+    fun perform(key: FunctionKey) {
+        val view = functionViews[key]
+        when (key) {
+            FunctionKey.ASSISTANT -> requestAi(RequestKind.ASSISTANT, view as? AiStatusButton)
+            FunctionKey.EMOJI -> requestAi(RequestKind.EMOJI, view as? AiStatusButton)
+            FunctionKey.CLIPBOARD -> { view?.nudge(); openClipboard() }
+            FunctionKey.SCRIPT -> { view?.nudge(); scope.launch { withContext(Dispatchers.IO) { store.update { it.copy(traditional = !it.traditional) } } } }
+            FunctionKey.SETTINGS -> { view?.nudge(); openSettings() }
+            FunctionKey.HIDE -> service.requestHideSelf(0)
+        }
+    }
+
+    private fun requestAi(kind: RequestKind, button: AiStatusButton?) {
+        when {
+            !active || sensitive -> notice("此输入框不允许发送到 AI")
+            !store.config.consent -> {
+                notice("请先在设置里允许使用云端 AI")
+                openSettings()
+            }
+            // A running request keeps running; pressing again used to cancel and resend it.
+            requestBusy() -> { button?.refuse(); notice("AI 请求中，请稍候（长按可取消）") }
+            else -> {
+                button?.nudge(); lastKind = kind; awaitingStart = true
+                panel?.postDelayed({ if (awaitingStart) { awaitingStart = false; render() } }, 2500)
+                revision++; refresh(true, emoji = kind == RequestKind.EMOJI); render()
+            }
+        }
+    }
+
+    private fun cancelRequest(): Boolean {
+        if (!requestBusy()) return false
+        awaitingStart = false; captureJob?.cancel(); coordinator.invalidate()
+        notice("已取消 AI 请求")
+        return true
+    }
+
+    /** All function keys as a grid with names, for the function menu behind the ⋯ button. */
+    fun functionMenu(onChosen: () -> Unit): View {
+        val context = ContextThemeWrapper(service, android.R.style.Theme_Material_Light)
+        val grid = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(8), dp(6), dp(8), dp(2)) }
+        grid.addView(TextView(context).apply {
+            text = "功能"; textSize = 12f; setTextColor(0xff6b7280.toInt()); setPadding(dp(6), 0, 0, dp(2))
+        })
+        FunctionKey.entries.chunked(3).forEach { row ->
+            val line = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
+            row.forEach { key ->
+                val cell = LinearLayout(context).apply {
+                    orientation = LinearLayout.HORIZONTAL; gravity = android.view.Gravity.CENTER_VERTICAL
+                    setPadding(dp(6), dp(4), dp(6), dp(4)); isClickable = true; isFocusable = true
+                    background = android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(0x24565CC6), null,
+                        android.graphics.drawable.GradientDrawable().apply { setColor(android.graphics.Color.WHITE); cornerRadius = dp(10).toFloat() })
+                    contentDescription = key.title
+                    setOnClickListener { onChosen(); panel?.post { perform(key) } }
+                }
+                val icon = FunctionGlyphView.create(context, key).apply {
+                    isClickable = false; isFocusable = false; background = null; importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                    (this as? ScriptToggleButton)?.setTraditional(store.config.traditional, animate = false)
+                }
+                cell.addView(icon, LinearLayout.LayoutParams(dp(34), dp(34)))
+                cell.addView(TextView(context).apply { text = key.title; textSize = 13f; setTextColor(0xff2b2f36.toInt()); setPadding(dp(4), 0, 0, 0) })
+                line.addView(cell, LinearLayout.LayoutParams(0, -2, 1f))
+            }
+            repeat(3 - row.size) { line.addView(View(context), LinearLayout.LayoutParams(0, 0, 1f)) }
+            grid.addView(line, LinearLayout.LayoutParams(-1, -2))
+        }
+        return grid
     }
 
     private fun openClipboard() {
@@ -179,15 +211,8 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
     private fun requestBusy() = awaitingStart || state is AiState.Loading || ready?.result?.streaming == true
     private fun render() {
         val c = store.config
-        fun style(segment: TextView?, selected: Boolean) {
-            segment ?: return
-            segment.setTextColor(if (selected) android.graphics.Color.WHITE else 0xff525966.toInt())
-            segment.background = if (selected) android.graphics.drawable.GradientDrawable().apply {
-                setColor(0xff565CC6.toInt()); cornerRadius = 11 * segment.resources.displayMetrics.density
-            } else null
-        }
-        style(simplifiedSegment, !c.traditional); style(traditionalSegment, c.traditional)
-        scriptToggle?.contentDescription = if (c.traditional) "繁体输出，点击切换简体" else "简体输出，点击切换繁体"
+        buildFunctionBar()
+        (functionViews[FunctionKey.SCRIPT] as? ScriptToggleButton)?.setTraditional(c.traditional)
         val indicator = when {
             sensitive -> "隐私字段"
             !c.consent -> "未授权"
@@ -199,15 +224,23 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             !c.automatic || (!c.enabled && !c.assistantEnabled) -> "手动触发"
             else -> "待请求"
         }
-        statusButton?.setPhase(when {
+        val phase = when {
             sensitive || !c.consent -> AiStatusButton.Phase.IDLE
             state is AiState.Failed || ready?.result?.streamError?.isNotEmpty() == true -> AiStatusButton.Phase.FAILED
             state is AiState.Loading || awaitingStart -> AiStatusButton.Phase.WAITING
             ready?.result?.streaming == true -> AiStatusButton.Phase.STREAMING
             ready != null -> AiStatusButton.Phase.DONE
             else -> AiStatusButton.Phase.IDLE
-        })
-        statusButton?.contentDescription = "AI 助手，状态：$indicator。" + if (requestBusy()) "长按取消请求" else "点击重试或召唤助手"
+        }
+        val emojiShown = lastKind == RequestKind.EMOJI
+        (functionViews[FunctionKey.ASSISTANT] as? AiStatusButton)?.apply {
+            setPhase(if (emojiShown) AiStatusButton.Phase.IDLE else phase)
+            contentDescription = "AI 助手，状态：$indicator。" + if (requestBusy()) "长按取消请求" else "点击召唤助手"
+        }
+        (functionViews[FunctionKey.EMOJI] as? AiStatusButton)?.apply {
+            setPhase(if (emojiShown) phase else AiStatusButton.Phase.IDLE)
+            contentDescription = "AI 表情。" + if (requestBusy() && emojiShown) "长按取消请求" else "点击按当前输入生成表情"
+        }
         label?.text = "●"
         label?.contentDescription = "AI 状态：$indicator"
         label?.setTextColor(when {
@@ -225,10 +258,11 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         candidateRow?.removeAllViews()
         label?.visibility = View.VISIBLE
         ready?.let { result ->
+            val emoji = result.request.stamp == emojiStamp
             fun add(text: String, completion: Boolean, role: String = "") {
                 candidateRow?.addView(Button(panel!!.context).apply {
                     isAllCaps = false
-                    contentDescription = (if (completion) "AI 补全：" else if (role.isNotEmpty()) "AI $role：" else "AI 候选：") + text
+                    contentDescription = (if (emoji) "AI 表情：" else if (completion) "AI 补全：" else if (role.isNotEmpty()) "AI $role：" else "AI 候选：") + text
                     this.text = (if (completion) "补全：" else if (role.isNotEmpty()) "$role：" else "") + text.take(45) + if (text.length > 45) "…" else ""
                     textSize = candidateTextSize
                     setTextColor(0xff151515.toInt())
@@ -239,7 +273,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
                     }
                     background = android.graphics.drawable.RippleDrawable(
                         android.content.res.ColorStateList.valueOf(0x24525966), null, pressMask)
-                    typeface = com.osfans.trime.data.theme.FontManager.getTypeface("candidate_font")
+                    if (!emoji) typeface = com.osfans.trime.data.theme.FontManager.getTypeface("candidate_font")
                     minHeight = 0; minimumHeight = 0; includeFontPadding = false; isSingleLine = true
                     setPadding((8 * resources.displayMetrics.density).toInt(), 0, (8 * resources.displayMetrics.density).toInt(), 0)
                     layoutParams = LinearLayout.LayoutParams(-2, -1)
@@ -250,14 +284,21 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
                     }
                 })
             }
-            result.result.candidates.forEachIndexed { index, text -> add(text, false, if (result.request.assistantEnabled) (if (index == 0) "纠错" else "助手") else "") }
-            if (result.request.assistantEnabled && result.result.candidates.size == 1) {
+            fun placeholder(text: String) {
                 candidateRow?.addView(android.widget.TextView(panel!!.context).apply {
-                    text = if (result.result.streaming) "助手：生成中…" else "助手：未完成"
+                    this.text = text
                     textSize = candidateTextSize;setTextColor(0xff777777.toInt());gravity=android.view.Gravity.CENTER
                     setPadding(12,0,12,0);layoutParams=LinearLayout.LayoutParams(-2,-1)
                 })
             }
+            if (emoji) {
+                result.result.candidates.forEach { add(it, false) }
+                if (result.result.streaming) placeholder("表情生成中…")
+                return@let
+            }
+            result.result.candidates.forEachIndexed { index, text -> add(text, false, if (result.request.assistantEnabled) (if (index == 0) "纠错" else "助手") else "") }
+            if (result.request.assistantEnabled && result.result.candidates.size == 1)
+                placeholder(if (result.result.streaming) "助手：生成中…" else "助手：未完成")
             if (result.result.completion.isNotBlank()) add(result.result.completion, true)
         }
     }
@@ -395,7 +436,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         return Target(snapshot, false, start, end, Selection(a, b), text.hashCode(), manual)
     }
 
-    private fun refresh(manual: Boolean) {
+    private fun refresh(manual: Boolean, emoji: Boolean = false) {
         captureJob?.cancel()
         coordinator.invalidate()
         captureJob = scope.launch {
@@ -409,8 +450,12 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
                 return@launch
             }
             val assistant = manual || c.assistantEnabled
+            if (!manual) lastKind = RequestKind.AUTO
+            // An emoticon request reuses the assistant transport: its own prompt, up to five items, no roles.
             val request = AiRequest(RequestStamp(session, revision, c.generation, keyboardGeneration, c.generation), snapshot.input,
-                store.prompt(c, chinese, assistant), c.completion, c.candidateCount,c.outputTokenBudget,assistant)
+                if (emoji) EMOJI_PROMPT else store.prompt(c, chinese, assistant), !emoji && c.completion,
+                if (emoji) 5 else c.candidateCount, c.outputTokenBudget, assistant)
+            emojiStamp = if (emoji) request.stamp else null
             coordinator.submit(request, true, sensitive, if (manual) 0L else c.debounceMs)
         }
     }
@@ -449,6 +494,13 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
                     }
                 }
             }
+        } else if (result.request.stamp == emojiStamp) {
+            // Emoticons describe committed text, so they go after it instead of replacing it.
+            applying = true; suppress = true; directTarget = null; coordinator.invalidate()
+            connection.beginBatchEdit()
+            try {
+                if (connection.setSelection(snapshot.end, snapshot.end)) connection.commitText(text, 1)
+            } finally { connection.endBatchEdit(); applying = false; revision++; target = null }
         } else {
             applying = true; suppress = true; directTarget = null; coordinator.invalidate()
             connection.beginBatchEdit()
@@ -459,5 +511,11 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
                 }
             } finally { connection.endBatchEdit(); applying = false; revision++; target = null }
         }
+    }
+
+    private companion object {
+        const val KEY_WIDTH_DP = 38
+        /** Five emoticons in different styles: four kaomoji and one emoji. */
+        const val EMOJI_PROMPT = "i is input; b/a context. Return only a JSON array of 5 strings: emoticons for the mood or meaning of i (use b/a if i is empty or unclear). Give each a different style, such as cute, smug, crying, excited or deadpan. Exactly one item is a standard emoji (one or a short sequence); the other four are kaomoji, e.g. (,,・ω・,,) or („ಡωಡ„). No words, no explanations."
     }
 }

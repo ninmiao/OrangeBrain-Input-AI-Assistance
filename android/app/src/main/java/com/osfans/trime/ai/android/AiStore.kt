@@ -82,6 +82,8 @@ data class AiConfig(
     val policies: List<AiPolicy> = emptyList(),
     val policyVersion: Int = 0,
     val provider: String = "",
+    /** Function keys at the right end of the AI bar, left to right; 0–5 ids of [FunctionKey]. */
+    val functionKeys: List<String> = FunctionKey.DEFAULT_IDS,
 )
 
 class AiStore internal constructor(private val context: Context) {

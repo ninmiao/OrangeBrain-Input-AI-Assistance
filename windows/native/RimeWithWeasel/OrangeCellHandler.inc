@@ -41,6 +41,25 @@ bool RimeWithWeaselHandler::_OrangeCellChoose(WeaselSessionId id,size_t index) {
   }
   return true;
 }
+// The candidate window draws this as badges (WeaselUI/OrangeCellStatusBar.h):
+// U+E000 language U+E001 script U+E001 AI phase U+E001 AI label U+E001 hint U+E001 error.
+std::wstring RimeWithWeaselHandler::_OrangeCellStatusLine(const orangecell::Composition& z,const orangecell::KeyPreferences& prefs) {
+  const std::wstring& st=z.aiStatus;
+  const wchar_t* phase=
+    st==L"请求中…"?L"waiting":
+    st==L"助手生成中…"?L"streaming":
+    st.rfind(L"✓",0)==0?L"done":
+    (st==L"请求失败"||st==L"部分返回"||st==L"连接中断"||st==L"后台未连接")?L"failed":L"idle";
+  std::wstring label=st.rfind(L"✓ ",0)==0?st.substr(2):st;
+  std::wstring hint;
+  const auto language=orangecell::shortcutLabel(z.languageShortcut);
+  if(!language.empty())hint=language+(z.chinese?L" → EN":L" → 中");
+  const auto ai=orangecell::shortcutLabel(prefs.aiShortcut);
+  if(!ai.empty())hint+=(hint.empty()?L"":L" · ")+ai+L" 助手";
+  const std::wstring sep(1,wchar_t(0xE001));
+  return std::wstring(1,wchar_t(0xE000))+(z.chinese?L"zh":L"en")+sep+(z.traditional?L"trad":L"simp")+sep+phase+sep+
+         label+sep+hint+sep+z.aiError;
+}
 bool RimeWithWeaselHandler::_OrangeCellRespond(WeaselSessionId id,EatLine eat) {
   if(!eat)return false;
   auto& z=m_orangecell[id];auto& session=get_session_status(id);
@@ -59,12 +78,7 @@ bool RimeWithWeaselHandler::_OrangeCellRespond(WeaselSessionId id,EatLine eat) {
   const auto cursor=z.preedit.empty()?z.caret:z.preeditCaret;
   std::wstring body=L"status.ascii_mode="+std::wstring(z.chinese?L"0":L"1")+L"\nstatus.disabled=0\nstatus.composing="+std::wstring(z.input.empty()?L"0":L"1")+
     L"\nstatus.schema_id=orangecell\nctx.preedit="+escape_string(display)+L"\nctx.preedit.cursor=0,"+
-    std::to_wstring(display.size())+L","+std::to_wstring(cursor)+L"\nctx.aux="+
-    std::wstring(z.chinese?(z.traditional?L"繁":L"简"):L"EN")+
-    (orangecell::shortcutLabel(z.languageShortcut).empty()?L"":L" · "+orangecell::shortcutLabel(z.languageShortcut)+(z.chinese?L" → EN":L" → 中"))+
-    L" · AI "+escape_string(z.aiStatus)+
-    (orangecell::shortcutLabel(prefs.aiShortcut).empty()?L"":L" ("+orangecell::shortcutLabel(prefs.aiShortcut)+L")")+
-    (z.aiError.empty()?L"":L" · "+escape_string(z.aiError))+
+    std::to_wstring(display.size())+L","+std::to_wstring(cursor)+L"\nctx.aux="+escape_string(_OrangeCellStatusLine(z,prefs))+
     L"\nctx.cand="+cs.str()+L"\nconfig.inline_preedit=0\n";
   auto style=session.style;style.inline_preedit=false;
   std::wstringstream ss;boost::archive::text_woarchive sa(ss);sa<<style;body+=L"style="+ss.str()+L"\n";

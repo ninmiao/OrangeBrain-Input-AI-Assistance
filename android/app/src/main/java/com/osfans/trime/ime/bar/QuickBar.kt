@@ -101,7 +101,7 @@ class QuickBar(
     private val alwaysUi: AlwaysUi by lazy {
         AlwaysUi(context, theme) { action ->
             action?.let { commonKeyboardActionListener.listener.onAction(KeyActionManager.getAction(it)) }
-                ?: windowManager.attachWindow(SwitchOptionWindow(context, service, rime, theme))
+                ?: windowManager.attachWindow(SwitchOptionWindow(context, service, rime, theme) { windowManager.attachWindow(KeyboardWindow) })
         }.apply {
             hideKeyboardButton.apply {
                 setOnClickListener { service.requestHideSelf(0) }
@@ -128,10 +128,10 @@ class QuickBar(
 
     private val clipboardSuggestionUi by lazy {
         ClipboardSuggestionUi(context).apply {
-            root.setOnClickListener {
-                val content = text.text.toString()
-                if (content.isNotEmpty()) {
-                    service.commitText(content)
+            setOnPaste {
+                val pasted = this.content
+                if (pasted.isNotEmpty()) {
+                    service.commitText(pasted)
                     handleClipboardContent(null)
                 }
             }
@@ -257,7 +257,7 @@ class QuickBar(
         val isEmpty = content.isNullOrEmpty() || !clipboardSuggestion
 
         if (!isEmpty) {
-            clipboardSuggestionUi.text.text = content
+            clipboardSuggestionUi.setContent(content!!)
             clipboardTimeoutJob?.cancel()
             clipboardTimeoutJob = service.lifecycleScope.launch {
                 delay(clipboardSuggestionTimeout * 1000L)

@@ -118,7 +118,10 @@ class AiSettingsActivity : AppCompatActivity() {
                 targetLimit=target.text.toString().toInt(),beforeLength=before.text.toString().toInt(),afterLength=after.text.toString().toInt(),outputTokenBudget=budget.text.toString().toInt()) }
         }
         label("键盘", 20f)
-        label("空格左侧的中/EN 切换中文与英文；候选栏的简/繁同时控制本地和 AI 汉字。")
+        label("空格左侧的中/EN 切换中文与英文；简繁键同时控制本地和 AI 汉字。")
+        val keys = FunctionKey.parse(c.functionKeys)
+        button("候选栏功能键（${keys.size}/${FunctionKey.MAX}）：${keys.joinToString("、") { it.title }.ifEmpty { "无" }}") { editFunctionKeys() }
+        label("功能键显示在 AI 候选栏最右端，最多 ${FunctionKey.MAX} 个，可以不放。所有功能也都在键盘左上角 ⋯ 菜单里。")
         val prefs = AppPrefs.defaultInstance().keyboard
         toggle("字母键盘顶部数字行", prefs.numberRowEnabled.getValue()) { prefs.numberRowEnabled.setValue(it); report("数字行设置已保存，下次打开键盘生效") }
         toggle("按键震动", prefs.vibrateOnKeyPress.getValue()) { enabled ->
@@ -157,6 +160,42 @@ class AiSettingsActivity : AppCompatActivity() {
         page.addView(group)
         button("新增 Policy") { work { val id = withContext(Dispatchers.IO) { store.addPolicy("Policy ${store.config.policies.size + 1}") }; openPolicy(id) } }
     }
+    /** Pick 0–5 function keys and their order (left to right). */
+    private fun editFunctionKeys() {
+        val chosen = FunctionKey.parse(store.config.functionKeys).toMutableList()
+        val order = (chosen + FunctionKey.entries.filter { it !in chosen }).toMutableList()
+        val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(20), dp(8), dp(12), 0) }
+        fun rebuild() {
+            list.removeAllViews()
+            order.forEachIndexed { index, key ->
+                val row = LinearLayout(this).apply { gravity = android.view.Gravity.CENTER_VERTICAL }
+                row.addView(CheckBox(this).apply {
+                    text = key.title; isChecked = key in chosen
+                    setOnCheckedChangeListener { box, on ->
+                        if (on && chosen.size >= FunctionKey.MAX) {
+                            box.isChecked = false
+                            Toast.makeText(this@AiSettingsActivity, "最多 ${FunctionKey.MAX} 个功能键", Toast.LENGTH_SHORT).show()
+                        } else if (on) chosen += key else chosen -= key
+                    }
+                }, LinearLayout.LayoutParams(0, -2, 1f))
+                fun move(delta: Int) = Button(this).apply {
+                    text = if (delta < 0) "▲" else "▼"; isAllCaps = false; minWidth = 0; minimumWidth = 0
+                    isEnabled = index + delta in order.indices
+                    contentDescription = (if (delta < 0) "上移 " else "下移 ") + key.title
+                    setOnClickListener { order.removeAt(index); order.add(index + delta, key); rebuild() }
+                }
+                row.addView(move(-1), LinearLayout.LayoutParams(dp(48), -2))
+                row.addView(move(1), LinearLayout.LayoutParams(dp(48), -2))
+                list.addView(row)
+            }
+        }
+        rebuild()
+        AlertDialog.Builder(this).setTitle("候选栏功能键（从左到右）").setView(ScrollView(this).apply { addView(list) })
+            .setPositiveButton("保存") { _, _ -> save { it.copy(functionKeys = order.filter { key -> key in chosen }.map { key -> key.id }) } }
+            .setNeutralButton("恢复默认") { _, _ -> save { it.copy(functionKeys = FunctionKey.DEFAULT_IDS) } }
+            .setNegativeButton("取消", null).show()
+    }
+
     private fun duplicatePolicy(id: String) {
         val action: () -> Unit = { work {
             val copied = withContext(Dispatchers.IO) { store.duplicatePolicy(id) }

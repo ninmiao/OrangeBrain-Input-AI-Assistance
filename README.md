@@ -6,7 +6,7 @@
 
 *An input method simple enough for a cat with one orange braincell.*
 
-[Windows 1.13.0 x64](dist/OrangeCell-Windows-1.13.0-Setup-x64.exe) · [Android 1.11.0 ARM64](dist/OrangeCell-1.11.0-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
+[Windows 1.14.0 x64](dist/OrangeCell-Windows-1.14.0-Setup-x64.exe) · [Android 1.12.0 ARM64](dist/OrangeCell-1.12.0-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
 
 > 本项目原名 **Zephyr Input（微风输入法）**，自 Windows 1.13.0 / Android 1.11.0 起更名为 **橘脑一颗（OrangeCell）**。旧版用户请看[从 Zephyr Input 升级](#从-zephyr-input-升级--upgrading-from-zephyr-input)。
 >
@@ -41,7 +41,7 @@ Cloud assistance supports **OpenAI, OpenRouter, and Google Gemini**, with separa
 
 1. **Windows**：下载安装器，运行并允许 UAC。在输入法列表里选择 **橘脑一颗**，从开始菜单打开 **橘脑一颗 OrangeCell** 设置。
 2. **Android**：下载 ARM64 APK，先按引导授予存储权限，再启用键盘，等待首次词库部署。
-3. **在线 AI**：在 Policy 中填 API Key 并选模型，在 **AI 增强（自动）** 里选模式。Windows 点 **保存并生效**，Android 允许使用云端 AI。组字时按 **F8**（Windows）或点 **星光**（Android）也可手动请求。
+3. **在线 AI**：在 Policy 中填 API Key 并选模型，在 **AI 增强（自动）** 里选模式。Windows 点 **保存并生效**，Android 允许使用云端 AI。组字时按 **F8**（Windows）或点候选栏右端的 **星光**（Android）也可手动请求。
 
 Run Setup and approve UAC on **Windows**, or install the ARM64 APK, grant storage access, and enable the keyboard on **Android**. For online AI, add a key and model to your policy and choose a mode under **Automatic AI**. Save on Windows and grant cloud permission on Android. While composing, press **F8** or tap the **sparkle** for help on demand.
 
@@ -94,15 +94,17 @@ Real emulator capture: for `woyaochihuogu`, online AI suggests “我要吃火�
 
 ### AI 助手 · Assistant
 
-候选栏显示 AI 当前状态，关闭、等待、请求、生成及断线可区分；Windows 设置页可查看后台与最近请求，并一键重启服务（保留配置和 Key，取消未上屏文字）。Android 点击 AI 小圆点查看状态，设置页可重置请求。
+候选栏显示 AI 当前状态，关闭、等待、请求、生成及断线可区分；Windows 设置页可查看后台与最近请求，并一键重启服务（保留配置和 Key，取消未上屏文字）。Windows 候选窗顶部用图标显示中 / EN、简 / 繁和 AI 状态（等待时星光转圈，完成时打勾）。Android 点击 AI 小圆点查看状态，设置页可重置请求。
 
-The candidate area shows AI request status. Windows settings show background services and the last request, with a restart button that preserves settings and keys but cancels uncommitted text. On Android, tap the AI dot for details or reset requests in settings.
+The candidate area shows AI request status. Windows settings show background services and the last request, with a restart button that preserves settings and keys but cancels uncommitted text. The Windows candidate window shows Chinese/English, simplified/traditional and AI state as animated badges. On Android, tap the AI dot for details or reset requests in settings.
 
-组字时，Windows 按 **F8**，Android 点候选栏左侧的星光图标，即可取消上一条请求并重新请求助手。Windows 可换成 F9、F10、Ctrl+Shift+F8 或关闭快捷键。Android 首次使用请在设置里允许云端 AI。
+组字时，Windows 按 **F8**，Android 点候选栏右端的星光图标，即可请求助手；请求进行中再点不会重复发送，长按星光可取消。Windows 可换成 F9、F10、Ctrl+Shift+F8 或关闭快捷键。Android 首次使用请在设置里允许云端 AI。
+
+Android 候选栏右端是功能键区，可放 0–5 个：**剪贴板**、**简繁**、**AI 表情**、**AI 助手**、**AI 设置**、**收起键盘**，在 **AI 辅助 → 候选栏功能键** 里勾选并调整顺序。默认是剪贴板、简繁、表情、助手，助手在最右端。不放在候选栏的功能也都在键盘左上角 **⋯** 菜单里。**AI 表情** 按当前输入生成 5 个不同风格的表情（4 个颜表情和 1 个 emoji）；组字时点选会替换拼音，已上屏的文字则把表情插在后面。
 
 在 **AI 增强（自动）** 中选择 **无**、**仅纠错** 或 **AI 助手＋纠错**。选 **无** 时只响应手动触发。**仅纠错** 返回一个修正候选。**AI 助手＋纠错** 通过一次流式请求先显示纠错，再显示助手。Windows 修改后点击 **保存并生效**。
 
-While composing, press **F8** on Windows or tap the sparkle on Android to cancel the previous request and request the assistant. **Automatic AI** offers **None**, **Correction only**, and **Assistant + correction**. **None** keeps manual requests available. In assistant mode, a single streaming request shows correction first and the assistant suggestion second. Windows also offers F9, F10, Ctrl+Shift+F8, and a disabled shortcut option.
+While composing, press **F8** on Windows or tap the sparkle at the right end of the Android bar to request the assistant; a running request is not sent twice, and a long press cancels it. The right end of the Android bar holds 0–5 function keys (clipboard, simplified/traditional, AI emoticons, AI assistant, AI settings, hide keyboard), chosen and ordered under **AI assistance → Function keys**; every function is also in the **⋯** menu. **AI emoticons** suggests five emoticons in different styles for the current input: four kaomoji and one emoji. **Automatic AI** offers **None**, **Correction only**, and **Assistant + correction**. **None** keeps manual requests available. In assistant mode, a single streaming request shows correction first and the assistant suggestion second. Windows also offers F9, F10, Ctrl+Shift+F8, and a disabled shortcut option.
 
 | 当前输入 / Input | 前文 / Context | 助手候选示例 / Assistant example |
 | --- | --- | --- |

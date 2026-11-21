@@ -512,7 +512,9 @@ class KeyboardView(
                     it
                 }
             }
-        if (keyLabel.isNotEmpty()) {
+        if (key.isShift && keyLabel.isNotEmpty()) {
+            drawShiftGlyph(canvas, key, centerX, centerY)
+        } else if (keyLabel.isNotEmpty()) {
             paint.typeface = FontManager.getTypeface("key_font")
             // For characters, use large font. For labels like "Done", use small font.
             paint.textSize =
@@ -567,6 +569,38 @@ class KeyboardView(
             }
         }
         canvas.translate(-keyDrawX, -keyDrawY)
+    }
+
+    private val shiftArrow =
+        android.graphics.Path().apply {
+            // A rounded upward arrow on a 24-unit grid.
+            moveTo(12f, 3.6f); lineTo(20.4f, 12.4f); lineTo(15.6f, 12.4f); lineTo(15.6f, 18.6f)
+            lineTo(8.4f, 18.6f); lineTo(8.4f, 12.4f); lineTo(3.6f, 12.4f); close()
+        }
+    private val shiftPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { strokeJoin = Paint.Join.ROUND; strokeCap = Paint.Cap.ROUND }
+
+    /**
+     * Shift is drawn instead of written: an outlined arrow when off, a filled arrow for one
+     * capital, and a filled accent arrow with a bar underneath while caps lock holds.
+     */
+    private fun drawShiftGlyph(canvas: Canvas, key: Key, centerX: Float, centerY: Float) {
+        val locked = key.isOn
+        val shifted = locked || keyboard.isShifted
+        val size = minOf(key.width, key.height) * 0.46f
+        val unit = size / 24f
+        canvas.save()
+        canvas.translate(centerX - size / 2f, centerY - size / 2f)
+        canvas.scale(unit, unit)
+        val color = if (locked) 0xff565CC6.toInt() else key.getTextColor()
+        shiftPaint.color = color
+        shiftPaint.strokeWidth = 1.9f
+        shiftPaint.style = if (shifted) Paint.Style.FILL_AND_STROKE else Paint.Style.STROKE
+        canvas.drawPath(shiftArrow, shiftPaint)
+        if (locked) {
+            shiftPaint.style = Paint.Style.FILL
+            canvas.drawRoundRect(8.4f, 20.6f, 15.6f, 22.6f, 1f, 1f, shiftPaint)
+        }
+        canvas.restore()
     }
 
     private fun onDrawKeyBackground(

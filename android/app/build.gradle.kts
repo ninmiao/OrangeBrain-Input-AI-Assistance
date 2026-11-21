@@ -27,8 +27,8 @@ android {
         minSdk = 23
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         targetSdk = 35
-        versionCode = 20261214
-        versionName = "1.11.0"
+        versionCode = 20261215
+        versionName = "1.12.0"
 
         multiDexEnabled = true
         setProperty("archivesBaseName", "OrangeCell-${versionName}")

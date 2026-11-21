@@ -26,8 +26,8 @@ class ClipboardTest {
             fun copy(text:String) {ins.runOnMainSync {(ins.targetContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(ClipData.newPlainText("fixture",text))}}
             fun paste(text:String) {
                 device.findObject(By.desc("剪贴板")).click()
-                assertTrue(device.wait(Until.hasObject(By.textStartsWith("当前复制 · ")),5000))
-                device.findObject(By.textStartsWith("当前复制 · ")).click()
+                assertTrue(device.wait(Until.hasObject(By.descStartsWith("当前复制：")),5000))
+                device.findObject(By.descStartsWith("当前复制：")).click()
                 if (!device.wait(Until.hasObject(By.desc("test-editor").text(text)),5000)) {
                     assertEquals("Pasting must preserve the current composition",text,device.findObject(By.desc("test-editor"))?.text)
                 }

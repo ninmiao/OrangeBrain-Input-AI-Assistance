@@ -35,6 +35,8 @@ class SwitchOptionWindow(
     private val service: TrimeInputMethodService,
     private val rime: RimeSession,
     private val theme: Theme,
+    /** Returns to the keyboard before a function key runs. */
+    private val backToKeyboard: () -> Unit = {},
 ) : BoardWindow.BarBoardWindow(),
     InputBroadcastReceiver {
     var popupMenu: PopupMenu? = null
@@ -95,10 +97,19 @@ class SwitchOptionWindow(
         }
     }
 
-    val view by lazy {
+    private val switchList by lazy {
         context.recyclerView {
             layoutManager = gridLayoutManager(4)
             adapter = this@SwitchOptionWindow.adapter
+        }
+    }
+
+    // Every function key is also reachable here, whether or not it is on the AI bar.
+    val view by lazy {
+        android.widget.LinearLayout(context).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            service.createAiFunctionMenu(backToKeyboard)?.let { addView(it, android.widget.LinearLayout.LayoutParams(-1, -2)) }
+            addView(switchList, android.widget.LinearLayout.LayoutParams(-1, 0, 1f))
         }
     }
 

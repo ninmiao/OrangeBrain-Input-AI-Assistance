@@ -1,4 +1,5 @@
 #include "StandardLayout.h"
+#include "OrangeCellStatusBar.h"
 
 using namespace weasel;
 
@@ -54,7 +55,15 @@ CSize StandardLayout::_GetPreeditSize(const Text& text,
 void StandardLayout::RecalculateSizes() {
   _preeditSize = _GetPreeditSize(_context.preedit, _pD2D->pPreeditFormat);
   _range = _context.preedit.highlightedRange();
-  _auxSize = _GetPreeditSize(_context.aux, _pD2D->pPreeditFormat);
+  if (orangecell::IsStatusAux(_context.aux.str)) {
+    const auto line = orangecell::StatusLine::Parse(_context.aux.str);
+    const bool verticalText = _style.layout_type == UIStyle::LAYOUT_VERTICAL_TEXT ||
+                              _style.layout_type == UIStyle::LAYOUT_VERTICAL_TEXT_FULLSCREEN;
+    _auxSize = verticalText ? _GetPreeditSize(Text(line.Plain()), _pD2D->pPreeditFormat)
+                            : CSize(orangecell::MeasureSize(*_pD2D, line, _pD2D->pPreeditFormat));
+  } else {
+    _auxSize = _GetPreeditSize(_context.aux, _pD2D->pPreeditFormat);
+  }
   _pD2D->GetTextSize(_pre, _pre.length(), _pD2D->pPreeditFormat,
                      &_pagePrevSize);
   _pD2D->GetTextSize(_next, _next.length(), _pD2D->pPreeditFormat,
@@ -190,6 +199,9 @@ bool StandardLayout::IsInlinePreedit() const {
 }
 
 bool StandardLayout::ShouldDisplayStatusIcon() const {
+  // OrangeCell draws language and script as badges in its status line.
+  if (orangecell::IsStatusAux(_context.aux.str))
+    return false;
   // rule 1. emphasis ascii mode
   // rule 2. show status icon when switching mode
   // rule 3. always show status icon with tips

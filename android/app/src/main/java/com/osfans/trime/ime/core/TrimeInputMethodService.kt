@@ -81,6 +81,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private lateinit var rime: RimeSession
     private var aiController: com.osfans.trime.ai.android.AiKeyboardController? = null
     fun createAiView(): View = aiController?.createView() ?: View(this)
+    fun createAiFunctionMenu(onChosen: () -> Unit): View? = aiController?.functionMenu(onChosen)
     fun notifyAiUserInput() { aiController?.userInput() }
     fun wordSegmentationActive():Boolean {
         val info=currentInputEditorInfo ?: return false

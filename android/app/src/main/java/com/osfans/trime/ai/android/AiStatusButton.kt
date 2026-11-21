@@ -11,7 +11,6 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PathMeasure
 import android.graphics.RectF
-import android.view.View
 import android.view.animation.LinearInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.core.graphics.PathParser
@@ -21,28 +20,30 @@ import kotlin.math.min
 import kotlin.math.sin
 
 /**
- * The AI sparkle button with a visible request state:
- * idle sparkle, waiting (amber ring spinning, sparkle breathing), streaming (faster indigo ring),
- * done (green check pops in, then settles back to the sparkle) and failed (red sparkle with a badge).
+ * An AI function key with a visible request state:
+ * idle glyph, waiting (amber ring spinning, glyph breathing), streaming (faster ring in the key's
+ * colour), done (green check pops in, then settles back to the glyph) and failed (red glyph with a badge).
+ * [Glyph.SPARKLE] is the assistant, [Glyph.SMILE] the emoticon key (a face that bobs while it waits).
  * The view only draws; the controller decides the phase and what a tap does.
  */
-class AiStatusButton(context: Context) : View(context) {
+class AiStatusButton(context: Context, val glyph: Glyph = Glyph.SPARKLE) : FunctionGlyphView(context) {
     enum class Phase { IDLE, WAITING, STREAMING, DONE, FAILED }
+    enum class Glyph { SPARKLE, SMILE }
 
     private var requested = Phase.IDLE
     private var shown = Phase.IDLE
-    private val density = resources.displayMetrics.density
+    private val base = if (glyph == Glyph.SMILE) ORANGE else INDIGO
 
     private val sparkle = PathParser.createPathFromPathData(SPARKLE)
+    private val star = PathParser.createPathFromPathData(STAR)
     private val checkPath = Path().apply { moveTo(7.2f, 12.4f); lineTo(10.6f, 15.8f); lineTo(16.8f, 8.6f) }
     private val checkMeasure = PathMeasure(checkPath, false)
     private val work = Path()
     private val oval = RectF(1.5f, 1.5f, 22.5f, 22.5f)
-    private val fill = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val line = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeCap = Paint.Cap.ROUND; strokeJoin = Paint.Join.ROUND }
+    private val mouth = RectF(7.6f, 9.4f, 15.4f, 16.6f)
 
     private var spin = 0f      // 0..1, loops while waiting or streaming
-    private var ring = 0f      // 0 = no ring, 1 = full ring; drives the sparkle shrinking inside it
+    private var ring = 0f      // 0 = no ring, 1 = full ring; drives the glyph shrinking inside it
     private var pop = 0f       // done badge growth, overshoots slightly
     private var fade = 1f      // done badge fade-out before it settles
 
@@ -74,6 +75,8 @@ class AiStatusButton(context: Context) : View(context) {
     }
     private val settle = Runnable { if (shown == Phase.DONE) fadeAnimator.start() }
 
+    init { contentDescription = if (glyph == Glyph.SMILE) "AI 表情" else "AI 助手" }
+
     /** Idempotent: repeated render() calls with the same phase never restart an animation. */
     fun setPhase(phase: Phase) {
         if (phase == requested) return
@@ -92,17 +95,9 @@ class AiStatusButton(context: Context) : View(context) {
                 pop = 0f; popAnimator.cancel(); popAnimator.start()
                 postDelayed(settle, 1600)
             }
-            Phase.FAILED -> { stopTicker(); animateRing(0f); shake() }
+            Phase.FAILED -> { stopTicker(); animateRing(0f); refuse() }
         }
         invalidate()
-    }
-
-    /** Immediate tactile feedback for a tap, before the request has started. */
-    fun nudge() {
-        animate().cancel()
-        animate().scaleX(0.8f).scaleY(0.8f).setDuration(90).withEndAction {
-            animate().scaleX(1f).scaleY(1f).setDuration(220).setInterpolator(OvershootInterpolator(3f)).start()
-        }.start()
     }
 
     /** Tap ignored because a request is already running. */
@@ -110,8 +105,6 @@ class AiStatusButton(context: Context) : View(context) {
         ObjectAnimator.ofFloat(this, TRANSLATION_X, 0f, -3f * density, 3f * density, -2f * density, 2f * density, 0f)
             .setDuration(260).start()
     }
-
-    private fun shake() = refuse()
 
     private fun startTicker(ms: Long) {
         ticker.duration = ms
@@ -133,47 +126,52 @@ class AiStatusButton(context: Context) : View(context) {
 
     override fun onDetachedFromWindow() {
         stopTicker(); ringAnimator.cancel(); popAnimator.cancel(); fadeAnimator.cancel(); removeCallbacks(settle)
-        animate().cancel()
         super.onDetachedFromWindow()
     }
 
-    override fun onDraw(canvas: Canvas) {
-        val box = min(width, height) * 0.80f
-        if (box <= 0f) return
-        canvas.save()
-        canvas.translate((width - box) / 2f, (height - box) / 2f)
-        val k = box / 24f
-        canvas.scale(k, k)
+    override fun drawGlyph(canvas: Canvas) {
+        val pulse = 0.5f + 0.5f * sin(2 * PI * spin).toFloat()
         when (shown) {
-            Phase.IDLE -> drawSparkle(canvas, INDIGO, 1f)
+            Phase.IDLE -> drawIcon(canvas, base, 1f, 0f)
             Phase.WAITING -> {
                 drawRing(canvas, AMBER, 110f)
-                drawSparkle(canvas, AMBER, 0.55f + 0.45f * (0.5f + 0.5f * sin(2 * PI * spin).toFloat()))
+                drawIcon(canvas, AMBER, 0.55f + 0.45f * pulse, sin(2 * PI * spin).toFloat())
             }
             Phase.STREAMING -> {
-                drawRing(canvas, INDIGO, 250f)
-                drawSparkle(canvas, INDIGO, 0.7f + 0.3f * (0.5f + 0.5f * sin(4 * PI * spin).toFloat()))
+                drawRing(canvas, base, 250f)
+                drawIcon(canvas, base, 0.7f + 0.3f * (0.5f + 0.5f * sin(4 * PI * spin).toFloat()), sin(4 * PI * spin).toFloat())
             }
             Phase.DONE -> {
-                drawSparkle(canvas, INDIGO, 1f - min(1f, pop) * 0.9f)
+                drawIcon(canvas, base, 1f - min(1f, pop) * 0.9f, 0f)
                 drawDone(canvas)
             }
             Phase.FAILED -> {
-                drawSparkle(canvas, RED, 1f)
+                drawIcon(canvas, RED, 1f, 0f)
                 drawBadge(canvas)
             }
         }
-        canvas.restore()
     }
 
-    private fun drawSparkle(canvas: Canvas, color: Int, alpha: Float) {
+    /** [wobble] in -1..1 tilts the face or nothing for the sparkle. */
+    private fun drawIcon(canvas: Canvas, color: Int, alpha: Float, wobble: Float) {
         val s = 1f - 0.38f * ring
-        fill.style = Paint.Style.FILL
-        fill.color = color
-        fill.alpha = (255 * alpha.coerceIn(0f, 1f)).toInt()
+        val a = (255 * alpha.coerceIn(0f, 1f)).toInt()
         canvas.save()
         canvas.scale(s, s, 12f, 12.5f)
-        canvas.drawPath(sparkle, fill)
+        if (glyph == Glyph.SPARKLE) {
+            fill.style = Paint.Style.FILL; fill.color = color; fill.alpha = a
+            canvas.drawPath(sparkle, fill)
+        } else {
+            canvas.rotate(10f * wobble, 11.5f, 13f)
+            line.color = color; line.alpha = a; line.strokeWidth = 1.9f
+            canvas.drawCircle(11.5f, 13f, 8.2f, line)
+            fill.style = Paint.Style.FILL; fill.color = color; fill.alpha = a
+            canvas.drawCircle(8.7f, 11.4f, 1.25f, fill)
+            canvas.drawCircle(14.3f, 11.4f, 1.25f, fill)
+            line.strokeWidth = 1.7f
+            canvas.drawArc(mouth, 25f, 130f, false, line)
+            canvas.drawPath(star, fill)
+        }
         canvas.restore()
     }
 
@@ -219,9 +217,7 @@ class AiStatusButton(context: Context) : View(context) {
 
     private companion object {
         const val SPARKLE = "M10,2.5L12.25,8.75L18.5,11L12.25,13.25L10,19.5L7.75,13.25L1.5,11L7.75,8.75ZM19.5,2L20.4,4.6L23,5.5L20.4,6.4L19.5,9L18.6,6.4L16,5.5L18.6,4.6ZM19,15L20,18L23,19L20,20L19,23L18,20L15,19L18,18Z"
-        val INDIGO = 0xff565CC6.toInt()
-        val AMBER = 0xffB87900.toInt()
-        val GREEN = 0xff267348.toInt()
-        val RED = 0xffB3261E.toInt()
+        // A small four-point star at the top right of the face: the "AI" mark.
+        const val STAR = "M20.2,0.8L21,3L23.2,3.8L21,4.6L20.2,6.8L19.4,4.6L17.2,3.8L19.4,3Z"
     }
 }
