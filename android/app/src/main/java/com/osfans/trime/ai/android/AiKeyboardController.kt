@@ -157,33 +157,44 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
         return true
     }
 
-    /** All function keys as a grid with names, for the function menu behind the ⋯ button. */
+    /**
+     * The function keys as tiles for the ⋯ menu. Same tile as the Rime switches below them
+     * (48 dp key-coloured square, name underneath, 96 dp cell, four per row), so both read as one grid.
+     */
     fun functionMenu(onChosen: () -> Unit): View {
         val context = ContextThemeWrapper(service, android.R.style.Theme_Material_Light)
-        val grid = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(8), dp(6), dp(8), dp(2)) }
-        grid.addView(TextView(context).apply {
-            text = "功能"; textSize = 12f; setTextColor(0xff6b7280.toInt()); setPadding(dp(6), 0, 0, dp(2))
-        })
-        FunctionKey.entries.chunked(3).forEach { row ->
+        val general = com.osfans.trime.data.theme.ThemeManager.activeTheme.generalStyle
+        val textColor = com.osfans.trime.data.theme.ColorManager.getColor("key_text_color")
+        val corner = general.roundCorner * service.resources.displayMetrics.density
+        val grid = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        FunctionKey.entries.chunked(4).forEach { row ->
             val line = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
             row.forEach { key ->
-                val cell = LinearLayout(context).apply {
-                    orientation = LinearLayout.HORIZONTAL; gravity = android.view.Gravity.CENTER_VERTICAL
-                    setPadding(dp(6), dp(4), dp(6), dp(4)); isClickable = true; isFocusable = true
-                    background = android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(0x24565CC6), null,
-                        android.graphics.drawable.GradientDrawable().apply { setColor(android.graphics.Color.WHITE); cornerRadius = dp(10).toFloat() })
+                val cell = FrameLayout(context).apply {
+                    isClickable = true; isFocusable = true
                     contentDescription = key.title
                     setOnClickListener { onChosen(); panel?.post { perform(key) } }
                 }
-                val icon = FunctionGlyphView.create(context, key).apply {
-                    isClickable = false; isFocusable = false; background = null; importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                val tile = FrameLayout(context).apply {
+                    background = com.osfans.trime.data.theme.ColorManager.getDecorDrawable(
+                        "key_back_color", "key_border_color", dp(general.keyBorder), corner)
+                    foreground = android.graphics.drawable.RippleDrawable(
+                        android.content.res.ColorStateList.valueOf(0x24565CC6), null,
+                        android.graphics.drawable.GradientDrawable().apply { setColor(android.graphics.Color.WHITE); cornerRadius = corner })
+                }
+                val glyph = FunctionGlyphView.create(context, key).apply {
+                    isClickable = false; isFocusable = false; background = null
+                    importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
                     (this as? ScriptToggleButton)?.setTraditional(store.config.traditional, animate = false)
                 }
-                cell.addView(icon, LinearLayout.LayoutParams(dp(34), dp(34)))
-                cell.addView(TextView(context).apply { text = key.title; textSize = 13f; setTextColor(0xff2b2f36.toInt()); setPadding(dp(4), 0, 0, 0) })
-                line.addView(cell, LinearLayout.LayoutParams(0, -2, 1f))
+                tile.addView(glyph, FrameLayout.LayoutParams(dp(48), dp(48), android.view.Gravity.CENTER))
+                cell.addView(tile, FrameLayout.LayoutParams(dp(48), dp(48), android.view.Gravity.TOP or android.view.Gravity.CENTER_HORIZONTAL).apply { topMargin = dp(4) })
+                cell.addView(TextView(context).apply {
+                    text = key.title; textSize = 12f; gravity = android.view.Gravity.CENTER; setTextColor(textColor)
+                }, FrameLayout.LayoutParams(-2, -2, android.view.Gravity.TOP or android.view.Gravity.CENTER_HORIZONTAL).apply { topMargin = dp(58) })
+                line.addView(cell, LinearLayout.LayoutParams(0, dp(96), 1f))
             }
-            repeat(3 - row.size) { line.addView(View(context), LinearLayout.LayoutParams(0, 0, 1f)) }
+            repeat(4 - row.size) { line.addView(View(context), LinearLayout.LayoutParams(0, dp(96), 1f)) }
             grid.addView(line, LinearLayout.LayoutParams(-1, -2))
         }
         return grid

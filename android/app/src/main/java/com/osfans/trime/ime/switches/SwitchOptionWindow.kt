@@ -106,11 +106,15 @@ class SwitchOptionWindow(
 
     // Every function key is also reachable here, whether or not it is on the AI bar.
     val view by lazy {
-        android.widget.LinearLayout(context).apply {
+        // One scrolling grid: the function tiles first, then the Rime switches, same tile style.
+        val column = android.widget.LinearLayout(context).apply {
             orientation = android.widget.LinearLayout.VERTICAL
             service.createAiFunctionMenu(backToKeyboard)?.let { addView(it, android.widget.LinearLayout.LayoutParams(-1, -2)) }
-            addView(switchList, android.widget.LinearLayout.LayoutParams(-1, 0, 1f))
+            switchList.isNestedScrollingEnabled = false
+            switchList.overScrollMode = View.OVER_SCROLL_NEVER
+            addView(switchList, android.widget.LinearLayout.LayoutParams(-1, -2))
         }
+        android.widget.ScrollView(context).apply { isVerticalScrollBarEnabled = false; addView(column) }
     }
 
     private fun updateSchemaOptionEntries() {
