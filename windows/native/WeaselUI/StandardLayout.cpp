@@ -16,7 +16,7 @@ wstring FormatCandidateLabel(const wstring& label, const wchar_t* format) {
 
 CSize StandardLayout::_GetPreeditSize(const Text& text,
                                       ComPtr<IDWriteTextFormat1>& pTextFormat) {
-  const wstring& preedit = text.str;
+  const wstring preedit = orangecell::StripMarkers(text.str);
   CSize size(0, 0);
   if (!preedit.empty()) {
     const auto range = text.highlightedRange();

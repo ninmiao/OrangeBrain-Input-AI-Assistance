@@ -6,11 +6,7 @@
 
 *An input method simple enough for a cat with one orange braincell.*
 
-[Windows 1.14.0 x64](dist/OrangeCell-Windows-1.14.0-Setup-x64.exe) · [Android 1.12.0 ARM64](dist/OrangeCell-1.12.0-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
-
-> 本项目原名 **Zephyr Input（微风输入法）**，自 Windows 1.13.0 / Android 1.11.0 起更名为 **橘脑一颗（OrangeCell）**。旧版用户请看[从 Zephyr Input 升级](#从-zephyr-input-升级--upgrading-from-zephyr-input)。
->
-> Formerly **Zephyr Input**; renamed **OrangeCell** from Windows 1.13.0 and Android 1.11.0. See [Upgrading from Zephyr Input](#从-zephyr-input-升级--upgrading-from-zephyr-input).
+[Windows 1.14.0 · x86 / x64 / ARM64](dist/OrangeCell-Windows-1.14.0-Setup-x86-arm64.exe) · [Android 1.12.0 ARM64](dist/OrangeCell-1.12.0-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了橘脑一颗（OrangeCell），自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
@@ -290,3 +286,7 @@ OrangeCell's original code and documentation use **GPL-3.0-or-later**, permittin
 Windows 安装包暂未做代码签名，首次运行时 SmartScreen 可能提示“Windows 已保护你的电脑”。点击“更多信息”，再点“仍要运行”即可继续安装，安装、更新和卸载不受影响。可对照发布附件中的 `SHA256SUMS` 核对文件。
 
 The Windows installer is not code-signed, so SmartScreen may show "Windows protected your PC" on first run. Choose "More info", then "Run anyway". Installing, updating, and uninstalling work normally. Compare the file with `SHA256SUMS` in the release assets.
+
+## 项目更名 · Renamed
+
+本项目原名 **Zephyr Input（微风输入法）**，自 Windows 1.13.0 / Android 1.11.0 起更名为 **橘脑一颗 OrangeCell**，旧版升级见[上文](#从-zephyr-input-升级--upgrading-from-zephyr-input)。 *Formerly Zephyr Input; renamed OrangeCell from Windows 1.13.0 and Android 1.11.0.*

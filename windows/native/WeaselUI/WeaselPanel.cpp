@@ -536,7 +536,8 @@ void WeaselPanel::_DrawOrangeCellStatus() {
 
 bool WeaselPanel::_DrawPreedit(const Text& text, bool isPreedit) {
   bool drawn = false;
-  wstring const& t = text.str;
+  const wstring cleaned = orangecell::StripMarkers(text.str);
+  wstring const& t = cleaned;
   PtTextFormat& pTextFormat = m_pD2D->pPreeditFormat;
 
   if (!t.empty()) {

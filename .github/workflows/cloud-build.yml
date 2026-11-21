@@ -63,7 +63,7 @@ jobs:
           $version = (Get-Item (Join-Path $image 'OrangeCellSettings.exe')).VersionInfo.ProductVersion
           if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid Windows version' }
           ./windows/scripts/build-installer.ps1 -Image $image -Version $version -Compiler $compiler -OutputDirectory $output
-          $installer = Get-Item -LiteralPath "$output/OrangeCell-Windows-$version-Setup-x64.exe"
+          $installer = Get-Item -LiteralPath "$output/OrangeCell-Windows-$version-Setup-x86-arm64.exe"
           if ($installer.VersionInfo.ProductVersion.Trim() -ne $version) { throw 'Installer version mismatch' }
           $digest = (Get-FileHash -LiteralPath $installer.FullName).Hash.ToLowerInvariant()
           "$digest  $($installer.Name)" | Set-Content -LiteralPath "$output/SHA256SUMS" -Encoding ASCII
@@ -75,7 +75,7 @@ jobs:
         run: |
           tzutil /s "Central Standard Time"
           if ($LASTEXITCODE) { throw 'Cannot change the runner time zone' }
-          $installer = Get-ChildItem -LiteralPath (Join-Path $env:RUNNER_TEMP 'orangecell-output') -Filter 'OrangeCell-Windows-*-Setup-x64.exe'
+          $installer = Get-ChildItem -LiteralPath (Join-Path $env:RUNNER_TEMP 'orangecell-output') -Filter 'OrangeCell-Windows-*-Setup-x86-arm64.exe'
           # Wait for Setup itself only. Start-Process -Wait would also wait for the
           # broker and input service that Setup leaves running, which never exit.
           $setup = Start-Process -FilePath $installer.FullName -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-' -PassThru
@@ -120,7 +120,7 @@ jobs:
       - name: Install and check ARM64X activation in ARM64 and x64 processes
         timeout-minutes: 12
         run: |
-          $installer = Get-ChildItem -LiteralPath (Join-Path $env:RUNNER_TEMP 'windows-x64') -Filter 'OrangeCell-Windows-*-Setup-x64.exe'
+          $installer = Get-ChildItem -LiteralPath (Join-Path $env:RUNNER_TEMP 'windows-x64') -Filter 'OrangeCell-Windows-*-Setup-x86-arm64.exe'
           $setup = Start-Process -FilePath $installer.FullName -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-' -PassThru
           if (!$setup.WaitForExit(300000)) { throw 'Silent install did not finish in 5 minutes' }
           if ($setup.ExitCode) { throw "Silent install failed: $($setup.ExitCode)" }
@@ -227,7 +227,7 @@ jobs:
         shell: bash
         run: |
           shopt -s nullglob
-          windows=("$RUNNER_TEMP"/windows-x64/OrangeCell-Windows-*-Setup-x64.exe)
+          windows=("$RUNNER_TEMP"/windows-x64/OrangeCell-Windows-*-Setup-x86-arm64.exe)
           android=("$RUNNER_TEMP"/android-arm64/OrangeCell-*-arm64-v8a-demo.apk)
           [[ ${#windows[@]} -eq 1 && ${#android[@]} -eq 1 ]]
           (cd "$RUNNER_TEMP/windows-x64" && tr -d '\r' < SHA256SUMS | sha256sum --check -)

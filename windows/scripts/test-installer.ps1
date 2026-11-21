@@ -3,7 +3,7 @@ $ErrorActionPreference='Stop'
 $root=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 if(!$Report){$Report=Join-Path $root '.tools/installer-validation.json'}
 $setupPath=(Resolve-Path -LiteralPath $Setup).Path
-if([IO.Path]::GetFileName($setupPath) -notmatch '^OrangeCell-Windows-(?<version>[0-9]+\.[0-9]+\.[0-9]+)-Setup-x64\.exe$'){throw 'Unexpected installer'}
+if([IO.Path]::GetFileName($setupPath) -notmatch '^OrangeCell-Windows-(?<version>[0-9]+\.[0-9]+\.[0-9]+)-Setup-x86-arm64\.exe$'){throw 'Unexpected installer'}
 $expectedVersion=$Matches.version
 $target=Join-Path $env:ProgramFiles 'OrangeCell'
 $uninstallKey='HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{26046138-D37D-49AE-880A-0FA896024DB1}_is1'

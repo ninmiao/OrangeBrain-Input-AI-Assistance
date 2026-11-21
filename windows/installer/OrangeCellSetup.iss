@@ -22,7 +22,7 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0
 OutputDir={#Output}
-OutputBaseFilename=OrangeCell-Windows-{#Version}-Setup-x64
+OutputBaseFilename=OrangeCell-Windows-{#Version}-Setup-x86-arm64
 Compression=lzma2/fast
 SolidCompression=yes
 ; Store file times in UTC. The default keeps the build machine's local time, so a

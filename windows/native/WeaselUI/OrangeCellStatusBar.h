@@ -30,9 +30,10 @@ struct StatusLine {
 
   static StatusLine Parse(const std::wstring& aux) {
     StatusLine s;
-    if (aux.empty() || aux[0] != wchar_t(0xE000)) return s;
+    const size_t start = aux.find(wchar_t(0xE000));
+    if (start == std::wstring::npos) return s;
     std::vector<std::wstring> f;
-    size_t from = 1;
+    size_t from = start + 1;
     for (;;) {
       size_t at = aux.find(wchar_t(0xE001), from);
       f.push_back(aux.substr(from, at == std::wstring::npos ? std::wstring::npos : at - from));
@@ -64,7 +65,14 @@ struct StatusLine {
 };
 
 inline bool IsStatusAux(const std::wstring& aux) {
-  return !aux.empty() && aux[0] == wchar_t(0xE000);
+  return aux.find(wchar_t(0xE000)) != std::wstring::npos;
+}
+
+// Text that is not drawn as badges must never show the private-use field markers.
+inline std::wstring StripMarkers(std::wstring text) {
+  for (auto& c : text)
+    if (c == wchar_t(0xE000) || c == wchar_t(0xE001)) c = L' ';
+  return text;
 }
 
 // Colours are 0xAABBGGRR, as everywhere in Weasel.
