@@ -183,7 +183,7 @@ inline void Sparkle(weasel::D2D& d2d, float x, float y, float size, float shrink
 inline void Arc(weasel::D2D& d2d, float cx, float cy, float r, float startDeg, float sweepDeg, float width,
                 uint32_t color) {
   std::vector<D2D1_POINT_2F> pts;
-  const int n = std::max(8, int(sweepDeg / 8));
+  const int n = (std::max)(8, int(sweepDeg / 8));
   for (int i = 0; i <= n; ++i) {
     float t = (startDeg + sweepDeg * i / n) * 3.14159265f / 180.0f;
     pts.push_back({cx + r * std::cos(t), cy + r * std::sin(t)});
@@ -220,8 +220,8 @@ inline void Draw(weasel::D2D& d2d, const StatusLine& s, const RECT& rc, weasel::
   const ULONGLONG now = GetTickCount64();
   const float seconds = float(now - anim.start) / 1000.0f;
   float x = float(rc.left);
-  const float y = float(rc.top) + std::max(0.0f, (float(rc.bottom - rc.top) - m.h) / 2);
-  const float h = m.h, r = std::round(h * 0.28f), stroke = std::max(1.0f, h / 16);
+  const float y = float(rc.top) + (std::max)(0.0f, (float(rc.bottom - rc.top) - m.h) / 2);
+  const float h = m.h, r = std::round(h * 0.28f), stroke = (std::max)(1.0f, h / 16);
   auto rounded = [&](float l, float t, float w, float hh, float rad) {
     return D2D1::RoundedRect(D2D1::RectF(l, t, l + w, t + hh), rad, rad);
   };
@@ -241,9 +241,9 @@ inline void Draw(weasel::D2D& d2d, const StatusLine& s, const RECT& rc, weasel::
 
   // Script: a card that turns over when 简 and 繁 switch.
   {
-    float p = anim.scriptAt ? std::min(1.0f, float(now - anim.scriptAt) / 380.0f) : 1.0f;
+    float p = anim.scriptAt ? (std::min)(1.0f, float(now - anim.scriptAt) / 380.0f) : 1.0f;
     float eased = p < 0.5f ? 2 * p * p : 1 - std::pow(-2 * p + 2, 2.0f) / 2;
-    float sx = std::max(0.04f, std::fabs(std::cos(3.14159265f * eased)));
+    float sx = (std::max)(0.04f, std::fabs(std::cos(3.14159265f * eased)));
     bool trad = eased < 0.5f ? anim.previousTraditional : s.traditional;
     if (!anim.scriptAt) trad = s.traditional;
     D2D1_MATRIX_3X2_F old;
@@ -283,8 +283,8 @@ inline void Draw(weasel::D2D& d2d, const StatusLine& s, const RECT& rc, weasel::
     Sparkle(d2d, ix, iy, m.icon, 0.6f, WithAlpha(tone, uint8_t(140 + 115 * pulse)));
   } else if (s.phase == AiPhase::Done && now - anim.phaseAt < 1900) {
     const float t = float(now - anim.phaseAt) / 1000.0f;
-    const float grow = Overshoot(std::min(1.0f, t / 0.36f));
-    const float fade = t < 1.6f ? 1.0f : std::max(0.0f, 1 - (t - 1.6f) / 0.28f);
+    const float grow = Overshoot((std::min)(1.0f, t / 0.36f));
+    const float fade = t < 1.6f ? 1.0f : (std::max)(0.0f, 1 - (t - 1.6f) / 0.28f);
     d2d.SetBrushColor(WithAlpha(kGreen, uint8_t(255 * fade)));
     d2d.dc->FillEllipse(D2D1::Ellipse(D2D1::Point2F(cx, cy), m.icon / 2 * grow, m.icon / 2 * grow),
                         d2d.m_pBrush.Get());
