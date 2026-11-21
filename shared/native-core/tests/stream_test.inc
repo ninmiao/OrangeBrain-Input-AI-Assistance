@@ -1,3 +1,16 @@
+// Assistant mode keeps two candidates unless the request asks for more slots (emoticon requests).
+{
+  auto invoke=[](const J& args) {auto r=J::parse(orangecell::invoke(J{{"op","stream"},{"args",args}}.dump()));if(r.contains("error"))throw std::runtime_error(r.dump());return r.at("ok");};
+  auto hex=[](const std::string& v) {std::string h;for(unsigned char c:v){h+="0123456789abcdef"[c>>4];h+="0123456789abcdef"[c&15];}return h;};
+  const std::string endpoint="https://openrouter.ai/api/v1/chat/completions";
+  const std::string body=std::string("data: ")+J{{"choices",J::array({J{{"index",0},{"delta",{{"content","[\"a\",\"b\",\"c\",\"d\",\"e\"]"}}}}})}}.dump()+"\r\n\r\n";
+  auto five=invoke({{"endpoint",endpoint},{"assistantEnabled",true},{"slots",5},{"chunkHex",hex(body)}});
+  five=invoke({{"endpoint",endpoint},{"assistantEnabled",true},{"slots",5},{"state",five["state"]},{"finish",true}});
+  if(five["result"]["candidates"].size()!=5)throw std::runtime_error("emoticon request must keep five candidates");
+  auto two=invoke({{"endpoint",endpoint},{"assistantEnabled",true},{"chunkHex",hex(body)}});
+  two=invoke({{"endpoint",endpoint},{"assistantEnabled",true},{"state",two["state"]},{"finish",true}});
+  if(two["result"]["candidates"].size()!=2)throw std::runtime_error("assistant mode keeps correction and assistant only");
+}
 // All split points include UTF-8 bytes, SSE CRLF, JSON escapes and role order.
 {
   auto invoke=[](const J& args) {auto r=J::parse(orangecell::invoke(J{{"op","stream"},{"args",args}}.dump()));if(r.contains("error"))throw std::runtime_error(r.dump());return r.at("ok");};

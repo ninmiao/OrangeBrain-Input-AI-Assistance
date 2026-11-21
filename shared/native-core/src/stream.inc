@@ -120,7 +120,10 @@ J streamDecode(const J& a) {
   }
   if(result.is_object()) {
     auto& candidates = result.at("candidates");
-    const size_t slots = roles ? 2 : 1;
+    // Assistant mode keeps correction + assistant; a request may ask for more (emoticons: 5).
+    size_t slots = roles ? 2 : 1;
+    const int wanted = a.value("slots", 0);
+    if (wanted >= 1 && wanted <= 8) slots = size_t(wanted);
     if (candidates.size() > slots) candidates.erase(candidates.begin() + slots, candidates.end());
     result["streaming"]=!finish&&!done;
     if(!error.empty() || ((done||finish) && cut)) {

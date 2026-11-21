@@ -454,7 +454,7 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
             // An emoticon request reuses the assistant transport: its own prompt, up to five items, no roles.
             val request = AiRequest(RequestStamp(session, revision, c.generation, keyboardGeneration, c.generation), snapshot.input,
                 if (emoji) EMOJI_PROMPT else store.prompt(c, chinese, assistant), !emoji && c.completion,
-                if (emoji) 5 else c.candidateCount, c.outputTokenBudget, assistant)
+                if (emoji) 5 else c.candidateCount, c.outputTokenBudget, assistant, maxCandidates = if (emoji) 5 else 0)
             emojiStamp = if (emoji) request.stamp else null
             coordinator.submit(request, true, sensitive, if (manual) 0L else c.debounceMs)
         }

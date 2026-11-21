@@ -15,7 +15,7 @@ data class RequestStamp(
     val apiGeneration: Long,
 )
 
-data class AiRequest(val stamp: RequestStamp, val input: AiInput, val systemPrompt: String, val completionEnabled: Boolean, val candidateCount: Int = 1, val outputTokenBudget:Int = 256, val assistantEnabled:Boolean = false, val onPartial:((AiResult)->Unit)? = null)
+data class AiRequest(val stamp: RequestStamp, val input: AiInput, val systemPrompt: String, val completionEnabled: Boolean, val candidateCount: Int = 1, val outputTokenBudget:Int = 256, val assistantEnabled:Boolean = false, val onPartial:((AiResult)->Unit)? = null, val maxCandidates:Int = 0)
 
 sealed interface AiState {
     data object Idle : AiState

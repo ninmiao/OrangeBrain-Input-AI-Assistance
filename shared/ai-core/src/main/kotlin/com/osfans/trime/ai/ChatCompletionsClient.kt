@@ -122,7 +122,7 @@ class ChatCompletionsClient internal constructor(private val http: OkHttpClient)
                                 fun feed(bytes:ByteArray,size:Int,finish:Boolean):AiResult? {
                                     val hex=buildString(size*2) { for(i in 0 until size) { val b=bytes[i].toInt() and 255;append("0123456789abcdef"[b shr 4]);append("0123456789abcdef"[b and 15]) } }
                                     val r=NativeCore.invoke("stream",buildJsonObject {
-                                        put("endpoint",endpoint);put("assistantEnabled",request.assistantEnabled)
+                                        put("endpoint",endpoint);put("assistantEnabled",request.assistantEnabled);put("slots",request.maxCandidates)
                                         put("state",state);put("chunkHex",hex);put("finish",finish)
                                     }).jsonObject
                                     state=r.getValue("state")
