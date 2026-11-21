@@ -6,8 +6,8 @@
 
 | 项目 | 当前状态 |
 | --- | --- |
-| Windows 本地安装包 | 1.13.0 x64：更名为橘脑一颗 OrangeCell，云构建结果见下方条目；此前的 1.12.9（Zephyr Input）已安装到本机 |
-| Android 本地安装包 | 1.11.0 ARM64 demo：更名为橘脑一颗 OrangeCell，新应用 ID `io.github.ninmiao.orangecell`；S26 上仍是旧的 1.10.4（Zephyr Input） |
+| Windows 本地安装包 | 1.13.0 x64（橘脑一颗 OrangeCell）已在 `dist/`；本机仍是 1.12.9（Zephyr Input） |
+| Android 本地安装包 | 1.11.0 ARM64 demo（橘脑一颗 OrangeCell，应用 ID `io.github.ninmiao.orangecell`）已在 `dist/`；S26 上仍是 1.10.4（Zephyr Input） |
 | 源码提示词 | 纠错模式返回一个候选；助手模式以单次流式请求返回纠错和助手两个候选；前后文默认 50 / 0 |
 | 安装包提示词 | Windows 1.12.5 与 Android 1.10.3 使用独立的纠错和助手提示词 |
 | LLM 接入 | OpenAI、OpenRouter、Google Gemini 在线 API，始终发送完整提示词；Preset 已移除 |
@@ -31,7 +31,8 @@
 - Android 标识：应用 ID 从 `com.osfans.trime.ai` 改为 `io.github.ninmiao.orangecell`（demo / debug 后缀不变），应用名简体“橘脑一颗”、繁体“橘腦一顆”、英文“OrangeCell”，原生库改名为 `orangecell_core`。Kotlin 源码包名 `com.osfans.trime` 是同文上游的命名空间，未改。
 - Rime：方案 `zephyr_wanxiang` 改为 `orangecell_wanxiang`，下载词表与语法模型前缀改为 `orangecell_`，更新器工作目录改为 `.orangecell-wanxiang`，方案显示名改为“万象拼音 · 橘脑一颗”。
 - 旧数据迁移：Windows 新安装器在安装前静默运行旧 Zephyr Input 的卸载程序（注销旧输入法、删除旧程序，用户数据保留）。Broker 和 Rime 服务首次启动时，把 `%APPDATA%\ZephyrInput` 改名为 `%APPDATA%\OrangeCell`，把 `HKCU\Software\ZephyrInput` 复制到新键，并把 Rime 用户目录里 `zephyr_` / `.zephyr-` 开头的用户词库、词表、模型和更新器状态改名，同时改写其中的标识；`build\` 里旧的编译产物删除后重新部署。Android 在取得存储权限后把 `/sdcard/ZephyrInput` 改名为 `/sdcard/OrangeCell`，做同样的改名。迁移完成后写入 `.orangecell-migrated` 标记，之后不再扫描。Android 的 AI Policy 与 Key 存在旧应用的私有存储里，无法转移，需要重新填写。
-- 测试：新增 Windows `migration_test` 和 Kotlin `LegacyRenameTest`。本机已编译并通过 `migration_test`（MSVC `/W4` 无警告）；其余构建与测试结果见云构建记录。
+- 测试：新增 Windows `migration_test` 和 Kotlin `LegacyRenameTest`。本机已编译并通过 `migration_test`（MSVC `/W4` 无警告）。云构建 run 44874911413 全部通过：Android arm64（含 `:ai-core:test`）、Windows x64（含组件测试与 x64/x86 原生测试）、Windows on ARM 安装检查。
+- 发布：`dist/` 换为云构建产物 `OrangeCell-Windows-1.13.0-Setup-x64.exe` 与 `OrangeCell-1.11.0-arm64-v8a-demo.apk`，SHA-256 已校验；旧的 Zephyr 安装包已移除。尚未安装到本机或 S26，从旧版升级的迁移尚未在真机上验证。
 - 清理：删除 `branding/` 中落选的候选图和脚本，只保留最终图标与生成脚本（该目录不进 Git）。
 
 ### 2026-11-20 · 迁移前清理（文档更新）
