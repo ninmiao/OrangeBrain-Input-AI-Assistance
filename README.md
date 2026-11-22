@@ -57,23 +57,23 @@ Run Setup and approve UAC on **Windows**, or install the ARM64 APK, grant storag
 
 ## 输入预览 · Typing preview
 
-这些实图展示纠错与本地候选；当前版本另外标注“纠错 / 助手”角色。 / These captures show correction alongside local candidates; current builds also label correction and assistant roles.
+两张都是当前版本的实图，同一句输入 `woyaochihuogu`（我要吃火锅），本地 Rime 词库给不出正确整句，在线 AI 同时给出 **纠错** 和 **助手** 两个候选。 / Both are real captures of the current builds: for `woyaochihuogu` (“I want hotpot”), local Rime misses the sentence while the online AI returns a correction and an assistant reply.
 
 ### Windows
 
-<img src="docs/images/windows-input.png" alt="Windows 实际输入：错序拼音 nihoa，AI 候选为你好，下面保留 Rime 本地候选" width="860">
+<img src="docs/images/windows-input.png" alt="Windows 实际输入 woyaochihuogu：状态行显示中、简和已返回徽章；候选 1 为 AI 纠错“我要吃火锅”，候选 2 为 AI 助手“点个鸳鸯锅吧，辣汤涮牛肉，清汤煮蔬菜。”，下面是 Rime 本地候选" width="645">
 
-`nihoa` → **你好**。**AI / Rime** 标明在线与本地候选来源。
+状态行用徽章显示 **中 / 简 / AI 状态**；候选右侧标明来源：**AI 纠错**、**AI 助手**、**Rime**。
 
-Real TSF input: online AI corrects `nihoa` to “你好” (hello), alongside local Rime candidates.
+Badges show language, script and AI state; each candidate is labelled AI correction, AI assistant or local Rime.
 
 ### Android
 
-<img src="docs/images/android-keyboard.png" alt="真实在线 AI 纠错：输入 woyaochihuogu，本地候选为我要吃货古，下方 AI 候选为我要吃火锅" width="360">
+<img src="docs/images/android-keyboard.png" alt="Android 模拟器实际输入 woyaochihuogu：上排是 Rime 本地候选“我要吃或古”，下排是 AI 候选“纠错：我要吃火锅”和“助手：好啊，一起…”，右端是剪贴板、简繁、AI 表情、AI 助手功能键" width="360">
 
-模拟器实图：`woyaochihuogu`，本地“我要吃货古”，在线 AI“我要吃火锅”；点击候选上屏。
+上排是 Rime 本地候选，下排是 AI 的 **纠错 / 助手** 候选，右端是功能键区（剪贴板、简繁、AI 表情、AI 助手）。点击候选上屏。
 
-Real emulator capture: for `woyaochihuogu`, online AI suggests “我要吃火锅” (I want hotpot). Tap to commit.
+Local Rime candidates on top; AI correction and assistant below, with the function keys (clipboard, script, AI emoji, AI assistant) on the right. Tap to commit.
 
 ## 输入示例 · Examples
 

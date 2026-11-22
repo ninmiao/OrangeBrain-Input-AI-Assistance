@@ -23,6 +23,13 @@
 
 ## 待发布
 
+### 2026-11-22 · README 输入预览换成当前版本实图
+
+- Windows：本机 1.14.0 在 TSF 测试窗口输入 `woyaochihuogu`，一张图包含中 / 简 / 已返回徽章、AI 纠错“我要吃火锅”、AI 助手候选和 Rime 本地候选（`docs/images/windows-input.png`）。
+- Android：模拟器 1.12.1 在短信输入框输入同一拼音后点助手键，一张图包含 Rime 本地候选“我要吃或古”、AI“纠错 / 助手”候选和右端功能键区（`docs/images/android-keyboard.png`）。Policy 为 OpenAI。
+- 发现的问题（待查）：模拟器上 OpenRouter · DeepSeek Flash Policy 延迟测试正常（1003 ms），但键盘里点助手键返回“响应格式错误”；换 OpenAI Policy 正常。
+- 模拟器锁屏 PIN 曾被清空，导致之前保存的 Key 失效，已重设 PIN 并重新输入测试 Key（Key 不进仓库）。
+
 ### 2026-11-21 · Android 1.12.1：表情键接管正在进行的 AI 请求
 
 - 问题：AI 纠错或助手请求进行中按表情键，表情请求被拒绝（“AI 请求中，请稍候”），或者表情发出后，Rime 自己回报的状态 / 选区事件又触发一次自动纠错请求，把表情候选覆盖掉。
