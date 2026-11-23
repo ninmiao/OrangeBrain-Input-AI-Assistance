@@ -242,8 +242,8 @@ secrets.properties
 
 
 
-!/dist/OrangeCell-Windows-1.14.0-Setup-x86-arm64.exe
-!/dist/OrangeCell-1.12.1-arm64-v8a-demo.apk
+!/dist/OrangeCell-Windows-1.14.1-Setup-x86-arm64.exe
+!/dist/OrangeCell-1.12.2-arm64-v8a-demo.apk
 !/dist/SHA256SUMS
 
 !/docs/ai/streaming-validation.md

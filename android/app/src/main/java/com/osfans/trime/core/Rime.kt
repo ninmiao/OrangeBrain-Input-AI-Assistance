@@ -197,8 +197,14 @@ class Rime :
         setRimeOption(option, value)
     }
 
-    override suspend fun getRuntimeOption(option: String): Boolean = withRimeContext {
-        getRimeOption(option)
+    // The keyboard reads options synchronously while drawing. When Rime is not running (no
+    // storage access yet, or stopped for a redeploy) the dispatcher refuses work; answer "off"
+    // instead of crashing the input method.
+    override suspend fun getRuntimeOption(option: String): Boolean = try {
+        withRimeContext { getRimeOption(option) }
+    } catch (e: IllegalStateException) {
+        Timber.w("Rime option '$option' read while Rime is not running: ${e.message}")
+        false
     }
 
     override suspend fun getCandidates(

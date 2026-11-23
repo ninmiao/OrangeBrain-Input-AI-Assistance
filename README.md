@@ -6,7 +6,7 @@
 
 *An input method simple enough for a cat with one orange braincell.*
 
-[Windows 1.14.0 · x86 / x64 / ARM64](dist/OrangeCell-Windows-1.14.0-Setup-x86-arm64.exe) · [Android 1.12.1 ARM64](dist/OrangeCell-1.12.1-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
+[Windows 1.14.1 · x86 / x64 / ARM64](dist/OrangeCell-Windows-1.14.1-Setup-x86-arm64.exe) · [Android 1.12.2 ARM64](dist/OrangeCell-1.12.2-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了橘脑一颗（OrangeCell），自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
@@ -117,18 +117,6 @@ Examples illustrate the feature; answers and length depend on the model. Kaomoji
 Windows 支持 Windows 10/11 x64，含 32 位应用使用的 TSF 组件；本机验证使用 Windows 11。安装到 `C:\Program Files\OrangeCell`，输入法列表里显示为 **橘脑一颗**。运行新版 Setup 覆盖更新，卸载从系统“已安装的应用”进入，用户设置、Key 和学习词库保留。Android 当前提供 ARM64 APK，安装后在系统输入法设置启用；首次部署词库需稍等。
 
 Windows targets Windows 10/11 x64 and includes x86 TSF support for 32-bit apps; testing used Windows 11. Setup installs to Program Files. Run a newer Setup to update, or uninstall through Windows Settings; user settings, keys and learned words are retained. Android provides an ARM64 APK; enable it in system keyboard settings and allow the initial dictionary deployment to finish.
-
-## 从 Zephyr Input 升级 · Upgrading from Zephyr Input
-
-改名后程序、输入法注册和应用 ID 全部换新，但学习词库、设置和 Key 会自动带过来。
-
-- **Windows**：直接运行新版 Setup。安装器会先静默卸载旧的 Zephyr Input（注销旧输入法、删除旧程序文件），再安装橘脑一颗。首次启动时，`%APPDATA%\ZephyrInput` 整体改名为 `%APPDATA%\OrangeCell`，`HKCU\Software\ZephyrInput` 复制到 `HKCU\Software\OrangeCell`，用户词库、下载的万象 / 雾凇词表和语法模型随之改名，然后重新部署一次。之后在输入法列表里选 **橘脑一颗**。正在运行的程序可能还加载着旧输入法模块，注销或重启后才会彻底释放。
-- **Android**：新应用 ID 是 `io.github.ninmiao.orangecell`，会作为新应用安装，旧的 Zephyr Input 不会被覆盖。授予存储权限后，新应用会把 `/sdcard/ZephyrInput` 改名为 `/sdcard/OrangeCell` 继续使用，学习词库保留。在线 AI 的 Policy 和 Key 保存在旧应用的私有存储里，无法转移，需要重新填写。数据目录移走后旧应用就不能再用了，确认新键盘正常后卸载它即可。
-
-Everything was renamed, including the Windows input method registration and the Android application ID; learned words, settings and keys carry over where the platform allows.
-
-- **Windows:** run the new Setup. It silently uninstalls the old Zephyr Input first. On first start, `%APPDATA%\ZephyrInput` becomes `%APPDATA%\OrangeCell`, `HKCU\Software\ZephyrInput` is copied to `HKCU\Software\OrangeCell`, and the user dictionary, downloaded dictionaries and grammar model are renamed before one redeploy. Choose **橘脑一颗** in the input list. Apps that already loaded the old module release it after you sign out or restart.
-- **Android:** the new application ID `io.github.ninmiao.orangecell` installs as a separate app. After you grant storage access, it renames `/sdcard/ZephyrInput` to `/sdcard/OrangeCell` and keeps your learned words. Online AI policies and keys live in the old app's private storage and must be entered again. The old app loses its data folder after the move; uninstall it once the new keyboard works.
 
 ## 更新词表和本地模型 · Updating local data
 
@@ -287,6 +275,6 @@ Windows 安装包暂未做代码签名，首次运行时 SmartScreen 可能提�
 
 The Windows installer is not code-signed, so SmartScreen may show "Windows protected your PC" on first run. Choose "More info", then "Run anyway". Installing, updating, and uninstalling work normally. Compare the file with `SHA256SUMS` in the release assets.
 
-## 项目更名 · Renamed
+## 声明 · Notice
 
-本项目原名 **Zephyr Input（微风输入法）**，自 Windows 1.13.0 / Android 1.11.0 起更名为 **橘脑一颗 OrangeCell**，旧版升级见[上文](#从-zephyr-input-升级--upgrading-from-zephyr-input)。 *Formerly Zephyr Input; renamed OrangeCell from Windows 1.13.0 and Android 1.11.0.*
+本项目原名 Zephyr Input（微风输入法），现更名为橘脑一颗 OrangeCell，直接安装新版即可升级，词库和设置自动迁移。 *Formerly Zephyr Input; install the new version to upgrade, and learned words and settings move over automatically.*

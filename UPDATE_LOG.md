@@ -6,8 +6,8 @@
 
 | 项目 | 当前状态 |
 | --- | --- |
-| Windows 本地安装包 | 1.14.0（`OrangeCell-Windows-1.14.0-Setup-x86-arm64.exe`，x86 / x64 / ARM64）已在 `dist/`，本机已用本地构建的安装包覆盖安装；ARM64 真机打字尚未验证 |
-| Android 本地安装包 | 1.12.1 ARM64 demo 已在 `dist/`（表情键接管 AI 请求、无存储权限时不再闪退）；S26 已覆盖安装 1.12.1（Key 和设置保留），旧的 Zephyr Input 已卸载 |
+| Windows 本地安装包 | 1.14.1（`OrangeCell-Windows-1.14.1-Setup-x86-arm64.exe`，x86 / x64 / ARM64）已在 `dist/`，本机已覆盖安装；ARM64 真机打字尚未验证 |
+| Android 本地安装包 | 1.12.2 ARM64 demo 已在 `dist/`，模拟器已测试；S26 当前为 1.12.1，待更新 |
 | 源码提示词 | 纠错模式返回一个候选；助手模式以单次流式请求返回纠错和助手两个候选；前后文默认 50 / 0 |
 | 安装包提示词 | Windows 1.12.5 与 Android 1.10.3 使用独立的纠错和助手提示词 |
 | LLM 接入 | OpenAI、OpenRouter、Google Gemini 在线 API，始终发送完整提示词；Preset 已移除 |
@@ -23,12 +23,31 @@
 
 ## 待发布
 
+### 2026-11-23 · Android 1.12.2：英文模式点长 AI 候选闪退、无存储权限时闪退
+
+- 崩溃一（用户在 S26 上报告）：英文模式下 AI 纠错 / 助手的候选常超过 45 个字符，点击时会先弹“AI 候选”确认框。这个框是 AndroidX `AlertDialog`，却用键盘的平台 Material 主题创建，缺少 AppCompat 属性，`show()` 时抛 `IllegalStateException`，输入法进程退出。现在确认框使用 AppCompat 主题（`Theme.AppCompat.DayNight.Dialog.Alert`）。
+- 崩溃二（模拟器上发现）：没有“所有文件访问”权限时 Rime 不会启动，但键盘绘制按键时同步读取 Rime 选项（`getRuntimeOption`），调度器未运行就直接抛异常。现在 Rime 未运行时该读取返回“关闭”并记日志，键盘不再崩溃（授权前布局仍不完整，授权后恢复正常）。
+- 验证（模拟器，OpenAI Policy）：英文模式输入一句英文后点助手键，得到 52 字符的纠错候选；点击后确认框正常弹出，“采用”替换原文，之后继续打字正常，logcat 无崩溃。未授权存储时打开键盘不再崩溃。
+- 模拟器每次以旧快照启动，Key、云端许可、锁屏 PIN 和存储权限都会回到旧状态，不是应用问题；测试前已重新设置。
+- 版本：Android 1.12.2（versionCode 20261217）。
+
+### 2026-11-23 · Windows 1.14.1：托盘中 / EN 图标重画
+
+- 问题：托盘里的“中 / EN”看不清。原图标只在 16 像素上画了 6 像素高的字，24、20 像素是把 16 像素图居中留白，150% 缩放下实际只有一小块。
+- 现在字铺满整块图标，只在顶部保留两只小猫耳朵；16、20、24、32、40、48、64 像素各自按像素网格单独绘制，笔画由实心线条拼成（16 / 20 像素 2 像素粗，尺寸越大越粗），中间竖笔上下都伸出方框，避免看成“由”。配色不变：中文橘底奶油字，英文奶油底棕字。
+- 文件：`windows/native/resource/zh.ico`、`en.ico`，由 `branding/make_tray_icons.py`（v2）生成。
+- 版本：Windows 1.14.1。本地构建（组件测试、TSF x64 / x86 测试、架构检查通过）并在本机静默覆盖安装，退出码 0。
+
 ### 2026-11-22 · README 输入预览换成当前版本实图
 
 - Windows：本机 1.14.0 在 TSF 测试窗口输入 `woyaochihuogu`，一张图包含中 / 简 / 已返回徽章、AI 纠错“我要吃火锅”、AI 助手候选和 Rime 本地候选（`docs/images/windows-input.png`）。
 - Android：模拟器 1.12.1 在短信输入框输入同一拼音后点助手键，一张图包含 Rime 本地候选“我要吃或古”、AI“纠错 / 助手”候选和右端功能键区（`docs/images/android-keyboard.png`）。Policy 为 OpenAI。
 - 发现的问题（待查）：模拟器上 OpenRouter · DeepSeek Flash Policy 延迟测试正常（1003 ms），但键盘里点助手键返回“响应格式错误”；换 OpenAI Policy 正常。
 - 模拟器锁屏 PIN 曾被清空，导致之前保存的 Key 失效，已重设 PIN 并重新输入测试 Key（Key 不进仓库）。
+
+### 2026-11-23 · README：改名说明压缩为一句
+
+- 删除“从 Zephyr Input 升级”整节，改为文末一句“声明”：原名 Zephyr Input，直接安装新版即可升级，词库和设置自动迁移。
 
 ### 2026-11-21 · Android 1.12.1：表情键接管正在进行的 AI 请求
 

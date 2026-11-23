@@ -295,7 +295,11 @@ class AiKeyboardController(private val service: TrimeInputMethodService, private
                     setPadding((8 * resources.displayMetrics.density).toInt(), 0, (8 * resources.displayMetrics.density).toInt(), 0)
                     layoutParams = LinearLayout.LayoutParams(-2, -1)
                     setOnClickListener {
-                        if (text.length > 45) service.showDialog(AlertDialog.Builder(context).setTitle(if (completion) "补全" else "AI 候选")
+                        // The button context is a platform Material theme; the AndroidX dialog needs an
+                        // AppCompat one or it throws on create (long English replies hit this path).
+                        if (text.length > 45) service.showDialog(AlertDialog.Builder(
+                            ContextThemeWrapper(service, com.osfans.trime.R.style.Theme_TrimeAppTheme),
+                            androidx.appcompat.R.style.Theme_AppCompat_DayNight_Dialog_Alert).setTitle(if (completion) "补全" else "AI 候选")
                             .setMessage(text).setPositiveButton("采用") { _, _ -> adopt(result, text) }.setNegativeButton("取消", null).create())
                         else adopt(result, text)
                     }
