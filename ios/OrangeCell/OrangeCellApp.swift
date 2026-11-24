@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+import OCCore
 import SwiftUI
 
 enum Route: Hashable {
@@ -7,6 +8,17 @@ enum Route: Hashable {
 
 @main
 struct OrangeCellApp: App {
+    init() {
+        // Leave the shared-container evidence on every launch (not only when the
+        // diagnostics page is open): the probe file and the key-storage sample are
+        // what the keyboard looks for to prove it shares the app's container.
+        Task.detached(priority: .utility) {
+            let context = AppGroupContext.detect()
+            AppGroupProbe.write(role: "app", context: context, bundleIdentifier: Bundle.main.bundleIdentifier ?? "")
+            _ = KeyStorageSelfTest.writeAndVerifyLocally(context: context)
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()
