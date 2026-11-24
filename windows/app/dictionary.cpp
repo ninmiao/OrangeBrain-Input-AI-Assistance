@@ -255,9 +255,7 @@ void Dictionary::deploy(const std::string& schema) {
   bool running = processRunning(server);
   try {
     if (running) {
-      run(server, {L"/quit"}, 10000);
-      for (int i = 0; i < 50 && processRunning(server); i++)
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      stopUserProcess(server);
       require(!processRunning(server),
               "Finish current input and retry dictionary deployment");
     }
