@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "comment": "Prebuilt iOS static libraries from fcitx5-prebuilder (MIT). The upstream 'ios' release is rolling, so every file is pinned by SHA-256; fetch-deps.sh refuses anything else.",
+  "upstream": "https://github.com/fcitx-contrib/fcitx5-prebuilder/releases/download/ios",
+  "upstreamUpdatedAt": "2026-11-06T21:55:51Z",
+  "mirrorTag": "ios-deps-20261124",
+  "mirror": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/download/ios-deps-20261124",
+  "variants": {
+    "os64": {
+      "suffix": ""
+    },
+    "sim-arm64": {
+      "suffix": "-arm64"
+    },
+    "sim-x86_64": {
+      "suffix": "-x86_64"
+    }
+  },
+  "defaultVariants": [
+    "os64",
+    "sim-arm64"
+  ],
+  "packages": {
+    "librime": {
+      "os64": {
+        "sha256": "e635f4150c4fc4eedce76f7a31e9f59661080d1803c1e9685b9aee17e8f6d375",
+        "size": 2813451
+      },
+      "sim-arm64": {
+        "sha256": "1e73cc14e1070ee09fae7310a430860001d73b3946bcb6949f6be6a953a04b31",
+        "size": 2833727
+      },
+      "sim-x86_64": {
+        "sha256": "9dd66a218141a055ee9eec6a352bcd749dbd7191ba57114946d471ebc46dd6e7",
+        "size": 2765898
+      }
+    },
+    "boost": {
+      "os64": {
+        "sha256": "374d5fa0794c810263c29a6580e4123acfc51eedec7afad7a2c51b065c09a10d",
+        "size": 3020084
+      },
+      "sim-arm64": {
+        "sha256": "0456ec2c5c8e88793aa2543ba6ba0a2eb2ea869791e4ed007fa14e5e21b3bc4b",
+        "size": 3020179
+      },
+      "sim-x86_64": {
+        "sha256": "81f9ff3725956b150f99c7bdae46c049aba82dd4c385c36d11d007b3bc5ec498",
+        "size": 3016763
+      }
+    },
+    "glog": {
+      "os64": {
+        "sha256": "ef3f8d32cf3be929010bc9e84bb6233d8dfeddd0e2b92a2fd2cc9807d8e3f612",
+        "size": 126353
+      },
+      "sim-arm64": {
+        "sha256": "a0e2db9f6e98ed3f4652b22ae5abb35880311a88920d70377d30979086698a45",
+        "size": 127469
+      },
+      "sim-x86_64": {
+        "sha256": "47f704a5c53bc4dbfe1bb27f79cdf8cb4f3ef0e9418d3907e87ba3fb29173b52",
+        "size": 125016
+      }
+    },
+    "leveldb": {
+      "os64": {
+        "sha256": "2ee76653027165a7e266d0f8b3330216b71a3e1ef54da68f87ea5a1f55afe39e",
+        "size": 133300
+      },
+      "sim-arm64": {
+        "sha256": "235b22f9fd9b091294014ab9cdf0a0b0aad260b12d8d98983eb580cd80cb4419",
+        "size": 134145
+      },
+      "sim-x86_64": {
+        "sha256": "878573a0b32b054f82cb119b20211f6e67dbca40ec1353b0fe367f28927d7ced",
+        "size": 141292
+      }
+    },
+    "lua": {
+      "os64": {
+        "sha256": "1f0bda81a3a5a17904a899e858616f7c1edab564025f07f88dd9b545f5f4f789",
+        "size": 139128
+      },
+      "sim-arm64": {
+        "sha256": "72bfe994ddc4a72a6cf06aaf8f82231bdd3dc7d5d73d49762194bea816976b72",
+        "size": 140678
+      },
+      "sim-x86_64": {
+        "sha256": "2cd3dd62d84bf12450507d66358bdadadee300494762b9be9ea5b404d8f0f079",
+        "size": 145466
+      }
+    },
+    "marisa": {
+      "os64": {
+        "sha256": "67ea9058b1bec660b8fe42e3197696ea69fbcbf89fe603f5f2fbf41f02f4519b",
+        "size": 65468
+      },
+      "sim-arm64": {
+        "sha256": "1c685c69a3fc172faee6680a7670801ac0060e6ed73973457e762e187a2f5aa8",
+        "size": 65800
+      },
+      "sim-x86_64": {
+        "sha256": "91f3054910c99e8141f34457440549ee0a3d26d064ea60d03ba37c64ac5e09a3",
+        "size": 68690
+      }
+    },
+    "opencc": {
+      "os64": {
+        "sha256": "91d3b5d927847496cea330cfffa4a6dacc7d7eb06efe083788b8e82d55eb2874",
+        "size": 937586
+      },
+      "sim-arm64": {
+        "sha256": "244f4c91ded56eb7741b2b813680b031a245e9be568e8d9da9526c4e8676aa52",
+        "size": 938840
+      },
+      "sim-x86_64": {
+        "sha256": "8d1d4cd64c332f63be2c7b11d2befc91526833b3612bd472d8788c126e4ed358",
+        "size": 940937
+      }
+    },
+    "yaml-cpp": {
+      "os64": {
+        "sha256": "b984b0af0d20af749a9769d13ff328b1f620e65abe314f413895a7eecedaf76b",
+        "size": 160362
+      },
+      "sim-arm64": {
+        "sha256": "8e874b1d28635f8a3bf52206e54b3641538297f7fb35ab344bb008524732c19b",
+        "size": 160829
+      },
+      "sim-x86_64": {
+        "sha256": "8ac9c52a4c39038822e5f00f9ccccaf2644d6b018cfcaf22b9ccfa246bde974b",
+        "size": 161884
+      }
+    },
+    "zstd": {
+      "os64": {
+        "sha256": "32430fc4bfd9845f94f2ae20985e4a795f0eac2c8c421e97c41b09cf151f7c0a",
+        "size": 299380
+      },
+      "sim-arm64": {
+        "sha256": "da52ef829973ae3e1348ab023b77ae118446281e5555a72f820fc9bc55a9b9a6",
+        "size": 307370
+      },
+      "sim-x86_64": {
+        "sha256": "93a1c93bf4d1a175b7bc3b3c60f739ecf60fc070b3b257a5c058e85492331650",
+        "size": 358869
+      }
+    }
+  },
+  "headers": {
+    "rime_api.h": "cfdd786df06467df16a0318d9d2d7c420e3d0a420317d379313994f30cd266f0"
+  }
+}

@@ -1,0 +1,306 @@
+name: iOS CI
+
+# Builds and tests the iOS port on GitHub-hosted runners (there is no Mac here)
+# and publishes the results to the orphan branch `ci-results`, which
+# ios/scripts/ci_wait.py reads (docs/IOS_PLAN.md section 6). Pushes to the `ios`
+# branch additionally refresh the `ios-nightly` prerelease and the SideStore
+# source. No Apple certificate or API key is used anywhere.
+
+on:
+  push:
+    branches: [ios, 'ios/**']
+    paths:
+      - 'ios/**'
+      - 'shared/native-core/**'
+      - '.github/workflows/ios-*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  OC_VERSION: '0.1.0'
+  XCODE_APP: /Applications/Xcode_26.6.app
+
+jobs:
+  core-linux:
+    name: core-linux
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    container: swift:6.2-noble
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Prepare
+        shell: bash
+        run: |
+          echo "CI_OUT=$GITHUB_WORKSPACE/ci-out/core-linux" >> "$GITHUB_ENV"
+          mkdir -p "$GITHUB_WORKSPACE/ci-out/core-linux/logs"
+      - name: Install build tools
+        shell: bash
+        run: |
+          bash ios/scripts/ci_step.sh apt -- bash -c 'apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq cmake g++ make default-jdk-headless python3 && swift --version && cmake --version | head -n 1'
+      - name: native-core C++ test (CMake, includes the C API cases)
+        shell: bash
+        run: |
+          export JAVA_HOME=/usr/lib/jvm/default-java
+          bash ios/scripts/ci_step.sh native-core-test -- bash -c 'cmake -S shared/native-core -B build/native-core -DCMAKE_BUILD_TYPE=Release && cmake --build build/native-core -j 4 && ctest --test-dir build/native-core --output-on-failure -V'
+      - name: OCCore swift test
+        shell: bash
+        run: |
+          bash ios/scripts/ci_step.sh swift-test-linux -- bash -c 'cd ios/Packages/OCCore && swift test'
+      - name: Summary
+        if: always()
+        shell: bash
+        run: python3 ios/scripts/ci_summary.py core-linux --out "$CI_OUT"
+      - name: Upload job results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ci-core-linux
+          path: |
+            ci-out/core-linux
+            !ci-out/core-linux/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+  build-test:
+    name: build-test
+    runs-on: macos-26
+    timeout-minutes: 75
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+      HOMEBREW_NO_INSTALL_CLEANUP: '1'
+      HOMEBREW_NO_ENV_HINTS: '1'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Prepare
+        shell: bash
+        run: |
+          echo "CI_OUT=$GITHUB_WORKSPACE/ci-out/build-test" >> "$GITHUB_ENV"
+          mkdir -p "$GITHUB_WORKSPACE/ci-out/build-test/logs" "$GITHUB_WORKSPACE/ci-out/build-test/screenshots" "$RUNNER_TEMP/results"
+      - name: Select Xcode and record the toolchain
+        shell: bash
+        run: |
+          bash ios/scripts/ci_step.sh toolchain -- bash -c 'sudo xcode-select -s "$XCODE_APP" && xcodebuild -version && swift --version 2>&1 | head -n 2 && sw_vers && xcrun simctl list runtimes && xcrun simctl list devicetypes | grep -i "iPhone 17"'
+      - name: Cache prebuilt libraries
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ios/.deps-cache
+          key: ios-deps-v1-${{ hashFiles('ios/deps.lock.json', 'ios/scripts/fetch-deps.sh') }}
+      - name: Fetch prebuilt libraries
+        shell: bash
+        run: bash ios/scripts/ci_step.sh fetch-deps -- bash ios/scripts/fetch-deps.sh os64 sim-arm64
+      - name: Install XcodeGen
+        shell: bash
+        run: bash ios/scripts/ci_step.sh xcodegen-install -- bash -c 'brew install xcodegen && xcodegen --version'
+      - name: Generate the Xcode project
+        shell: bash
+        run: bash ios/scripts/ci_step.sh xcodegen -- bash -c 'cd ios && xcodegen generate --spec project.yml'
+      - name: OCCore swift test (macOS)
+        shell: bash
+        run: bash ios/scripts/ci_step.sh swift-test-macos -- bash -c 'cd ios/Packages/OCCore && swift test'
+      - name: Create the simulator
+        shell: bash
+        run: bash ios/scripts/ci_step.sh simulator-create -- bash ios/scripts/create-sim.sh
+      - name: Build for the simulator
+        shell: bash
+        run: |
+          bash ios/scripts/ci_step.sh build-sim -- xcodebuild build-for-testing \
+            -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            MARKETING_VERSION="$OC_VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER"
+      - name: App unit tests (simulator)
+        shell: bash
+        run: |
+          rm -rf "$RUNNER_TEMP/results/unit.xcresult"
+          export TEST_RUNNER_OC_INFO_FILE="$CI_OUT/logs/ocinfo.txt"
+          bash ios/scripts/ci_step.sh unit-tests -- xcodebuild test-without-building \
+            -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Debug \
+            -destination "id=$SIM_UDID" -derivedDataPath build/dd \
+            -only-testing:OrangeCellTests \
+            -resultBundlePath "$RUNNER_TEMP/results/unit.xcresult"
+      - name: Build the UI tests
+        shell: bash
+        run: |
+          bash ios/scripts/ci_step.sh build-ui-tests -- xcodebuild build-for-testing \
+            -project ios/OrangeCell.xcodeproj -scheme OCUITests -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            MARKETING_VERSION="$OC_VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER"
+      - name: Simulator end-to-end (keyboard enabled, typed into OCTestHost)
+        shell: bash
+        env:
+          PRODUCTS_DIR: ${{ github.workspace }}/build/dd/Build/Products/Debug-iphonesimulator
+          DERIVED_DATA: ${{ github.workspace }}/build/dd
+        run: bash ios/scripts/ci_step.sh e2e -- bash ios/scripts/e2e-sim.sh
+      - name: Summary
+        if: always()
+        shell: bash
+        run: python3 ios/scripts/ci_summary.py build-test --out "$CI_OUT" --xcresult "$RUNNER_TEMP/results/unit.xcresult"
+      - name: Upload job results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ci-build-test
+          path: |
+            ci-out/build-test
+            !ci-out/build-test/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+  ipa-device:
+    name: ipa-device
+    runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+      HOMEBREW_NO_INSTALL_CLEANUP: '1'
+      HOMEBREW_NO_ENV_HINTS: '1'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Prepare
+        shell: bash
+        run: |
+          echo "CI_OUT=$GITHUB_WORKSPACE/ci-out/ipa-device" >> "$GITHUB_ENV"
+          mkdir -p "$GITHUB_WORKSPACE/ci-out/ipa-device/logs"
+      - name: Select Xcode
+        shell: bash
+        run: bash ios/scripts/ci_step.sh toolchain -- bash -c 'sudo xcode-select -s "$XCODE_APP" && xcodebuild -version'
+      - name: Cache prebuilt libraries
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ios/.deps-cache
+          key: ios-deps-v1-${{ hashFiles('ios/deps.lock.json', 'ios/scripts/fetch-deps.sh') }}
+      - name: Fetch prebuilt libraries (device)
+        shell: bash
+        run: bash ios/scripts/ci_step.sh fetch-deps -- bash ios/scripts/fetch-deps.sh os64
+      - name: Install XcodeGen
+        shell: bash
+        run: bash ios/scripts/ci_step.sh xcodegen-install -- bash -c 'brew install xcodegen && xcodegen --version'
+      - name: Generate the Xcode project
+        shell: bash
+        run: bash ios/scripts/ci_step.sh xcodegen -- bash -c 'cd ios && xcodegen generate --spec project.yml'
+      - name: Build for device (unsigned)
+        shell: bash
+        run: |
+          bash ios/scripts/ci_step.sh build-device -- xcodebuild build \
+            -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Release \
+            -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build/dd-device \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            MARKETING_VERSION="$OC_VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER"
+      - name: Package the IPA (ad-hoc signature with entitlements)
+        shell: bash
+        run: |
+          mkdir -p dist-ipa
+          bash ios/scripts/ci_step.sh make-ipa -- bash ios/scripts/make-ipa.sh \
+            build/dd-device/Build/Products/Release-iphoneos/OrangeCell.app \
+            "dist-ipa/OrangeCell-iOS-$OC_VERSION.ipa" ios/Config
+      - name: Upload IPA
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ipa-device
+          path: dist-ipa/*.ipa
+          if-no-files-found: error
+          retention-days: 14
+      - name: Summary
+        if: always()
+        shell: bash
+        run: python3 ios/scripts/ci_summary.py ipa --out "$CI_OUT"
+      - name: Upload job results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ci-ipa-device
+          path: |
+            ci-out/ipa-device
+            !ci-out/ipa-device/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+  release:
+    name: release
+    needs: [build-test, ipa-device]
+    if: github.ref == 'refs/heads/ios'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Prepare
+        shell: bash
+        run: |
+          echo "CI_OUT=$GITHUB_WORKSPACE/ci-out/release" >> "$GITHUB_ENV"
+          mkdir -p "$GITHUB_WORKSPACE/ci-out/release/logs"
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: ipa-device
+          path: dist-ipa
+      - name: Publish the ios-nightly prerelease and write the SideStore source
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash ios/scripts/ci_step.sh release -- bash ios/scripts/publish-release.sh
+      - name: Summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "#### release"
+            echo "- release: https://github.com/$GITHUB_REPOSITORY/releases/tag/ios-nightly"
+            echo "- SideStore source: https://raw.githubusercontent.com/$GITHUB_REPOSITORY/ci-results/sidestore/source.json"
+            ls -l dist-ipa 2>/dev/null | sed 's/^/- /' || true
+          } > "$CI_OUT/summary.md"
+      - name: Upload job results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ci-release
+          path: |
+            ci-out/release
+            !ci-out/release/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+  publish-results:
+    name: publish-results
+    if: always()
+    needs: [core-linux, build-test, ipa-device, release]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      actions: read
+    concurrency:
+      group: ci-results
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        continue-on-error: true
+        with:
+          pattern: ci-*
+          path: ci-collected
+      - name: Publish to the ci-results branch
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          NEEDS_JSON: ${{ toJSON(needs) }}
+          COLLECTED: ci-collected
+        run: python3 ios/scripts/ci_publish.py

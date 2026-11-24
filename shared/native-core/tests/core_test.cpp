@@ -1,5 +1,9 @@
 #include "core.h"
 
+#ifdef OC_C_API_TEST
+#include "c_api.h"
+#endif
+
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -263,6 +267,35 @@ int main() {
         ++count;
       }
     }
+#ifdef OC_C_API_TEST
+    {
+      // C API used by the iOS bridge: same answers as orangecell::invoke, and
+      // every returned string is owned by the caller.
+      const char* request =
+          R"CASE({"op":"encode","args":{"input":"nihao","before":"你好"}})CASE";
+      char* raw = oc_invoke(request);
+      if (!raw) throw std::runtime_error("oc_invoke returned null");
+      std::string viaC(raw);
+      oc_free(raw);
+      if (viaC != orangecell::invoke(request))
+        throw std::runtime_error("oc_invoke differs from invoke");
+      auto reply = J::parse(viaC);
+      if (J::parse(reply.at("ok").get<std::string>()) !=
+          J::parse(R"CASE({"i":"nihao","b":"你好"})CASE"))
+        throw std::runtime_error("oc_invoke encode mismatch");
+      ++count;
+      char* none = oc_invoke(nullptr);
+      if (!none || !J::parse(none).contains("error"))
+        throw std::runtime_error("oc_invoke(NULL) must report an error");
+      oc_free(none);
+      oc_free(nullptr);
+      char* broken = oc_invoke("{not json");
+      if (!broken || !J::parse(broken).contains("error"))
+        throw std::runtime_error("oc_invoke accepted malformed JSON");
+      oc_free(broken);
+      ++count;
+    }
+#endif
     std::cout << count << " native truncation/format/envelope cases passed\n";
     return 0;
   } catch (const std::exception& e) {

@@ -23,6 +23,15 @@
 
 ## 待发布
 
+### 2026-11-24 · iOS 0.1.0 · M0 可行性探针（进行中，分支 `ios`）
+
+- 新增 `ios/`（只在分支 `ios` 上）：XcodeGen 工程定义 `ios/project.yml`（主应用 `OrangeCell`、键盘扩展 `OrangeCellKeyboard`、模拟器测试宿主 `OCTestHost`、单元与界面测试，iOS 17.0，Swift 6 编译器、Swift 5 语言模式，`.xcodeproj` 不入库）。Swift 包 `OCCore`（编入 `shared/native-core` 的 C++ 源码 + `oc_invoke` 封装、`AppGroupLocator`、描述文件解析、Key 存储两套后端、诊断报告）和 `OCRime`（librime C API 的 Swift 封装：版本、模块查询、setup / initialize / finalize）。键盘扩展 M0 界面显示「橘脑一颗 · librime 版本 · oc_core OK」，带地球键和几个会插入文字的按键；主应用有首页（启用键盘、完全访问说明、试打区）和「诊断」页（App Group 识别结果、两进程探针文件、Key 存储后端、描述文件到期时间、Rime 模块、内存）。
+- 依赖：`ios/deps.lock.json` 用 SHA-256 锁定 fcitx5-prebuilder `ios` 发布里的 librime 1.17.0 及 boost / glog / leveldb / lua / marisa / opencc / yaml-cpp / zstd 静态库，`ios/scripts/fetch-deps.sh` 下载校验；链接时对 `librime.a` 使用 `-force_load`，避免靠静态构造函数注册的 lua / octagram / predict / qjs 模块被链接器丢掉；qjs 模块还需要系统的 JavaScriptCore。
+- 共享代码：`shared/native-core` 新增 C 接口 `src/c_api.{h,cpp}`（`oc_invoke` / `oc_free`），加入 CMake 库目标；`core.cpp` 逻辑未改，Windows 与 Android 的构建文件未改。测试用例放在 `core_test.cpp` 里并由宏 `OC_C_API_TEST` 开关，只有共享 CMake 的测试目标打开它，Windows 现有的 `orangecell_protocol_test` 仍编译原来的内容。
+- CI：`.github/workflows/ios-ci.yml`（推送到 `ios` / `ios/**` 时运行）：`core-linux`（Linux 上 CMake 跑 native-core 测试 + `swift test`）、`build-test`（macos-26，Xcode 26.6：取依赖、XcodeGen、模拟器构建、单元测试、模拟器端到端、内存采样）、`ipa-device`（未签名真机构建，对 `.app` 与 `.appex` 临时签名并带上 App Group 权限，打成 IPA）、`release`（仅 `ios` 分支：`ios-nightly` 预发布 + SideStore 源）、`publish-results`（把状态、摘要、日志、截图写到孤儿分支 `ci-results`）。`ios/scripts/ci_wait.py <sha>` 等待并取回结果。
+- 本机已验证：用 MSVC 编译 `core_test.cpp` + `core.cpp` + `c_api.cpp` 并运行，780 项通过（含 2 项 C 接口用例）；去掉 `OC_C_API_TEST` 的 Windows 形态同样编译通过，778 项；`ci_publish.py` / `ci_wait.py` 对本地裸仓库跑通（一次提交、保留最近 15 次、取回摘要与截图）。
+- 尚未验证：全部 iOS 构建与测试（本机没有 Mac / Swift），模拟器里启用键盘，SideStore 真机安装（推迟到 M2 之后与用户一起做）。本条在 CI 结果出来后更新。
+
 ### 2026-11-24 · iOS 版规划（文档更新）
 
 - 新增 `docs/IOS_PLAN.md`：iOS 版蓝图与执行方案，经三轮评审。要点：自建 Swift 薄壳（主应用 + 键盘扩展），librime 用 fcitx5-prebuilder 的 iOS 静态库（1.17.0，含 lua / octagram / predict），AI 部分原样复用 `shared/native-core`（新增 C 接口），参考仓输入法 Hamster 的 MIT 代码；无 Mac，编译测试全部走 GitHub Actions `macos-26`；分发改为免费 Apple ID + SideStore 7 天续签侧载（第四轮修订评审）：CI 产出未签名 IPA 与 SideStore 源，运行时从描述文件识别被改名的 App Group，Key 存储设 Keychain / 加密文件两套后端。

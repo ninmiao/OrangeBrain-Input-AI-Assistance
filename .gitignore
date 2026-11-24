@@ -28,6 +28,7 @@
 !/script/
 !/tests/
 !/docs/
+!/ios/
 
 # Local SDK, JDK, emulator, downloads and test credentials
 /.tools/

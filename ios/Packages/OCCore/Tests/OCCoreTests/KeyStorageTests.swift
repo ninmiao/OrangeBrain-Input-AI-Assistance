@@ -1,0 +1,162 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+import Foundation
+import XCTest
+@testable import OCCore
+
+final class KeyStorageTests: XCTestCase {
+    func testChoosesBackendFromKeyboardProbes() {
+        let none = KeyStorageSelfTest.chooseBackend(keyboardProbes: [])
+        XCTAssertEqual(none, "none")
+
+        let fileOnly = KeyStorageSelfTest.chooseBackend(keyboardProbes: [
+            KeyStorageProbe(backend: "keychain-shared", crossProcessReadOK: false, detail: "-34018"),
+            KeyStorageProbe(backend: "keychain-default", crossProcessReadOK: false),
+            KeyStorageProbe(backend: "encrypted-file", crossProcessReadOK: true),
+        ])
+        XCTAssertEqual(fileOnly, "encrypted-file")
+
+        let shared = KeyStorageSelfTest.chooseBackend(keyboardProbes: [
+            KeyStorageProbe(backend: "keychain-shared", crossProcessReadOK: true),
+            KeyStorageProbe(backend: "encrypted-file", crossProcessReadOK: true),
+        ])
+        XCTAssertEqual(shared, "keychain-shared")
+
+        // The default keychain group is private to one process, so it never counts.
+        let defaultOnly = KeyStorageSelfTest.chooseBackend(keyboardProbes: [
+            KeyStorageProbe(backend: "keychain-default", crossProcessReadOK: true),
+        ])
+        XCTAssertEqual(defaultOnly, "none")
+    }
+
+    #if canImport(CryptoKit)
+    private func temporaryDirectory() throws -> URL {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("oc-keys-\(UUID().uuidString)")
+        addTeardownBlock { try? FileManager.default.removeItem(at: url) }
+        return url
+    }
+
+    func testEncryptedFileStoreRoundTrip() throws {
+        let directory = try temporaryDirectory()
+        let store = EncryptedFileSecretStore(directory: directory)
+        XCTAssertNil(try store.get(account: "openai"))
+
+        let secret = Data("sk-test-not-a-real-key".utf8)
+        try store.set(secret, account: "openai")
+        XCTAssertEqual(try store.get(account: "openai"), secret)
+
+        // A second instance over the same directory (the keyboard process) sees it.
+        let other = EncryptedFileSecretStore(directory: directory)
+        XCTAssertEqual(try other.get(account: "openai"), secret)
+        XCTAssertNil(try other.get(account: "gemini"))
+
+        try store.set(Data("changed".utf8), account: "openai")
+        XCTAssertEqual(try other.get(account: "openai"), Data("changed".utf8))
+
+        try store.remove(account: "openai")
+        XCTAssertNil(try other.get(account: "openai"))
+    }
+
+    func testFilesOnDiskDoNotContainThePlaintext() throws {
+        let directory = try temporaryDirectory()
+        let store = EncryptedFileSecretStore(directory: directory)
+        let secret = "sk-plaintext-marker-1234567890"
+        try store.set(Data(secret.utf8), account: "marker")
+        let names = try FileManager.default.contentsOfDirectory(atPath: directory.path)
+        XCTAssertFalse(names.isEmpty)
+        for name in names {
+            let bytes = try Data(contentsOf: directory.appendingPathComponent(name))
+            XCTAssertNil(bytes.range(of: Data(secret.utf8)), "\(name) leaks the secret")
+            XCTAssertFalse(name.contains("marker"), "file names must not reveal accounts")
+        }
+    }
+
+    func testTamperedFileIsRejected() throws {
+        let directory = try temporaryDirectory()
+        let store = EncryptedFileSecretStore(directory: directory)
+        try store.set(Data("value".utf8), account: "a")
+        let files = try FileManager.default.contentsOfDirectory(atPath: directory.path).filter { $0.hasSuffix(".secret") }
+        let target = directory.appendingPathComponent(try XCTUnwrap(files.first))
+        var bytes = try Data(contentsOf: target)
+        bytes[bytes.count - 1] ^= 0xFF
+        try bytes.write(to: target)
+        XCTAssertThrowsError(try store.get(account: "a"))
+    }
+
+    func testSelfTestSampleThroughEncryptedStore() throws {
+        let directory = try temporaryDirectory()
+        let writer = EncryptedFileSecretStore(directory: directory)
+        try writer.set(KeyStorageSelfTest.sampleValue, account: KeyStorageSelfTest.sampleAccount)
+        let reader = EncryptedFileSecretStore(directory: directory)
+        XCTAssertEqual(try reader.get(account: KeyStorageSelfTest.sampleAccount), KeyStorageSelfTest.sampleValue)
+    }
+    #endif
+}
+
+final class DiagnosticsTests: XCTestCase {
+    func testReportRoundTripsThroughJson() throws {
+        let report = DiagnosticsReport(
+            role: "keyboard",
+            generatedAt: date("2026-11-24T10:00:00Z"),
+            bundleIdentifier: "io.github.ninmiao.orangecell.keyboard",
+            appVersion: "0.1.0 (1)",
+            fullAccess: false,
+            groupNominal: AppGroupLocator.nominalGroup,
+            groupResolved: AppGroupLocator.nominalGroup + ".ABCDE12345",
+            groupSource: AppGroupLocator.Source.profileSuffixed.rawValue,
+            containerPath: "/tmp/x",
+            containerWritable: true,
+            probeWritten: true,
+            peerProbe: nil,
+            profileName: "profile",
+            teamIdentifier: "ABCDE12345",
+            profileGroups: [AppGroupLocator.nominalGroup + ".ABCDE12345"],
+            profileExpires: date("2026-12-01T10:00:00Z"),
+            profileDaysRemaining: 6,
+            keyStorage: [KeyStorageProbe(backend: "encrypted-file", crossProcessReadOK: true)],
+            footprintMB: 12.3,
+            rimeVersion: "1.17.0",
+            rimeModules: ["lua", "octagram"],
+            ocCoreOK: true,
+            notes: ["n"]
+        )
+        let text = DiagnosticsCollector.json(report)
+        let decoded = try DiagnosticsFiles.decoder().decode(DiagnosticsReport.self, from: Data(text.utf8))
+        XCTAssertEqual(decoded, report)
+    }
+
+    func testProbeWithoutContainerIsNil() {
+        let context = AppGroupContext(
+            profile: nil,
+            resolution: AppGroupLocator.Resolution(identifier: nil, source: .missing),
+            containerURL: nil
+        )
+        XCTAssertNil(AppGroupProbe.write(role: "app", context: context, bundleIdentifier: "x"))
+        XCTAssertNil(AppGroupProbe.read(role: "keyboard", context: context))
+    }
+
+    func testProbeWrittenByOneRoleIsReadByTheOther() throws {
+        let base = FileManager.default.temporaryDirectory.appendingPathComponent("oc-probe-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
+        addTeardownBlock { try? FileManager.default.removeItem(at: base) }
+        let context = AppGroupContext(
+            profile: nil,
+            resolution: AppGroupLocator.Resolution(identifier: "group.test", source: .nominalNoProfile),
+            containerURL: base
+        )
+        let written = try XCTUnwrap(AppGroupProbe.write(role: "app", context: context, bundleIdentifier: "io.test.app"))
+        let read = try XCTUnwrap(AppGroupProbe.read(role: "app", context: context))
+        XCTAssertEqual(read.nonce, written.nonce)
+        XCTAssertEqual(read.groupIdentifier, "group.test")
+        XCTAssertNil(AppGroupProbe.read(role: "keyboard", context: context))
+    }
+
+    func testMemoryProbeReportsPlausibleValueOnApplePlatforms() {
+        #if canImport(Darwin)
+        let megabytes = MemoryProbe.physFootprintMB()
+        XCTAssertNotNil(megabytes)
+        XCTAssertGreaterThan(megabytes ?? 0, 1)
+        #else
+        XCTAssertNil(MemoryProbe.physFootprintMB())
+        #endif
+    }
+}
