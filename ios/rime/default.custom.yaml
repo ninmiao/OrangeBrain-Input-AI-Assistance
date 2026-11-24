@@ -1,0 +1,8 @@
+# iOS customization of the shared Rime defaults (Android's default.yaml is used unchanged).
+#
+# iOS ships Wanxiang only. Android's default.yaml also lists rime_ai_simp (Rime-ice
+# data, GPL-3.0); that dictionary is not bundled with the iOS app, see docs/IOS_PLAN.md
+# section 2 (it becomes a user download in M4).
+patch:
+  schema_list:
+    - schema: orangecell_wanxiang

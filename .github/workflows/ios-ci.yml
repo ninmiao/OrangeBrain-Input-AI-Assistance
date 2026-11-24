@@ -13,6 +13,10 @@ on:
       - 'ios/**'
       - 'shared/native-core/**'
       - '.github/workflows/ios-*.yml'
+      - '.github/actions/ios-*/**'
+      # Rime data that Android ships and iOS compiles from the same files.
+      - 'android/app/src/main/assets/shared/**'
+      - 'android/app/data/rime/prelude/**'
   workflow_dispatch:
 
 permissions:
@@ -23,7 +27,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  OC_VERSION: '0.1.0'
+  OC_VERSION: '0.2.0'
   XCODE_APP: /Applications/Xcode_26.6.app
 
 jobs:
@@ -72,45 +76,86 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-  build-test:
-    name: build-test
+  # Compiles the schema and dictionaries Android already ships into build/*.bin with
+  # oc_deployer (pinned macOS librime). Cached on the inputs, so most runs only restore.
+  rime-data:
+    name: rime-data
     runs-on: macos-26
-    timeout-minutes: 75
-    env:
-      HOMEBREW_NO_AUTO_UPDATE: '1'
-      HOMEBREW_NO_INSTALL_CLEANUP: '1'
-      HOMEBREW_NO_ENV_HINTS: '1'
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
-      - name: Prepare
-        shell: bash
-        run: |
-          echo "CI_OUT=$GITHUB_WORKSPACE/ci-out/build-test" >> "$GITHUB_ENV"
-          mkdir -p "$GITHUB_WORKSPACE/ci-out/build-test/logs" "$GITHUB_WORKSPACE/ci-out/build-test/screenshots" "$RUNNER_TEMP/results"
-      - name: Select Xcode and record the toolchain
-        shell: bash
-        run: |
-          bash ios/scripts/ci_step.sh toolchain -- bash -c 'sudo xcode-select -s "$XCODE_APP" && xcodebuild -version && swift --version 2>&1 | head -n 2 && sw_vers && xcrun simctl list runtimes && xcrun simctl list devicetypes | grep -i "iPhone 17"'
-      - name: Cache prebuilt libraries
+      - uses: ./.github/actions/ios-mac-setup
+        with:
+          job: rime-data
+          variants: macos-arm64
+          rime-data: 'false'
+      - name: Cache the compiled data
+        id: cache
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
-          path: ios/.deps-cache
-          key: ios-deps-v1-${{ hashFiles('ios/deps.lock.json', 'ios/scripts/fetch-deps.sh') }}
-      - name: Fetch prebuilt libraries
+          path: ios/.rime-data/rime-shared
+          key: rime-data-v1-${{ hashFiles('ios/deps.lock.json', 'ios/rime/**', 'ios/tools/oc_deployer/**', 'ios/scripts/build-rime-data.sh', 'android/app/src/main/assets/shared/default.yaml', 'android/app/src/main/assets/shared/orangecell-dictionaries.json', 'android/app/src/main/assets/shared/orangecell_wanxiang*', 'android/app/src/main/assets/shared/orangecell_wanxiang*/**', 'android/app/data/rime/prelude/**') }}
+      - name: Compile the Rime data
+        if: steps.cache.outputs.cache-hit != 'true'
         shell: bash
-        run: bash ios/scripts/ci_step.sh fetch-deps -- bash ios/scripts/fetch-deps.sh os64 sim-arm64
-      - name: Install XcodeGen
+        run: bash ios/scripts/ci_step.sh rime-data -- bash ios/scripts/build-rime-data.sh
+      - name: Record the size of what was built
+        if: always()
         shell: bash
-        run: bash ios/scripts/ci_step.sh xcodegen-install -- bash -c 'brew install xcodegen && xcodegen --version'
-      - name: Generate the Xcode project
-        shell: bash
-        run: bash ios/scripts/ci_step.sh xcodegen -- bash -c 'cd ios && xcodegen generate --spec project.yml'
+        run: |
+          {
+            echo "#### rime-data"
+            echo "- cache hit: ${{ steps.cache.outputs.cache-hit }}"
+            if [ -f ios/.rime-data/rime-shared/oc-data.json ]; then
+              python3 - <<'PY'
+          import json
+          d = json.load(open("ios/.rime-data/rime-shared/oc-data.json", encoding="utf8"))
+          total = sum(f["size"] for f in d["files"])
+          print(f"- compiled with librime {d['builtWithLibrime']}, {len(d['files'])} files, {total / 1048576:.1f} MiB; dictionary {d['dictionary']['name']} {d['dictionary']['version']}")
+          for f in sorted(d["files"], key=lambda f: -f["size"])[:8]:
+              print(f"  - {f['size'] / 1048576:.2f} MiB {f['path']}")
+          PY
+            fi
+            du -sh ios/.rime-data/rime-shared 2>/dev/null | sed 's/^/- bundle size: /' || true
+          } > "$CI_OUT/summary.md"
+          cat "$CI_OUT/summary.md"
+      - name: Publish the data for the other jobs
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: rime-shared
+          path: ios/.rime-data/rime-shared
+          compression-level: 1
+          if-no-files-found: error
+          retention-days: 7
+      - name: Upload job results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ci-rime-data
+          path: |
+            ci-out/rime-data
+            !ci-out/rime-data/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+  build-test:
+    name: build-test
+    needs: [rime-data]
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/ios-mac-setup
+        with:
+          job: build-test
       - name: Create the simulator
         shell: bash
         run: bash ios/scripts/ci_step.sh simulator-create -- bash ios/scripts/create-sim.sh
-      - name: Build for the simulator
+      - name: Build for the simulator (Debug)
         shell: bash
         run: |
           bash ios/scripts/ci_step.sh build-sim -- xcodebuild build-for-testing \
@@ -118,30 +163,38 @@ jobs:
             -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd \
             ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
             MARKETING_VERSION="$OC_VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER"
-      - name: App unit tests (simulator)
+      - name: App unit tests (simulator, real Rime data)
         shell: bash
         run: |
           rm -rf "$RUNNER_TEMP/results/unit.xcresult"
           export TEST_RUNNER_OC_INFO_FILE="$CI_OUT/logs/ocinfo.txt"
+          export TEST_RUNNER_OC_RIME_SHARED="$GITHUB_WORKSPACE/ios/.rime-data/rime-shared"
           bash ios/scripts/ci_step.sh unit-tests -- xcodebuild test-without-building \
             -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Debug \
             -destination "id=$SIM_UDID" -derivedDataPath build/dd \
-            -only-testing:OrangeCellTests \
+            -only-testing:OrangeCellTests -skip-testing:OrangeCellTests/MemoryBudgetTests \
             -resultBundlePath "$RUNNER_TEMP/results/unit.xcresult"
-      - name: Build the UI tests
+      - name: Memory with the shipped dictionary (Debug, minimal modules)
+        if: ${{ !cancelled() }}
         shell: bash
         run: |
-          bash ios/scripts/ci_step.sh build-ui-tests -- xcodebuild build-for-testing \
-            -project ios/OrangeCell.xcodeproj -scheme OCUITests -configuration Debug \
-            -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd \
-            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
-            MARKETING_VERSION="$OC_VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER"
-      - name: Simulator end-to-end (keyboard enabled, typed into OCTestHost)
+          export TEST_RUNNER_OC_INFO_FILE="$CI_OUT/logs/ocinfo.txt"
+          export TEST_RUNNER_OC_RIME_SHARED="$GITHUB_WORKSPACE/ios/.rime-data/rime-shared"
+          bash ios/scripts/ci_step.sh memory-debug-minimal -- xcodebuild test-without-building \
+            -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Debug \
+            -destination "id=$SIM_UDID" -derivedDataPath build/dd \
+            -only-testing:OrangeCellTests/MemoryBudgetTests
+      - name: Memory with the shipped dictionary (Debug, all modules)
+        if: ${{ !cancelled() }}
         shell: bash
-        env:
-          PRODUCTS_DIR: ${{ github.workspace }}/build/dd/Build/Products/Debug-iphonesimulator
-          DERIVED_DATA: ${{ github.workspace }}/build/dd
-        run: bash ios/scripts/ci_step.sh e2e -- bash ios/scripts/e2e-sim.sh
+        run: |
+          export TEST_RUNNER_OC_INFO_FILE="$CI_OUT/logs/ocinfo.txt"
+          export TEST_RUNNER_OC_RIME_SHARED="$GITHUB_WORKSPACE/ios/.rime-data/rime-shared"
+          export TEST_RUNNER_OC_RIME_MODULES=all
+          bash ios/scripts/ci_step.sh memory-debug-all -- xcodebuild test-without-building \
+            -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Debug \
+            -destination "id=$SIM_UDID" -derivedDataPath build/dd \
+            -only-testing:OrangeCellTests/MemoryBudgetTests
       - name: OCCore swift test (macOS)
         if: ${{ !cancelled() }}
         shell: bash
@@ -161,40 +214,78 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-  ipa-device:
-    name: ipa-device
+  # The number the keyboard is budgeted against is a Release number.
+  memory-release:
+    name: memory-release
+    needs: [rime-data]
     runs-on: macos-26
-    timeout-minutes: 60
-    env:
-      HOMEBREW_NO_AUTO_UPDATE: '1'
-      HOMEBREW_NO_INSTALL_CLEANUP: '1'
-      HOMEBREW_NO_ENV_HINTS: '1'
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
-      - name: Prepare
+      - uses: ./.github/actions/ios-mac-setup
+        with:
+          job: memory-release
+      - name: Create the simulator
+        shell: bash
+        run: bash ios/scripts/ci_step.sh simulator-create -- bash ios/scripts/create-sim.sh
+      - name: Build for the simulator (Release)
         shell: bash
         run: |
-          echo "CI_OUT=$GITHUB_WORKSPACE/ci-out/ipa-device" >> "$GITHUB_ENV"
-          mkdir -p "$GITHUB_WORKSPACE/ci-out/ipa-device/logs"
-      - name: Select Xcode
+          bash ios/scripts/ci_step.sh build-sim-release -- xcodebuild build-for-testing \
+            -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Release \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES \
+            MARKETING_VERSION="$OC_VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER"
+      - name: Memory with the shipped dictionary (Release, minimal modules)
         shell: bash
-        run: bash ios/scripts/ci_step.sh toolchain -- bash -c 'sudo xcode-select -s "$XCODE_APP" && xcodebuild -version'
-      - name: Cache prebuilt libraries
-        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        run: |
+          export TEST_RUNNER_OC_INFO_FILE="$CI_OUT/logs/ocinfo.txt"
+          export TEST_RUNNER_OC_RIME_SHARED="$GITHUB_WORKSPACE/ios/.rime-data/rime-shared"
+          bash ios/scripts/ci_step.sh memory-release-minimal -- xcodebuild test-without-building \
+            -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Release \
+            -destination "id=$SIM_UDID" -derivedDataPath build/dd \
+            -only-testing:OrangeCellTests/MemoryBudgetTests
+      - name: Memory with the shipped dictionary (Release, all modules)
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          export TEST_RUNNER_OC_INFO_FILE="$CI_OUT/logs/ocinfo.txt"
+          export TEST_RUNNER_OC_RIME_SHARED="$GITHUB_WORKSPACE/ios/.rime-data/rime-shared"
+          export TEST_RUNNER_OC_RIME_MODULES=all
+          bash ios/scripts/ci_step.sh memory-release-all -- xcodebuild test-without-building \
+            -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Release \
+            -destination "id=$SIM_UDID" -derivedDataPath build/dd \
+            -only-testing:OrangeCellTests/MemoryBudgetTests
+      - name: Summary
+        if: always()
+        shell: bash
+        run: python3 ios/scripts/ci_summary.py memory --out "$CI_OUT"
+      - name: Upload job results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          path: ios/.deps-cache
-          key: ios-deps-v1-${{ hashFiles('ios/deps.lock.json', 'ios/scripts/fetch-deps.sh') }}
-      - name: Fetch prebuilt libraries (device)
-        shell: bash
-        run: bash ios/scripts/ci_step.sh fetch-deps -- bash ios/scripts/fetch-deps.sh os64
-      - name: Install XcodeGen
-        shell: bash
-        run: bash ios/scripts/ci_step.sh xcodegen-install -- bash -c 'brew install xcodegen && xcodegen --version'
-      - name: Generate the Xcode project
-        shell: bash
-        run: bash ios/scripts/ci_step.sh xcodegen -- bash -c 'cd ios && xcodegen generate --spec project.yml'
+          name: ci-memory-release
+          path: |
+            ci-out/memory-release
+            !ci-out/memory-release/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+  ipa-device:
+    name: ipa-device
+    needs: [rime-data]
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/ios-mac-setup
+        with:
+          job: ipa-device
+          variants: os64
       - name: Build for device (unsigned)
         shell: bash
         run: |
@@ -216,6 +307,7 @@ jobs:
         with:
           name: ipa-device
           path: dist-ipa/*.ipa
+          compression-level: 1
           if-no-files-found: error
           retention-days: 14
       - name: Summary
@@ -235,7 +327,7 @@ jobs:
 
   release:
     name: release
-    needs: [build-test, ipa-device]
+    needs: [build-test, memory-release, ipa-device]
     if: github.ref == 'refs/heads/ios'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -283,7 +375,7 @@ jobs:
   publish-results:
     name: publish-results
     if: always()
-    needs: [core-linux, build-test, ipa-device, release]
+    needs: [core-linux, rime-data, build-test, memory-release, ipa-device, release]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:

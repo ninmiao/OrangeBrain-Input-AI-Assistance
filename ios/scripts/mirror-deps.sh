@@ -22,9 +22,11 @@ import json, sys
 lock = json.load(open(sys.argv[1], encoding="utf8"))
 for package, entry in lock["packages"].items():
     for variant, info in entry.items():
-        suffix = lock["variants"][variant]["suffix"]
-        name = f"{package}{suffix}.tar.bz2"
-        print("\t".join([name, info["sha256"], f'{lock["upstream"]}/{name}']))
+        v = lock["variants"][variant]
+        name = f"{package}{v['suffix']}.tar.bz2"
+        upstream = v.get("upstream", lock["upstream"])
+        # Release assets share one namespace, so the macOS files get a prefix.
+        print("\t".join([v.get("mirrorPrefix", "") + name, info["sha256"], f"{upstream}/{name}"]))
 PY
 
 while IFS=$'\t' read -r name sha url; do

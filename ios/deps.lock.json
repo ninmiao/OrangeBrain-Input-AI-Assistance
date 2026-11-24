@@ -1,19 +1,33 @@
 {
-  "schema": 1,
-  "comment": "Prebuilt iOS static libraries from fcitx5-prebuilder (MIT). The upstream 'ios' release is rolling, so every file is pinned by SHA-256; fetch-deps.sh refuses anything else.",
+  "schema": 2,
+  "comment": "Prebuilt static libraries from fcitx5-prebuilder (MIT). The upstream releases are rolling, so every file is pinned by SHA-256; fetch-deps.sh refuses anything else.",
   "upstream": "https://github.com/fcitx-contrib/fcitx5-prebuilder/releases/download/ios",
-  "upstreamUpdatedAt": "2026-11-06T21:55:51Z",
+  "upstreamUpdatedAt": {
+    "ios": "2026-11-06T21:55:51Z",
+    "macos": "2026-11-17T05:19:32Z"
+  },
   "mirrorTag": "ios-deps-20261124",
   "mirror": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/download/ios-deps-20261124",
   "variants": {
     "os64": {
-      "suffix": ""
+      "suffix": "",
+      "upstream": "https://github.com/fcitx-contrib/fcitx5-prebuilder/releases/download/ios",
+      "mirrorPrefix": ""
     },
     "sim-arm64": {
-      "suffix": "-arm64"
+      "suffix": "-arm64",
+      "upstream": "https://github.com/fcitx-contrib/fcitx5-prebuilder/releases/download/ios",
+      "mirrorPrefix": ""
     },
     "sim-x86_64": {
-      "suffix": "-x86_64"
+      "suffix": "-x86_64",
+      "upstream": "https://github.com/fcitx-contrib/fcitx5-prebuilder/releases/download/ios",
+      "mirrorPrefix": ""
+    },
+    "macos-arm64": {
+      "suffix": "-arm64",
+      "upstream": "https://github.com/fcitx-contrib/fcitx5-prebuilder/releases/download/macos",
+      "mirrorPrefix": "macos-"
     }
   },
   "defaultVariants": [
@@ -33,6 +47,10 @@
       "sim-x86_64": {
         "sha256": "9dd66a218141a055ee9eec6a352bcd749dbd7191ba57114946d471ebc46dd6e7",
         "size": 2765898
+      },
+      "macos-arm64": {
+        "sha256": "9aea3d16764e7f7b0b1e8b7573869da3c97aceecd426cbc6bfe4e935418742fe",
+        "size": 2830885
       }
     },
     "boost": {
@@ -47,6 +65,10 @@
       "sim-x86_64": {
         "sha256": "81f9ff3725956b150f99c7bdae46c049aba82dd4c385c36d11d007b3bc5ec498",
         "size": 3016763
+      },
+      "macos-arm64": {
+        "sha256": "7bfe7fa33a0231a7fbd9579448e2c8002edf3878654c57c46edf393820eafb9e",
+        "size": 3968860
       }
     },
     "glog": {
@@ -61,6 +83,10 @@
       "sim-x86_64": {
         "sha256": "47f704a5c53bc4dbfe1bb27f79cdf8cb4f3ef0e9418d3907e87ba3fb29173b52",
         "size": 125016
+      },
+      "macos-arm64": {
+        "sha256": "4309b735faed3931d5cf95dcad7b65b61f90174dc58d9c420cda090840b01ff5",
+        "size": 127549
       }
     },
     "leveldb": {
@@ -75,6 +101,10 @@
       "sim-x86_64": {
         "sha256": "878573a0b32b054f82cb119b20211f6e67dbca40ec1353b0fe367f28927d7ced",
         "size": 141292
+      },
+      "macos-arm64": {
+        "sha256": "d8db7166b0a5f89a5f9107f1b7bb9119fe68c4a6bb7ac62ad5e8c863f704d9f0",
+        "size": 134145
       }
     },
     "lua": {
@@ -89,6 +119,10 @@
       "sim-x86_64": {
         "sha256": "2cd3dd62d84bf12450507d66358bdadadee300494762b9be9ea5b404d8f0f079",
         "size": 145466
+      },
+      "macos-arm64": {
+        "sha256": "b9c7e5a48e7f072610ec0892613ece3fa1cc8873e6e1d97ce2d6d3f1523c090b",
+        "size": 140750
       }
     },
     "marisa": {
@@ -103,6 +137,10 @@
       "sim-x86_64": {
         "sha256": "91f3054910c99e8141f34457440549ee0a3d26d064ea60d03ba37c64ac5e09a3",
         "size": 68690
+      },
+      "macos-arm64": {
+        "sha256": "eecef6d55e9350bd0608a1346cd78f1c96050e33328258c32724856dcc7f7b18",
+        "size": 237265
       }
     },
     "opencc": {
@@ -117,6 +155,10 @@
       "sim-x86_64": {
         "sha256": "8d1d4cd64c332f63be2c7b11d2befc91526833b3612bd472d8788c126e4ed358",
         "size": 940937
+      },
+      "macos-arm64": {
+        "sha256": "1db818b243f55ebc1a8011eb0731f26750a5eb698e9e38e157b1cc2baba2bf18",
+        "size": 1307046
       }
     },
     "yaml-cpp": {
@@ -131,6 +173,10 @@
       "sim-x86_64": {
         "sha256": "8ac9c52a4c39038822e5f00f9ccccaf2644d6b018cfcaf22b9ccfa246bde974b",
         "size": 161884
+      },
+      "macos-arm64": {
+        "sha256": "f54e147581fced2c990f0ba3933b293998b0b54ba3ba74c341d2ebce18b17c7e",
+        "size": 161064
       }
     },
     "zstd": {
@@ -145,6 +191,10 @@
       "sim-x86_64": {
         "sha256": "93a1c93bf4d1a175b7bc3b3c60f739ecf60fc070b3b257a5c058e85492331650",
         "size": 358869
+      },
+      "macos-arm64": {
+        "sha256": "0be136f6833fde6918df2db47a6100fd9f4e38b6ab34ea5334da6731aff923d6",
+        "size": 307418
       }
     }
   },

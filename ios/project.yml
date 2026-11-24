@@ -72,6 +72,12 @@ targets:
     platform: iOS
     sources:
       - path: OrangeCell
+      # Compiled Rime data (ios/scripts/build-rime-data.sh); the keyboard reads it
+      # from the containing app bundle and never deploys.
+      - path: .rime-data/rime-shared
+        type: folder
+        buildPhase: resources
+        optional: true
     settings:
       groups: [rimeLink]
       base:

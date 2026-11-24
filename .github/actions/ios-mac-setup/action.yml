@@ -1,0 +1,56 @@
+name: iOS macOS job setup
+description: >-
+  Common start of the macOS jobs of the iOS workflows: output directory, Xcode 26.6,
+  pinned prebuilt libraries (cached), the compiled Rime data (artifact of the rime-data
+  job), XcodeGen and the generated Xcode project.
+
+inputs:
+  job:
+    description: Name of the job; its results go to ci-out/<job>.
+    required: true
+  variants:
+    description: Prebuilt-library variants to fetch (see ios/deps.lock.json).
+    default: 'os64 sim-arm64'
+  rime-data:
+    description: Download the rime-shared artifact into ios/.rime-data.
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Prepare
+      shell: bash
+      run: |
+        echo "CI_OUT=$GITHUB_WORKSPACE/ci-out/${{ inputs.job }}" >> "$GITHUB_ENV"
+        mkdir -p "$GITHUB_WORKSPACE/ci-out/${{ inputs.job }}/logs" "$GITHUB_WORKSPACE/ci-out/${{ inputs.job }}/screenshots" "$RUNNER_TEMP/results"
+    - name: Select Xcode and record the toolchain
+      shell: bash
+      run: |
+        export CI_OUT="$GITHUB_WORKSPACE/ci-out/${{ inputs.job }}"
+        bash ios/scripts/ci_step.sh toolchain -- bash -c 'sudo xcode-select -s "$XCODE_APP" && xcodebuild -version && swift --version 2>&1 | head -n 2 && sw_vers && xcrun simctl list runtimes && xcrun simctl list devicetypes | grep -i "iPhone 17"'
+    - name: Cache prebuilt libraries
+      uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+      with:
+        path: ios/.deps-cache
+        key: ios-deps-v2-${{ hashFiles('ios/deps.lock.json', 'ios/scripts/fetch-deps.sh') }}
+    - name: Fetch prebuilt libraries
+      shell: bash
+      run: |
+        export CI_OUT="$GITHUB_WORKSPACE/ci-out/${{ inputs.job }}"
+        bash ios/scripts/ci_step.sh fetch-deps -- bash ios/scripts/fetch-deps.sh ${{ inputs.variants }}
+    - name: Download the compiled Rime data
+      if: ${{ inputs.rime-data == 'true' }}
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+      with:
+        name: rime-shared
+        path: ios/.rime-data/rime-shared
+    - name: Install XcodeGen and generate the project
+      shell: bash
+      env:
+        HOMEBREW_NO_AUTO_UPDATE: '1'
+        HOMEBREW_NO_INSTALL_CLEANUP: '1'
+        HOMEBREW_NO_ENV_HINTS: '1'
+      run: |
+        export CI_OUT="$GITHUB_WORKSPACE/ci-out/${{ inputs.job }}"
+        bash ios/scripts/ci_step.sh xcodegen-install -- bash -c 'brew install xcodegen && xcodegen --version'
+        bash ios/scripts/ci_step.sh xcodegen -- bash -c 'cd ios && xcodegen generate --spec project.yml'

@@ -134,12 +134,14 @@ def build_test(out: pathlib.Path, xcresult: pathlib.Path) -> str:
     lines.append(f"- OCCore `swift test` on macOS: {f'{mac[0]} tests, {mac[1]} failures' if mac else 'no result'}")
 
     info = ocinfo(read(out / "logs" / "ocinfo.txt") + "\n" + unit_log)
-    if info:
-        lines.append("- librime link check (from the unit-test log):")
-        for key in ("librime.version", "librime.modules.beforeStart", "librime.modules.afterStart",
-                    "librime.started", "librime.missingRequired", "oc_core.encode", "appgroup.source", "test.footprintMB"):
-            if key in info:
-                lines.append(f"  - `{key}` = `{info[key]}`")
+    plain = {k: v for k, v in info.items() if not k.startswith("memory.")}
+    if plain:
+        lines.append("- unit-test observations (OCINFO lines):")
+        for key in sorted(plain):
+            lines.append(f"  - `{key}` = `{plain[key]}`")
+    table = memory_table(info)
+    if table:
+        lines += ["", "Memory with the shipped dictionary (phys_footprint in MB, XCTest process, baseline included):", "", table, ""]
 
     e2e = read(out / "e2e.md").strip()
     if e2e:
@@ -193,6 +195,44 @@ def build_test(out: pathlib.Path, xcresult: pathlib.Path) -> str:
     return "\n".join(lines)
 
 
+MEMORY_STAGES = ["0-baseline", "1-engine-and-session", "2-first-sentence-typed", "3-committed",
+                 "4-five-more-phrases", "5-stopped"]
+
+
+def memory_table(info: dict) -> str:
+    """Rows are stages, columns are the <mode> part of the memory.<mode>.<stage> keys."""
+    modes = sorted({k.split(".")[1] for k in info if k.startswith("memory.") and k.count(".") >= 2})
+    if not modes:
+        return ""
+    header = "| stage | " + " | ".join(modes) + " |"
+    rule = "| --- | " + " | ".join("---" for _ in modes) + " |"
+    rows = []
+    for stage in MEMORY_STAGES:
+        cells = [info.get(f"memory.{mode}.{stage}", "-") for mode in modes]
+        rows.append(f"| {stage} | " + " | ".join(cells) + " |")
+    return "\n".join([header, rule] + rows)
+
+
+def memory_job(out: pathlib.Path) -> str:
+    """The Release memory job: the same test once per module list."""
+    lines = ["#### memory-release (macos-26)"]
+    toolchain = read(out / "logs" / "toolchain.log").strip().splitlines()
+    if toolchain:
+        lines.append("- toolchain: " + "; ".join(l.strip() for l in toolchain[:3]))
+    info = ocinfo(read(out / "logs" / "ocinfo.txt"))
+    table = memory_table(info)
+    if table:
+        lines += ["", "Release, simulator, phys_footprint in MB (the XCTest process itself is in the baseline):", "", table, ""]
+        for mode in ("minimal", "all"):
+            try:
+                delta = float(info[f"memory.{mode}.3-committed"]) - float(info[f"memory.{mode}.0-baseline"])
+                lines.append(f"- {mode} modules: engine + dictionary + first sentence cost **{delta:.1f} MB** over the baseline")
+            except (KeyError, ValueError):
+                pass
+    lines += ["", steps_table(out)]
+    return "\n".join(lines)
+
+
 def ipa(out: pathlib.Path) -> str:
     lines = ["#### ipa-device"]
     for name in ("ipa-info.txt",):
@@ -207,7 +247,7 @@ def ipa(out: pathlib.Path) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("job", choices=["core-linux", "build-test", "ipa"])
+    parser.add_argument("job", choices=["core-linux", "build-test", "ipa", "memory"])
     parser.add_argument("--out", required=True)
     parser.add_argument("--xcresult", default="")
     args = parser.parse_args()
@@ -217,6 +257,8 @@ def main() -> None:
         text = core_linux(out)
     elif args.job == "build-test":
         text = build_test(out, pathlib.Path(args.xcresult) if args.xcresult else None)
+    elif args.job == "memory":
+        text = memory_job(out)
     else:
         text = ipa(out)
     (out / "summary.md").write_text(text + "\n", encoding="utf8")

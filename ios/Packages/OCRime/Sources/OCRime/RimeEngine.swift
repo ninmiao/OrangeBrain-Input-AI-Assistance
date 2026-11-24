@@ -4,11 +4,15 @@ import Foundation
 
 public enum RimeEngineError: Error, Equatable {
     case apiUnavailable
+    case sessionUnavailable
 }
 
-/// Minimal Swift handle on librime: version, set-up / initialise / finalise and
-/// a look at which modules (lua, octagram, predict, ...) are registered.
-/// Sessions, candidates and deployment arrive with milestone M1.
+/// Swift handle on the librime process-global state: version, setup / initialise /
+/// finalise and a look at which modules (lua, octagram, predict, ...) are
+/// registered. Typing goes through `RimeSession` / `RimeService`.
+///
+/// Not thread-safe: librime is a process-wide singleton, so every call must come
+/// from one serial queue (`RimeService` does that).
 public final class RimeEngine {
     /// Modules the prebuilt librime is expected to contain. `required` ones
     /// must be registered or the build is not what the plan assumes.
@@ -17,6 +21,11 @@ public final class RimeEngine {
         "default", "core", "dict", "gears", "levers", "deployer",
         "lua", "octagram", "grammar", "predict", "qjs",
     ]
+    /// What the keyboard loads at run time: the engine core (`default` expands to
+    /// core, dict and gears). The shipped schema uses no Lua, no QuickJS and no
+    /// grammar model, so those plugins stay registered (linked in) but are not
+    /// initialised.
+    public static let minimalModules = ["default"]
 
     public struct Directories: Equatable {
         public var sharedData: String
@@ -34,6 +43,7 @@ public final class RimeEngine {
     public private(set) var isInitialized = false
     private var traits = RimeTraits()
     private var ownedStrings: [UnsafeMutablePointer<CChar>] = []
+    private var moduleArray: UnsafeMutablePointer<UnsafePointer<CChar>?>?
     private let directories: Directories
     private let appName: String
 
@@ -45,6 +55,7 @@ public final class RimeEngine {
     deinit {
         if isInitialized { finalize() }
         ownedStrings.forEach { free($0) }
+        moduleArray?.deallocate()
     }
 
     // MARK: static queries (no initialisation needed)
@@ -77,7 +88,9 @@ public final class RimeEngine {
     }
 
     /// `setup` + `initialize`. Creates the directories first; librime does not.
-    public func start() throws {
+    /// `modules == nil` loads librime's default list (everything that is linked in);
+    /// pass `RimeEngine.minimalModules` to skip the plugins.
+    public func start(modules: [String]? = nil) throws {
         guard let api = rime_get_api() else { throw RimeEngineError.apiUnavailable }
         guard !isInitialized else { return }
         for path in [directories.sharedData, directories.userData] {
@@ -89,10 +102,18 @@ public final class RimeEngine {
         fresh.user_data_dir = keep(directories.userData)
         fresh.distribution_name = keep("橘脑一颗")
         fresh.distribution_code_name = keep("OrangeCell")
-        fresh.distribution_version = keep("0.1.0")
+        fresh.distribution_version = keep("0.2.0")
         fresh.app_name = keep(appName)
         fresh.min_log_level = 2
         fresh.log_dir = keep(directories.log ?? "")
+        if let modules {
+            moduleArray?.deallocate()
+            let array = UnsafeMutablePointer<UnsafePointer<CChar>?>.allocate(capacity: modules.count + 1)
+            for (index, name) in modules.enumerated() { array[index] = keep(name) }
+            array[modules.count] = nil
+            moduleArray = array
+            fresh.modules = array
+        }
         traits = fresh
 
         api.pointee.setup(&traits)

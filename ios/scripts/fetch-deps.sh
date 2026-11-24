@@ -37,11 +37,14 @@ wanted = sys.argv[2:] or lock["defaultVariants"]
 for variant in wanted:
     if variant not in lock["variants"]:
         sys.exit("unknown variant: " + variant)
-    suffix = lock["variants"][variant]["suffix"]
+    info = lock["variants"][variant]
+    suffix = info["suffix"]
+    upstream = info.get("upstream", lock["upstream"])
+    prefix = info.get("mirrorPrefix", "")
     for package, entry in lock["packages"].items():
         name = f"{package}{suffix}.tar.bz2"
         print("\t".join([variant, package, name, entry[variant]["sha256"],
-                         f'{lock["upstream"]}/{name}', f'{lock["mirror"]}/{name}']))
+                         f'{upstream}/{name}', f'{lock["mirror"]}/{prefix}{name}']))
 PY
 }
 
