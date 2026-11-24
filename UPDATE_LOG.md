@@ -23,6 +23,11 @@
 
 ## 待发布
 
+### 2026-11-24 · iOS 版规划（文档更新）
+
+- 新增 `docs/IOS_PLAN.md`：iOS 版蓝图与执行方案，经三轮评审。要点：自建 Swift 薄壳（主应用 + 键盘扩展），librime 用 fcitx5-prebuilder 的 iOS 静态库（1.17.0，含 lua / octagram / predict），AI 部分原样复用 `shared/native-core`（新增 C 接口），参考仓输入法 Hamster 的 MIT 代码；无 Mac，编译测试全部走 GitHub Actions `macos-26`；分发改为免费 Apple ID + SideStore 7 天续签侧载（第四轮修订评审）：CI 产出未签名 IPA 与 SideStore 源，运行时从描述文件识别被改名的 App Group，Key 存储设 Keychain / 加密文件两套后端。
+- 仅文档，未改代码，未编译。
+
 ### 2026-11-23 · Windows 1.14.3 / Android 1.12.3：设置里显示版本与 GitHub 主页，新增应用内自动更新
 
 - 新功能：Windows 设置“输入 / Input”页右下角、Android「AI 辅助设置」页顶部显示当前版本，并有「GitHub 主页」和「检查更新」按钮。
