@@ -411,7 +411,7 @@ ios/
 | 9 | 键盘扩展里的按键用坐标点击，不用无障碍标识；键盘界面用固定高度保证按键位置稳定 | XCUITest 的 `app.keyboards` 看不到第三方键盘扩展（它是远程视图），只能看到宿主文本框；效果用宿主文本框的内容验证。M1 起键盘布局变化时要同步更新坐标，或改为进程内的界面测试（宿主内嵌 `KeyboardViewController`） |
 | 10 | 工程里设 `ENABLE_DEBUG_DYLIB = NO` | Xcode 的 Debug 构建默认把二进制拆成桩 + `.debug.dylib`，会扭曲键盘进程的内存数字 |
 
-### M0 实测结果（CI 运行 #3，提交 `64602d0`）
+### M0 实测结果（CI 运行 #5，提交 `f217293`，全部任务通过）
 
 | 项目 | 结果 |
 | --- | --- |
@@ -420,6 +420,7 @@ ios/
 | 系统里显示键盘 | 方法①，系统在 `OCTestHost` 里显示橘脑一颗键盘；点「你」「好」、删除键，宿主文本框得到「你好」→「你」 |
 | IPA | 约 4.3 MB，主应用与扩展各带 App Group 权限的临时签名，`ios-nightly` 预发布可下载；SideStore 源在 `ci-results` 分支 `sidestore/source.json` |
 | 键盘内存（模拟器） | 只初始化 Rime、不加载词库时 43 MB（`phys_footprint`，自报与 `footprint` 一致）；其中 dyld 私有内存 15 MB、MALLOC_SMALL 10 MB，模拟器的数字偏大，只作代理 |
+| 跨进程共享（模拟器，开启完全访问） | 键盘看到主应用的探针文件；Key 存储「加密文件」后端跨进程读取成功，「Keychain 默认组」读不到（两个进程默认组不同，符合预期） |
 | 未验证 | 真机：App Group 实际名字、Keychain 共享组是否可用、描述文件到期时间、内存上限、SideStore 安装本身 |
 
 对 M1 的影响：
