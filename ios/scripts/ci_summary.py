@@ -147,51 +147,52 @@ def build_test(out: pathlib.Path, xcresult: pathlib.Path) -> str:
     if table:
         lines += ["", "Memory with the shipped dictionary (phys_footprint in MB, XCTest process, baseline included):", "", table, ""]
 
-    e2e = read(out / "e2e.md").strip()
-    if e2e:
-        lines += ["", e2e, ""]
+    shots = sorted(p.name for p in (out / "screenshots").glob("*.png")) if (out / "screenshots").exists() else []
+    if shots:
+        lines.append("- screenshots: " + ", ".join(f"`{s}`" for s in shots))
+    lines += ["", steps_table(out)]
+    return "\n".join(lines)
 
-    report = out / "logs" / "report-keyboard.json"
-    if report.exists():
+
+def e2e_job(out: pathlib.Path, title: str) -> str:
+    """The simulator end-to-end run: its own table, memory numbers, reports of the extension."""
+    lines = [f"#### {title} (macos-26)"]
+    toolchain = read(out / "logs" / "toolchain.log").strip().splitlines()
+    if toolchain:
+        lines.append("- toolchain: " + "; ".join(l.strip() for l in toolchain[:3]))
+    for log in sorted((out / "logs").glob("ui-*.log")):
+        total = xctest_total(read(log))
+        lines.append(f"- UI tests `{log.stem}`: {f'{total[0]} tests, {total[1]} failures' if total else 'no result'}")
+    table = read(out / "e2e.md").strip()
+    if table:
+        lines += ["", table, ""]
+    footprints = read(out / "footprints.tsv").strip()
+    if footprints:
+        lines.append("- keyboard process footprint (`footprint`, MB): " + ", ".join(
+            f"{row.split(chr(9))[0]} **{row.split(chr(9))[1]}**" for row in footprints.splitlines() if chr(9) in row))
+    for tag in ("A", "B"):
+        report = out / "logs" / f"report-keyboard-{tag}.json"
+        if not report.exists():
+            continue
         try:
             data = json.loads(read(report))
-            lines.append("- keyboard extension self-report (report-keyboard.json):")
-            lines.append(f"  - librime `{data.get('rimeVersion')}`, modules `{' '.join(data.get('rimeModules', []))}`")
-            lines.append(f"  - oc_core round trip: `{data.get('ocCoreOK')}`, full access: `{data.get('fullAccess')}`")
-            lines.append(f"  - in-process phys_footprint: **{data.get('footprintMB')} MB**")
-            lines.append(f"  - App Group: `{data.get('groupResolved')}` ({data.get('groupSource')}), container `{data.get('containerPath')}`")
-            peer = data.get("peerProbe")
-            lines.append(f"  - sees the app's probe file: `{bool(peer)}`")
+            lines.append(f"- keyboard report ({tag}): librime `{data.get('rimeVersion')}`, full access `{data.get('fullAccess')}`, "
+                         f"engine running `{data.get('rimeRunning')}`, user dictionary shared `{data.get('userDataShared')}` "
+                         f"(`{data.get('userDataDirectory')}`), deploy stamp `{data.get('deployStamp')}`, "
+                         f"data `{data.get('rimeDataDictionary')}` / schema `{data.get('rimeDataSchema')}`, "
+                         f"in-process phys_footprint {data.get('footprintMB')} MB")
             for probe in data.get("keyStorage", []):
                 lines.append(f"  - key storage `{probe.get('backend')}`: cross-process read `{probe.get('crossProcessReadOK')}` {probe.get('detail', '')}")
         except Exception as error:  # noqa: BLE001
-            lines.append(f"- keyboard report unreadable: {error}")
-    else:
-        lines.append("- keyboard extension self-report: NOT FOUND (the extension never wrote one)")
-
-    app_report = out / "logs" / "report-app.json"
-    if app_report.exists():
-        try:
-            data = json.loads(read(app_report))
-            lines.append(f"- app diagnostics: group `{data.get('groupResolved')}` ({data.get('groupSource')}), "
-                         f"probe written `{data.get('probeWritten')}`, sees keyboard probe `{bool(data.get('peerProbe'))}`, "
-                         f"librime `{data.get('rimeVersion')}`")
-        except Exception as error:  # noqa: BLE001
-            lines.append(f"- app report unreadable: {error}")
-
-    fp = read(out / "footprint-keyboard-mb.txt").strip()
-    if fp:
-        lines.append(f"- keyboard process footprint measured from outside (`footprint`): **{fp} MB**")
-
-    fp_text = read(out / "logs" / "footprint-keyboard.txt")
+            lines.append(f"- keyboard report ({tag}) unreadable: {error}")
+    fp_text = read(out / "logs" / "footprint-typing.txt")
     categories = []
     for line in fp_text.splitlines():
         match = re.match(r"\s*([\d.]+ (?:KB|MB|GB|B))\s+([\d.]+ (?:KB|MB|GB|B))\s+([\d.]+ (?:KB|MB|GB|B))\s+(\d+)\s+(.+)$", line)
         if match and match.group(5).strip() != "TOTAL":
             categories.append(f"{match.group(5).strip()} {match.group(1)} dirty")
     if categories:
-        lines.append("  - biggest dirty categories: " + ", ".join(categories[:5]))
-
+        lines.append("  - biggest dirty categories after typing: " + ", ".join(categories[:6]))
     shots = sorted(p.name for p in (out / "screenshots").glob("*.png")) if (out / "screenshots").exists() else []
     if shots:
         lines.append("- screenshots: " + ", ".join(f"`{s}`" for s in shots))
@@ -251,7 +252,7 @@ def ipa(out: pathlib.Path) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("job", choices=["core-linux", "build-test", "ipa", "memory"])
+    parser.add_argument("job", choices=["core-linux", "build-test", "ipa", "memory", "e2e", "e2e-debug"])
     parser.add_argument("--out", required=True)
     parser.add_argument("--xcresult", default="")
     args = parser.parse_args()
@@ -263,6 +264,8 @@ def main() -> None:
         text = build_test(out, pathlib.Path(args.xcresult) if args.xcresult else None)
     elif args.job == "memory":
         text = memory_job(out)
+    elif args.job in ("e2e", "e2e-debug"):
+        text = e2e_job(out, args.job)
     else:
         text = ipa(out)
     (out / "summary.md").write_text(text + "\n", encoding="utf8")

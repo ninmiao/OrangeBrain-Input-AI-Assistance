@@ -288,6 +288,101 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  # The real keyboard extension, typed into through the system keyboard on a simulator. Release is the
+  # gate: typing, learning across the app's deployment and a keyboard restart, and the memory budget.
+  e2e:
+    name: e2e
+    needs: [rime-data]
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/ios-mac-setup
+        with:
+          job: e2e
+      - name: Create the simulator
+        shell: bash
+        run: bash ios/scripts/ci_step.sh simulator-create -- bash ios/scripts/create-sim.sh
+      - name: Build the app, the keyboard and the UI tests (Release)
+        shell: bash
+        run: |
+          bash ios/scripts/ci_step.sh build-e2e -- xcodebuild build-for-testing \
+            -project ios/OrangeCell.xcodeproj -scheme OCUITests -configuration Release \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            MARKETING_VERSION="$OC_VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER"
+      - name: End-to-end run (Release)
+        shell: bash
+        env:
+          DERIVED_DATA: ${{ github.workspace }}/build/dd
+          PRODUCTS_DIR: ${{ github.workspace }}/build/dd/Build/Products/Release-iphonesimulator
+          CONFIGURATION: Release
+          E2E_MODE: full
+        run: bash ios/scripts/ci_step.sh e2e-run -- bash ios/scripts/e2e-sim.sh
+      - name: Summary
+        if: always()
+        shell: bash
+        run: python3 ios/scripts/ci_summary.py e2e --out "$CI_OUT"
+      - name: Upload job results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ci-e2e
+          path: |
+            ci-out/e2e
+            !ci-out/e2e/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # The same typing run on the Debug build, for the number only (not a gate).
+  e2e-debug:
+    name: e2e-debug
+    needs: [rime-data]
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/ios-mac-setup
+        with:
+          job: e2e-debug
+      - name: Create the simulator
+        shell: bash
+        run: bash ios/scripts/ci_step.sh simulator-create -- bash ios/scripts/create-sim.sh
+      - name: Build the app, the keyboard and the UI tests (Debug)
+        shell: bash
+        run: |
+          bash ios/scripts/ci_step.sh build-e2e -- xcodebuild build-for-testing \
+            -project ios/OrangeCell.xcodeproj -scheme OCUITests -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            MARKETING_VERSION="$OC_VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER"
+      - name: Typing run (Debug)
+        shell: bash
+        env:
+          DERIVED_DATA: ${{ github.workspace }}/build/dd
+          PRODUCTS_DIR: ${{ github.workspace }}/build/dd/Build/Products/Debug-iphonesimulator
+          CONFIGURATION: Debug
+          E2E_MODE: typing
+        run: bash ios/scripts/ci_step.sh e2e-run -- bash ios/scripts/e2e-sim.sh
+      - name: Summary
+        if: always()
+        shell: bash
+        run: python3 ios/scripts/ci_summary.py e2e-debug --out "$CI_OUT"
+      - name: Upload job results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ci-e2e-debug
+          path: |
+            ci-out/e2e-debug
+            !ci-out/e2e-debug/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
   ipa-device:
     name: ipa-device
     needs: [rime-data]
@@ -344,7 +439,7 @@ jobs:
 
   release:
     name: release
-    needs: [core-linux, build-test, memory-release, ipa-device]
+    needs: [core-linux, build-test, memory-release, e2e, ipa-device]
     if: github.ref == 'refs/heads/ios'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -396,7 +491,7 @@ jobs:
   publish-results:
     name: publish-results
     if: always()
-    needs: [core-linux, rime-data, build-test, memory-release, ipa-device, release]
+    needs: [core-linux, rime-data, build-test, memory-release, e2e, e2e-debug, ipa-device, release]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:

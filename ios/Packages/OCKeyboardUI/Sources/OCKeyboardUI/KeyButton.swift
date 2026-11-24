@@ -14,7 +14,6 @@ final class KeyButton: UIControl {
 
     private let label = UILabel()
     private let imageView = UIImageView()
-    private let shadowLayer = CALayer()
 
     var fillColor: UIColor { baseColor }
 
@@ -42,10 +41,12 @@ final class KeyButton: UIControl {
         layer.masksToBounds = false
         backgroundColor = baseColor
 
-        // A one-point shadow underneath, as on the system keyboard.
-        shadowLayer.backgroundColor = KeyboardTheme.keyShadow.cgColor
-        shadowLayer.cornerRadius = KeyboardTheme.keyCornerRadius
-        layer.insertSublayer(shadowLayer, at: 0)
+        // A one-point shadow underneath, as on the system keyboard. It is the layer's own shadow,
+        // drawn behind the key face (a sublayer would be drawn over the face).
+        layer.shadowOffset = CGSize(width: 0, height: 1)
+        layer.shadowRadius = 0
+        layer.shadowOpacity = 1
+        layer.shadowColor = KeyboardTheme.keyShadow.cgColor
 
         isAccessibilityElement = true
         accessibilityTraits = [.keyboardKey, .button]
@@ -113,10 +114,7 @@ final class KeyButton: UIControl {
         super.layoutSubviews()
         label.frame = bounds.insetBy(dx: 2, dy: 2)
         imageView.frame = bounds
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        shadowLayer.frame = CGRect(x: 0, y: 1, width: bounds.width, height: bounds.height)
-        CATransaction.commit()
+        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: KeyboardTheme.keyCornerRadius).cgPath
     }
 
     override var isHighlighted: Bool {
@@ -126,7 +124,7 @@ final class KeyButton: UIControl {
     /// Re-applies dynamic colours after a light / dark change.
     func refreshColors() {
         backgroundColor = isHighlighted ? pressedColor : baseColor
-        shadowLayer.backgroundColor = KeyboardTheme.keyShadow.cgColor
+        layer.shadowColor = KeyboardTheme.keyShadow.cgColor
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

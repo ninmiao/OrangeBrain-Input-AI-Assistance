@@ -148,6 +148,8 @@ public struct DiagnosticsReport: Codable, Equatable, Sendable {
     public var userDataDirectory: String?
     public var userDataShared: Bool?
     public var deployStamp: String?
+    /// Whether the keyboard's engine was running when the report was made (nil in the app).
+    public var rimeRunning: Bool?
 }
 
 public enum DiagnosticsCollector {
@@ -163,6 +165,7 @@ public enum DiagnosticsCollector {
         writesKeySample: Bool,
         rimeVersion: String?,
         rimeModules: [String],
+        rimeRunning: Bool? = nil,
         now: Date = Date()
     ) -> DiagnosticsReport {
         let context = AppGroupContext.detect(bundle: bundle)
@@ -230,7 +233,8 @@ public enum DiagnosticsCollector {
             rimeDictionaryBytes: dataStamp?.dictionaryBytes,
             userDataDirectory: userDirectory?.url.path,
             userDataShared: userDirectory?.isShared,
-            deployStamp: DeployStamp.read(in: context)
+            deployStamp: DeployStamp.read(in: context),
+            rimeRunning: rimeRunning
         )
     }
 

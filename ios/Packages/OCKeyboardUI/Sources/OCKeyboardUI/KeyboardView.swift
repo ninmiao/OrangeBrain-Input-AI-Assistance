@@ -318,7 +318,9 @@ final class CandidateCell: UICollectionViewCell {
         let result = NSMutableAttributedString(string: candidate.text, attributes: [
             .font: KeyboardTheme.candidateFont, .foregroundColor: KeyboardTheme.text,
         ])
-        if !candidate.comment.isEmpty {
+        // The reading of a phrase repeats what the composition row shows; only a single character
+        // keeps it (你 nǐ), which is what tells homophones apart.
+        if !candidate.comment.isEmpty, candidate.text.count == 1 {
             result.append(NSAttributedString(string: " " + candidate.comment, attributes: [
                 .font: KeyboardTheme.commentFont, .foregroundColor: KeyboardTheme.secondaryText,
             ]))

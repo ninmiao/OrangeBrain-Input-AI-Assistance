@@ -135,15 +135,19 @@ open class OCKeyboardViewController: UIInputViewController {
         diagnosticsWorkItem?.cancel()
         let fullAccess = hasFullAccess
         let item = DispatchWorkItem { [weak self] in
-            guard self != nil else { return }
+            guard let self else { return }
+            let service = self.controller.rimeService
             DispatchQueue.global(qos: .utility).async {
+                // Asked on this queue: the engine's own queue may be busy and must not stall typing.
+                let running = service?.isRunning
                 let report = DiagnosticsCollector.collect(
                     role: "keyboard",
                     peerRole: "app",
                     fullAccess: fullAccess,
                     writesKeySample: false,
                     rimeVersion: RimeEngine.version(),
-                    rimeModules: RimeEngine.registeredModules()
+                    rimeModules: RimeEngine.registeredModules(),
+                    rimeRunning: running
                 )
                 DiagnosticsCollector.save(report)
             }
