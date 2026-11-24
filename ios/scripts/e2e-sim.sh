@@ -35,7 +35,7 @@ row() { echo "| $1 | $2 |" >> "$RESULT"; log "$1: $2"; }
 shrink() {
   local size
   size=$(wc -c < "$1" 2>/dev/null | tr -d ' ' || echo 0)
-  if [ "$size" -gt 400000 ]; then sips -Z 1500 "$1" >/dev/null 2>&1 || true; fi
+  if [ "$size" -gt 300000 ]; then sips -Z 1200 "$1" >/dev/null 2>&1 || true; fi
 }
 
 shot() {
@@ -64,6 +64,16 @@ dump_prefs() {
     find "$SIM_DATA/Library/Preferences" -maxdepth 1 -iname '*eyboard*' 2>/dev/null
     echo "== pluginkit"
     xcrun simctl spawn "$UDID" pluginkit -mAD -p com.apple.keyboard-service 2>&1 | head -n 40
+    echo "== preference files that mention orangecell (Full Access and friends)"
+    local plist
+    for plist in "$SIM_DATA"/Library/Preferences/*.plist; do
+      if plutil -p "$plist" 2>/dev/null | grep -q -i orangecell; then
+        echo "--- $plist"
+        plutil -p "$plist" 2>/dev/null | grep -i -B2 -A2 orangecell | head -n 30
+      fi
+    done
+    echo "== com.apple.keyboard.preferences.plist"
+    plutil -p "$SIM_DATA/Library/Preferences/com.apple.keyboard.preferences.plist" 2>&1 | head -n 40
   } > "$LOGS/prefs-$tag.txt" 2>&1
 }
 
@@ -159,21 +169,41 @@ sleep 8
 shot "01-host-after-seed"
 
 ENABLED_BY="none"
+
+# Settings flow: adds the keyboard when it is not listed yet and switches on Full Access.
+settings_flow() {
+  local tag="$1"
+  if run_ui_test "EnableKeyboardUITests" "$tag"; then
+    row "Settings UI (add keyboard, Allow Full Access)" "PASS"
+  else
+    row "Settings UI (add keyboard, Allow Full Access)" "FAIL (see ui-$tag logs)"
+  fi
+}
+
 if run_ui_test "KeyboardUITests" "seed"; then
   ENABLED_BY="method 1 (AppleKeyboards pre-seeded)"
-  row "method 1: seed AppleKeyboards, type in OCTestHost (XCUITest)" "PASS"
+  row "method 1: seed AppleKeyboards, our keyboard shown and typed into OCTestHost (XCUITest)" "PASS"
+  # Full Access is needed for App Group / network access from the extension.
+  dump_prefs "02-before-settings-ui"
+  settings_flow "settings-fullaccess"
+  dump_prefs "03-after-settings-ui"
+  reboot
+  launch_host
+  sleep 8
+  shot "02-host-after-fullaccess"
+  if run_ui_test "KeyboardUITests" "fullaccess"; then
+    row "with Full Access: typing into OCTestHost" "PASS"
+  else
+    row "with Full Access: typing into OCTestHost" "FAIL"
+  fi
 else
-  row "method 1: seed AppleKeyboards, type in OCTestHost (XCUITest)" "FAIL (see ui-seed logs)"
+  row "method 1: seed AppleKeyboards, our keyboard shown and typed into OCTestHost (XCUITest)" "FAIL (see ui-seed logs)"
   # ------------------------------------------ method 2: drive Settings
   xcrun simctl spawn "$UDID" defaults delete -g AppleKeyboards >/dev/null 2>&1 || true
   xcrun simctl spawn "$UDID" defaults delete -g AppleKeyboardsExpanded >/dev/null 2>&1 || true
   reboot
   dump_prefs "02-before-settings-ui"
-  if run_ui_test "EnableKeyboardUITests" "settings"; then
-    row "method 2: add keyboard + Full Access via Settings (XCUITest)" "PASS"
-  else
-    row "method 2: add keyboard + Full Access via Settings (XCUITest)" "FAIL (see ui-settings logs)"
-  fi
+  settings_flow "settings"
   dump_prefs "03-after-settings-ui"
   reboot
   launch_host

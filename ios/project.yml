@@ -26,6 +26,9 @@ settings:
     CURRENT_PROJECT_VERSION: "1"
     CLANG_CXX_LANGUAGE_STANDARD: "c++17"
     ENABLE_USER_SCRIPT_SANDBOXING: NO
+    # Debug builds would otherwise split each binary into a stub plus a
+    # .debug.dylib, which distorts the memory numbers of the keyboard extension.
+    ENABLE_DEBUG_DYLIB: NO
     # Simulator builds are ad-hoc signed so that entitlements (App Groups) are
     # embedded; device builds are built unsigned and signed afterwards by
     # ios/scripts/make-ipa.sh (SideStore re-signs on the phone).

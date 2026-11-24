@@ -110,7 +110,9 @@ final class KeyboardViewController: UIInputViewController {
         detailLabel.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
         detailLabel.textAlignment = .left
         detailLabel.textColor = .secondaryLabel
-        detailLabel.numberOfLines = 0
+        detailLabel.numberOfLines = 5
+        detailLabel.lineBreakMode = .byTruncatingTail
+        detailLabel.contentMode = .topLeft
         detailLabel.accessibilityIdentifier = "oc.m0.detail"
 
         let textRow = row([
@@ -139,6 +141,10 @@ final class KeyboardViewController: UIInputViewController {
             content.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
             content.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
             content.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -6),
+            // Fixed heights keep the keys where the UI test taps them (it cannot see
+            // inside the keyboard extension and taps by coordinates).
+            titleLabel.heightAnchor.constraint(equalToConstant: 20),
+            detailLabel.heightAnchor.constraint(equalToConstant: 70),
             textRow.heightAnchor.constraint(equalToConstant: 46),
             controlRow.heightAnchor.constraint(equalToConstant: 46),
         ])

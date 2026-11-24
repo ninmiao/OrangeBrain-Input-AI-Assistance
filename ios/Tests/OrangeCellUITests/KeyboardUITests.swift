@@ -54,60 +54,55 @@ extension XCTestCase {
 
 /// With our keyboard enabled and selected, the test host shows it as soon as the
 /// text field is focused. This is the end-to-end proof for milestone M0.
+///
+/// XCUITest cannot see inside a third-party keyboard extension (the keyboard is a
+/// remote view; `app.keyboards` stays empty), so the keys are tapped by
+/// coordinates. The keyboard view has a fixed layout for this (see
+/// KeyboardViewController.buildInterface) and the effect is checked through the
+/// host's text field, which XCUITest can read.
 final class KeyboardUITests: XCTestCase {
     private let app = XCUIApplication(bundleIdentifier: hostBundleID)
+
+    /// Key centres as fractions of the screen (iPhone 17: 402 x 874 pt).
+    private let keyNi = CGVector(dx: 0.101, dy: 0.773)
+    private let keyHao = CGVector(dx: 0.283, dy: 0.773)
+    private let keyDelete = CGVector(dx: 0.643, dy: 0.835)
 
     override func setUp() {
         continueAfterFailure = false
     }
 
-    private func element(_ identifier: String) -> XCUIElement {
-        app.descendants(matching: .any).matching(identifier: identifier).firstMatch
+    private func tap(_ point: CGVector, _ name: String) {
+        app.windows.firstMatch.coordinate(withNormalizedOffset: point).tap()
+        note("tap \(name) at \(point.dx),\(point.dy)")
+        Thread.sleep(forTimeInterval: 0.6)
+    }
+
+    private func fieldText(_ field: XCUIElement) -> String {
+        let value = (field.value as? String) ?? ""
+        return value == "type here" ? "" : value
     }
 
     func testOurKeyboardAppearsInTheHostAndInsertsText() throws {
         app.launch()
         let field = app.textFields["oc.testhost.field"]
         XCTAssertTrue(field.waitForExistence(timeout: 30), "host text field missing")
-        if !app.keyboards.firstMatch.waitForExistence(timeout: 8) {
-            field.tap()
-        }
-        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 20), "no keyboard shown")
-
-        let title = element("oc.m0.title")
-        var ours = title.waitForExistence(timeout: 8)
-        if !ours {
-            // Another keyboard came up first: cycle with the system's globe key.
-            saveShot("keyboard-first-seen")
-            dumpHierarchy(app, name: "keyboard-first-seen-tree")
-            for attempt in 1...4 where !ours {
-                let next = app.keyboards.buttons["Next keyboard"]
-                note("cycle attempt \(attempt): next-keyboard key exists=\(next.exists)")
-                guard next.exists else { break }
-                next.tap()
-                ours = title.waitForExistence(timeout: 4)
-            }
-        }
-        note("keyboard.ours=\(ours)")
-        if ours { note("keyboard.title=\(title.label)") }
+        field.tap()
+        // The extension needs a moment to start, run its Rime checks and repaint the banner.
+        Thread.sleep(forTimeInterval: 10)
         saveShot("keyboard-m0")
-        dumpHierarchy(app, name: "keyboard-hierarchy")
-        XCTAssertTrue(ours, "the system showed a keyboard, but not OrangeCell's")
+        dumpHierarchy(app, name: "host-hierarchy")
+        note("accessibility sees keyboards=\(app.keyboards.count)")
 
-        // Give the extension a moment to finish its Rime checks and repaint the banner.
-        Thread.sleep(forTimeInterval: 3)
-        saveShot("keyboard-m0-settled")
-
-        let niKey = element("oc.key.ni")
-        XCTAssertTrue(niKey.waitForExistence(timeout: 5), "key 你 missing")
-        niKey.tap()
-        element("oc.key.hao").tap()
-        let typed = (field.value as? String) ?? ""
+        tap(keyNi, "你")
+        tap(keyHao, "好")
+        let typed = fieldText(field)
         note("typed=\(typed)")
         saveShot("keyboard-typed")
-        XCTAssertEqual(typed, "你好")
+        XCTAssertEqual(typed, "你好", "OrangeCell's keyboard did not insert 你好 (is it the one on screen?)")
 
-        element("oc.key.delete").tap()
-        XCTAssertEqual((field.value as? String) ?? "", "你")
+        tap(keyDelete, "delete")
+        XCTAssertEqual(fieldText(field), "你")
+        saveShot("keyboard-after-delete")
     }
 }

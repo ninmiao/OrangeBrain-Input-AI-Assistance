@@ -96,7 +96,8 @@ final class EnableKeyboardUITests: XCTestCase {
             let before = (toggle.value as? String) ?? "?"
             note("settings.fullAccess.before=\(before)")
             if before != "1" {
-                toggle.tap()
+                // The element spans the whole row; the visible switch is at its right end.
+                toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
                 Thread.sleep(forTimeInterval: 1)
                 snap("full-access-alert")
                 let alert = settings.alerts.firstMatch

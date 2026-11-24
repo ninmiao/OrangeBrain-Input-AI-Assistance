@@ -392,3 +392,18 @@ ios/
 - Apple：配置键盘的完全访问 <https://developer.apple.com/documentation/uikit/configuring-open-access-for-a-custom-keyboard>；创建自定义键盘 <https://developer.apple.com/documentation/uikit/creating-a-custom-keyboard>；App 审核指南 <https://developer.apple.com/app-store/review/guidelines/>
 - SideStore（免费账号侧载、7 天续签、3 个应用 / 10 个 App ID 限制）：<https://github.com/SideStore/SideStore>、<https://docs.sidestore.io/docs/faq>；App Group 改名逻辑见其源码 `SideStore/Core/Operations/PipelineOperations/FetchProvisioningProfilesOperation.swift`
 - fastlane 认证（仅付费路线备用）：<https://docs.fastlane.tools/getting-started/ios/authentication/>
+
+## 15. 实施变更（执行中记录）
+
+### M0（2026-11-24）
+
+| # | 变更 | 原因 |
+| --- | --- | --- |
+| 1 | native-core 不复制进 Swift 包：`OCCore/Sources/CNativeCore/shim.cpp` 用相对路径 `#include` 共享目录里的 `core.cpp` 与 `c_api.cpp`，`private/nlohmann/json.hpp` 转发到共享的 json.hpp | SwiftPM 的 target 目录不能指向包外；复制会有两份协议代码。这样只有一份源码，Android / Windows / iOS 同源 |
+| 2 | C 接口的测试写在 `core_test.cpp` 里，用宏 `OC_C_API_TEST` 开关，只有共享 CMake 的测试目标打开 | Windows 的 `orangecell_protocol_test` 也编译同一个 `core_test.cpp`，但不链接 `c_api.cpp`；不加开关会破坏 Windows 构建 |
+| 3 | 发布流程并入 `ios-ci.yml` 的 `release` 任务，每次推送 `ios` 分支且构建全绿后刷新 `ios-nightly` 预发布；不再单独写 `ios-release.yml`，也不限定 `main` | 当前只有 `ios` 分支；单文件更简单。SideStore 源写到孤儿分支 `ci-results` 的 `sidestore/source.json`，不动 `main` |
+| 3a | 依赖镜像 `ios-deps.yml` 除手动触发外，`ios/deps.lock.json` 变化时在 `ios` 分支自动运行 | `workflow_dispatch` 只对默认分支上的工作流文件生效，没有 API 令牌就无法手动触发 |
+| 4 | 链接 librime 时对 `librime.a` 用 `-force_load`，并加 `-framework JavaScriptCore` | 各插件靠 `RIME_MODULE_INITIALIZER`（构造函数）注册，静态库里没人引用的目标文件会被丢掉；`libqjs.a` 在 Apple 平台用 JavaScriptCore 实现，符号分析确认它引用 `JS*` 系列函数。boost 只需 `container` / `iostreams` / `random` 三个库，头文件不必解压 |
+| 5 | 打进 IPA 的权限文件只含 App Group，不含 `keychain-access-groups` | SideStore 重签时只依据二进制里的权限去注册能力；`$(AppIdentifierPrefix)` 在 CI 里没有团队 ID 可替换，写进去反而可能让安装后无法启动。Keychain 共享组改由诊断页在真机上用「团队 ID + 约定后缀」实测（第 4.6 节），结果决定后端 |
+| 6 | Linux 任务在 `swift:6.2-noble` 容器里跑，用 apt 装 cmake / g++ / JDK 头文件；CMake 的 JNI 查找用缓存变量手工回答 AWT / JVM 库 | ubuntu 托管机没有 Swift 工具链；`default-jdk-headless` 不含 libjawt，FindJNI 会失败，而编 `jni.cpp` 只需要头文件 |
+| 7 | 增加结果通道：每个 iOS 工作流最后的 `publish-results` 任务把状态、摘要、失败日志、截图写到孤儿分支 `ci-results`；`ios/scripts/ci_wait.py <sha>` 等待并取回 | 没有带令牌的 GitHub API，看不到日志与产物下载 |
