@@ -92,7 +92,11 @@ public struct ProvisioningProfile: Equatable, Sendable {
 
     /// Reads `embedded.mobileprovision` from a bundle, telling "not there" from "not understood".
     public static func loadResult(from bundle: Bundle) -> LoadResult {
-        guard let url = bundle.url(forResource: "embedded", withExtension: "mobileprovision") else { return .missing }
+        // On iOS the profile sits at the top of the app bundle; the direct path also covers flat bundles.
+        let direct = bundle.bundleURL.appendingPathComponent("embedded.mobileprovision")
+        guard let url = bundle.url(forResource: "embedded", withExtension: "mobileprovision")
+            ?? (FileManager.default.fileExists(atPath: direct.path) ? direct : nil)
+        else { return .missing }
         let data: Data
         do {
             data = try Data(contentsOf: url)

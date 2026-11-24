@@ -64,6 +64,7 @@ final class EmbeddedHostViewController: UIViewController, UITextViewDelegate {
     private let mirror = UILabel()
     private var keyboardController: KeyboardController!
     private var inputContainer: UIInputView!
+    private var keyboardHeight: NSLayoutConstraint!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -118,8 +119,9 @@ final class EmbeddedHostViewController: UIViewController, UITextViewDelegate {
             keyboard.trailingAnchor.constraint(equalTo: container.trailingAnchor),
             keyboard.topAnchor.constraint(equalTo: container.topAnchor),
             keyboard.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-            container.heightAnchor.constraint(equalToConstant: KeyboardView.preferredHeight(landscape: false)),
         ])
+        keyboardHeight = container.heightAnchor.constraint(equalToConstant: KeyboardView.preferredHeight(landscape: false))
+        keyboardHeight.isActive = true
         inputContainer = container
         textView.inputView = container
         keyboardController.prepare()
@@ -128,6 +130,12 @@ final class EmbeddedHostViewController: UIViewController, UITextViewDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         textView.becomeFirstResponder()
+    }
+
+    /// The extension sizes itself like this (OCKeyboardViewController.currentHeight).
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        keyboardHeight?.constant = KeyboardView.preferredHeight(landscape: traitCollection.verticalSizeClass == .compact)
     }
 
     func textViewDidChange(_ textView: UITextView) {

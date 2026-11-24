@@ -178,6 +178,8 @@ targets:
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
     dependencies:
       - package: OCKeyboardUI
       - package: OCCore
@@ -229,7 +231,7 @@ schemes:
     build:
       targets:
         OCTestHost: all
-        OrangeCell: [build]
+        OrangeCell: all
     test:
       config: Debug
       targets:

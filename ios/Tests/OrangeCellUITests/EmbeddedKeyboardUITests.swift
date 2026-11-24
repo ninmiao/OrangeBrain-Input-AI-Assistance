@@ -57,7 +57,7 @@ final class EmbeddedKeyboardUITests: XCTestCase {
         launch()
         type("nihao")
         wait("candidate 0 never showed") { self.element("oc.candidate.0").exists }
-        XCTAssertEqual(composition, "nihao")
+        wait("the composition should show nihao") { self.composition == "nihao" }
         XCTAssertEqual(element("oc.candidate.0").label, "你好")
         saveShot("embedded-nihao-light")
         element("oc.candidate.0").tap()
@@ -161,6 +161,22 @@ final class EmbeddedKeyboardUITests: XCTestCase {
     }
 
     // MARK: screenshots (light and dark)
+
+    /// The landscape layout (shorter keys, smaller candidate bar) in the same host.
+    func testScreenshotLandscape() {
+        launch()
+        XCUIDevice.shared.orientation = .landscapeLeft
+        Thread.sleep(forTimeInterval: 2)
+        XCTAssertTrue(key("space").waitForExistence(timeout: 10))
+        type("ni")
+        wait("candidate bar never filled in landscape") { self.element("oc.candidate.0").exists }
+        saveShot("embedded-landscape-1-zh-candidates")
+        key("delete").tap(); key("delete").tap()
+        key("language").tap()
+        type("hello")
+        saveShot("embedded-landscape-2-en")
+        XCUIDevice.shared.orientation = .portrait
+    }
 
     func testScreenshotsLight() { screenshots(dark: false) }
     func testScreenshotsDark() { screenshots(dark: true) }

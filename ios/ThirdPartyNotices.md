@@ -92,3 +92,12 @@ SOFTWARE.
 - XcodeGen（MIT）：只在 CI 里生成工程，不随包。
 - 仓输入法 Hamster（MIT）的 RimeKit / HamsterKeyboardKit：M0 没有拷入任何代码；以后移植时在这里补充版权声明与原文。
 - fcitx5-ios、Squirrel、Trime（GPL）：只阅读思路，没有拷入代码。
+
+## M1 增补（2026-11-24）
+
+- 随应用分发的所有组件的许可证全文放在 `ios/Resources/licenses/<组件>/`，由 `ios/scripts/fetch-licenses.py` 从各上游仓库的固定标签取回（清单见 `licenses/index.json`），打进主应用，并在应用里「致谢与开源许可」页逐项显示。键盘扩展不带这些文件，它们跟主应用同一个安装包分发。
+- QuickJS（quickjs-ng，MIT）：librime-qjs 的 JavaScript 引擎，静态链接在 `libqjs.a` 里；在 Apple 平台上的运行时使用系统的 JavaScriptCore，两者的许可证都列入了许可页。
+- OpenCC（Apache-2.0）：上游没有单独的 NOTICE 文件，随包的是 `LICENSE` 全文；OpenCC 的转换数据（`rime-shared/opencc`）取自 fcitx5-prebuilder 的 macOS 包里的 `share/opencc`，与链接的库同版本。
+- 万象词库与语法（CC BY 4.0）：iOS 包里的编译结果（`rime-shared/build/*.bin`）由与 Android 相同的源文件生成，署名和许可证原文随数据放在应用包里的 `rime-shared/licenses/wanxiang`。iOS 包不含 GPL-3.0-only 的雾凇词库。
+- 应用图标是占位：把仓库里 256 px 的 `docs/images/orangecell-logo.png` 用最近邻放大 4 倍，贴在奶油色底上，不是正式图标。
+- 键盘界面代码（`OCKeyboardUI`）为原创，没有复制 Hamster、Trime、Squirrel 等项目的代码。

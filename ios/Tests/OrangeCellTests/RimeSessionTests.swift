@@ -137,6 +137,9 @@ final class RimeSessionTests: XCTestCase {
         // The end-to-end run learns the same way through the real keyboard and needs this number.
         ocInfo("learning.orderAfterEachRound=\(orderAfterEachRound.joined(separator: " | "))")
         ocInfo("learning.tapIndices=\(tapIndices.map(String.init).joined(separator: ","))")
+        // The system-level end-to-end test (KeyboardUITests) taps the third candidate once and expects
+        // the phrase to be first afterwards.
+        XCTAssertEqual(Array(tapIndices.prefix(2)), [2, 0], "the end-to-end learning schedule no longer matches the dictionary")
         ocInfo("learning.roundsToTop=\(roundsToTop.map(String.init) ?? "never")")
         let after = service.typeSync("nihao")
         ocInfo("learning.after=\(after.candidates.prefix(5).map(\.text).joined(separator: "|"))")
@@ -150,6 +153,35 @@ final class RimeSessionTests: XCTestCase {
         let again = restarted.typeSync("nihao")
         XCTAssertEqual(again.candidates.first?.text, learned, "learning was lost across a restart")
         restarted.stopSync()
+    }
+
+    /// Does the linked Lua plugin run a translator that a schema asks for? The shipped schema uses no
+    /// plugin, so this builds a tiny schema in a temporary user directory. Observation only for now:
+    /// the result is logged (`lua.*`) and turns into an assertion once a CI run has confirmed it.
+    func testLuaPluginRunsATranslatorFromASchema() throws {
+        let shared = try sharedDirectory
+        let user = temporaryUserDirectory()
+        try FileManager.default.createDirectory(at: user.appendingPathComponent("lua"), withIntermediateDirectories: true)
+        let schema = [
+            "schema:", "  schema_id: oc_lua_probe", "  name: OC Lua probe", "  version: \"1\"",
+            "engine:", "  processors:", "    - ascii_composer", "    - key_binder", "    - speller", "    - selector",
+            "    - navigator", "    - express_editor", "  segmentors:", "    - abc_segmentor", "  translators:",
+            "    - lua_translator@*oc_probe", "speller:", "  alphabet: \"abcdefghijklmnopqrstuvwxyz\"", "",
+        ].joined(separator: "\n")
+        let script = [
+            "local function translator(input, seg)", "  if input == \"luaprobe\" then",
+            "    yield(Candidate(\"lua\", seg.start, seg._end, \"LUA-OK\", \"\"))", "  end", "end", "return translator", "",
+        ].joined(separator: "\n")
+        try schema.write(to: user.appendingPathComponent("oc_lua_probe.schema.yaml"), atomically: true, encoding: .utf8)
+        try script.write(to: user.appendingPathComponent("lua/oc_probe.lua"), atomically: true, encoding: .utf8)
+        let deployed = RimeDeployer.deployConfigFile(
+            sharedData: URL(fileURLWithPath: shared), userData: user, file: "oc_lua_probe.schema.yaml", versionKey: "schema_version")
+        ocInfo("lua.deployed=\(deployed)")
+        let service = RimeService(configuration: RimeServiceConfiguration(
+            sharedDataDirectory: shared, userDataDirectory: user.path, modules: ["default", "lua"], schemaID: "oc_lua_probe"))
+        let update = service.typeSync("luaprobe")
+        ocInfo("lua.candidates=\(update.candidates.map(\.text).joined(separator: "|")) composing=\(update.isComposing)")
+        service.stopSync()
     }
 
     func testChinesePunctuationAndCommitDoNotComposeWithoutInput() throws {

@@ -303,6 +303,26 @@ if [ "$MODE" = "full" ]; then
     row "keyboard report (B)" "fullAccess=$fa userDataShared=$shared rimeRunning=$running deployStamp=$stamp"
     c=1; [ "$shared" = "true" ] && c=0
     check "phase B: with Full Access the user dictionary is in the App Group" "$c" "(userDataShared=$shared)"
+    # What the extension itself reports (report-keyboard.json), the checks the first end-to-end run lacked.
+    python3 - "$LOGS/report-keyboard-B.json" > "$LOGS/report-checks.txt" <<'PY'
+import json, sys
+report = json.load(open(sys.argv[1], encoding="utf8"))
+modules = report.get("rimeModules") or []
+store = [p for p in report.get("keyStorage") or [] if p.get("backend") == "encrypted-file"]
+checks = [
+    ("oc_core round trip inside the extension", report.get("ocCoreOK") is True),
+    ("librime modules registered (lua, octagram, predict, qjs)", all(m in modules for m in ("lua", "octagram", "predict", "qjs"))),
+    ("Rime data stamp readable and built by the linked librime", report.get("rimeDataBuiltWithLibrime") == report.get("rimeVersion")),
+    ("the extension sees the app probe file (App Group shared)", report.get("peerProbe") is not None),
+    ("encrypted-file key store readable across processes", bool(store) and store[0].get("crossProcessReadOK") is True),
+]
+for name, ok in checks:
+    print(("PASS" if ok else "FAIL") + "\t" + name)
+PY
+    while IFS=$'\t' read -r verdict name; do
+      c=1; [ "$verdict" = "PASS" ] && c=0
+      check "phase B: $name" "$c"
+    done < "$LOGS/report-checks.txt"
   else
     check "phase B: keyboard report exists" 1
   fi

@@ -320,9 +320,8 @@ final class KeyboardUITests: XCTestCase {
     // MARK: user dictionary across the app deployment and a keyboard restart
 
     /// Which candidate to tap in each round to teach the keyboard 拟好 for nihao. The phrase starts third
-    /// and climbs as it is chosen. RimeSessionTests logs the indices it needs (`learning.tapIndices`) and
-    /// compares them with this list.
-    private let learnSchedule: [Int] = (ProcessInfo.processInfo.environment["OC_LEARN_SCHEDULE"] ?? "2,1,0,0")
+    /// and is first after one choice; RimeSessionTests asserts that (`learning.tapIndices` starts 2, 0).
+    private let learnSchedule: [Int] = (ProcessInfo.processInfo.environment["OC_LEARN_SCHEDULE"] ?? "2")
         .split(separator: ",").compactMap { Int($0) }
 
     func testUserDictionaryAcrossDeployAndKeyboardRestart() throws {
