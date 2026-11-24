@@ -435,7 +435,7 @@ ios/
 | 11 | M0 的真机步骤推迟到 M2 之后的集中真机环节 | 编排者决定：用户要求在应用成熟前不被打断；接受的风险是 App Group 名、Keychain 共享组、描述文件到期、内存上限都还是模拟器推断。已知事实（SideStore 源码）：App Group 会变成 `<group>.<TEAMID>`，扩展的 Bundle ID 会变成 `<主应用 ID>.<TEAMID>.keyboard`。代码里没有任何地方依赖扩展的字面 Bundle ID（只有测试和 CI 脚本里有）；App Group 靠描述文件运行时识别（第 4.3 节）。键盘在读不到 App Group 时仍完整可用：词库随应用包提供，用户词典放扩展私有目录（阶段 A 的端到端测试就是这种状态）|
 | 12 | 词库在 CI 里编译（`ios/tools/oc_deployer`，固定版本的 macOS 版 librime），随应用包提供；键盘里不做完整部署，主应用的「部署」只编译 `default.yaml`（含 iOS 的 `default.custom.yaml`）到 App Group 的 `rime-user/build` 并写 `state/deploy-stamp` | 键盘进程内存紧，完整部署（编译词典）在手机上既慢又占内存；部署产物与 Android 来自同一份源文件，所以结果相同。方案列表只含 `orangecell_wanxiang`，雾凇（GPL-3.0-only，体积大）不随 iOS 包，语法模型关闭 |
 | 13 | Rime 运行时是进程唯一的单例，一个串行队列，各键盘控制器只创建 / 销毁会话；任何控制器的 `deinit` 都不会 `finalize`；传给 librime 的字符串（traits、模块名）进程生命周期内只分配一次，不释放 | 验证者指出：librime 与 glog 是进程全局的，系统可能在旧控制器释放前创建新的，旧控制器的 `deinit` 会拆掉新会话，LevelDB 用户词典有崩溃风险；glog 还会保存 `argv0` 指针 |
-| 14 | 运行时只加载 `default` 模块（lua / octagram / predict / qjs 仍然链接、注册，但不为这套方案载入） | 实测引擎 + 词典在 Release 的 XCTest 进程里只比基线多 0.3 至 0.5 MB，载入全部模块与只载入最小集合的差别可以忽略（见 M1 实测结果表），而万象方案本身不用这些插件；以后需要 lua 过滤器时再切换 |
+| 14 | 运行时只加载 `default` 模块（lua / octagram / predict / qjs 仍然链接、注册，但不为这套方案载入） | 实测引擎 + 词典在 Release 的 XCTest 进程里只比基线多 0.3 至 0.6 MB，载入全部模块与只载入最小集合的差别可以忽略（见 M1 实测结果表），而万象方案本身不用这些插件；以后需要 lua 过滤器时再切换 |
 | 15 | 版本号 `0.2.<运行号>`，构建号 = 运行号 | SideStore 靠版本号严格递增判断更新；里程碑给出主、次版本，末位随运行递增 |
 | 16 | 候选栏只在单字候选后面显示读音（你 nǐ），词组候选不显示 | 万象给每个候选都带带声调的读音，手机上候选栏会被长读音占满，且词组的读音和上面的输入串重复 |
 | 17 | 加密文件密钥存储：读不出的密钥文件不再当作「没有密钥」去覆盖，创建用临时文件 + `link()` 原子完成，AES-GCM 把账户名放进附加认证数据；主应用启动时不再运行密钥自检，只在「诊断」页点按钮或 CI 用 `-OCRunSelfTest` 启动时运行 | 验证者指出：首次解锁前的瞬时读失败或首次创建的竞争会丢失所有密钥 |
@@ -443,3 +443,24 @@ ios/
 | 19 | 系统级端到端测试拆成独立任务：`e2e`（Release，闸门）和 `e2e-debug`（只给 Debug 的内存数字）；XCUITest 通过「请求文件」让脚本去量内存、部署、杀键盘进程；按键位置用屏幕像素确定（键盘顶部、底行有没有地球键） | M0 的脚本只要第一个界面测试通过就退出 0，没有真正的闸门；XCUITest 在模拟器里无法自己量别的进程的内存或杀进程 |
 | 20 | 验证者要求「用一个需要 lua / octagram 的方案证明它们真的载入」：随包的万象方案不用这些插件（语法模型关闭，见 12），所以改为两层证据：单元测试 `testLuaPluginRunsATranslatorFromASchema` 在临时用户目录里放一个用 `lua_translator@*oc_probe` 的小方案和一段 Lua 脚本，部署后输入 `luaprobe`，首选候选必须是脚本给出的 `LUA-OK`（CI 里通过，证明 Lua 插件在链接的 librime 里真的载入并运行）；端到端闸门检查键盘自己报告的已注册模块列表含 lua / octagram / predict / qjs。octagram 没有语法模型可用，只证明了注册 | 没有现成的、需要这些插件的方案；注册表里有这些模块说明静态构造函数没有被链接器丢掉（M0 已证实），Lua 的实际运行由探针方案证明 |
 | 21 | 键盘的用户词典位置随「完全访问」变化：开启时在 App Group 的 `rime-user`，关闭时在扩展私有的 `Application Support/rime-user`，切换时不迁移 | 没有完全访问就读不到 App Group；用户在中途开关完全访问时之前学到的词会「消失」（还在另一个目录里），M2 前要决定是否迁移或提示 |
+
+### M1 实测结果（CI 运行 #14，提交 `1c69509`，全部任务通过，发布了 `ios-nightly` 0.2.14）
+
+| 项目 | 结果 |
+| --- | --- |
+| 测试 | 模拟器应用单元测试 15 项（真实词库：nihao → 你好 / 你号 / 拟好 …；woyaochihuoguo → 我要吃火锅；学词；Lua 探针）、OCCore macOS 40 项与 Linux 全过、进程内键盘界面测试 10 项（含深浅色、横屏截图）、系统级端到端（真键盘扩展）全过 |
+| 键盘内存（模拟器，Release，`footprint` 从外部量） | 打完一句（含退格、EN 输入）后 **46.0 MB**；学词后 45.0 MB；进程被杀后重启再输入 44.0 MB。预算 55 MB，余量 9 MB。进程内 `phys_footprint` 自报 46.1 / 44.8 MB，与外部测量一致 |
+| 键盘内存（模拟器，Debug，仅作比较） | 打完一句后 46.0 MB，与 Release 相同（`ENABLE_DEBUG_DYLIB = NO` 之后 Debug 不再被拆成桩加动态库，数字没有被扭曲） |
+| 内存构成（打字后，Release） | dyld 私有内存 16 MB、MALLOC_SMALL 12 MB、`__DATA` 7.0 MB、`__DATA_CONST` 6.1 MB、页表 1.6 MB、CoreAnimation 1.4 MB。M0 不带词库的基线是 43 MB，所以词库、引擎和一次打字一共只多出约 3 MB：56 MB 的 `table.bin` 是内存映射，几乎不占脏页。dyld 私有的 16 MB 和 `__DATA` / `__DATA_CONST` 在 M0 就被判断为模拟器上偏大的部分（M0 的 15 MB 与此相近），真机上预计更小，但没有测过（真机步骤推迟，见第 11 行） |
+| qjs / lua 的代价 | 在 Release 的 XCTest 进程里，引擎加词典加打完一句比基线多 0.3 MB（只载入 `default` 模块）或 0.6 MB（载入链接进来的全部模块）。键盘运行时只载入 `default`；插件虽然链接，注册表里有，但这套方案用不到，所以没有为它们付内存 |
+| 用户词典与进程重启 | 选一次「拟好」后它升到首位（单元测试：1 轮）；主应用在键盘运行期间部署（`default.yaml` 重新编译，部署戳更新），键盘照常打字；杀掉键盘进程（`kill -9`）再启动新进程，「拟好」仍是第一候选，用户词典没有损坏 |
+| 无完全访问 | 引擎照常运行，用户词典在键盘私有的 `Application Support/rime-user`，诊断报告 `userDataShared=false`（阶段 A） |
+| 发布 | `ios-nightly` 预发布里的 `OrangeCell-iOS-0.2.14.ipa`，31 983 170 字节，SHA-256 与 `sidestore/source.json` 一致；两个 Info.plist 的 `UIDeviceFamily = [1]`，带 AppIcon，`licenses/` 与 `rime-shared/licenses/` 在包里；源里声明的 entitlements 与二进制带的一致（`com.apple.security.application-groups`） |
+| CI 耗时 | `e2e`（Release，闸门）19 分钟，`e2e-debug` 15 分钟，`build-test` 17.5 分钟，三者并行，整次运行约 20 分钟 |
+| 未验证 | 真机（App Group 实际名、Keychain 共享组、描述文件到期、真机内存、SideStore 安装）；键盘在引擎还没接上时就被点击的行为（模拟器里开启完全访问后的第一次启动，第一个字母曾以普通文本插入一次，没有查实原因，加了 `unhandledLetters` 计数和端到端检查，后续运行为 0）；候选栏中读音的长度对其他方案的影响 |
+
+对 M2 的影响：
+1. 内存余量足够，M2 做 AI 候选（网络请求、JSON、响应缓存）时每增加一项都要在 `e2e` 里看 `footprint` 的变化，预算保持 55 MB；超预算的停止规则仍按第 9 节。
+2. 用户词典在「完全访问」开关两侧不互通（第 21 行）：M2 前要决定是否迁移，或在应用里提示。
+3. 系统在扩展下面自己画了一条带地球键和麦克风的栏（iOS 26，这种机型 `needsInputModeSwitchKey` 为假，我们的底行没有地球键）；键盘高度 282 pt 不含这一条，系统级测试靠截图像素确定键盘顶部，不依赖它。
+4. 系统级测试靠像素和布局规则点按键，键盘布局或配色变化时要同步 `KeyboardUITests` 里的度量（`Metrics` 与按键行权重），端到端里「教键盘」的候选序号（第三个，一次）由单元测试断言，词库更新后这个断言会提醒更新。

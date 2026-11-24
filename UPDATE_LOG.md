@@ -8,6 +8,7 @@
 | --- | --- |
 | Windows 本地安装包 | 1.14.3（`OrangeCell-Windows-1.14.3-Setup-x86-arm64.exe`，x86 / x64 / ARM64）已在 `dist/`；ARM64 真机尚未验证 |
 | Android 本地安装包 | 1.12.3 ARM64 demo 已在 `dist/`，模拟器已测试应用内更新；S26 待更新 |
+| iOS 预览包（分支 `ios`） | 0.2.14（M1，GitHub 预发布 `ios-nightly` 的未签名 IPA，用 SideStore 安装）；拼音输入已在模拟器里端到端验证，真机尚未验证，AI 候选还没有 |
 | 源码提示词 | 纠错模式返回一个候选；助手模式以单次流式请求返回纠错和助手两个候选；前后文默认 50 / 0 |
 | 安装包提示词 | Windows 1.12.5 与 Android 1.10.3 使用独立的纠错和助手提示词 |
 | LLM 接入 | OpenAI、OpenRouter、Google Gemini 在线 API，始终发送完整提示词；Preset 已移除 |
@@ -23,17 +24,18 @@
 
 ## 待发布
 
-### 2026-11-24 · iOS 0.2.x · M1「能打字」（分支 `ios`，进行中）
+### 2026-11-24 · iOS 0.2.14 · M1「能打字」（分支 `ios`）
 
-- 词库在 CI 里编译：`ios/tools/oc_deployer`（一个 C 小程序，调用 librime 的 setup / deployer_initialize / deploy）用固定版本的 macOS 版 librime，把 Android 随包的 `orangecell_wanxiang` 方案和词典编译成 `build/*.bin`，连同 OpenCC 数据和许可证放进 `rime-shared/`，作为 artifact 交给其他任务，并随主应用和键盘扩展打包。与 Android 用同一份源文件和同一份 `default.custom.yaml` 约定（方案列表只有 `orangecell_wanxiang`），语法模型关闭，键盘里不做完整部署。`ios/scripts/build-rime-data.sh` 按输入文件的哈希缓存。预置文件取自 `android/app/data/rime/prelude/`（`assets/shared` 里那几份只是指向它的文本指针）。
-- `OCRime`：`RimeService` 是唯一入口，一个串行队列、进程内唯一的 Rime 运行时，按键 / 候选 / 上屏 / 选词 / 翻页 / 清空 / `ascii_mode`，键盘消失时同步用户词典，收到内存警告时丢掉缓存。`OCCore`：`RimeData`（共享词库与用户目录定位、`oc-data.json` 校验、部署戳）。
-- 键盘 `OCKeyboardUI`（扩展和测试宿主共用，UIKit）：26 键、shift / 大写锁定（双击）、中 / EN（对应 `ascii_mode`）、123 与 #+= 面板（中文下全角标点）、长按删除连续删除、空格上屏首选、回车上屏原始输入或换行、地球键仅在需要时出现、输入串一行 + 可横向滚动的候选栏、按键气泡、完全访问下的触感反馈、深浅色。外观沿用 Android 键盘的排布。M0 的调试面板已移除。
-- 主应用：首页的启用步骤和试打框、诊断页（Rime 词库版本、部署戳、方案与词典大小）、「致谢与开源许可」页（`ios/Resources/licenses` 里各组件的许可证全文）、占位图标（仓库里 256 px 的 Logo 放大 4 倍，奶油色底；不是正式图标）。主应用可以「部署」：只对用户配置做部署，写部署戳，键盘看到戳变化后重启引擎；不会编译词典。
-- 安全与 CI 加固（M0 评审意见）：加密文件密钥存储不再把读不出的密钥当成「没有密钥」去覆盖（只有文件不存在才新建，新建用临时文件 + `link()` 原子完成，AES-GCM 带账户名作附加认证数据）；描述文件解析失败与「没有描述文件」分开报告；截断语料 `tests/corpus/truncated-output.jsonl` 也在 Swift 测试里跑；XcodeGen 固定为 2.48.0 并校验 SHA-256；Linux 容器固定到摘要；IPA 版本号 `0.2.<运行号>`，构建号递增；`release` 任务等所有测试任务通过才发布，发布先传新文件再移动 tag，只保留最新 3 个 IPA；SideStore 源现在如实声明 IPA 带的全部 entitlements；`ci_publish.py` 不再把令牌放进命令行，并在并发推送时重试；`ci_wait.py` 在同一提交被重复构建时不会取回旧结果。
-- 系统级端到端（`ios/scripts/e2e-sim.sh`，CI 任务 `e2e` 为 Release、`e2e-debug` 为 Debug 只看内存）：在模拟器里通过系统键盘真实打字；阶段 A 无完全访问（用户词典在扩展私有目录），阶段 B 开启完全访问后教键盘「拟好」，主应用在键盘运行时部署，杀掉键盘进程再起，学到的词仍排第一；键盘进程的内存由脚本用 `footprint` 从外部测量，Release 超过 55 MB 即判失败。键盘列表由 XCUITest 按屏幕像素定位按键。
-- 键盘界面修正：按键背景原先被「阴影层」盖住（按键发灰、深色模式发黑），改为按键自己的图层阴影；候选栏只在单字候选后面显示读音；shift 双击改按触摸时间戳判定，大写 / 锁定时原地换键帽，不再重建全部按键；长按删除的计时器放进 common 模式。
-- 已验证（CI 运行 #8，提交 `08eb4e3`）：词库编译、`core-linux`、Release 内存测试、真机 IPA 构建全部通过；模拟器应用单元测试 14 项全过（输入「nihao」得到「你好 / 你号 / 拟好 …」，「woyaochihuoguo」首选「我要吃火锅」，选「拟好」后它升到首位并且重启引擎后保持）；进程内键盘界面测试 9 项中 6 项通过，3 项失败（shift 双击没有锁定大写、长按删除没有连续删除、测试里用错了数字键的标识），本条目随后的提交里修复，修复后的结果见下一条。
-- 未验证：真实键盘扩展进程的系统级端到端、Release 扩展进程内存、双进程用户词典测试、IPA 在真机上的安装。
+- 词库在 CI 里编译：`ios/tools/oc_deployer`（一个 C 小程序，调用 librime 的 setup / deployer_initialize / deploy）用固定版本的 macOS 版 librime，把 Android 随包的 `orangecell_wanxiang` 方案和词典编译成 `build/*.bin`，连同 OpenCC 数据和许可证放进 `rime-shared/`，作为 artifact 交给其他任务，并随主应用打包（扩展读主应用包里的同一份）。与 Android 用同一份源文件和同一份 `default.custom.yaml` 约定（方案列表只有 `orangecell_wanxiang`），语法模型关闭，键盘里不做完整部署。`ios/scripts/build-rime-data.sh` 按输入文件的哈希缓存。预置文件取自 `android/app/data/rime/prelude/`（`assets/shared` 里那几份只是指向它的文本指针）。
+- `OCRime`：`RimeService` 是唯一入口，进程内唯一的 Rime 运行时和一个串行队列（键盘控制器只创建 / 销毁会话，任何 `deinit` 都不 `finalize`，传给 librime 的字符串只分配一次）；按键、候选、上屏、选词、翻页、清空、`ascii_mode`；键盘消失 8 秒后停止引擎并同步用户词典，收到内存警告时丢弃缓存。`OCCore`：`RimeData`（词库与用户目录定位、`oc-data.json` 校验、部署戳）。
+- 键盘 `OCKeyboardUI`（扩展和测试宿主共用，UIKit）：26 键、shift / 大写锁定（双击）、中 / EN（对应 `ascii_mode`，扩展启动时默认中）、123 与 #+= 面板（中文下全角标点）、长按删除连续删除、空格上屏首选、回车上屏原始输入或换行、地球键只在系统要求时出现、输入串一行 + 可横向滚动的候选栏（单字候选后带读音）、按键气泡、完全访问下的触感反馈、深浅色、横屏布局。外观沿用 Android 键盘的排布。M0 的调试面板已移除。
+- 主应用：首页的启用步骤和试打框、诊断页（Rime 词库版本、部署戳、方案与词典大小、键盘运行状态）、「致谢与开源许可」页（`ios/Resources/licenses` 里各组件的许可证全文）、占位图标（仓库里 256 px 的 Logo 放大 4 倍，贴在奶油色底上；不是正式图标）。主应用可以「部署」：只把 `default.yaml` 编译进 App Group 的用户目录并写部署戳，键盘看到戳变化后重启引擎；不会编译词典。
+- 用户词典位置：开启完全访问时在 App Group 的 `rime-user`，没有完全访问时在键盘自己的私有目录（离线输入照常可用，学到的词只留在键盘里）。两种位置之间切换时不迁移已学的词。
+- 验证者（M0）意见全部处理，见 `docs/IOS_PLAN.md` 第 15 节：SideStore 源如实声明 IPA 带的全部 entitlements 且发布前核对；各组件许可证全文随包；版本号 `0.2.<运行号>`、构建号 = 运行号；加密文件密钥存储不再把读不出的密钥当成「没有密钥」去覆盖（只有文件不存在才新建，临时文件 + `link()` 原子创建，AES-GCM 带账户名作附加认证数据），主应用启动时不再运行密钥自检；描述文件解析失败与「没有描述文件」分开报告；截断语料 `tests/corpus/truncated-output.jsonl` 也在 Swift 测试里跑；XcodeGen 固定 2.48.0 并校验 SHA-256，Linux 容器固定摘要；`release` 任务等全部测试任务通过才发布，先传新文件再移动 tag，只保留最新 3 个 IPA；`ci_publish.py` 不再把令牌放进命令行；`ci_wait.py` 不会取回同一提交的旧结果；两个 target 的设备族都是 iPhone。
+- 系统级端到端（`ios/scripts/e2e-sim.sh`；CI 任务 `e2e` 为 Release 且是发布闸门，`e2e-debug` 只看 Debug 内存）：在模拟器里通过真正的键盘扩展打字。阶段 A 没有完全访问：nihao 点候选得到「你好」、woyaochihuoguo 加空格得到「我要吃火锅」、拼音输入中退格只改输入串、中 / EN 切换后输入 hello；阶段 B 开启完全访问：教键盘「拟好」，主应用在键盘运行时部署，杀掉键盘进程再起，「拟好」仍排第一。键盘进程的内存由脚本用 `footprint` 从外部测量，Release 超过 55 MB 就失败。另外检查：键盘自己报告的引擎状态、已注册模块（lua / octagram / predict / qjs）、`oc_core` 往返、与主应用共享的探针文件和加密文件密钥、中文模式下没有字母漏成普通文本。
+- 键盘界面修正（CI 截图发现）：按键背景原先被「阴影层」盖住（按键发灰、深色模式发黑），改为按键自己的图层阴影；扩展启动时原先停在 EN，现在在引擎接上后切到中；shift 双击改按触摸时间戳判定，大写 / 锁定时原地换键帽，不再重建全部按键；长按删除的计时器放进 common 模式。
+- 已验证（CI 运行 #14，提交 `1c69509`，全部任务通过）：模拟器应用单元测试 15 项（输入「nihao」得到「你好 / 你号 / 拟好 …」，「woyaochihuoguo」首选「我要吃火锅」，选「拟好」一次后它升到首位并且重启引擎后保持；Lua 插件在链接的 librime 里真的载入并运行了一个测试方案里的 Lua 翻译器）；OCCore `swift test` 在 macOS 40 项、Linux 全过；进程内键盘界面测试 10 项（深浅色与横屏截图）；系统级端到端全部通过。键盘扩展进程内存（模拟器，`footprint` 从外部测量）：Release 打完一句后 46.0 MB，学词后 45.0 MB，被杀后重启再输入 44.0 MB；Debug 46.0 MB（预算 55 MB）。IPA 约 32 MB（其中词典 table.bin 未压缩 58.7 MB），0.2.14，已在预发布 `ios-nightly`，SideStore 源 `sidestore/source.json` 声明了 `com.apple.security.application-groups`。
+- 未验证：真机（App Group 实际名、Keychain 共享组、描述文件到期、真机内存、SideStore 安装本身；推迟到 M2 之后与用户一起做）；模拟器里 dyld 私有内存 16 MB 在真机上是共享缓存，真机数字应更低但没有测过；模拟器里刚打开完全访问后的第一次启动，第一个字母曾以普通文本插入过一次（原因没有查实，可能是键盘还没就绪时就被点了；之后加了计数检查，后续的运行都是 0）。
 
 ### 2026-11-24 · iOS 0.1.0 · M0 可行性探针（分支 `ios`）
 
