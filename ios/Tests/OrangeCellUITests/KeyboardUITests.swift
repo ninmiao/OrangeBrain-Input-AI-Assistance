@@ -152,17 +152,28 @@ final class KeyboardUITests: XCTestCase {
         func keyCenters(atY y: CGFloat) -> [CGFloat] {
             let row = min(max(Int(y * scale), 0), height - 1)
             let reference = color(x: 2, y: row)
-            var centers: [CGFloat] = []
+            // Runs of pixels that differ from the keyboard background. A key label can cut a run in
+            // pieces where anti-aliasing passes through the background colour, so runs closer than 4 pt
+            // are merged (the gap between two keys is 6 pt or more).
+            var runs: [(start: Int, end: Int)] = []
             var runStart: Int?
             for x in 0..<width {
                 let isKey = differs(color(x: x, y: row), reference)
                 if isKey, runStart == nil { runStart = x }
                 if !isKey, let start = runStart {
-                    if CGFloat(x - start) > 20 * scale { centers.append(CGFloat(start + x) / 2 / scale) }
+                    runs.append((start, x))
                     runStart = nil
                 }
             }
-            return centers
+            var merged: [(start: Int, end: Int)] = []
+            for run in runs {
+                if let last = merged.last, CGFloat(run.start - last.end) < 4 * scale {
+                    merged[merged.count - 1].end = run.end
+                } else {
+                    merged.append(run)
+                }
+            }
+            return merged.filter { CGFloat($0.end - $0.start) > 20 * scale }.map { CGFloat($0.start + $0.end) / 2 / scale }
         }
     }
 
@@ -347,6 +358,13 @@ final class KeyboardUITests: XCTestCase {
 
         // 2. the app deploys while the keyboard is up; typing goes on
         requestHelper("deploy")
+        // The app came to the front for the deployment and was closed again: bring the host back.
+        // The keyboard appears again and sees the new deploy stamp.
+        app.activate()
+        XCTAssertTrue(field.waitForExistence(timeout: 20), "the host did not come back after the deployment")
+        field.tap()
+        Thread.sleep(forTimeInterval: 4)
+        saveShot("system-learn-3-after-deploy")
         type("woyaochihuoguo")
         Thread.sleep(forTimeInterval: 1)
         spaceKey.tap()
