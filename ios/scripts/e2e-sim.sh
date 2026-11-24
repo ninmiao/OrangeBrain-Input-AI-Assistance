@@ -110,6 +110,16 @@ measure_footprint() {
   mb="$(footprint_mb "$LOGS/footprint-$label.txt")"
   printf '%s\t%s\n' "$label" "$mb" >> "$FOOTPRINTS"
   row "keyboard process footprint after $label ($CONFIGURATION, pid $pid)" "$mb MB"
+  # The keyboard report of this very process (it is rewritten 1.5 s after the last key).
+  sleep 3
+  local report unhandled c
+  report="$(newest report-keyboard.json || true)"
+  if [ -n "$report" ]; then
+    cp "$report" "$LOGS/report-keyboard-at-$label.json"
+    unhandled="$(json_field "$report" unhandledLetters)"
+    c=1; [ "$unhandled" = "0" ] && c=0
+    check "no letter fell through to plain text in 中 mode (until $label)" "$c" "(unhandledLetters=${unhandled:-n/a})"
+  fi
 }
 
 read_stamp() {

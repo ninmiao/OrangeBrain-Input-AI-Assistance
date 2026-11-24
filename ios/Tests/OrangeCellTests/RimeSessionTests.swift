@@ -155,9 +155,9 @@ final class RimeSessionTests: XCTestCase {
         restarted.stopSync()
     }
 
-    /// Does the linked Lua plugin run a translator that a schema asks for? The shipped schema uses no
-    /// plugin, so this builds a tiny schema in a temporary user directory. Observation only for now:
-    /// the result is logged (`lua.*`) and turns into an assertion once a CI run has confirmed it.
+    /// Proof that the linked Lua plugin really loads and runs: a schema that asks for a Lua translator
+    /// (the shipped Wanxiang schema uses no plugin, so a tiny one is built in a temporary user directory)
+    /// gets its candidate from the script.
     func testLuaPluginRunsATranslatorFromASchema() throws {
         let shared = try sharedDirectory
         let user = temporaryUserDirectory()
@@ -182,6 +182,8 @@ final class RimeSessionTests: XCTestCase {
         let update = service.typeSync("luaprobe")
         ocInfo("lua.candidates=\(update.candidates.map(\.text).joined(separator: "|")) composing=\(update.isComposing)")
         service.stopSync()
+        XCTAssertTrue(deployed, "the probe schema could not be compiled")
+        XCTAssertEqual(update.candidates.first?.text, "LUA-OK", "the Lua translator did not run: the plugin is not loaded")
     }
 
     func testChinesePunctuationAndCommitDoNotComposeWithoutInput() throws {

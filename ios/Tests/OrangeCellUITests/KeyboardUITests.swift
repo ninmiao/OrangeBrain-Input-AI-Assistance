@@ -189,7 +189,14 @@ final class KeyboardUITests: XCTestCase {
         if let cached = keyboardTopCache { return cached }
         let container = app.otherElements["inputView"]
         let fromTree = container.exists ? container.frame.minY : app.windows.firstMatch.frame.height - 282
-        let fromPixels = screen()?.keyboardTop
+        // The keyboard can still be on its way in (first start after a reboot): look for it for a while.
+        var fromPixels: CGFloat?
+        let deadline = Date().addingTimeInterval(25)
+        repeat {
+            fromPixels = screen()?.keyboardTop
+            if fromPixels != nil { break }
+            Thread.sleep(forTimeInterval: 1)
+        } while Date() < deadline
         note("keyboardTop pixels=\(fromPixels.map { String(describing: $0) } ?? "n/a") tree=\(fromTree) width=\(screenWidth)")
         let value = fromPixels ?? fromTree
         keyboardTopCache = value
@@ -286,14 +293,27 @@ final class KeyboardUITests: XCTestCase {
         return field
     }
 
+    /// The first letter after a keyboard start: type it and take it back. If it ever lands in the
+    /// document as plain text the delete removes it; the keyboard counts such letters
+    /// (`unhandledLetters` in its report) and the end-to-end script checks that the count is 0.
+    private func warmUp(_ field: XCUIElement) {
+        _ = keyboardTop
+        _ = bottomRow
+        let before = fieldText(field)
+        type("n")
+        Thread.sleep(forTimeInterval: 1)
+        deleteKey.tap(); Thread.sleep(forTimeInterval: 0.5)
+        deleteKey.tap(); Thread.sleep(forTimeInterval: 0.5)
+        note("warm-up: field before=\(before) after=\(fieldText(field))")
+    }
+
     // MARK: typing
 
     func testRealExtensionTypesChineseAndEnglish() throws {
         let field = openHostAndFocus()
         saveShot("system-1-keyboard")
         dumpHierarchy(app, name: "system-host-hierarchy")
-        _ = keyboardTop
-        _ = bottomRow
+        warmUp(field)
 
         // nihao, choose the first candidate by tapping it
         type("nihao")
@@ -335,8 +355,7 @@ final class KeyboardUITests: XCTestCase {
 
     func testUserDictionaryAcrossDeployAndKeyboardRestart() throws {
         var field = openHostAndFocus()
-        _ = keyboardTop
-        _ = bottomRow
+        warmUp(field)
 
         // 1. teach the keyboard
         var expected = ""
@@ -375,6 +394,7 @@ final class KeyboardUITests: XCTestCase {
         requestHelper("kill-keyboard")
         app.terminate()
         field = openHostAndFocus()
+        warmUp(field)
         saveShot("system-restart-1-keyboard")
         type("nihao")
         Thread.sleep(forTimeInterval: 1)

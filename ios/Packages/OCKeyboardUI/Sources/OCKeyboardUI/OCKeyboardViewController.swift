@@ -137,6 +137,7 @@ open class OCKeyboardViewController: UIInputViewController {
         let item = DispatchWorkItem { [weak self] in
             guard let self else { return }
             let service = self.controller.rimeService
+            let unhandled = self.controller.unhandledLetters
             DispatchQueue.global(qos: .utility).async {
                 // Asked on this queue: the engine's own queue may be busy and must not stall typing.
                 let running = service?.isRunning
@@ -147,7 +148,8 @@ open class OCKeyboardViewController: UIInputViewController {
                     writesKeySample: false,
                     rimeVersion: RimeEngine.version(),
                     rimeModules: RimeEngine.registeredModules(),
-                    rimeRunning: running
+                    rimeRunning: running,
+                    unhandledLetters: unhandled
                 )
                 DiagnosticsCollector.save(report)
             }

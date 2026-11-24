@@ -33,6 +33,9 @@ public final class KeyboardController {
     /// Called after text was inserted or removed (the keyboard extension uses it to
     /// refresh its diagnostics a little later).
     public var onActivity: (() -> Void)?
+    /// How many letters typed in 中 mode Rime did not take and the keyboard had to insert as plain text
+    /// (the diagnostics report shows it; it should stay 0).
+    public private(set) var unhandledLetters = 0
 
     private var service: RimeService?
     private var output: KeyboardTextOutput?
@@ -107,7 +110,10 @@ public final class KeyboardController {
            let key = text.lowercased().first.flatMap({ RimeKey.character($0) }) {
             let update = service.processSync(key)
             apply(update)
-            if !update.handled && update.commit == nil { insert(text) }
+            if !update.handled && update.commit == nil {
+                unhandledLetters += 1
+                insert(text)
+            }
             return
         }
         // Everything else is plain text; a pending composition is committed first.
