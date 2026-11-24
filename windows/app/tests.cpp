@@ -9,6 +9,7 @@
 
 #include "dictionary.h"
 #include "service.h"
+#include "updater.h"
 using namespace zw;
 int main(int argc, char** argv) {
   if(argc==2 && std::string(argv[1])=="--lifetime-fixture"){Sleep(30000);return 0;}
@@ -37,6 +38,37 @@ int main(int argc, char** argv) {
           "Context defaults");
     store.save(c);
     check(store.load() == c, "Configuration round trip");
+    check(compareVersions("1.14.10", "1.14.9") > 0 && compareVersions("1.14.2", "1.14.2") == 0 &&
+              compareVersions("1.9.0", "1.14.0") < 0,
+          "Version comparison is numeric");
+    {
+      const std::string a(64, 'a'), b(64, 'b'), z(64, 'c');
+      const std::string sums = a + "  OrangeCell-Windows-1.14.2-Setup-x86-arm64.exe\r\n" +
+                               z + "  OrangeCell-1.12.2-arm64-v8a-demo.apk\n" +
+                               b + "  OrangeCell-Windows-1.14.10-Setup-x86-arm64.exe\n";
+      auto u = parseUpdate(sums, "1.14.2");
+      check(u.newer && u.version == "1.14.10" && u.sha256 == b &&
+                u.url == "https://raw.githubusercontent.com/ninmiao/"
+                         "OrangeBrain-Input-AI-Assistance/main/dist/"
+                         "OrangeCell-Windows-1.14.10-Setup-x86-arm64.exe",
+            "Newest Windows installer chosen from SHA256SUMS");
+      check(!parseUpdate(sums, "1.14.10").newer && !parseUpdate(sums, "2.0.0").newer,
+            "No update when current is newest");
+      rejects([&] { parseUpdate(z + "  OrangeCell-1.12.2-arm64-v8a-demo.apk\n", "1.0.0"); },
+              "Missing Windows installer rejected");
+      rejects([&] { downloadUpdate({"9.9.9", "x.exe", a, "https://example.com/x.exe", true}, {}, nullptr); },
+              "Update from another host rejected");
+    }
+    if (GetEnvironmentVariableW(L"ORANGECELL_LIVE_UPDATE_TEST", nullptr, 0)) {
+      // Network test, off by default: pretends to be 1.0.0 and downloads the real installer.
+      auto u = checkUpdate("1.0.0", nullptr);
+      uint64_t seen = 0;
+      auto file = downloadUpdate(u, [&](uint64_t n) { seen = n; }, nullptr);
+      check(u.newer && fs::exists(file) && sha256(file) == u.sha256 && seen > 0,
+            "Live update downloaded and verified");
+      check(downloadUpdate(u, {}, nullptr) == file, "Verified update reused");
+      std::cout << "live update " << u.version << " -> " << utf8(file.wstring()) << "\n";
+    }
     auto source = c;
     source.erase("settingsRevision");
     source["policies"].erase(2);

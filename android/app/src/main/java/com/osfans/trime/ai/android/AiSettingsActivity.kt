@@ -39,6 +39,14 @@ class AiSettingsActivity : AppCompatActivity() {
         if (it.resultCode == RESULT_OK) action?.invoke() else report("验证已取消")
     }
     private var serviceStatusView:TextView?=null
+    // App update state lives outside render(), which rebuilds the page on every resume.
+    private var versionView: TextView? = null
+    private var updateButton: Button? = null
+    private var updateState = "可检查更新"
+    private var updateJob: Job? = null
+    private var updateVersion: String? = null
+    private var updateFile: java.io.File? = null
+    private var installAfterPermission = false
     private fun dp(n: Int) = (n * resources.displayMetrics.density).toInt()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,9 +55,15 @@ class AiSettingsActivity : AppCompatActivity() {
         title = "OrangeCell"
         lifecycleScope.launch { AiRuntimeStatus.state.collect { value -> serviceStatusView?.text="AI 状态：$value" } }
         setContentView(TextView(this).apply { text = "加载设置…" })
-        lifecycleScope.launch { store = withContext(Dispatchers.IO) { AiStore.get(this@AiSettingsActivity) }; render() }
+        lifecycleScope.launch {
+            store = withContext(Dispatchers.IO) { AiStore.get(this@AiSettingsActivity) }; render()
+            if (savedInstanceState == null && policyId == null) startUpdate(automatic = true)
+        }
     }
-    override fun onResume() { super.onResume(); if (::store.isInitialized) render() }
+    override fun onResume() {
+        super.onResume(); if (::store.isInitialized) render()
+        if (installAfterPermission && canInstallPackages()) { installAfterPermission = false; installUpdate() }
+    }
     override fun onPause() { flushPending();feedbackPreview.close(); super.onPause() }
     private fun render() {
         flushPending()
@@ -65,6 +79,20 @@ class AiSettingsActivity : AppCompatActivity() {
     private fun renderMain() {
         val c = store.config
         label("AI 云端候选", 25f)
+        versionView = label(versionText())
+        val actions = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        val half = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+        actions.addView(Button(this).apply {
+            text = "GitHub 主页"; isAllCaps = false
+            setOnClickListener { startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(AppUpdater.REPOSITORY))) }
+        }, half)
+        updateButton = Button(this).apply {
+            text = updateFile?.let { "安装 $updateVersion" } ?: "检查更新"; isAllCaps = false
+            isEnabled = updateJob?.isActive != true
+            setOnClickListener { startUpdate(automatic = false) }
+        }
+        actions.addView(updateButton, half)
+        page.addView(actions)
         serviceStatusView=label("AI 状态：${AiRuntimeStatus.state.value}")
         button("重置 AI 请求 / Reset AI") {
             store.update { it };AiRuntimeStatus.state.value="已重置，待请求"
@@ -350,6 +378,64 @@ class AiSettingsActivity : AppCompatActivity() {
         };fields.forEach { it.addTextChangedListener(watcher) }
     }
     private fun report(text: String) { status.text = text }
+    private fun versionText() = "版本 ${AppUpdater.currentVersion(this)} · $updateState"
+    private fun showUpdate(state: String) {
+        updateState = state
+        versionView?.text = versionText()
+        updateButton?.apply { isEnabled = updateJob?.isActive != true; text = updateFile?.let { "安装 $updateVersion" } ?: "检查更新" }
+    }
+    private val updatePrefs get() = getSharedPreferences("orangecell_update", Context.MODE_PRIVATE)
+    // Opening the settings checks dist/SHA256SUMS; a newer APK is downloaded and verified in the
+    // background, then handed to the Android installer only after the user agrees.
+    private fun startUpdate(automatic: Boolean) {
+        if (updateJob?.isActive == true) return
+        if (updateFile?.isFile == true) { promptInstall(automatic = false); return }
+        AppUpdater.unsupportedReason(this)?.let { if (!automatic) showUpdate(it) else showUpdate("自动更新不可用：$it"); return }
+        val current = AppUpdater.currentVersion(this)
+        updateJob = lifecycleScope.launch {
+            showUpdate("正在检查更新…")
+            try {
+                val update = withContext(Dispatchers.IO) { AppUpdater.check(current) }
+                if (!update.newer) { showUpdate("已是最新版本"); return@launch }
+                showUpdate("发现新版本 ${update.version}，正在下载…")
+                val file = withContext(Dispatchers.IO) {
+                    AppUpdater.download(this@AiSettingsActivity, update) { bytes ->
+                        lifecycleScope.launch { showUpdate("正在下载新版本… ${bytes / (1024 * 1024)} MB") }
+                    }
+                }
+                updateVersion = update.version; updateFile = file
+                showUpdate("新版本 ${update.version} 已下载")
+                if (!automatic || updatePrefs.getString("declined", null) != update.version) promptInstall(automatic)
+            } catch (e: CancellationException) { throw e
+            } catch (e: Exception) { showUpdate("检查更新失败：${e.message ?: e.javaClass.simpleName}") }
+        }
+        updateJob?.invokeOnCompletion { lifecycleScope.launch { showUpdate(updateState) } }
+    }
+    private fun canInstallPackages() =
+        android.os.Build.VERSION.SDK_INT < 26 || packageManager.canRequestPackageInstalls()
+    private fun promptInstall(automatic: Boolean) {
+        if (isFinishing) return
+        AlertDialog.Builder(this).setTitle("橘脑一颗 · 软件更新")
+            .setMessage("新版本 $updateVersion 已下载，并已通过 SHA-256 校验。\n\n点「安装」后 Android 会弹出系统安装确认。" +
+                if (canInstallPackages()) "" else "\n\n首次更新需要先允许橘脑一颗「安装未知应用」，会为你打开系统设置。")
+            .setPositiveButton("安装") { _, _ -> installUpdate() }
+            .setNegativeButton("稍后") { _, _ ->
+                if (automatic) updatePrefs.edit().putString("declined", updateVersion).apply()
+                showUpdate("新版本 $updateVersion 已下载，点「安装」即可更新")
+            }.show()
+    }
+    private fun installUpdate() {
+        val file = updateFile ?: return
+        if (!canInstallPackages()) {
+            installAfterPermission = true
+            startActivity(Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                android.net.Uri.parse("package:$packageName")))
+            showUpdate("请允许「安装未知应用」，返回后继续安装")
+            return
+        }
+        try { startActivity(AppUpdater.installIntent(this, file)) }
+        catch (e: Exception) { showUpdate("无法打开系统安装程序：${e.message}") }
+    }
     private fun save(transform: (AiConfig) -> AiConfig) = work { withContext(Dispatchers.IO) { store.update(transform) }; render() }
     private fun work(action: suspend () -> Unit) { lifecycleScope.launch {
         report("处理中…")

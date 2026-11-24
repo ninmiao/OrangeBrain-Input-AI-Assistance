@@ -6,8 +6,8 @@
 
 | 项目 | 当前状态 |
 | --- | --- |
-| Windows 本地安装包 | 1.14.2（`OrangeCell-Windows-1.14.2-Setup-x86-arm64.exe`，x86 / x64 / ARM64）已在 `dist/`，本机已覆盖安装；ARM64 真机尚未验证 |
-| Android 本地安装包 | 1.12.2 ARM64 demo 已在 `dist/`，模拟器已测试；S26 当前为 1.12.1，待更新 |
+| Windows 本地安装包 | 1.14.3（`OrangeCell-Windows-1.14.3-Setup-x86-arm64.exe`，x86 / x64 / ARM64）已在 `dist/`；ARM64 真机尚未验证 |
+| Android 本地安装包 | 1.12.3 ARM64 demo 已在 `dist/`，模拟器已测试应用内更新；S26 待更新 |
 | 源码提示词 | 纠错模式返回一个候选；助手模式以单次流式请求返回纠错和助手两个候选；前后文默认 50 / 0 |
 | 安装包提示词 | Windows 1.12.5 与 Android 1.10.3 使用独立的纠错和助手提示词 |
 | LLM 接入 | OpenAI、OpenRouter、Google Gemini 在线 API，始终发送完整提示词；Preset 已移除 |
@@ -22,6 +22,15 @@
 - 不记录 Key、设备密码、个人输入内容或其他凭据。
 
 ## 待发布
+
+### 2026-11-23 · Windows 1.14.3 / Android 1.12.3：设置里显示版本与 GitHub 主页，新增应用内自动更新
+
+- 新功能：Windows 设置“输入 / Input”页右下角、Android「AI 辅助设置」页顶部显示当前版本，并有「GitHub 主页」和「检查更新」按钮。
+- 自动更新：打开设置时读取仓库 `dist/SHA256SUMS`（raw.githubusercontent.com），从中找出最新的 Windows 安装包或 Android ARM64 APK 及其 SHA-256。有新版本时在后台下载并校验，然后询问是否安装：Windows 说明需要管理员授权（UAC），以管理员方式启动安装程序后关闭设置窗口；Android 交给系统安装器，首次会先打开「安装未知应用」授权页，返回后自动继续。自动弹出的提示选「稍后」后，同一版本不再自动弹出，按钮仍可随时安装。校验失败的下载会被删除。
+- 限制：Android 只给发布版（`.demo`）和 ARM64 设备更新，其他构建只显示原因。Windows 下载放在 `%LOCALAPPDATA%\OrangeCell\updates`，Android 放在应用缓存。只在打开设置时检查，后台不检查。
+- 顺带：Windows 设置窗口标题从旧名“微风输入法”改为“橘脑一颗 OrangeCell”。
+- 测试（Windows）：新增版本比较、SHA256SUMS 解析、拒绝非 GitHub 下载地址的单元测试，共 100 项检查通过；设置界面自检通过（默认窗口不需滚动，版本与按钮存在）；实际打开设置窗口，联网检查显示“已是最新版本”；联网测试假装当前为 1.0.0，实际下载 dist 中 40 MB 安装包，SHA-256 通过，第二次复用已校验文件。UAC 弹窗与安装需要人工点击，未自动测试。`build-release.ps1` 全部通过，生成 1.14.3 安装包。
+- 测试（Android）：新增 4 项 `AppUpdaterTest` 单元测试通过。模拟器（Android 15，x86_64＋ARM 转译）安装临时 1.12.1 测试包：打开设置后自动发现 GitHub 上的 1.12.2，下载并校验，弹出安装提示 → 打开「安装未知应用」→ 允许后返回自动进入系统安装确认 →「更新」成功，版本变为 1.12.2。
 
 ### 2026-11-23 · Windows 1.14.2：下载万象语法模型、更新万象词表报 “Native helper timed out”
 

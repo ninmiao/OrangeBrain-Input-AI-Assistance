@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.18)
-project(OrangeCellWindows VERSION 1.14.2 LANGUAGES C CXX RC)
+project(OrangeCellWindows VERSION 1.14.3 LANGUAGES C CXX RC)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 set(ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../..")
-add_library(orangecell_windows STATIC platform.cpp configuration.cpp network.cpp service.cpp dictionary.cpp
+add_library(orangecell_windows STATIC platform.cpp configuration.cpp network.cpp service.cpp dictionary.cpp updater.cpp
   "${ROOT}/shared/native-core/src/core.cpp" third_party/miniz/miniz_tinfl.c)
 target_include_directories(orangecell_windows PUBLIC . "${ROOT}/shared/native-core/src" "${ROOT}/shared/native-core/third_party" PRIVATE third_party/miniz)
 target_compile_definitions(orangecell_windows PUBLIC UNICODE _UNICODE NOMINMAX WIN32_LEAN_AND_MEAN _WIN32_WINNT=0x0A00)

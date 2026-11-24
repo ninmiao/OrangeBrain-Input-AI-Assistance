@@ -11,6 +11,7 @@
 
 #include "dictionary.h"
 #include "service.h"
+#include "updater.h"
 namespace zw {
 namespace {
 enum Id {
@@ -64,10 +65,19 @@ enum Id {
   DICT_CANCEL,
   DICT_PROGRESS,
   DICT_STATUS,
-  DICT_SOURCE
+  DICT_SOURCE,
+  // App version and self-update; kept apart from the dictionary range above.
+  VERSION_INFO = 600,
+  GITHUB_LINK,
+  APP_UPDATE
 };
 constexpr UINT JOB_DONE = WM_APP + 20, DICT_REPORT = WM_APP + 21,
-               FOCUS_ENTER = WM_APP + 22;
+               FOCUS_ENTER = WM_APP + 22, UPDATE_REPORT = WM_APP + 23;
+std::string appVersion() {
+  return std::to_string(ORANGECELL_VER_MAJOR) + "." +
+         std::to_string(ORANGECELL_VER_MINOR) + "." +
+         std::to_string(ORANGECELL_VER_PATCH);
+}
 const std::vector<std::string> languageValues = {"shift",
                                                  "shift_left",
                                                  "shift_right",
@@ -113,7 +123,7 @@ void choices(HWND h, const std::vector<std::string>& values,
 }
 struct Done {
   int kind;
-  bool partial = false;
+  bool partial = false, automatic = false;
   std::string policy, endpoint, model, error;
   J data;
   std::string output;
@@ -123,6 +133,7 @@ struct Item {
   int x, y, width, height;
   bool fill;
   int column;
+  int part;  // 0: whole column, 1: left half, 2: right half
 };
 struct Page {
   HWND window = nullptr;
@@ -135,7 +146,11 @@ class App {
   J config_, saved_;
   std::map<std::string, std::pair<std::string, std::string>> pendingKeys_;
   bool dirty_ = false, dictionaryDirty_ = false, benchmarkInitialized_ = false;
-  int column_ = -1, flash_ = 0;
+  int column_ = -1, part_ = 0, flash_ = 0;
+  std::shared_ptr<Cancel> updateCancel_;
+  bool updateBusy_ = false;
+  std::string updateVersion_;
+  fs::path updateFile_;
   HBRUSH flashBrush_ = nullptr;
   std::vector<int> changed_, highlighted_;
   std::vector<std::string> benchmarkIds_;
@@ -309,7 +324,7 @@ class App {
             DWORD style, int id, int y, int height = 28, int x = 16,
             int width = 0) {
     auto h = make(pages_[page].window, cls, label, style, id);
-    pages_[page].items.push_back({h, x, y, width, height, width == 0, column_});
+    pages_[page].items.push_back({h, x, y, width, height, width == 0, column_, part_});
     pages_[page].content = std::max(pages_[page].content, y + height + 18);
     return h;
   }
@@ -418,8 +433,15 @@ class App {
     field(0, AFTER, L"后文字符 / After (0–500)", 336);
     column_ = 0;
     button(0,SERVICE_RESTART,L"重启服务（取消未上屏文字）",356);
-    column_ = -1;
     label(0,L"",396,48);controls_[SERVICE_STATUS]=pages_[0].items.back().window;
+    column_ = 1;
+    item(0, L"STATIC", L"", SS_LEFT | SS_ENDELLIPSIS, VERSION_INFO, 396, 24);
+    part_ = 1;
+    button(0, GITHUB_LINK, L"GitHub 主页", 424);
+    part_ = 2;
+    button(0, APP_UPDATE, L"检查更新 / Update", 424);
+    part_ = 0;
+    column_ = -1;
     column_ = 0;
     field(1, NAME, L"方案名称 / Policy name", 12);
     field(1, ENDPOINT, L"HTTPS 接口 / API endpoint", 82);
@@ -487,7 +509,9 @@ class App {
     EnableWindow(control(SAVE), FALSE);
     layout();
     serviceState();SetTimer(window_,10,2000,nullptr);
+    versionText(u8"可检查更新");
     if (smoke_) SetTimer(window_, 9, 300, nullptr);
+    else startUpdate(true);
   }
   void layout() {
     RECT rect; GetClientRect(window_, &rect);
@@ -519,6 +543,7 @@ class App {
       int colWidth=(int(r.right)-px(36))/2;
       int x=item.column<0 ? px(item.x) : px(12)+item.column*(colWidth+px(12));
       int w=item.column<0 ? (item.fill ? int(r.right)-px(item.x+16) : px(item.width)) : colWidth;
+      if(item.column>=0 && item.part) { w=(colWidth-px(8))/2; if(item.part==2) x+=w+px(8); }
       wchar_t cls[32]{}; GetClassNameW(item.window,cls,32);
       int h=px(!wcscmp(cls,L"ComboBox")?250:item.height);
       batch=DeferWindowPos(batch,item.window,nullptr,x,px(item.y)-p.scroll,std::max(px(100),w),h,
@@ -870,6 +895,7 @@ class App {
     if (closing_) return;
     if(d->kind==SERVICE_RESTART) {EnableWindow(control(SERVICE_RESTART),TRUE);serviceState();status(d->error.empty()?u8"重启已发起 / Restart requested":d->error);return;}
     if(d->partial) { text(control(BENCH_RESULT),d->output); return; }
+    if (d->kind == APP_UPDATE) { updateDone(*d); return; }
     if (d->kind >= DICT_REDEPLOY) {
       dictBusy_ = false;
       dictCancelable_ = true;
@@ -983,8 +1009,92 @@ class App {
         done.release();
     });
   }
+  void versionText(const std::string& state) {
+    text(control(VERSION_INFO), u8"版本 / Version " + appVersion() + u8" · " + state);
+  }
+  fs::path declinedFile() const { return store_.directory() / L"update-declined.txt"; }
+  // Opening the settings checks dist/SHA256SUMS; a newer installer is downloaded and verified
+  // in the background, then installed only after the user agrees and approves UAC.
+  void startUpdate(bool automatic) {
+    if (updateBusy_) return;
+    if (!updateFile_.empty() && fs::exists(updateFile_)) { promptInstall(false); return; }
+    updateBusy_ = true;
+    EnableWindow(control(APP_UPDATE), FALSE);
+    versionText(u8"正在检查更新…");
+    updateCancel_ = std::make_shared<Cancel>();
+    auto cancel = updateCancel_;
+    auto target = window_;
+    auto current = appVersion();
+    workers_.emplace_back([target, cancel, current, automatic] {
+      auto d = std::make_unique<Done>();
+      d->kind = APP_UPDATE;
+      d->automatic = automatic;
+      try {
+        auto u = checkUpdate(current, cancel);
+        d->data = {{"version", u.version}, {"newer", u.newer}};
+        if (u.newer)
+          d->output = utf8(downloadUpdate(u, [target](uint64_t bytes) {
+            PostMessageW(target, UPDATE_REPORT, WPARAM(bytes), 0);
+          }, cancel).wstring());
+      } catch (const std::exception& e) {
+        d->error = errorText(e);
+      }
+      if (PostMessageW(target, JOB_DONE, 0, reinterpret_cast<LPARAM>(d.get())))
+        d.release();
+    });
+  }
+  void updateDone(const Done& d) {
+    updateBusy_ = false;
+    EnableWindow(control(APP_UPDATE), TRUE);
+    if (!d.error.empty()) {
+      if (d.error != "cancelled") versionText(u8"检查更新失败：" + d.error);
+      return;
+    }
+    if (!d.data["newer"].get<bool>()) {
+      versionText(u8"已是最新版本");
+      return;
+    }
+    updateVersion_ = d.data["version"];
+    updateFile_ = fs::path(wide(d.output));
+    versionText(u8"新版本 " + updateVersion_ + u8" 已下载");
+    text(control(APP_UPDATE), u8"安装 " + updateVersion_);
+    std::string declined;
+    try { if (fs::exists(declinedFile())) declined = readFile(declinedFile(), 64); } catch (...) {}
+    if (!d.automatic || declined != updateVersion_) promptInstall(d.automatic);
+  }
+  void promptInstall(bool automatic) {
+    auto message = wide(u8"橘脑一颗 " + updateVersion_ +
+        u8" 已下载，并已通过 SHA-256 校验。\n\n安装需要管理员授权（UAC）。安装时输入服务会重启，"
+        u8"未上屏的文字会被取消，设置窗口会关闭。\n\n现在安装吗？");
+    if (MessageBoxW(window_, message.c_str(), L"橘脑一颗 · 软件更新",
+                    MB_YESNO | MB_ICONQUESTION) != IDYES) {
+      if (automatic) try { atomicWrite(declinedFile(), updateVersion_); } catch (...) {}
+      versionText(u8"新版本 " + updateVersion_ + u8" 已下载，点击右侧按钮安装");
+      return;
+    }
+    SHELLEXECUTEINFOW info{sizeof(info)};
+    info.fMask = SEE_MASK_NOASYNC;
+    info.hwnd = window_;
+    info.lpVerb = L"runas";  // the installer needs administrator rights: Windows shows UAC
+    auto file = updateFile_.wstring();
+    info.lpFile = file.c_str();
+    info.nShow = SW_SHOWNORMAL;
+    if (!ShellExecuteExW(&info)) {
+      versionText(GetLastError() == ERROR_CANCELLED
+                      ? u8"已取消管理员授权，更新未安装"
+                      : u8"无法启动安装程序");
+      return;
+    }
+    PostMessageW(window_, WM_CLOSE, 0, 0);
+  }
   void command(int id, int notification) {
     if (loading_) return;
+    if (id == GITHUB_LINK) {
+      ShellExecuteW(window_, L"open", wide(kRepositoryUrl).c_str(), nullptr, nullptr,
+                    SW_SHOWNORMAL);
+      return;
+    }
+    if (id == APP_UPDATE) { startUpdate(false); return; }
     if(id==SAVE) { save(false); return; }
     if(id==SERVICE_RESTART) {restartServices();return;}
     if (id == POLICIES && notification == LBN_SELCHANGE) {
@@ -1095,6 +1205,9 @@ class App {
       require(save(false) && store_.load()["aiShortcut"]=="f9","AI shortcut not persisted");
       config_=saved_=original;store_.save(original);reload();dirty_=false;
       require(GetClassLongPtrW(window_,GCLP_HICON)!=0,"Window logo missing");
+      require(utf8(text(control(VERSION_INFO))).find(appVersion())!=std::string::npos &&
+              IsWindow(control(GITHUB_LINK)) && IsWindow(control(APP_UPDATE)),
+              "Version, GitHub link or update button missing");
       SetWindowPos(window_,nullptr,0,0,px(1000),px(740),SWP_NOMOVE|SWP_NOZORDER);
       layout();
       for(int i=0;i<PAGE_COUNT;++i) {
@@ -1185,6 +1298,7 @@ class App {
     closing_ = true;
     if (apiCancel_) apiCancel_->cancelled = true;
     if (dictCancel_) dictCancel_->cancelled = true;
+    if (updateCancel_) updateCancel_->cancelled = true;
     for (auto& worker : workers_)
       if (worker.joinable()) worker.join();
     MSG msg;
@@ -1229,6 +1343,10 @@ class App {
       }
       case WM_COMMAND:
         command(LOWORD(w), HIWORD(w));
+        return 0;
+      case UPDATE_REPORT:
+        if (!closing_)
+          versionText(u8"正在下载新版本… " + std::to_string(uint64_t(w) / (1024 * 1024)) + " MB");
         return 0;
       case WM_TIMER:
         KillTimer(window_, w);
@@ -1332,7 +1450,7 @@ class App {
     wc.lpszClassName = L"OrangeCellNativePage";
     RegisterClassW(&wc);
     auto h = CreateWindowExW(WS_EX_CONTROLPARENT, L"OrangeCellNativeSettings",
-                             L"OrangeCell · 微风输入法", WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+                             L"橘脑一颗 OrangeCell", WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                              CW_USEDEFAULT, CW_USEDEFAULT, px(1000), px(740), nullptr,
                              nullptr, instance_, this);
     require(h != nullptr, "Cannot open settings window");

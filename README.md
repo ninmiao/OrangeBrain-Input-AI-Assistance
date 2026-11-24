@@ -6,7 +6,9 @@
 
 *An input method simple enough for a cat with one orange braincell.*
 
-[Windows 1.14.2 · x86 / x64 / ARM64](dist/OrangeCell-Windows-1.14.2-Setup-x86-arm64.exe) · [Android 1.12.2 ARM64](dist/OrangeCell-1.12.2-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
+[Windows 1.14.3 · x86 / x64 / ARM64](dist/OrangeCell-Windows-1.14.3-Setup-x86-arm64.exe) · [Android 1.12.3 ARM64](dist/OrangeCell-1.12.3-arm64-v8a-demo.apk) · [SHA-256](dist/SHA256SUMS) · [GPL-3.0-or-later](LICENSE)
+
+从 Windows 1.14.3 / Android 1.12.3 起，打开设置会自动检查这里的新版本，下载并校验后再问你是否安装（Windows 需要管理员授权，Android 需要允许安装）。 / From these versions on, the settings check for new releases here, download and verify them, then ask before installing.
 
 我想要一个打字快、隐私设置清楚、也能看懂手滑拼音的输入法，于是做了橘脑一颗（OrangeCell），自己日常用。欢迎来当小白鼠，遇到问题提个 Issue 就好。
 
