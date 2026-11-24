@@ -75,7 +75,19 @@ final class KeyboardUITests: XCTestCase {
         XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 20), "no keyboard shown")
 
         let title = element("oc.m0.title")
-        let ours = title.waitForExistence(timeout: 20)
+        var ours = title.waitForExistence(timeout: 8)
+        if !ours {
+            // Another keyboard came up first: cycle with the system's globe key.
+            saveShot("keyboard-first-seen")
+            dumpHierarchy(app, name: "keyboard-first-seen-tree")
+            for attempt in 1...4 where !ours {
+                let next = app.keyboards.buttons["Next keyboard"]
+                note("cycle attempt \(attempt): next-keyboard key exists=\(next.exists)")
+                guard next.exists else { break }
+                next.tap()
+                ours = title.waitForExistence(timeout: 4)
+            }
+        }
         note("keyboard.ours=\(ours)")
         if ours { note("keyboard.title=\(title.label)") }
         saveShot("keyboard-m0")

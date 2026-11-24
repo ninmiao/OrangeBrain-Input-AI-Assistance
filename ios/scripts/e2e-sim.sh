@@ -34,7 +34,7 @@ row() { echo "| $1 | $2 |" >> "$RESULT"; log "$1: $2"; }
 
 shrink() {
   local size
-  size=$(stat -f%z "$1" 2>/dev/null || echo 0)
+  size=$(wc -c < "$1" 2>/dev/null | tr -d ' ' || echo 0)
   if [ "$size" -gt 400000 ]; then sips -Z 1500 "$1" >/dev/null 2>&1 || true; fi
 }
 
@@ -78,7 +78,9 @@ newest_report() {
 
 # run_ui_test <Class[/method]> <tag>  -> exit code of xcodebuild
 run_ui_test() {
-  local target="$1" tag="$2" dir="$OUT/ui-$tag"
+  local target="$1"
+  local tag="$2"
+  local dir="$OUT/ui-$tag"
   rm -rf "$dir" "$OUT/results-ui-$tag.xcresult"
   mkdir -p "$dir"
   log "UI test $target ($tag)"
@@ -144,6 +146,7 @@ if ! xcrun simctl install "$UDID" "$PRODUCTS/OrangeCell.app"; then
   exit 2
 fi
 row "install OrangeCell.app (with keyboard extension)" "ok"
+if xcrun simctl install "$UDID" "$PRODUCTS/OCTestHost.app"; then row "install OCTestHost.app" "ok"; else row "install OCTestHost.app" "FAILED"; fi
 ls "$PRODUCTS/OrangeCell.app/PlugIns" > "$LOGS/appex-list.txt" 2>&1 || true
 
 # --------------------------------------------- method 1: seed preferences

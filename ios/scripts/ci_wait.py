@@ -91,7 +91,8 @@ def main():
     parser.add_argument("sha", help="full or abbreviated commit sha")
     parser.add_argument("--timeout-min", type=float, default=75)
     parser.add_argument("--remote", default="origin")
-    parser.add_argument("--workflow", default="", help="print this workflow's run instead of the latest")
+    parser.add_argument("--workflow", default="iOS CI",
+                        help="wait for this workflow's results (default: iOS CI); '' accepts whichever run published last")
     args = parser.parse_args()
 
     full = run_git("rev-parse", "--verify", f"{args.sha}^{{commit}}")
@@ -110,12 +111,12 @@ def main():
             raw = show(f"{args.remote}/{BRANCH}:by-sha/{sha}.json")
             if raw:
                 pointer = json.loads(raw)
-                if args.workflow and args.workflow in pointer.get("runs", {}):
-                    entry = pointer["runs"][args.workflow]
-                else:
-                    entry = pointer
-                run_path = entry["path"]
-                break
+                if not args.workflow:
+                    run_path = pointer["path"]
+                    break
+                if args.workflow in pointer.get("runs", {}):
+                    run_path = pointer["runs"][args.workflow]["path"]
+                    break
         now = time.time()
         if now - last_api >= API_EVERY_SECONDS:
             last_api = now

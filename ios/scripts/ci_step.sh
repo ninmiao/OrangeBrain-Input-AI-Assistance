@@ -33,6 +33,11 @@ if [ "$code" -ne 0 ]; then
   grep -n -E 'error:|\*\*\* |Test Case .* failed|XCTAssert|Fatal error|Assertion failed|Undefined symbols|undefined symbol|ld: |clang: error|FAILED|Segmentation fault|Traceback' "$log" \
     | head -n 200 > "$out/logs/$name.errors.txt" || true
   echo "::error::step '$name' failed with exit code $code"
+  # The first error-looking lines also become annotations, which the public
+  # check-runs API shows while the workflow is still running.
+  head -n 8 "$out/logs/$name.errors.txt" 2>/dev/null | while IFS= read -r line; do
+    printf '::error title=%s::%s\n' "$name" "$(printf '%s' "${line:0:300}" | sed 's/%/%25/g')"
+  done || true
 else
   tail -n 40 "$log" > "$out/logs/$name.tail.txt"
 fi
