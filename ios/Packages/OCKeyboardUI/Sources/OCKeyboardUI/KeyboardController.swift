@@ -44,8 +44,15 @@ public final class KeyboardController {
         self.service = service
         self.output = output
         state.notice = service == nil ? (notice ?? "没有找到词库，当前只能输入英文") : notice
-        if service == nil { state.mode = .english }
+        if service == nil {
+            state.mode = .english
+            englishOnlyBecauseNoEngine = true
+        }
     }
+
+    /// True while the keyboard is English only because there is no engine (yet). The extension
+    /// starts without one and attaches it in viewWillAppear; the keyboard must then open in 中.
+    private var englishOnlyBecauseNoEngine = false
 
     public func attach(output: KeyboardTextOutput?) {
         self.output = output
@@ -59,8 +66,14 @@ public final class KeyboardController {
         state.notice = service == nil ? (notice ?? "没有找到词库，当前只能输入英文") : nil
         if service == nil {
             state.mode = .english
+            englishOnlyBecauseNoEngine = true
+        } else if englishOnlyBecauseNoEngine {
+            englishOnlyBecauseNoEngine = false
+            state.mode = .chinese
+            state.shift = .off
+            service?.setAsciiMode(false) { _ in }
         } else if state.mode == .english {
-            _ = service?.setAsciiModeSync(true)
+            service?.setAsciiMode(true) { _ in }
         }
     }
 

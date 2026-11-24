@@ -130,24 +130,22 @@ final class KeyboardUITests: XCTestCase {
             abs(a.0 - b.0) + abs(a.1 - b.1) + abs(a.2 - b.2) > 24
         }
 
-        /// The keyboard background runs up from the bottom edge along the left margin
-        /// (the separator under the candidates is one pixel and is skipped).
-        var keyboardTop: CGFloat {
-            let reference = color(x: 2, y: height - 2)
-            var top = height - 1
-            var misses = 0
-            var y = height - 1
-            while y >= 0 {
-                if differs(color(x: 2, y: y), reference) {
-                    misses += 1
-                    if misses > 8 { break }
-                } else {
-                    top = y
-                    misses = 0
+        /// The keyboard starts where the left margin first turns into the keyboard background colour
+        /// (light 0xD1D3D9 or dark 0x2B2B2D) and stays that colour for a while. Below our view the system
+        /// draws its own bar (globe, dictation), so scanning down from the top is the reliable direction.
+        var keyboardTop: CGFloat? {
+            let backgrounds: [(Int, Int, Int)] = [(0xD1, 0xD3, 0xD9), (0x2B, 0x2B, 0x2D)]
+            func near(_ a: (Int, Int, Int), _ b: (Int, Int, Int)) -> Bool { abs(a.0 - b.0) + abs(a.1 - b.1) + abs(a.2 - b.2) <= 12 }
+            var y = 0
+            while y < height - 24 {
+                let here = color(x: 2, y: y)
+                if let target = backgrounds.first(where: { near(here, $0) }),
+                   (1...20).allSatisfy({ near(color(x: 2, y: y + $0), target) }) {
+                    return CGFloat(y) / scale
                 }
-                y -= 1
+                y += 1
             }
-            return CGFloat(top) / scale
+            return nil
         }
 
         /// Horizontal centres (points) of the keys on the pixel row at `y` (points).
