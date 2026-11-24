@@ -64,6 +64,14 @@ echo "deploy took $(( $(date +%s) - start )) s"
 
 # ---- 4. package ------------------------------------------------------------------
 cp -R "$DEPS/share/opencc" "$RESULT/opencc"
+# Sources of the small configuration files (a few hundred KiB), so the app can recompile
+# default.yaml in the App Group after the user changed settings. The dictionary sources
+# (50 MiB of text) stay out of the bundle.
+for f in default.yaml key_bindings.yaml punctuation.yaml symbols.yaml orangecell_wanxiang.schema.yaml; do
+  cp "$WORK/src/$f" "$RESULT/$f"
+done
+cp "$WORK"/src/orangecell_wanxiang_d_*_algebra.yaml "$WORK"/src/orangecell_wanxiang_d_*.dict.yaml "$RESULT/"
+cp "$IOS_DIR/rime/default.custom.yaml" "$RESULT/default.custom.yaml"
 mkdir -p "$RESULT/licenses/wanxiang"
 cp "$ANDROID_SHARED/licenses/wanxiang/"* "$RESULT/licenses/wanxiang/"
 

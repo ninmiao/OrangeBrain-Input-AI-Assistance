@@ -119,13 +119,25 @@ final class RimeSessionTests: XCTestCase {
         XCTAssertNotEqual(before.candidates.first?.text, learned)
         _ = service.clearSync()
 
-        for _ in 0..<6 {
+        var orderAfterEachRound: [String] = []
+        var tapIndices: [Int] = []
+        var roundsToTop: Int?
+        for round in 1...6 {
             let typed = service.typeSync("nihao")
             guard let index = typed.candidates.firstIndex(where: { $0.text == learned }) else {
                 return XCTFail("\(learned) disappeared from the candidates")
             }
+            tapIndices.append(index)
             XCTAssertEqual(service.selectSync(candidateAt: index).commit, learned)
+            let order = service.typeSync("nihao")
+            orderAfterEachRound.append(order.candidates.prefix(3).map(\.text).joined(separator: ","))
+            if roundsToTop == nil, order.candidates.first?.text == learned { roundsToTop = round }
+            _ = service.clearSync()
         }
+        // The end-to-end run learns the same way through the real keyboard and needs this number.
+        ocInfo("learning.orderAfterEachRound=\(orderAfterEachRound.joined(separator: " | "))")
+        ocInfo("learning.tapIndices=\(tapIndices.map(String.init).joined(separator: ","))")
+        ocInfo("learning.roundsToTop=\(roundsToTop.map(String.init) ?? "never")")
         let after = service.typeSync("nihao")
         ocInfo("learning.after=\(after.candidates.prefix(5).map(\.text).joined(separator: "|"))")
         XCTAssertEqual(after.candidates.first?.text, learned, "the learned candidate did not move to the top")

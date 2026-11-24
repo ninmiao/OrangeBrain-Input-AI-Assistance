@@ -4,18 +4,26 @@ import SwiftUI
 
 enum Route: Hashable {
     case diagnostics
+    case licenses
 }
 
 @main
 struct OrangeCellApp: App {
     init() {
-        // Leave the shared-container evidence on every launch (not only when the
-        // diagnostics page is open): the probe file and the key-storage sample are
-        // what the keyboard looks for to prove it shares the app's container.
-        Task.detached(priority: .utility) {
-            let context = AppGroupContext.detect()
-            AppGroupProbe.write(role: "app", context: context, bundleIdentifier: Bundle.main.bundleIdentifier ?? "")
-            _ = KeyStorageSelfTest.writeAndVerifyLocally(context: context)
+        // Nothing runs at a normal launch: no self-test, no key writes, no deployment.
+        // The CI end-to-end run asks for them with launch arguments.
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains("-OCRunSelfTest") {
+            Task.detached(priority: .utility) {
+                let context = AppGroupContext.detect()
+                AppGroupProbe.write(role: "app", context: context, bundleIdentifier: Bundle.main.bundleIdentifier ?? "")
+                _ = KeyStorageSelfTest.writeAndVerifyLocally(context: context)
+            }
+        }
+        if arguments.contains("-OCDeploy") {
+            Task.detached(priority: .utility) {
+                DeployAction.save(DeployAction.run())
+            }
         }
     }
 
@@ -27,10 +35,14 @@ struct OrangeCellApp: App {
 }
 
 struct RootView: View {
-    /// `-OCOpenDiagnostics` (launch argument) lands straight on the diagnostics
-    /// page; the CI screenshots use it.
-    @State private var path: [Route] =
-        ProcessInfo.processInfo.arguments.contains("-OCOpenDiagnostics") ? [.diagnostics] : []
+    /// `-OCOpenDiagnostics` / `-OCOpenLicenses` (launch arguments) land straight on that
+    /// page; the CI screenshots use them.
+    @State private var path: [Route] = {
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains("-OCOpenDiagnostics") { return [.diagnostics] }
+        if arguments.contains("-OCOpenLicenses") { return [.licenses] }
+        return []
+    }()
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -39,6 +51,8 @@ struct RootView: View {
                     switch route {
                     case .diagnostics:
                         DiagnosticsView()
+                    case .licenses:
+                        LicensesView()
                     }
                 }
         }

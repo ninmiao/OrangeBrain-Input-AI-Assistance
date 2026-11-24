@@ -19,6 +19,9 @@ public enum AppGroupLocator {
         case nominalNoProfile
         /// A profile exists but contains no matching group: run in no-sharing mode.
         case missing
+        /// `embedded.mobileprovision` exists but could not be read or parsed. The group name is
+        /// unknown, so the requested name is tried; the diagnostics page says why.
+        case profileParseFailed
     }
 
     public struct Resolution: Equatable, Sendable {
@@ -54,6 +57,15 @@ public enum AppGroupLocator {
         return Resolution(identifier: nil, source: .missing)
     }
 
+    /// Like `resolve(profile:)`, for the result of reading the bundle's profile.
+    public static func resolve(load: ProvisioningProfile.LoadResult, nominal: String = nominalGroup) -> Resolution {
+        switch load {
+        case .missing: return Resolution(identifier: nominal, source: .nominalNoProfile)
+        case .parseFailed: return Resolution(identifier: nominal, source: .profileParseFailed)
+        case .loaded(let profile): return resolve(profile: profile, nominal: nominal)
+        }
+    }
+
     /// The shared container directory for a resolved group, or `nil` when the
     /// system does not hand one out (capability stripped, wrong signature).
     public static func containerURL(for resolution: Resolution) -> URL? {
@@ -71,20 +83,36 @@ public struct AppGroupContext: Sendable {
     public let profile: ProvisioningProfile?
     public let resolution: AppGroupLocator.Resolution
     public let containerURL: URL?
+    /// Why the profile could not be used, when `resolution.source == .profileParseFailed`.
+    public let profileParseError: String?
 
-    public init(profile: ProvisioningProfile?, resolution: AppGroupLocator.Resolution, containerURL: URL?) {
+    public init(
+        profile: ProvisioningProfile?,
+        resolution: AppGroupLocator.Resolution,
+        containerURL: URL?,
+        profileParseError: String? = nil
+    ) {
         self.profile = profile
         self.resolution = resolution
         self.containerURL = containerURL
+        self.profileParseError = profileParseError
     }
 
     public static func detect(bundle: Bundle = .main) -> AppGroupContext {
-        let profile = ProvisioningProfile.load(from: bundle)
-        let resolution = AppGroupLocator.resolve(profile: profile)
+        let load = ProvisioningProfile.loadResult(from: bundle)
+        let resolution = AppGroupLocator.resolve(load: load)
+        var profile: ProvisioningProfile?
+        var parseError: String?
+        switch load {
+        case .loaded(let value): profile = value
+        case .parseFailed(let reason): parseError = reason
+        case .missing: break
+        }
         return AppGroupContext(
             profile: profile,
             resolution: resolution,
-            containerURL: AppGroupLocator.containerURL(for: resolution)
+            containerURL: AppGroupLocator.containerURL(for: resolution),
+            profileParseError: parseError
         )
     }
 

@@ -51,6 +51,29 @@ final class NativeCoreTests: XCTestCase {
         )
     }
 
+    /// The corpus Android (JNI), the JVM tests and Windows already run: expected candidates
+    /// when non-empty, a decode failure when empty. Read from the repository, not copied.
+    func testSharedTruncationCorpus() throws {
+        var root = URL(fileURLWithPath: #filePath)
+        for _ in 0..<6 { root.deleteLastPathComponent() }   // NativeCoreTests.swift -> repository root
+        let corpus = root.appendingPathComponent("tests/corpus/truncated-output.jsonl")
+        let text = try String(contentsOf: corpus, encoding: .utf8)
+        var count = 0
+        for line in text.split(separator: "\n") where !line.isEmpty {
+            let object = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(line.utf8)) as? [String: Any], String(line))
+            let input = try XCTUnwrap(object["text"] as? String)
+            let truncated = try XCTUnwrap(object["truncated"] as? Bool)
+            let expected = try XCTUnwrap(object["expected"] as? [String])
+            if expected.isEmpty {
+                XCTAssertThrowsError(try NativeCore.decode(text: input, truncated: truncated), String(line))
+            } else {
+                XCTAssertEqual(try NativeCore.decode(text: input, truncated: truncated), expected, String(line))
+            }
+            count += 1
+        }
+        XCTAssertGreaterThanOrEqual(count, 24, "the corpus shrank or was not found at \(corpus.path)")
+    }
+
     func testReasoningTextIsNotAccepted() {
         XCTAssertThrowsError(
             try NativeCore.decode(text: "I think the answer is [\"hello\",\"hi\"]", assistantEnabled: true)

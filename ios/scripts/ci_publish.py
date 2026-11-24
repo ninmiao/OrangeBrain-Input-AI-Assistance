@@ -23,6 +23,7 @@ import datetime
 import json
 import os
 import pathlib
+import random
 import re
 import shutil
 import subprocess
@@ -46,6 +47,8 @@ TOKEN = env("GITHUB_TOKEN")
 SHA = env("GITHUB_SHA")
 SERVER = env("GITHUB_SERVER_URL", "https://github.com")
 API = "https://api.github.com"
+AUTH_BASE64 = base64.b64encode(f"x-access-token:{TOKEN}".encode()).decode() if TOKEN else ""
+SECRETS = [TOKEN, AUTH_BASE64]
 
 
 def api_get(path):
@@ -142,12 +145,42 @@ def shrink_screenshots(directory):
             subprocess.run(tool + [str(png), "-resize", "50%", str(png)], check=False)
 
 
-def git(work, *args, check=True, capture=False):
-    command = ["git", "-C", str(work)] + list(args)
-    return subprocess.run(command, check=check, capture_output=capture, text=True)
+class GitError(RuntimeError):
+    """A git failure whose message never contains the command line or a credential."""
+
+
+def redact(text):
+    for secret in SECRETS:
+        if secret:
+            text = text.replace(secret, "***")
+    return text
+
+
+def git_environment(authenticated):
+    """Credentials go through the environment, never through argv (argv shows up in logs)."""
+    environment = dict(os.environ)
+    environment["GIT_TERMINAL_PROMPT"] = "0"
+    if authenticated:
+        environment.update({
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "http.https://github.com/.extraheader",
+            "GIT_CONFIG_VALUE_0": f"AUTHORIZATION: basic {AUTH_BASE64}",
+        })
+    return environment
+
+
+def git(*args, cwd=None, authenticated=False, check=True):
+    command = ["git"] + (["-C", str(cwd)] if cwd else []) + list(args)
+    result = subprocess.run(command, capture_output=True, text=True, env=git_environment(authenticated))
+    if check and result.returncode != 0:
+        raise GitError(f"git {args[0]} failed (exit {result.returncode}): {redact(result.stderr).strip()[-300:]}")
+    return result
 
 
 def main():
+    for secret in SECRETS:
+        if secret:
+            print(f"::add-mask::{secret}")
     needs = json.loads(env("NEEDS_JSON", "{}") or "{}")
     collected = pathlib.Path(env("COLLECTED", "ci-collected"))
     jobs = fetch_jobs()
@@ -230,81 +263,79 @@ def main():
 
     # CI_PUBLISH_GIT_URL lets the script be tried against a local bare repository.
     url = env("CI_PUBLISH_GIT_URL") or f"https://github.com/{REPO}.git"
-    auth = base64.b64encode(f"x-access-token:{TOKEN}".encode()).decode()
-    git_base = ["git"]
-    if url.startswith("https://"):
-        git_base += ["-c", f"http.https://github.com/.extraheader=AUTHORIZATION: basic {auth}"]
+    authenticated = url.startswith("https://")
+    last_error = ""
 
-    for attempt in range(1, 7):
-        shutil.rmtree(work, ignore_errors=True)
-        work.mkdir(parents=True)
-        subprocess.run(["git", "init", "-q", "-b", BRANCH, str(work)], check=True)
-        remote_sha = ""
-        listing = subprocess.run(git_base + ["ls-remote", url, f"refs/heads/{BRANCH}"], capture_output=True, text=True)
-        if listing.returncode == 0 and listing.stdout.strip():
-            remote_sha = listing.stdout.split()[0]
-            subprocess.run(git_base + ["-C", str(work), "fetch", "-q", "--depth", "1", url, f"refs/heads/{BRANCH}"], check=True)
-            git(work, "checkout", "-q", "FETCH_HEAD", "--", ".")
-        # new run directory
-        target = work / "runs" / RUN_ID
-        shutil.rmtree(target, ignore_errors=True)
-        (work / "runs").mkdir(exist_ok=True)
-        shutil.copytree(run_dir, target)
-        # retention
-        runs = sorted((p for p in (work / "runs").iterdir() if p.is_dir() and p.name.isdigit()), key=lambda p: int(p.name), reverse=True)
-        keep = {p.name for p in runs[:KEEP_RUNS]}
-        for old in runs[KEEP_RUNS:]:
-            shutil.rmtree(old)
-        # pointers
-        by_sha = work / "by-sha"
-        by_sha.mkdir(exist_ok=True)
-        for pointer in by_sha.glob("*.json"):
-            try:
-                data = json.loads(pointer.read_text(encoding="utf8"))
-                data["runs"] = {k: v for k, v in data.get("runs", {}).items() if str(v.get("run_id")) in keep}
-                if data["runs"]:
-                    pointer.write_text(json.dumps(data, indent=2) + "\n", encoding="utf8")
-                else:
+    # Overlapping workflow runs publish concurrently; the lease makes a lost race fail
+    # loudly and the loop re-reads the branch and tries again.
+    for attempt in range(1, 13):
+        try:
+            shutil.rmtree(work, ignore_errors=True)
+            work.mkdir(parents=True)
+            git("init", "-q", "-b", BRANCH, str(work))
+            remote_sha = ""
+            listing = git("ls-remote", url, f"refs/heads/{BRANCH}", authenticated=authenticated)
+            if listing.stdout.strip():
+                remote_sha = listing.stdout.split()[0]
+                git("fetch", "-q", "--depth", "1", url, f"refs/heads/{BRANCH}", cwd=work, authenticated=authenticated)
+                git("checkout", "-q", "FETCH_HEAD", "--", ".", cwd=work)
+            # new run directory
+            target = work / "runs" / RUN_ID
+            shutil.rmtree(target, ignore_errors=True)
+            (work / "runs").mkdir(exist_ok=True)
+            shutil.copytree(run_dir, target)
+            # retention
+            runs = sorted((p for p in (work / "runs").iterdir() if p.is_dir() and p.name.isdigit()), key=lambda p: int(p.name), reverse=True)
+            keep = {p.name for p in runs[:KEEP_RUNS]}
+            for old in runs[KEEP_RUNS:]:
+                shutil.rmtree(old)
+            # pointers
+            by_sha = work / "by-sha"
+            by_sha.mkdir(exist_ok=True)
+            for pointer in by_sha.glob("*.json"):
+                try:
+                    data = json.loads(pointer.read_text(encoding="utf8"))
+                    data["runs"] = {k: v for k, v in data.get("runs", {}).items() if str(v.get("run_id")) in keep}
+                    if data["runs"]:
+                        pointer.write_text(json.dumps(data, indent=2) + "\n", encoding="utf8")
+                    else:
+                        pointer.unlink()
+                except Exception:  # noqa: BLE001
                     pointer.unlink()
-            except Exception:  # noqa: BLE001
-                pointer.unlink()
-        pointer_path = by_sha / f"{SHA}.json"
-        pointer = {"sha": SHA, "runs": {}}
-        if pointer_path.exists():
-            try:
-                pointer = json.loads(pointer_path.read_text(encoding="utf8"))
-            except Exception:  # noqa: BLE001
-                pass
-        pointer.setdefault("runs", {})[status["workflow"]] = {
-            "run_id": status["run_id"], "path": f"runs/{RUN_ID}", "conclusion": conclusion, "published_at": now,
-        }
-        pointer.update({"run_id": status["run_id"], "path": f"runs/{RUN_ID}", "workflow": status["workflow"],
-                        "conclusion": conclusion, "published_at": now})
-        pointer_path.write_text(json.dumps(pointer, indent=2) + "\n", encoding="utf8")
-        # SideStore source
-        if source_json is not None:
-            (work / "sidestore").mkdir(exist_ok=True)
-            shutil.copy2(source_json, work / "sidestore" / "source.json")
-        (work / "README.md").write_text(
-            "Scratch branch written by the iOS workflows (ios/scripts/ci_publish.py). "
-            "It is rebuilt as one orphan commit per run; do not rely on its history.\n", encoding="utf8")
+            pointer_path = by_sha / f"{SHA}.json"
+            pointer = {"sha": SHA, "runs": {}}
+            if pointer_path.exists():
+                try:
+                    pointer = json.loads(pointer_path.read_text(encoding="utf8"))
+                except Exception:  # noqa: BLE001
+                    pass
+            pointer.setdefault("runs", {})[status["workflow"]] = {
+                "run_id": status["run_id"], "path": f"runs/{RUN_ID}", "conclusion": conclusion, "published_at": now,
+            }
+            pointer.update({"run_id": status["run_id"], "path": f"runs/{RUN_ID}", "workflow": status["workflow"],
+                            "conclusion": conclusion, "published_at": now})
+            pointer_path.write_text(json.dumps(pointer, indent=2) + "\n", encoding="utf8")
+            # SideStore source
+            if source_json is not None:
+                (work / "sidestore").mkdir(exist_ok=True)
+                shutil.copy2(source_json, work / "sidestore" / "source.json")
+            (work / "README.md").write_text(
+                "Scratch branch written by the iOS workflows (ios/scripts/ci_publish.py). "
+                "It is rebuilt as one orphan commit per run; do not rely on its history.\n", encoding="utf8")
 
-        # The fresh repository has no history, so this commit is a root commit (an orphan).
-        git(work, "add", "-A")
-        subprocess.run(
-            ["git", "-C", str(work), "-c", "user.name=github-actions[bot]",
-             "-c", "user.email=41898282+github-actions[bot]@users.noreply.github.com",
-             "commit", "-q", "-m", f"ci-results: {status['workflow']} run {RUN_ID} ({conclusion}) {SHA[:12]}"],
-            check=True,
-        )
-        lease = f"--force-with-lease=refs/heads/{BRANCH}:{remote_sha}"
-        push = subprocess.run(git_base + ["-C", str(work), "push", "-q", lease, url, f"HEAD:refs/heads/{BRANCH}"], capture_output=True, text=True)
-        if push.returncode == 0:
+            # The fresh repository has no history, so this commit is a root commit (an orphan).
+            git("add", "-A", cwd=work)
+            git("-c", "user.name=github-actions[bot]", "-c", "user.email=41898282+github-actions[bot]@users.noreply.github.com",
+                "commit", "-q", "-m", f"ci-results: {status['workflow']} run {RUN_ID} ({conclusion}) {SHA[:12]}", cwd=work)
+            lease = f"--force-with-lease=refs/heads/{BRANCH}:{remote_sha}"
+            git("push", "-q", lease, url, f"HEAD:refs/heads/{BRANCH}", cwd=work, authenticated=authenticated)
             print(f"published runs/{RUN_ID} to {BRANCH} (attempt {attempt})")
             return 0
-        print(f"push attempt {attempt} failed: {push.stderr.strip()[-400:]}")
-        time.sleep(3 * attempt)
-    print("could not publish results")
+        except GitError as error:
+            last_error = str(error)
+            print(f"publish attempt {attempt} failed: {last_error}")
+            time.sleep(random.uniform(1.0, 4.0) * min(attempt, 5))
+    print(f"could not publish results: {last_error}")
     return 1
 
 

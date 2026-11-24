@@ -48,3 +48,20 @@ public enum RimeProbe {
         }
     }
 }
+
+/// Deployment from the main app (never from the keyboard): compiles configuration into the
+/// shared user directory so the keyboard picks it up (`DeployStamp` tells it to restart).
+public enum RimeDeployer {
+    /// Returns whether librime reported success. Stops the process's engine first; the app
+    /// does not type, so nothing is running.
+    @discardableResult
+    public static func deployConfigFile(sharedData: URL, userData: URL, file: String = "default.yaml",
+                                        versionKey: String = "config_version") -> Bool {
+        let runtime = RimeRuntime.shared
+        return runtime.queue.sync {
+            runtime.finalizeLocked()
+            let engine = RimeEngine(directories: .init(sharedData: sharedData.path, userData: userData.path))
+            return engine.deployConfigFile(file, versionKey: versionKey)
+        }
+    }
+}

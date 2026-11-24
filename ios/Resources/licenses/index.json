@@ -1,0 +1,25 @@
+{
+  "comment": "Components that ship inside the iOS app. Texts are in <id>/ next to this file; rime-shared/licenses holds the data licenses.",
+  "components": [
+    {"id": "orangecell", "name": "橘脑一颗 OrangeCell", "license": "GPL-3.0-or-later", "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance", "files": ["LICENSE.txt"]},
+    {"id": "librime", "name": "librime（含 lua / octagram / predict / qjs 插件）", "license": "BSD-3-Clause", "url": "https://github.com/rime/librime", "files": ["LICENSE.txt"]},
+    {"id": "librime-lua", "name": "librime-lua", "license": "BSD-3-Clause", "url": "https://github.com/hchunhui/librime-lua", "files": ["LICENSE.txt"]},
+    {"id": "librime-octagram", "name": "librime-octagram", "license": "BSD-3-Clause", "url": "https://github.com/lotem/librime-octagram", "files": ["LICENSE.txt"]},
+    {"id": "librime-predict", "name": "librime-predict", "license": "BSD-3-Clause", "url": "https://github.com/rime/librime-predict", "files": ["LICENSE.txt"]},
+    {"id": "librime-qjs", "name": "librime-qjs", "license": "BSD-3-Clause", "url": "https://github.com/HuangJian/librime-qjs", "files": ["LICENSE.txt"]},
+    {"id": "quickjs-ng", "name": "QuickJS（quickjs-ng，随 librime-qjs 静态链接）", "license": "MIT", "url": "https://github.com/quickjs-ng/quickjs", "files": ["LICENSE.txt"]},
+    {"id": "boost", "name": "Boost（container / iostreams / random）", "license": "BSL-1.0", "url": "https://www.boost.org", "files": ["LICENSE.txt"]},
+    {"id": "glog", "name": "glog", "license": "BSD-3-Clause", "url": "https://github.com/google/glog", "files": ["LICENSE.txt"]},
+    {"id": "leveldb", "name": "LevelDB", "license": "BSD-3-Clause", "url": "https://github.com/google/leveldb", "files": ["LICENSE.txt"]},
+    {"id": "lua", "name": "Lua", "license": "MIT", "url": "https://www.lua.org", "files": ["LICENSE.txt"]},
+    {"id": "marisa-trie", "name": "marisa-trie", "license": "BSD-2-Clause 或 LGPL-2.1（双许可，取 BSD-2-Clause）", "url": "https://github.com/s-yata/marisa-trie", "files": ["COPYING.md"]},
+    {"id": "opencc", "name": "OpenCC", "license": "Apache-2.0", "url": "https://github.com/BYVoid/OpenCC", "files": ["LICENSE.txt"]},
+    {"id": "yaml-cpp", "name": "yaml-cpp", "license": "MIT", "url": "https://github.com/jbeder/yaml-cpp", "files": ["LICENSE.txt"]},
+    {"id": "zstd", "name": "Zstandard", "license": "BSD-3-Clause 或 GPL-2.0（双许可，取 BSD-3-Clause）", "url": "https://github.com/facebook/zstd", "files": ["LICENSE.txt"]},
+    {"id": "nlohmann-json", "name": "nlohmann/json 3.12.0（AI 核心）", "license": "MIT", "url": "https://github.com/nlohmann/json", "files": ["LICENSE.txt"]},
+    {"id": "fcitx5-prebuilder", "name": "fcitx5-prebuilder（iOS 预编译静态库的来源）", "license": "MIT", "url": "https://github.com/fcitx-contrib/fcitx5-prebuilder", "files": ["LICENSE.txt"]}
+  ],
+  "data": [
+    {"id": "wanxiang", "name": "万象拼音词库与转写规则（amzxyz 及贡献者）", "license": "CC BY 4.0", "url": "https://github.com/amzxyz/rime-wanxiang", "folder": "rime-shared/licenses/wanxiang", "files": ["LICENSE.txt", "NOTICE.txt"]}
+  ]
+}

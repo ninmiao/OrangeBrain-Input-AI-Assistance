@@ -14,6 +14,8 @@ struct DiagnosticsView: View {
                 keyStorageSection(app)
                 profileSection(app)
                 rimeSection(app)
+                rimeDataSection(app)
+                deploySection(app)
                 keyboardSection
                 shareSection(app)
             } else {
@@ -24,8 +26,10 @@ struct DiagnosticsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .accessibilityIdentifier("oc.diagnostics.list")
         .toolbar {
-            Button("重新检测") { model.refresh() }
-                .disabled(model.isLoading)
+            ToolbarItem(placement: .primaryAction) {
+                Button("重新检测") { model.refresh() }
+                    .disabled(model.isLoading)
+            }
         }
         .task { model.refresh() }
     }
@@ -78,6 +82,11 @@ struct DiagnosticsView: View {
                 }
             }
             row("按键盘读取结果选用", model.chosenBackend, id: "oc.diag.backend")
+            Button("运行 Key 存储自检（写入测试值）") { model.runKeySelfTest() }
+                .accessibilityIdentifier("oc.diag.selftest")
+            Text("自检只写入一个固定的测试值，不涉及你的 Key；之后在键盘里用一次再回来检测，即可看到键盘能否读到。")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
             if model.keyboard == nil {
                 Text("需要键盘运行过一次，才能判断跨进程读取。")
                     .font(.footnote)
@@ -94,6 +103,10 @@ struct DiagnosticsView: View {
                 row("到期时间", expires.formatted(date: .abbreviated, time: .shortened), id: "oc.diag.expiry")
                 row("剩余天数", report.profileDaysRemaining.map { "\($0) 天" } ?? "—")
                 ForEach(report.profileGroups, id: \.self) { Text($0).font(.caption) }
+            } else if report.groupSource == AppGroupLocator.Source.profileParseFailed.rawValue {
+                Text("描述文件存在但无法解析，App Group 的真实名字无法确认，已尝试原名。" + (report.notes.first { $0.contains("mobileprovision") } ?? ""))
+                    .font(.footnote)
+                    .foregroundStyle(.red)
             } else {
                 Text("没有描述文件（模拟器或测试包）。侧载安装后这里显示到期时间。")
                     .font(.footnote)
@@ -113,6 +126,43 @@ struct DiagnosticsView: View {
             status("oc_core 往返", report.ocCoreOK)
             row("本进程内存", report.footprintMB.map { String(format: "%.1f MB", $0) } ?? "—")
         }
+    }
+
+    private func rimeDataSection(_ report: DiagnosticsReport) -> some View {
+        Section("词库数据（随应用打包）") {
+            row("方案", report.rimeDataSchema ?? "—", id: "oc.diag.schema")
+            row("词库", report.rimeDataDictionary ?? "—")
+            row("编译所用 librime", report.rimeDataBuiltWithLibrime ?? "—")
+            row("数据总大小", report.rimeDataBytes.map { Self.megabytes($0) } ?? "—")
+            row("词典表大小", report.rimeDictionaryBytes.map { Self.megabytes($0) } ?? "—")
+            row("用户词库目录", report.userDataDirectory ?? "—")
+            row("用户词库位置", report.userDataShared.map { $0 ? "App Group（与键盘共享）" : "应用私有" } ?? "—")
+            if let built = report.rimeDataBuiltWithLibrime, let linked = report.rimeVersion, built != linked {
+                Text("词库是用 librime \(built) 编译的，当前链接的是 \(linked)：版本不一致，只记录告警。")
+                    .font(.footnote)
+                    .foregroundStyle(.orange)
+            }
+        }
+    }
+
+    private func deploySection(_ report: DiagnosticsReport) -> some View {
+        Section("部署") {
+            row("部署戳", report.deployStamp ?? "还没有部署过", id: "oc.diag.stamp")
+            Button("部署配置并通知键盘") { model.deploy() }
+                .accessibilityIdentifier("oc.diag.deploy")
+            if let outcome = model.deployOutcome {
+                Text(outcome.message)
+                    .font(.footnote)
+                    .foregroundStyle(outcome.success ? Color.green : Color.red)
+            }
+            Text("只重新编译配置（default.yaml），词库本身是编译好打进应用的。键盘下次出现时发现部署戳变了，会重新载入。")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private static func megabytes(_ bytes: Int) -> String {
+        String(format: "%.1f MB", Double(bytes) / 1_048_576)
     }
 
     private var keyboardSection: some View {
@@ -178,6 +228,7 @@ struct DiagnosticsView: View {
         case .profileSuffixed: return "描述文件：带团队 ID 后缀"
         case .nominalNoProfile: return "无描述文件，用原名（模拟器）"
         case .missing: return "描述文件里没有这个组：不共享"
+        case .profileParseFailed: return "描述文件无法解析（已尝试原名）"
         case .none: return raw
         }
     }

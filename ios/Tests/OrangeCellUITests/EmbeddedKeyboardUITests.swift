@@ -129,8 +129,8 @@ final class EmbeddedKeyboardUITests: XCTestCase {
     func testNumbersAndSymbolsPanels() {
         launch()
         key("numbers").tap()
-        XCTAssertTrue(key("1").waitForExistence(timeout: 5))
-        key("1").tap(); key("2").tap()
+        XCTAssertTrue(key("sym.1").waitForExistence(timeout: 5))
+        key("sym.1").tap(); key("sym.2").tap()
         XCTAssertEqual(fieldText, "12")
         // Chinese mode: full-width punctuation.
         key("sym.，").tap()
@@ -155,6 +155,8 @@ final class EmbeddedKeyboardUITests: XCTestCase {
         type("abcdefghij")
         XCTAssertEqual(fieldText.count, 10)
         key("delete").press(forDuration: 2.0)
+        note("delete.afterHold remaining=\(fieldText.count) of 10")
+        saveShot("embedded-delete-hold")
         wait("holding delete should remove several characters") { self.fieldText.count < 5 }
     }
 

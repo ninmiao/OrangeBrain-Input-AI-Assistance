@@ -36,9 +36,9 @@ public final class KeyboardController {
 
     private var service: RimeService?
     private var output: KeyboardTextOutput?
-    private var lastShiftTap = Date.distantPast
-    /// Two taps on shift within this time lock caps.
-    static let doubleTapInterval: TimeInterval = 0.35
+    private var lastShiftTap: TimeInterval = -.infinity
+    /// Two taps on shift within this time (in seconds of touch time) lock caps.
+    static let doubleTapInterval: TimeInterval = 0.4
 
     public init(service: RimeService?, output: KeyboardTextOutput?, notice: String? = nil) {
         self.service = service
@@ -73,13 +73,14 @@ public final class KeyboardController {
 
     // MARK: keys
 
-    func handle(_ action: KeyAction) {
+    /// `timestamp` is when the touch happened (UITouch clock); it only matters for double taps.
+    func handle(_ action: KeyAction, timestamp: TimeInterval = ProcessInfo.processInfo.systemUptime) {
         switch action {
         case .character(let text): tapCharacter(text)
         case .space: tapSpace()
         case .enter: tapReturn()
         case .delete: tapDelete()
-        case .shift: tapShift()
+        case .shift: tapShift(at: timestamp)
         case .panel(let panel): show(panel)
         case .language: toggleLanguage()
         case .globe: break   // handled by the view controller (input mode list)
@@ -128,16 +129,17 @@ public final class KeyboardController {
         }
     }
 
-    func tapShift(now: Date = Date()) {
+    func tapShift(at now: TimeInterval = ProcessInfo.processInfo.systemUptime) {
         guard state.mode == .english else { return }
         defer { lastShiftTap = now }
+        let isDoubleTap = now - lastShiftTap < Self.doubleTapInterval
         switch state.shift {
         case .locked:
             state.shift = .off
         case .once:
-            state.shift = now.timeIntervalSince(lastShiftTap) < Self.doubleTapInterval ? .locked : .off
+            state.shift = isDoubleTap ? .locked : .off
         case .off:
-            state.shift = now.timeIntervalSince(lastShiftTap) < Self.doubleTapInterval ? .locked : .once
+            state.shift = isDoubleTap ? .locked : .once
         }
     }
 

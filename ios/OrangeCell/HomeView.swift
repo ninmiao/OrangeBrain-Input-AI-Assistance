@@ -20,10 +20,10 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("橘脑一颗 OrangeCell")
                         .font(.title2.bold())
-                    Text("iOS 版 · 诊断预览 \(versionText)")
+                    Text("iOS 版 · 预览 \(versionText)")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
-                    Text("这一版只验证键盘能否加载，真正的拼音输入在下一阶段加入。")
+                    Text("拼音输入、万象词库已可用；在线 AI 候选在后续版本加入。")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -33,7 +33,7 @@ struct HomeView: View {
             Section("启用键盘") {
                 step(1, "打开「设置」→「通用」→「键盘」→「键盘」→「添加新键盘…」，选择「橘脑一颗」。")
                 step(2, "点进已添加的「橘脑一颗」，打开「允许完全访问」。离线输入不需要；在线 AI 联网时才需要。")
-                step(3, "回到任意输入框，长按键盘左下角的地球键，选择「橘脑一颗」。")
+                step(3, "回到任意输入框，点系统键盘上的地球键（或长按它），切换到「橘脑一颗」。")
                 Button("打开系统设置") {
                     if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
                 }
@@ -41,8 +41,8 @@ struct HomeView: View {
             }
 
             Section("关于「完全访问」") {
-                Text("不开完全访问：只使用离线输入，键盘不联网，也不能读写与本应用共享的数据。")
-                Text("开启后：键盘才能请求在线 AI，并与主应用共享配置。键入内容只在你同意云端 AI 之后才会发送。")
+                Text("不开完全访问：离线拼音输入照常使用；用户词库（学到的词）只保存在键盘自己的私有目录，不和本应用共享，键盘也不联网。")
+                Text("开启后：用户词库放进与本应用共享的目录，设置改动可由本应用部署后通知键盘；以后的在线 AI 候选也需要它。键入内容只在你同意云端 AI 之后才会发送。")
             }
             .font(.footnote)
 
@@ -56,8 +56,12 @@ struct HomeView: View {
                     Label("诊断", systemImage: "stethoscope")
                 }
                 .accessibilityIdentifier("oc.home.diagnostics")
+                NavigationLink(value: Route.licenses) {
+                    Label("致谢与开源许可", systemImage: "doc.text")
+                }
+                .accessibilityIdentifier("oc.home.licenses")
             } footer: {
-                Text("显示 App Group 是否可用、Key 存储方式、描述文件到期时间和键盘的运行状态。")
+                Text("诊断页显示 App Group 是否可用、Key 存储方式、描述文件到期时间、词库数据和键盘的运行状态。")
             }
         }
         .navigationTitle("橘脑一颗")

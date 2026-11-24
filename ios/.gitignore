@@ -3,6 +3,7 @@
 /Config/
 /.deps/
 /.deps-cache/
+/.tools/
 /.rime-data/
 .build/
 DerivedData/

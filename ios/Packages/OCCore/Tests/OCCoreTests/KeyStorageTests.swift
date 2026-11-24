@@ -82,6 +82,87 @@ final class KeyStorageTests: XCTestCase {
         XCTAssertThrowsError(try store.get(account: "a"))
     }
 
+    private final class ErrorBox {
+        private let lock = NSLock()
+        private var messages: [String] = []
+        func add(_ error: Error) { lock.lock(); messages.append(String(describing: error)); lock.unlock() }
+        var all: [String] { lock.lock(); defer { lock.unlock() }; return messages }
+    }
+
+    /// First use from many writers at once (app and keyboard racing): exactly one key
+    /// survives and every writer can read all secrets.
+    func testConcurrentFirstUseCreatesOneKey() throws {
+        let directory = try temporaryDirectory()
+        let count = 16
+        let stores = (0..<count).map { _ in EncryptedFileSecretStore(directory: directory) }
+        let errors = ErrorBox()
+        DispatchQueue.concurrentPerform(iterations: count) { index in
+            do {
+                try stores[index].set(Data("value-\(index)".utf8), account: "account-\(index)")
+            } catch {
+                errors.add(error)
+            }
+        }
+        XCTAssertEqual(errors.all, [])
+        let reader = EncryptedFileSecretStore(directory: directory)
+        for index in 0..<count {
+            XCTAssertEqual(try reader.get(account: "account-\(index)"), Data("value-\(index)".utf8))
+        }
+        let leftovers = try FileManager.default.contentsOfDirectory(atPath: directory.path).filter { $0.hasPrefix(".store.key.") }
+        XCTAssertEqual(leftovers, [], "temporary key files must be cleaned up")
+    }
+
+    func testUnreadableKeyFileIsAnErrorAndNeverReplaced() throws {
+        let directory = try temporaryDirectory()
+        let store = EncryptedFileSecretStore(directory: directory)
+        try store.set(Data("first".utf8), account: "a")
+        let keyURL = directory.appendingPathComponent(".store.key")
+        let original = try Data(contentsOf: keyURL)
+        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: keyURL.path)
+        addTeardownBlock { try? FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: keyURL.path) }
+
+        XCTAssertThrowsError(try store.set(Data("second".utf8), account: "b"))
+        XCTAssertThrowsError(try store.get(account: "a"))
+        try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: keyURL.path)
+        XCTAssertEqual(try Data(contentsOf: keyURL), original, "the key must not have been overwritten")
+        XCTAssertEqual(try store.get(account: "a"), Data("first".utf8))
+    }
+
+    func testWrongSizedKeyFileIsRejectedNotReplaced() throws {
+        let directory = try temporaryDirectory()
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let keyURL = directory.appendingPathComponent(".store.key")
+        try Data([1, 2, 3]).write(to: keyURL)
+        let store = EncryptedFileSecretStore(directory: directory)
+        XCTAssertThrowsError(try store.set(Data("x".utf8), account: "a"))
+        XCTAssertEqual(try Data(contentsOf: keyURL), Data([1, 2, 3]))
+    }
+
+    func testSecretFileCopiedToAnotherAccountDoesNotDecrypt() throws {
+        let directory = try temporaryDirectory()
+        let store = EncryptedFileSecretStore(directory: directory)
+        try store.set(Data("alpha-secret".utf8), account: "alpha")
+        try store.set(Data("beta-secret".utf8), account: "beta")
+        let files = try FileManager.default.contentsOfDirectory(atPath: directory.path).filter { $0.hasSuffix(".secret") }.sorted()
+        XCTAssertEqual(files.count, 2)
+        // Put the first file's bytes into the second file: only the first file's owner may still decrypt.
+        let firstBytes = try Data(contentsOf: directory.appendingPathComponent(files[0]))
+        try firstBytes.write(to: directory.appendingPathComponent(files[1]))
+        let alpha = try? store.get(account: "alpha")
+        let beta = try? store.get(account: "beta")
+        let readable = [alpha, beta].compactMap { $0 ?? nil }
+        XCTAssertEqual(readable.count, 1, "the account name is part of the authenticated data")
+    }
+
+    func testRemoveIsQuietForMissingFilesAndRemovesRealOnes() throws {
+        let directory = try temporaryDirectory()
+        let store = EncryptedFileSecretStore(directory: directory)
+        XCTAssertNoThrow(try store.remove(account: "never-written"))
+        try store.set(Data("x".utf8), account: "a")
+        try store.remove(account: "a")
+        XCTAssertNil(try store.get(account: "a"))
+    }
+
     func testSelfTestSampleThroughEncryptedStore() throws {
         let directory = try temporaryDirectory()
         let writer = EncryptedFileSecretStore(directory: directory)

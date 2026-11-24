@@ -128,6 +128,36 @@ final class AppGroupLocatorTests: XCTestCase {
         XCTAssertNil(AppGroupLocator.resolve(profile: empty).identifier)
     }
 
+    func testUnparsableProfileIsReportedAsSuch() {
+        XCTAssertEqual(
+            AppGroupLocator.resolve(load: .parseFailed("broken")),
+            AppGroupLocator.Resolution(identifier: nominal, source: .profileParseFailed)
+        )
+        XCTAssertEqual(
+            AppGroupLocator.resolve(load: .missing),
+            AppGroupLocator.Resolution(identifier: nominal, source: .nominalNoProfile)
+        )
+    }
+
+    #if canImport(Darwin)
+    func testBundleWithGarbageProfileIsParseFailedNotMissing() throws {
+        let base = FileManager.default.temporaryDirectory.appendingPathComponent("oc-bundle-\(UUID().uuidString).bundle")
+        try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
+        addTeardownBlock { try? FileManager.default.removeItem(at: base) }
+        let bundle = try XCTUnwrap(Bundle(url: base))
+        XCTAssertEqual(ProvisioningProfile.loadResult(from: bundle), .missing)
+        try Data([0x30, 0x82, 0x01, 0x02]).write(to: base.appendingPathComponent("embedded.mobileprovision"))
+        guard case .parseFailed = ProvisioningProfile.loadResult(from: bundle) else {
+            return XCTFail("a profile that cannot be parsed must not look like a missing one")
+        }
+        try sampleProfile(groups: [nominal]).write(to: base.appendingPathComponent("embedded.mobileprovision"))
+        guard case .loaded(let profile) = ProvisioningProfile.loadResult(from: bundle) else {
+            return XCTFail("a good profile must load")
+        }
+        XCTAssertEqual(profile.applicationGroups, [nominal])
+    }
+    #endif
+
     func testNoProfileFallsBackToNominalName() {
         XCTAssertEqual(
             AppGroupLocator.resolve(profile: nil),

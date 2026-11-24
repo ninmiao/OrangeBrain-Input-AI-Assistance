@@ -17,6 +17,8 @@ on:
       # Rime data that Android ships and iOS compiles from the same files.
       - 'android/app/src/main/assets/shared/**'
       - 'android/app/data/rime/prelude/**'
+      # The truncation corpus shared with Android and Windows (OCCore tests read it).
+      - 'tests/corpus/**'
   workflow_dispatch:
 
 permissions:
@@ -27,7 +29,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  OC_VERSION: '0.2.0'
+  # Marketing version per milestone, last number = run number: strictly increasing, so
+  # SideStore always sees a new build as an update. CFBundleVersion is the run number too.
+  OC_VERSION: '0.2.${{ github.run_number }}'
   XCODE_APP: /Applications/Xcode_26.6.app
 
 jobs:
@@ -35,7 +39,7 @@ jobs:
     name: core-linux
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    container: swift:6.2-noble
+    container: swift:6.2-noble@sha256:576698469fd3cf95b2abdeb91a7571d3afcd91806c87283dd01d564803554c0f
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -317,7 +321,9 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ipa-device
-          path: dist-ipa/*.ipa
+          path: |
+            dist-ipa/*.ipa
+            dist-ipa/entitlements.json
           compression-level: 1
           if-no-files-found: error
           retention-days: 14
@@ -338,12 +344,16 @@ jobs:
 
   release:
     name: release
-    needs: [build-test, memory-release, ipa-device]
+    needs: [core-linux, build-test, memory-release, ipa-device]
     if: github.ref == 'refs/heads/ios'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
       contents: write
+    # Publishing is never cancelled half-way by a newer push; runs queue behind each other.
+    concurrency:
+      group: ios-release
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -392,8 +402,10 @@ jobs:
     permissions:
       contents: write
       actions: read
+    # One group per run: GitHub keeps only one *pending* job per group and would silently
+    # drop the others. ci_publish.py serialises through its push retry loop instead.
     concurrency:
-      group: ci-results
+      group: ci-results-${{ github.run_id }}
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6

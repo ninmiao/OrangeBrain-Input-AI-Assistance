@@ -114,8 +114,21 @@ public final class KeyboardView: UIView {
 
     private func reloadLayoutIfNeeded() {
         let layout = currentLayout()
-        if let old = renderedLayout, old.panel == layout.panel, old.mode == layout.mode, old.shift == layout.shift,
-           old.returnKind == layout.returnKind, old.showGlobe == layout.showGlobe { return }
+        if let old = renderedLayout, old.panel == layout.panel, old.mode == layout.mode, old.showGlobe == layout.showGlobe {
+            if old.shift == layout.shift, old.returnKind == layout.returnKind { return }
+            // Same keys in the same places, only some titles differ (capitals, caps lock, the
+            // return key): retitle the existing buttons instead of replacing them.
+            let specs = layout.rows.flatMap { $0 }.compactMap { item -> KeySpec? in
+                if case .key(let spec) = item { return spec }
+                return nil
+            }
+            if specs.count == keyButtons.count {
+                renderedLayout = layout
+                rows = layout.rows
+                for (button, spec) in zip(keyButtons, specs) { button.update(spec) }
+                return
+            }
+        }
         renderedLayout = layout
         rows = layout.rows
         keyButtons.forEach { $0.removeFromSuperview() }
@@ -144,7 +157,7 @@ public final class KeyboardView: UIView {
                 button.addTarget(target, action: action, for: .allTouchEvents)
             }
         default:
-            button.onTap = { [weak self] key in self?.controller.handle(key.spec.action) }
+            button.onTap = { [weak self] key in self?.controller.handle(key.spec.action, timestamp: key.lastTouchTimestamp) }
         }
     }
 
@@ -170,16 +183,19 @@ public final class KeyboardView: UIView {
 
     private func startDeleteRepeat() {
         stopDeleteRepeat()
-        deleteTimer = Timer.scheduledTimer(withTimeInterval: 0.45, repeats: false) { [weak self] _ in
-            self?.repeatDelete()
-        }
+        scheduleDeleteTimer(after: 0.45)
     }
 
     private func repeatDelete() {
         controller.handle(.delete)
-        deleteTimer = Timer.scheduledTimer(withTimeInterval: 0.08, repeats: false) { [weak self] _ in
-            self?.repeatDelete()
-        }
+        scheduleDeleteTimer(after: 0.08)
+    }
+
+    /// In the common run loop modes: a timer in the default mode stops while UIKit tracks a touch.
+    private func scheduleDeleteTimer(after interval: TimeInterval) {
+        let timer = Timer(timeInterval: interval, repeats: false) { [weak self] _ in self?.repeatDelete() }
+        RunLoop.main.add(timer, forMode: .common)
+        deleteTimer = timer
     }
 
     private func stopDeleteRepeat() {

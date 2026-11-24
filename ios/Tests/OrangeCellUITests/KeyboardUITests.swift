@@ -38,6 +38,17 @@ extension XCTestCase {
         }
     }
 
+    /// The end-to-end script measures the keyboard process from outside (`footprint`) while the
+    /// test holds the keyboard open: write a request file, wait for the script's answer.
+    func requestFootprint(_ label: String, timeout: TimeInterval = 90) {
+        guard let directory = shotDirectory else { return }
+        FileManager.default.createFile(atPath: directory.appendingPathComponent("footprint-request-" + label).path, contents: Data())
+        let done = directory.appendingPathComponent("footprint-done-" + label).path
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline, !FileManager.default.fileExists(atPath: done) { Thread.sleep(forTimeInterval: 0.5) }
+        note("footprint handshake \(label): " + (FileManager.default.fileExists(atPath: done) ? "answered" : "NO ANSWER"))
+    }
+
     func dumpHierarchy(_ app: XCUIApplication, name: String) {
         let text = app.debugDescription
         add({
@@ -184,5 +195,54 @@ final class KeyboardUITests: XCTestCase {
         type("hello")
         waitForField(field, "English mode should insert the letters directly") { $0 == "你好我要吃火hello" }
         saveShot("system-5-english")
+        requestFootprint("typing")
+    }
+
+    // MARK: user dictionary across the app's deployment and a keyboard restart
+
+    /// Where the candidate at `index` sits (two-character candidates are 62 pt wide each).
+    private func candidate(_ index: Int) -> XCUICoordinate {
+        point(x: 4 + 62 * CGFloat(index) + 31, y: keyboardTop + Metrics.top + Metrics.composition + Metrics.candidates / 2)
+    }
+
+    /// Picks, round after round, the candidate for 拟好 (nihao). `OC_LEARN_SCHEDULE` lists the index to
+    /// tap in each round: the learned phrase climbs the list, so the index shrinks.
+    func testLearnACandidate() throws {
+        app.launch()
+        let field = app.textFields["oc.testhost.field"]
+        XCTAssertTrue(field.waitForExistence(timeout: 30))
+        field.tap()
+        Thread.sleep(forTimeInterval: 8)
+        let schedule = (ProcessInfo.processInfo.environment["OC_LEARN_SCHEDULE"] ?? "2,1,1,0,0,0")
+            .split(separator: ",").compactMap { Int($0) }
+        var expected = ""
+        for (round, index) in schedule.enumerated() {
+            type("nihao")
+            Thread.sleep(forTimeInterval: 1)
+            candidate(index).tap()
+            expected += "拟好"
+            waitForField(field, "round \(round + 1): candidate \(index) should have inserted 拟好") { $0 == expected }
+        }
+        saveShot("system-learn-done")
+        note("learn.rounds=\(schedule.count) field=\(fieldText(field))")
+    }
+
+    /// After the app deployed and the keyboard process was restarted, the first candidate is the learned one.
+    func testLearnedCandidateComesFirstAfterRestart() throws {
+        app.launch()
+        let field = app.textFields["oc.testhost.field"]
+        XCTAssertTrue(field.waitForExistence(timeout: 30))
+        field.tap()
+        Thread.sleep(forTimeInterval: 8)
+        type("nihao")
+        Thread.sleep(forTimeInterval: 1)
+        saveShot("system-learned-candidates")
+        candidate(0).tap()
+        waitForField(field, "the learned candidate 拟好 should be first now") { $0 == "拟好" }
+        type("woyaochihuoguo")
+        Thread.sleep(forTimeInterval: 1)
+        spaceKey.tap()
+        waitForField(field, "typing still works after the restart") { $0 == "拟好我要吃火锅" }
+        requestFootprint("learned")
     }
 }

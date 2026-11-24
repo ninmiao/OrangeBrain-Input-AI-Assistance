@@ -103,19 +103,7 @@ public final class RimeEngine {
     func start(modules: [String]? = nil) throws {
         guard let api = rime_get_api() else { throw RimeEngineError.apiUnavailable }
         guard !isInitialized else { return }
-        for path in [directories.sharedData, directories.userData] {
-            try? FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
-        }
-        var fresh = RimeTraits()
-        fresh.data_size = Int32(MemoryLayout<RimeTraits>.size - MemoryLayout<Int32>.size)
-        fresh.shared_data_dir = keep(directories.sharedData)
-        fresh.user_data_dir = keep(directories.userData)
-        fresh.distribution_name = keep("橘脑一颗")
-        fresh.distribution_code_name = keep("OrangeCell")
-        fresh.distribution_version = keep("0.2.0")
-        fresh.app_name = keep(appName)
-        fresh.min_log_level = 2
-        fresh.log_dir = keep(directories.log ?? "")
+        var fresh = makeTraits()
         if let modules {
             moduleArray?.deallocate()
             moduleArray = nil
@@ -130,6 +118,39 @@ public final class RimeEngine {
         api.pointee.setup(&traits)
         api.pointee.initialize(&traits)
         isInitialized = true
+    }
+
+    /// Compiles one configuration file (`default.yaml` with the patches of
+    /// `default.custom.yaml`) into the user directory's `build/`, like `rime_deployer`
+    /// does for a config file. No session, no dictionary, no user dictionary.
+    /// Must not run while the engine is initialised.
+    func deployConfigFile(_ file: String = "default.yaml", versionKey: String = "config_version") -> Bool {
+        guard let api = rime_get_api(), !isInitialized else { return false }
+        traits = makeTraits()
+        api.pointee.setup(&traits)
+        api.pointee.deployer_initialize(&traits)
+        let ok = file.withCString { name in
+            versionKey.withCString { key in api.pointee.deploy_config_file(name, key) != 0 }
+        }
+        api.pointee.finalize()
+        return ok
+    }
+
+    private func makeTraits() -> RimeTraits {
+        for path in [directories.sharedData, directories.userData] {
+            try? FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
+        }
+        var fresh = RimeTraits()
+        fresh.data_size = Int32(MemoryLayout<RimeTraits>.size - MemoryLayout<Int32>.size)
+        fresh.shared_data_dir = keep(directories.sharedData)
+        fresh.user_data_dir = keep(directories.userData)
+        fresh.distribution_name = keep("橘脑一颗")
+        fresh.distribution_code_name = keep("OrangeCell")
+        fresh.distribution_version = keep("0.2.0")
+        fresh.app_name = keep(appName)
+        fresh.min_log_level = 2
+        fresh.log_dir = keep(directories.log ?? "")
+        return fresh
     }
 
     func finalize() {

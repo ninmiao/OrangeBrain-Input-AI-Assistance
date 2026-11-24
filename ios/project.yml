@@ -74,6 +74,11 @@ targets:
     platform: iOS
     sources:
       - path: OrangeCell
+      - path: Resources/Assets.xcassets
+      # Full license texts of everything that ships in the app (Acknowledgements page).
+      - path: Resources/licenses
+        type: folder
+        buildPhase: resources
       # Compiled Rime data (ios/scripts/build-rime-data.sh); the keyboard reads it
       # from the containing app bundle and never deploys.
       - path: .rime-data/rime-shared
@@ -86,6 +91,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.ninmiao.orangecell
         PRODUCT_NAME: OrangeCell
         TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     entitlements:
       path: Config/OrangeCell.entitlements
       properties:

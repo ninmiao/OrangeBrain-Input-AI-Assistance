@@ -4,10 +4,13 @@ import UIKit
 /// One key: a rounded rectangle with a title or an SF Symbol. Highlights while pressed
 /// and reports touch-down (for the popup and haptics) and a completed tap.
 final class KeyButton: UIControl {
-    let spec: KeySpec
+    private(set) var spec: KeySpec
     var onTouchDown: ((KeyButton) -> Void)?
     var onTouchUp: ((KeyButton) -> Void)?
     var onTap: ((KeyButton) -> Void)?
+    /// When the touch of the last completed tap happened (system uptime, the clock of UITouch).
+    /// Double taps are measured with it: it does not drift when the main thread is busy.
+    private(set) var lastTouchTimestamp: TimeInterval = ProcessInfo.processInfo.systemUptime
 
     private let label = UILabel()
     private let imageView = UIImageView()
@@ -54,27 +57,45 @@ final class KeyButton: UIControl {
 
     private func configureContent() {
         let tint: UIColor = spec.style == .accent ? KeyboardTheme.accentText : KeyboardTheme.text
+        if label.superview == nil {
+            label.textAlignment = .center
+            label.adjustsFontSizeToFitWidth = true
+            label.minimumScaleFactor = 0.6
+            label.isUserInteractionEnabled = false
+            imageView.contentMode = .center
+            imageView.isUserInteractionEnabled = false
+            addSubview(label)
+            addSubview(imageView)
+        }
+        accessibilityIdentifier = "oc.key." + spec.id
         if spec.title.hasPrefix("sf:") {
             let name = String(spec.title.dropFirst(3))
             let configuration = UIImage.SymbolConfiguration(pointSize: 18, weight: .regular)
             imageView.image = UIImage(systemName: name, withConfiguration: configuration)
             imageView.tintColor = tint
-            imageView.contentMode = .center
-            addSubview(imageView)
+            imageView.isHidden = false
+            label.isHidden = true
             accessibilityLabel = Self.accessibilityName(for: name)
         } else {
             label.text = spec.title
             label.textColor = tint
-            label.textAlignment = .center
-            label.adjustsFontSizeToFitWidth = true
-            label.minimumScaleFactor = 0.6
             label.font = spec.style == .normal && spec.title.count == 1 ? KeyboardTheme.keyFont : KeyboardTheme.modifierFont
             if spec.id == "language" { label.font = UIFont.systemFont(ofSize: 18, weight: .medium) }
-            addSubview(label)
+            label.isHidden = false
+            imageView.isHidden = true
             accessibilityLabel = spec.title
         }
-        label.isUserInteractionEnabled = false
-        imageView.isUserInteractionEnabled = false
+        backgroundColor = isHighlighted ? pressedColor : baseColor
+    }
+
+    /// Gives the key another title, symbol or colour without recreating it: shift, caps lock
+    /// and the return key change often, and replacing thirty views on every capital letter
+    /// is slow and can swallow a touch that is just arriving.
+    func update(_ newSpec: KeySpec) {
+        guard newSpec != spec else { return }
+        spec = newSpec
+        configureContent()
+        setNeedsLayout()
     }
 
     private static func accessibilityName(for symbol: String) -> String {
@@ -131,6 +152,7 @@ final class KeyButton: UIControl {
         let inside = isHighlighted
         isHighlighted = false
         onTouchUp?(self)
+        lastTouchTimestamp = touch?.timestamp ?? ProcessInfo.processInfo.systemUptime
         if inside { onTap?(self) }
     }
 
@@ -143,6 +165,7 @@ final class KeyButton: UIControl {
     override func accessibilityActivate() -> Bool {
         onTouchDown?(self)
         onTouchUp?(self)
+        lastTouchTimestamp = ProcessInfo.processInfo.systemUptime
         onTap?(self)
         return true
     }

@@ -31,6 +31,15 @@ public struct SecretStoreError: Error, Equatable, CustomStringConvertible {
 /// AES-GCM files in a directory (normally `<app group>/secrets`). The key sits
 /// next to the files; both are protected by iOS data protection and excluded
 /// from backups, so only this app and its keyboard sandbox can read them.
+///
+/// Failure rules (they protect every stored key from being lost):
+/// * the key file is created only when it does not exist, with an exclusive create
+///   (temp file + hard link), so two processes racing on first use end up with the
+///   same key;
+/// * a key file that exists but cannot be read (transient failure before first unlock,
+///   wrong size) is an error, never "no key": it is not overwritten;
+/// * the account name is bound into the AES-GCM authenticated data, so a secret file
+///   copied under another account does not decrypt.
 public final class EncryptedFileSecretStore: SecretStore {
     public let backendName = "encrypted-file"
     private let directory: URL
@@ -63,22 +72,50 @@ public final class EncryptedFileSecretStore: SecretStore {
         #endif
     }
 
-    private func loadKey(create: Bool) throws -> SymmetricKey? {
-        if let data = try? Data(contentsOf: keyURL), data.count == 32 {
-            return SymmetricKey(data: data)
+    /// `nil` only when the file does not exist; anything else that goes wrong throws.
+    private func readKey() throws -> SymmetricKey? {
+        guard FileManager.default.fileExists(atPath: keyURL.path) else { return nil }
+        let data: Data
+        do {
+            data = try Data(contentsOf: keyURL)
+        } catch {
+            throw SecretStoreError(code: -4, message: "key file unreadable: " + String(describing: error))
         }
-        guard create else { return nil }
+        guard data.count == 32 else {
+            throw SecretStoreError(code: -3, message: "key file has the wrong size")
+        }
+        return SymmetricKey(data: data)
+    }
+
+    private func createKeyExclusively() throws -> SymmetricKey {
         try prepareDirectory()
         let key = SymmetricKey(size: .bits256)
-        try write(key.withUnsafeBytes { Data($0) }, to: keyURL)
-        return key
+        let temporary = directory.appendingPathComponent(".store.key." + UUID().uuidString)
+        try write(key.withUnsafeBytes { Data($0) }, to: temporary)
+        defer { try? FileManager.default.removeItem(at: temporary) }
+        if link(temporary.path, keyURL.path) == 0 { return key }
+        let failure = errno
+        if failure == EEXIST {
+            // Another process created the key first: use theirs.
+            guard let existing = try readKey() else {
+                throw SecretStoreError(code: Int32(failure), message: "key vanished after a create race")
+            }
+            return existing
+        }
+        throw SecretStoreError(code: Int32(failure), message: "could not create the key file")
+    }
+
+    private func loadKey(create: Bool) throws -> SymmetricKey? {
+        if let key = try readKey() { return key }
+        guard create else { return nil }
+        return try createKeyExclusively()
     }
 
     public func set(_ value: Data, account: String) throws {
         guard let key = try loadKey(create: true) else {
             throw SecretStoreError(code: -1, message: "no key")
         }
-        let sealed = try AES.GCM.seal(value, using: key)
+        let sealed = try AES.GCM.seal(value, using: key, authenticating: Data(account.utf8))
         guard let combined = sealed.combined else {
             throw SecretStoreError(code: -2, message: "seal failed")
         }
@@ -86,15 +123,19 @@ public final class EncryptedFileSecretStore: SecretStore {
     }
 
     public func get(account: String) throws -> Data? {
-        guard let key = try loadKey(create: false),
-              let data = try? Data(contentsOf: fileURL(for: account))
-        else { return nil }
-        let box = try AES.GCM.SealedBox(combined: data)
-        return try AES.GCM.open(box, using: key)
+        let url = fileURL(for: account)
+        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
+        guard let key = try loadKey(create: false) else {
+            throw SecretStoreError(code: -5, message: "secret exists but the key file is missing")
+        }
+        let box = try AES.GCM.SealedBox(combined: try Data(contentsOf: url))
+        return try AES.GCM.open(box, using: key, authenticating: Data(account.utf8))
     }
 
     public func remove(account: String) throws {
-        try? FileManager.default.removeItem(at: fileURL(for: account))
+        let url = fileURL(for: account)
+        guard FileManager.default.fileExists(atPath: url.path) else { return }
+        try FileManager.default.removeItem(at: url)
     }
 }
 #endif
@@ -230,12 +271,14 @@ public enum KeyStorageSelfTest {
         return stores
     }
 
-    private static func group(of store: any SecretStore, context: AppGroupContext) -> String? {
+    /// `discover` asks the system for the process's default group, which adds a throw-away
+    /// Keychain item; only the app's explicit self-test does that, never the keyboard.
+    private static func group(of store: any SecretStore, context: AppGroupContext, discover: Bool) -> String? {
         #if canImport(Security)
         if store.backendName == "keychain-shared", let team = context.profile?.teamIdentifier {
             return team + "." + sharedKeychainSuffix
         }
-        if store.backendName == "keychain-default" { return KeychainSecretStore.discoverDefaultAccessGroup() }
+        if store.backendName == "keychain-default", discover { return KeychainSecretStore.discoverDefaultAccessGroup() }
         #endif
         return nil
     }
@@ -243,7 +286,7 @@ public enum KeyStorageSelfTest {
     /// App side: write the sample into every backend and read it back in the same process.
     public static func writeAndVerifyLocally(context: AppGroupContext) -> [KeyStorageProbe] {
         stores(context: context).map { store in
-            var probe = KeyStorageProbe(backend: store.backendName, accessGroup: group(of: store, context: context))
+            var probe = KeyStorageProbe(backend: store.backendName, accessGroup: group(of: store, context: context, discover: true))
             do {
                 try store.set(sampleValue, account: sampleAccount)
                 probe.wroteOK = true
@@ -259,7 +302,7 @@ public enum KeyStorageSelfTest {
     /// Keyboard side: read the sample the app wrote, without writing anything.
     public static func readAcrossProcesses(context: AppGroupContext) -> [KeyStorageProbe] {
         stores(context: context).map { store in
-            var probe = KeyStorageProbe(backend: store.backendName, accessGroup: group(of: store, context: context))
+            var probe = KeyStorageProbe(backend: store.backendName, accessGroup: group(of: store, context: context, discover: false))
             do {
                 let value = try store.get(account: sampleAccount)
                 probe.crossProcessReadOK = value == sampleValue

@@ -28,15 +28,20 @@ def main() -> None:
     parser.add_argument("--tag", default="ios-nightly")
     parser.add_argument("--repo", required=True)
     parser.add_argument("--commit", default="")
+    parser.add_argument("--entitlements-json", required=True,
+                        help="entitlements.json written by make-ipa.sh (what the signed binaries carry)")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
 
     ipa = pathlib.Path(args.ipa)
+    # SideStore refuses to install an app whose entitlements are not declared in the source.
+    entitlements = json.loads(pathlib.Path(args.entitlements_json).read_text(encoding="utf8"))
+    assert isinstance(entitlements, list) and all(isinstance(item, str) for item in entitlements)
     sha256 = hashlib.sha256(ipa.read_bytes()).hexdigest()
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     base = f"https://github.com/{args.repo}"
     icon = f"https://raw.githubusercontent.com/{args.repo}/main/docs/images/orangecell-logo.png"
-    note = f"iOS 诊断预览版（M0），提交 {args.commit[:12]}。键盘只验证加载，真正的拼音输入在后续阶段加入。"
+    note = f"iOS 预览版 {args.version}，提交 {args.commit[:12]}：拼音输入与万象词库可用，在线 AI 候选在后续版本加入。"
 
     source = {
         "name": "橘脑一颗 OrangeCell（iOS 预览）",
@@ -52,7 +57,7 @@ def main() -> None:
                 "bundleIdentifier": APP_ID,
                 "developerName": "ninmiao",
                 "subtitle": "拼音输入法 + 在线 AI 候选",
-                "localizedDescription": "橘脑一颗 OrangeCell 的 iOS 版：Rime 拼音输入法键盘加在线 AI 纠错与助手候选。当前为 M0 诊断预览。",
+                "localizedDescription": "橘脑一颗 OrangeCell 的 iOS 版：Rime 拼音输入法键盘加在线 AI 纠错与助手候选。当前为 M1 预览：拼音输入可用，AI 候选稍后加入。",
                 "iconURL": icon,
                 "tintColor": "#F28C28",
                 "category": "utilities",
@@ -69,7 +74,7 @@ def main() -> None:
                         "minOSVersion": "17.0",
                     }
                 ],
-                "appPermissions": {"entitlements": [], "privacy": {}},
+                "appPermissions": {"entitlements": entitlements, "privacy": {}},
             }
         ],
         "news": [],

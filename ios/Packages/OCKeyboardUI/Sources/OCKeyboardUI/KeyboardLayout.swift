@@ -25,13 +25,13 @@ enum KeyAction: Equatable {
     case globe
 }
 
-enum KeyStyle {
+enum KeyStyle: Equatable {
     case normal      // white letter key
     case modifier    // grey function key
     case accent      // orange (return key when it triggers an action)
 }
 
-struct KeySpec {
+struct KeySpec: Equatable {
     let id: String
     let action: KeyAction
     let title: String

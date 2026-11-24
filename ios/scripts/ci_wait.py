@@ -67,6 +67,15 @@ def api_runs(sha):
         return None
 
 
+def newer_running(sha, workflow, known_run_id):
+    """Id of a run of `workflow` for this commit that is newer than known_run_id and not finished."""
+    runs = api_runs(sha) or []
+    for run in runs:
+        if (not workflow or run.get("name") == workflow) and run["id"] > known_run_id and run["status"] != "completed":
+            return run["id"]
+    return None
+
+
 def unpack(remote, run_path, destination):
     """Extracts runs/<id> from the results branch into destination."""
     result = subprocess.run(["git", "archive", "--format=tar", f"{remote}/{BRANCH}", run_path], capture_output=True)
@@ -93,6 +102,8 @@ def main():
     parser.add_argument("--remote", default="origin")
     parser.add_argument("--workflow", default="iOS CI",
                         help="wait for this workflow's results (default: iOS CI); '' accepts whichever run published last")
+    parser.add_argument("--not-before-run-id", type=int, default=0,
+                        help="ignore published results of this run id or older (use it when the same commit is built again)")
     args = parser.parse_args()
 
     full = run_git("rev-parse", "--verify", f"{args.sha}^{{commit}}")
@@ -111,12 +122,18 @@ def main():
             raw = show(f"{args.remote}/{BRANCH}:by-sha/{sha}.json")
             if raw:
                 pointer = json.loads(raw)
-                if not args.workflow:
-                    run_path = pointer["path"]
-                    break
-                if args.workflow in pointer.get("runs", {}):
-                    run_path = pointer["runs"][args.workflow]["path"]
-                    break
+                entry = pointer if not args.workflow else pointer.get("runs", {}).get(args.workflow)
+                if entry and int(entry.get("run_id", 0)) > args.not_before_run_id:
+                    # A re-run of the same commit may already be under way: the pointer then still
+                    # shows the earlier run. Ask the runs API before trusting it.
+                    newer = newer_running(sha, args.workflow, int(entry.get("run_id", 0)))
+                    if newer:
+                        if announced != f"newer:{newer}":
+                            print(f"results exist from run {entry.get('run_id')}, but run {newer} of this commit is still in progress; waiting for it")
+                            announced = f"newer:{newer}"
+                    else:
+                        run_path = entry["path"]
+                        break
         now = time.time()
         if now - last_api >= API_EVERY_SECONDS:
             last_api = now
@@ -145,6 +162,7 @@ def main():
         time.sleep(POLL_SECONDS)
 
     run_id = pathlib.PurePosixPath(run_path).name
+    print(f"using the results of run {run_id} (pass --not-before-run-id {run_id} to skip it when the commit is built again)")
     destination = pathlib.Path(".tools") / "ci-results" / run_id
     written = unpack(args.remote, run_path, destination)
     summary = destination / "summary.md"

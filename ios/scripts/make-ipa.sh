@@ -26,6 +26,30 @@ codesign --force --sign - --timestamp=none --entitlements "$CONFIG/OrangeCellKey
 codesign --force --sign - --timestamp=none --entitlements "$CONFIG/OrangeCell.entitlements" "$APP"
 codesign --verify --deep --strict --verbose=2 "$APP"
 
+# The entitlements the signed app and extension really carry. SideStore refuses an install
+# when the source does not declare them all (appPermissions.entitlements), except the
+# team and application identifiers it fills in itself, so make-source.py takes this file.
+ENTITLEMENTS_JSON="$(dirname "$IPA_PATH")/entitlements.json"
+python3 - "$APP" "$APPEX" "$ENTITLEMENTS_JSON" <<'PY'
+import json, plistlib, subprocess, sys
+
+app, appex, out = sys.argv[1:4]
+FILLED_IN_BY_SIDESTORE = {"application-identifier", "com.apple.developer.team-identifier"}
+
+
+def entitlement_keys(path):
+    raw = subprocess.run(["codesign", "-d", "--entitlements", ":-", path], capture_output=True, check=True).stdout
+    return set(plistlib.loads(raw)) - FILLED_IN_BY_SIDESTORE if raw.strip() else set()
+
+
+keys_app, keys_appex = entitlement_keys(app), entitlement_keys(appex)
+print("app entitlements   :", sorted(keys_app))
+print("appex entitlements :", sorted(keys_appex))
+with open(out, "w", encoding="utf8") as handle:
+    json.dump(sorted(keys_app | keys_appex), handle, indent=2)
+    handle.write("\n")
+PY
+
 work="$(mktemp -d)"
 mkdir "$work/Payload"
 cp -R "$APP" "$work/Payload/"

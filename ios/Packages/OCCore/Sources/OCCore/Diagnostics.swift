@@ -182,7 +182,11 @@ public enum DiagnosticsCollector {
             : KeyStorageSelfTest.readAcrossProcesses(context: context)
 
         let profile = context.profile
-        if profile == nil { notes.append("no embedded.mobileprovision (simulator or test bundle)") }
+        if let reason = context.profileParseError {
+            notes.append("embedded.mobileprovision could not be read: " + reason)
+        } else if profile == nil {
+            notes.append("no embedded.mobileprovision (simulator or test bundle)")
+        }
 
         var dataStamp: RimeDataStamp?
         if let shared = RimeDataLocator.sharedDataDirectory(bundle: bundle) {

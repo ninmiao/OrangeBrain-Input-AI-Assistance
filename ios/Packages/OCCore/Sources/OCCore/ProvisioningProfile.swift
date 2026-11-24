@@ -82,13 +82,34 @@ public struct ProvisioningProfile: Equatable, Sendable {
         )
     }
 
-    /// Reads `embedded.mobileprovision` from a bundle. Simulator builds and
-    /// Mac-run test bundles have none, which is reported as `nil`.
+    public enum LoadResult: Equatable {
+        /// No `embedded.mobileprovision` (simulator build, Mac-run test bundle).
+        case missing
+        /// The file is there but could not be read or parsed (the reason is kept for the diagnostics page).
+        case parseFailed(String)
+        case loaded(ProvisioningProfile)
+    }
+
+    /// Reads `embedded.mobileprovision` from a bundle, telling "not there" from "not understood".
+    public static func loadResult(from bundle: Bundle) -> LoadResult {
+        guard let url = bundle.url(forResource: "embedded", withExtension: "mobileprovision") else { return .missing }
+        let data: Data
+        do {
+            data = try Data(contentsOf: url)
+        } catch {
+            return .parseFailed("unreadable: " + String(describing: error))
+        }
+        do {
+            return .loaded(try parse(data))
+        } catch {
+            return .parseFailed(String(describing: error))
+        }
+    }
+
+    /// Convenience: the profile if it loaded, `nil` for both other cases (use `loadResult` to tell them apart).
     public static func load(from bundle: Bundle) -> ProvisioningProfile? {
-        guard let url = bundle.url(forResource: "embedded", withExtension: "mobileprovision"),
-              let data = try? Data(contentsOf: url)
-        else { return nil }
-        return try? parse(data)
+        if case .loaded(let profile) = loadResult(from: bundle) { return profile }
+        return nil
     }
 
     /// Seconds until the profile expires; negative once expired; `nil` when unknown.

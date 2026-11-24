@@ -44,13 +44,10 @@ runs:
       with:
         name: rime-shared
         path: ios/.rime-data/rime-shared
-    - name: Install XcodeGen and generate the project
+    - name: Install the pinned XcodeGen and generate the project
       shell: bash
-      env:
-        HOMEBREW_NO_AUTO_UPDATE: '1'
-        HOMEBREW_NO_INSTALL_CLEANUP: '1'
-        HOMEBREW_NO_ENV_HINTS: '1'
       run: |
         export CI_OUT="$GITHUB_WORKSPACE/ci-out/${{ inputs.job }}"
-        bash ios/scripts/ci_step.sh xcodegen-install -- bash -c 'brew install xcodegen && xcodegen --version'
+        bash ios/scripts/ci_step.sh xcodegen-install -- bash ios/scripts/install-xcodegen.sh
+        export PATH="$GITHUB_WORKSPACE/ios/.tools/xcodegen/xcodegen/bin:$PATH"
         bash ios/scripts/ci_step.sh xcodegen -- bash -c 'cd ios && xcodegen generate --spec project.yml'
