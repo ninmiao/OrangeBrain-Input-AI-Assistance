@@ -1,31 +1,95 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import Foundation
 
-/// Thread-safe front door to librime. Every call runs on one private serial queue,
-/// so key presses are processed in order and never concurrently, whichever thread
-/// they come from. The asynchronous methods deliver on the main queue; the `Sync`
-/// variants block the caller and exist for tests and for shutdown.
+/// The one librime engine of the process and the one serial queue every Rime call runs on.
 ///
-/// The engine starts lazily on the first call (or explicitly with `start`) and can
-/// be stopped (`stop`) to release memory and the user-dictionary lock; the next
-/// call starts it again.
+/// librime and glog are process-global. iOS may create a new keyboard controller before it
+/// has released the old one, so engine lifetime must not follow any controller: services
+/// create and destroy their own *sessions*, and the engine is only ever finalised by an
+/// explicit `stop` (idle timeout, memory warning, changed user directory), never by a
+/// deinit.
+final class RimeRuntime {
+    struct Configuration: Equatable {
+        var sharedData: String
+        var userData: String
+        var modules: [String]?
+    }
+
+    static let shared = RimeRuntime()
+    let queue = DispatchQueue(label: "io.github.ninmiao.orangecell.rime", qos: .userInteractive)
+
+    // Everything below is touched on `queue` only.
+    private var engine: RimeEngine?
+    private var configuration: Configuration?
+    /// Bumped whenever the engine is (re)started or finalised; sessions of an older
+    /// generation are gone.
+    private(set) var generation = 0
+
+    /// Starts the engine, or restarts it when the directories or module list changed.
+    func ensureStarted(_ wanted: Configuration) -> Error? {
+        if let engine, engine.isInitialized, configuration == wanted { return nil }
+        finalizeLocked()
+        let engine = RimeEngine(directories: .init(sharedData: wanted.sharedData, userData: wanted.userData))
+        do {
+            try engine.start(modules: wanted.modules)
+        } catch {
+            engine.finalize()
+            return error
+        }
+        self.engine = engine
+        configuration = wanted
+        generation += 1
+        return nil
+    }
+
+    func finalizeLocked() {
+        guard let engine else { return }
+        engine.finalize()
+        self.engine = nil
+        configuration = nil
+        generation += 1
+    }
+
+    var isRunning: Bool { engine?.isInitialized == true }
+}
+
+/// Thread-safe front door to librime for one keyboard (one session). Every call runs
+/// on the shared serial queue, so key presses are processed in order and never
+/// concurrently, whichever thread they come from. The asynchronous methods deliver on
+/// the main queue; the `Sync` variants block the caller.
+///
+/// The engine starts lazily on the first call (or explicitly with `start`) and can be
+/// stopped (`stop`) to release memory and the user-dictionary lock; the next call starts
+/// it again.
 public final class RimeService {
     public let configuration: RimeServiceConfiguration
-    private let queue = DispatchQueue(label: "io.github.ninmiao.orangecell.rime", qos: .userInteractive)
-    // The following are touched on `queue` only.
-    private var engine: RimeEngine?
+    private let runtime = RimeRuntime.shared
+    // Touched on the runtime queue only.
     private var session: RimeSession?
+    private var sessionGeneration = -1
     private var lastError: Error?
 
     public init(configuration: RimeServiceConfiguration) {
         self.configuration = configuration
     }
 
+    deinit {
+        // Destroys this service's session on the Rime queue. The engine stays up: another
+        // controller may already be using it.
+        let leftover = session
+        runtime.queue.async { withExtendedLifetime(leftover) {} }
+    }
+
+    private var runtimeConfiguration: RimeRuntime.Configuration {
+        .init(sharedData: configuration.sharedDataDirectory, userData: configuration.userDataDirectory,
+              modules: configuration.modules)
+    }
+
     // MARK: lifecycle
 
     /// Starts the engine now (otherwise it starts with the first key). Completion on main.
     public func start(completion: ((Error?) -> Void)? = nil) {
-        queue.async { [self] in
+        runtime.queue.async { [self] in
             let error = startLocked()
             if let completion { DispatchQueue.main.async { completion(error) } }
         }
@@ -33,33 +97,34 @@ public final class RimeService {
 
     @discardableResult
     public func startSync() -> Error? {
-        queue.sync { startLocked() }
+        runtime.queue.sync { startLocked() }
     }
 
-    /// Ends the session and finalises librime. Flushes and closes the user dictionary.
+    /// Ends the session and finalises librime: flushes and closes the user dictionary and
+    /// frees the memory. The next call starts it again.
     public func stop(completion: (() -> Void)? = nil) {
-        queue.async { [self] in
+        runtime.queue.async { [self] in
             stopLocked()
             if let completion { DispatchQueue.main.async { completion() } }
         }
     }
 
     public func stopSync() {
-        queue.sync { stopLocked() }
+        runtime.queue.sync { stopLocked() }
     }
 
     public var isRunning: Bool {
-        queue.sync { engine != nil && session != nil }
+        runtime.queue.sync { runtime.isRunning && session != nil && sessionGeneration == runtime.generation }
     }
 
     public var startError: Error? {
-        queue.sync { lastError }
+        runtime.queue.sync { lastError }
     }
 
     /// Releases memory when the system asks for it, unless a composition is in progress.
     public func handleMemoryWarning() {
-        queue.async { [self] in
-            guard let session else { return }
+        runtime.queue.async { [self] in
+            guard let session, sessionGeneration == runtime.generation else { return }
             var probe = RimeUpdate()
             session.snapshot(limit: 0, into: &probe)
             if !probe.isComposing { stopLocked() }
@@ -94,17 +159,17 @@ public final class RimeService {
 
     // MARK: typing, synchronous
 
-    public func processSync(_ key: RimeKey) -> RimeUpdate { queue.sync { processLocked(key) } }
-    public func selectSync(candidateAt index: Int) -> RimeUpdate { queue.sync { selectLocked(index) } }
-    public func changePageSync(backward: Bool) -> RimeUpdate { queue.sync { changePageLocked(backward) } }
-    public func clearSync() -> RimeUpdate { queue.sync { clearLocked() } }
-    public func setAsciiModeSync(_ enabled: Bool) -> RimeUpdate { queue.sync { setAsciiModeLocked(enabled) } }
-    public func refreshSync() -> RimeUpdate { queue.sync { refreshLocked() } }
+    public func processSync(_ key: RimeKey) -> RimeUpdate { runtime.queue.sync { processLocked(key) } }
+    public func selectSync(candidateAt index: Int) -> RimeUpdate { runtime.queue.sync { selectLocked(index) } }
+    public func changePageSync(backward: Bool) -> RimeUpdate { runtime.queue.sync { changePageLocked(backward) } }
+    public func clearSync() -> RimeUpdate { runtime.queue.sync { clearLocked() } }
+    public func setAsciiModeSync(_ enabled: Bool) -> RimeUpdate { runtime.queue.sync { setAsciiModeLocked(enabled) } }
+    public func refreshSync() -> RimeUpdate { runtime.queue.sync { refreshLocked() } }
 
     /// Types a whole string key by key (letters, punctuation) and returns the last
     /// update, with every commit that happened along the way concatenated.
     public func typeSync(_ text: String) -> RimeUpdate {
-        queue.sync {
+        runtime.queue.sync {
             var last = RimeUpdate()
             var committed = ""
             for character in text {
@@ -117,43 +182,41 @@ public final class RimeService {
         }
     }
 
-    // MARK: implementation (queue only)
+    // MARK: implementation (runtime queue only)
 
     private func deliver(_ completion: @escaping (RimeUpdate) -> Void, _ work: @escaping () -> RimeUpdate) {
-        queue.async {
+        runtime.queue.async {
             let update = work()
             DispatchQueue.main.async { completion(update) }
         }
     }
 
     private func startLocked() -> Error? {
-        if engine != nil, session != nil { return nil }
-        stopLocked()
-        let engine = RimeEngine(directories: .init(
-            sharedData: configuration.sharedDataDirectory,
-            userData: configuration.userDataDirectory
-        ))
-        do {
-            try engine.start(modules: configuration.modules)
-            guard let session = RimeSession() else { throw RimeEngineError.sessionUnavailable }
-            if let schemaID = configuration.schemaID, session.currentSchema() != schemaID {
-                _ = session.selectSchema(schemaID)
-            }
-            self.engine = engine
-            self.session = session
-            lastError = nil
-            return nil
-        } catch {
-            engine.finalize()
+        if let error = runtime.ensureStarted(runtimeConfiguration) {
             lastError = error
+            session?.markStale()
+            session = nil
             return error
         }
+        if session != nil, sessionGeneration == runtime.generation { return nil }
+        session?.markStale()   // the engine was restarted since this session was created
+        session = nil
+        guard let fresh = RimeSession() else {
+            lastError = RimeEngineError.sessionUnavailable
+            return lastError
+        }
+        if let schemaID = configuration.schemaID, fresh.currentSchema() != schemaID {
+            _ = fresh.selectSchema(schemaID)
+        }
+        session = fresh
+        sessionGeneration = runtime.generation
+        lastError = nil
+        return nil
     }
 
     private func stopLocked() {
-        session = nil          // destroys the librime session first
-        engine?.finalize()
-        engine = nil
+        session = nil          // destroys this service's librime session first
+        runtime.finalizeLocked()
     }
 
     private func activeSession() -> RimeSession? {

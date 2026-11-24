@@ -15,8 +15,14 @@ final class RimeSession {
         if id == 0 { return nil }
     }
 
+    /// Set when the engine was finalised underneath this session. librime session ids
+    /// are addresses and may be reused by the next engine, so a stale id must never be destroyed.
+    private var stale = false
+
+    func markStale() { stale = true }
+
     deinit {
-        if id != 0 { _ = api.pointee.destroy_session(id) }
+        if id != 0, !stale { _ = api.pointee.destroy_session(id) }
     }
 
     // MARK: input

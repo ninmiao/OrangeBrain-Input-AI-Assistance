@@ -133,8 +133,12 @@ def build_test(out: pathlib.Path, xcresult: pathlib.Path) -> str:
     mac = xctest_total(read(out / "logs" / "swift-test-macos.log"))
     lines.append(f"- OCCore `swift test` on macOS: {f'{mac[0]} tests, {mac[1]} failures' if mac else 'no result'}")
 
+    for log in sorted((out / "logs").glob("ui-*.log")):
+        total = xctest_total(read(log))
+        lines.append(f"- UI tests `{log.stem}`: {f'{total[0]} tests, {total[1]} failures' if total else 'no result'}")
+
     info = ocinfo(read(out / "logs" / "ocinfo.txt") + "\n" + unit_log)
-    plain = {k: v for k, v in info.items() if not k.startswith("memory.")}
+    plain ={k: v for k, v in info.items() if not k.startswith("memory.")}
     if plain:
         lines.append("- unit-test observations (OCINFO lines):")
         for key in sorted(plain):

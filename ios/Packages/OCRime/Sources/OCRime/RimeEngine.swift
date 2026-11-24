@@ -11,8 +11,10 @@ public enum RimeEngineError: Error, Equatable {
 /// finalise and a look at which modules (lua, octagram, predict, ...) are
 /// registered. Typing goes through `RimeSession` / `RimeService`.
 ///
-/// Not thread-safe: librime is a process-wide singleton, so every call must come
-/// from one serial queue (`RimeService` does that).
+/// Not thread-safe, and librime (like glog) is process-global: there is exactly one
+/// engine per process, owned by `RimeRuntime`, and every call comes from its serial
+/// queue. Nothing finalises the engine implicitly: a deinit never tears down a session
+/// that belongs to somebody else.
 public final class RimeEngine {
     /// Modules the prebuilt librime is expected to contain. `required` ones
     /// must be registered or the build is not what the plan assumes.
@@ -42,19 +44,18 @@ public final class RimeEngine {
 
     public private(set) var isInitialized = false
     private var traits = RimeTraits()
-    private var ownedStrings: [UnsafeMutablePointer<CChar>] = []
     private var moduleArray: UnsafeMutablePointer<UnsafePointer<CChar>?>?
     private let directories: Directories
     private let appName: String
 
-    public init(directories: Directories, appName: String = "rime.orangecell") {
+    init(directories: Directories, appName: String = "rime.orangecell") {
         self.directories = directories
         self.appName = appName
     }
 
     deinit {
-        if isInitialized { finalize() }
-        ownedStrings.forEach { free($0) }
+        // No finalize here on purpose (see the type's documentation). The module list is
+        // only read while `initialize` runs, so it can go.
         moduleArray?.deallocate()
     }
 
@@ -81,16 +82,25 @@ public final class RimeEngine {
 
     // MARK: lifecycle
 
+    /// Strings that librime may keep pointers to (glog keeps the application name for the
+    /// life of the process) are copied once and never freed; the same text always maps
+    /// to the same pointer, so restarting the engine does not grow memory.
+    private static var interned: [String: UnsafePointer<CChar>] = [:]
+    private static let internLock = NSLock()
+
     private func keep(_ string: String) -> UnsafePointer<CChar> {
-        let copy = strdup(string)!
-        ownedStrings.append(copy)
-        return UnsafePointer(copy)
+        Self.internLock.lock()
+        defer { Self.internLock.unlock() }
+        if let existing = Self.interned[string] { return existing }
+        let copy = UnsafePointer(strdup(string)!)
+        Self.interned[string] = copy
+        return copy
     }
 
     /// `setup` + `initialize`. Creates the directories first; librime does not.
     /// `modules == nil` loads librime's default list (everything that is linked in);
     /// pass `RimeEngine.minimalModules` to skip the plugins.
-    public func start(modules: [String]? = nil) throws {
+    func start(modules: [String]? = nil) throws {
         guard let api = rime_get_api() else { throw RimeEngineError.apiUnavailable }
         guard !isInitialized else { return }
         for path in [directories.sharedData, directories.userData] {
@@ -108,6 +118,7 @@ public final class RimeEngine {
         fresh.log_dir = keep(directories.log ?? "")
         if let modules {
             moduleArray?.deallocate()
+            moduleArray = nil
             let array = UnsafeMutablePointer<UnsafePointer<CChar>?>.allocate(capacity: modules.count + 1)
             for (index, name) in modules.enumerated() { array[index] = keep(name) }
             array[modules.count] = nil
@@ -121,7 +132,7 @@ public final class RimeEngine {
         isInitialized = true
     }
 
-    public func finalize() {
+    func finalize() {
         guard isInitialized, let api = rime_get_api() else { return }
         api.pointee.finalize()
         isInitialized = false

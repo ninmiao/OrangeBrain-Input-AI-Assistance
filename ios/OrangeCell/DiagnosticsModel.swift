@@ -48,12 +48,12 @@ final class DiagnosticsModel: ObservableObject {
             role: "app",
             peerRole: "keyboard",
             writesKeySample: true,
-            rimeVersion: probe.result.version,
-            rimeModules: probe.result.modules
+            rimeVersion: probe.version,
+            rimeModules: probe.modules
         )
         let saved = DiagnosticsCollector.save(report)
         let keyboard = DiagnosticsCollector.loadReport(role: "keyboard")
         let backend = KeyStorageSelfTest.chooseBackend(keyboardProbes: keyboard?.keyStorage ?? [])
-        return Work(app: report, keyboard: keyboard, rime: probe.result, backend: backend, saved: saved)
+        return Work(app: report, keyboard: keyboard, rime: probe, backend: backend, saved: saved)
     }
 }

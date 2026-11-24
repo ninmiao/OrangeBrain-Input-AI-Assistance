@@ -23,7 +23,7 @@ func ocInfo(_ line: String) {
 /// setup / initialize / finalize run.
 final class RimeLinkTests: XCTestCase {
     /// One start/stop per process: glog and the module registry are process-global.
-    private static let probe: (result: RimeProbeResult, engine: RimeEngine?) = {
+    private static let probe: RimeProbeResult = {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("oc-rime-link-\(ProcessInfo.processInfo.processIdentifier)", isDirectory: true)
         return RimeProbe.run(workingDirectory: directory)
@@ -39,14 +39,14 @@ final class RimeLinkTests: XCTestCase {
     }
 
     func testVersionMatchesTheLockedBuild() throws {
-        let result = Self.probe.result
+        let result = Self.probe
         report(result)
         let version = try XCTUnwrap(result.version)
         XCTAssertTrue(version.hasPrefix("1.17"), "unexpected librime \(version)")
     }
 
     func testRequiredPluginModulesSurviveLinking() {
-        let result = Self.probe.result
+        let result = Self.probe
         XCTAssertEqual(result.missingRequired, [], "modules dead-stripped: \(result.missingRequired)")
         for name in RimeEngine.requiredModules {
             XCTAssertTrue(RimeEngine.isModuleRegistered(name) || result.modules.contains(name), "\(name) not registered")
@@ -54,7 +54,7 @@ final class RimeLinkTests: XCTestCase {
     }
 
     func testSetupInitializeFinalizeRan() {
-        let result = Self.probe.result
+        let result = Self.probe
         XCTAssertTrue(result.started, "initialize failed: \(result.error ?? "-")")
         XCTAssertNil(result.error)
     }
