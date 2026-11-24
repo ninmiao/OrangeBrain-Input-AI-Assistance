@@ -21,6 +21,7 @@ IOS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO="$(cd "$IOS_DIR/.." && pwd)"
 OUT="${OC_RIME_OUT:-$IOS_DIR/.rime-data}"
 ANDROID_SHARED="$REPO/android/app/src/main/assets/shared"
+PRELUDE="$REPO/android/app/data/rime/prelude"
 DEPS="$IOS_DIR/.deps/macos-arm64"
 WORK="$OUT/work"
 RESULT="$OUT/rime-shared"
@@ -33,8 +34,15 @@ mkdir -p "$WORK/src" "$WORK/user" "$RESULT/build"
 
 # ---- 1. sources (copied, symlinks followed; nothing is modified) ---------------
 cp -L "$ANDROID_SHARED/default.yaml" "$WORK/src/"
+# In the repository the prelude files inside assets/shared are one-line pointers
+# ("../../../../data/rime/prelude/x.yaml", links that lost their meaning when they were
+# committed from Windows); the real files are in android/app/data/rime/prelude.
 for f in key_bindings.yaml punctuation.yaml symbols.yaml; do
-  cp -L "$ANDROID_SHARED/$f" "$WORK/src/"
+  cp -L "$PRELUDE/$f" "$WORK/src/"
+  if head -c 3 "$WORK/src/$f" | grep -q '^\.\./'; then
+    echo "ERROR: $f is a path pointer, not Rime data" >&2
+    exit 1
+  fi
 done
 cp -R -L "$ANDROID_SHARED"/orangecell_wanxiang* "$WORK/src/"
 cp "$IOS_DIR/rime/default.custom.yaml" "$WORK/user/"

@@ -138,6 +138,16 @@ public struct DiagnosticsReport: Codable, Equatable, Sendable {
     public var rimeModules: [String]
     public var ocCoreOK: Bool
     public var notes: [String]
+
+    // Rime data (added in M1; optional so older reports still decode).
+    public var rimeDataSchema: String?
+    public var rimeDataDictionary: String?
+    public var rimeDataBuiltWithLibrime: String?
+    public var rimeDataBytes: Int?
+    public var rimeDictionaryBytes: Int?
+    public var userDataDirectory: String?
+    public var userDataShared: Bool?
+    public var deployStamp: String?
 }
 
 public enum DiagnosticsCollector {
@@ -174,6 +184,17 @@ public enum DiagnosticsCollector {
         let profile = context.profile
         if profile == nil { notes.append("no embedded.mobileprovision (simulator or test bundle)") }
 
+        var dataStamp: RimeDataStamp?
+        if let shared = RimeDataLocator.sharedDataDirectory(bundle: bundle) {
+            dataStamp = RimeDataLocator.dataStamp(sharedDirectory: shared)
+            if let built = dataStamp?.builtWithLibrime, let linked = rimeVersion, built != linked {
+                notes.append("Rime data was compiled by librime \(built) but librime \(linked) is linked")
+            }
+        } else {
+            notes.append("no compiled Rime data found in the app bundle")
+        }
+        let userDirectory = RimeDataLocator.userDataDirectory(context: context, hasFullAccess: fullAccess ?? true)
+
         return DiagnosticsReport(
             role: role,
             generatedAt: now,
@@ -197,7 +218,15 @@ public enum DiagnosticsCollector {
             rimeVersion: rimeVersion,
             rimeModules: rimeModules,
             ocCoreOK: NativeCore.selfTest(),
-            notes: notes
+            notes: notes,
+            rimeDataSchema: dataStamp?.schema,
+            rimeDataDictionary: dataStamp.map { "\($0.dictionary.name) \($0.dictionary.version)" },
+            rimeDataBuiltWithLibrime: dataStamp?.builtWithLibrime,
+            rimeDataBytes: dataStamp?.totalBytes,
+            rimeDictionaryBytes: dataStamp?.dictionaryBytes,
+            userDataDirectory: userDirectory?.url.path,
+            userDataShared: userDirectory?.isShared,
+            deployStamp: DeployStamp.read(in: context)
         )
     }
 
