@@ -23,14 +23,16 @@
 
 ## 待发布
 
-### 2026-11-24 · iOS 0.1.0 · M0 可行性探针（进行中，分支 `ios`）
+### 2026-11-24 · iOS 0.1.0 · M0 可行性探针（分支 `ios`）
 
-- 新增 `ios/`（只在分支 `ios` 上）：XcodeGen 工程定义 `ios/project.yml`（主应用 `OrangeCell`、键盘扩展 `OrangeCellKeyboard`、模拟器测试宿主 `OCTestHost`、单元与界面测试，iOS 17.0，Swift 6 编译器、Swift 5 语言模式，`.xcodeproj` 不入库）。Swift 包 `OCCore`（编入 `shared/native-core` 的 C++ 源码 + `oc_invoke` 封装、`AppGroupLocator`、描述文件解析、Key 存储两套后端、诊断报告）和 `OCRime`（librime C API 的 Swift 封装：版本、模块查询、setup / initialize / finalize）。键盘扩展 M0 界面显示「橘脑一颗 · librime 版本 · oc_core OK」，带地球键和几个会插入文字的按键；主应用有首页（启用键盘、完全访问说明、试打区）和「诊断」页（App Group 识别结果、两进程探针文件、Key 存储后端、描述文件到期时间、Rime 模块、内存）。
-- 依赖：`ios/deps.lock.json` 用 SHA-256 锁定 fcitx5-prebuilder `ios` 发布里的 librime 1.17.0 及 boost / glog / leveldb / lua / marisa / opencc / yaml-cpp / zstd 静态库，`ios/scripts/fetch-deps.sh` 下载校验；链接时对 `librime.a` 使用 `-force_load`，避免靠静态构造函数注册的 lua / octagram / predict / qjs 模块被链接器丢掉；qjs 模块还需要系统的 JavaScriptCore。
-- 共享代码：`shared/native-core` 新增 C 接口 `src/c_api.{h,cpp}`（`oc_invoke` / `oc_free`），加入 CMake 库目标；`core.cpp` 逻辑未改，Windows 与 Android 的构建文件未改。测试用例放在 `core_test.cpp` 里并由宏 `OC_C_API_TEST` 开关，只有共享 CMake 的测试目标打开它，Windows 现有的 `orangecell_protocol_test` 仍编译原来的内容。
-- CI：`.github/workflows/ios-ci.yml`（推送到 `ios` / `ios/**` 时运行）：`core-linux`（Linux 上 CMake 跑 native-core 测试 + `swift test`）、`build-test`（macos-26，Xcode 26.6：取依赖、XcodeGen、模拟器构建、单元测试、模拟器端到端、内存采样）、`ipa-device`（未签名真机构建，对 `.app` 与 `.appex` 临时签名并带上 App Group 权限，打成 IPA）、`release`（仅 `ios` 分支：`ios-nightly` 预发布 + SideStore 源）、`publish-results`（把状态、摘要、日志、截图写到孤儿分支 `ci-results`）。`ios/scripts/ci_wait.py <sha>` 等待并取回结果。
-- 本机已验证：用 MSVC 编译 `core_test.cpp` + `core.cpp` + `c_api.cpp` 并运行，780 项通过（含 2 项 C 接口用例）；去掉 `OC_C_API_TEST` 的 Windows 形态同样编译通过，778 项；`ci_publish.py` / `ci_wait.py` 对本地裸仓库跑通（一次提交、保留最近 15 次、取回摘要与截图）。
-- 尚未验证：全部 iOS 构建与测试（本机没有 Mac / Swift），模拟器里启用键盘，SideStore 真机安装（推迟到 M2 之后与用户一起做）。本条在 CI 结果出来后更新。
+- 新增 `ios/`（只在分支 `ios` 上，Android / Windows 代码未动）：XcodeGen 工程定义 `ios/project.yml`（主应用 `OrangeCell`、键盘扩展 `OrangeCellKeyboard`、模拟器测试宿主 `OCTestHost`、单元与界面测试，iOS 17.0，Swift 6 编译器、Swift 5 语言模式，`.xcodeproj` 不入库）。Swift 包 `OCCore`（编入 `shared/native-core` 的 C++ 源码 + `oc_invoke` 封装、`AppGroupLocator`、描述文件解析与到期时间、Key 存储两套后端、诊断报告）和 `OCRime`（librime C API 的 Swift 封装：版本、模块查询、setup / initialize / finalize）。键盘扩展 M0 界面显示「橘脑一颗 · librime 版本 · oc_core OK」，带地球键和几个会插入文字的按键；主应用有首页（启用键盘、完全访问说明、试打区）和「诊断」页（App Group 识别结果、两进程探针文件、Key 存储后端、描述文件到期时间、Rime 模块、内存）。
+- 依赖：`ios/deps.lock.json` 用 SHA-256 锁定 fcitx5-prebuilder `ios` 发布里的 librime 1.17.0 及 boost / glog / leveldb / lua / marisa / opencc / yaml-cpp / zstd 静态库，`ios/scripts/fetch-deps.sh` 下载并校验（先取本仓库 Release `ios-deps-20261124` 里的镜像，再取上游；`ios-deps.yml` 负责镜像）。链接时对 `librime.a` 用 `-force_load`，避免靠静态构造函数注册的 lua / octagram / predict / qjs 模块被链接器丢掉；qjs 模块还需要系统的 JavaScriptCore。
+- 共享代码：`shared/native-core` 新增 C 接口 `src/c_api.{h,cpp}`（`oc_invoke` / `oc_free`），加入 CMake 库目标；`core.cpp` 逻辑未改，Windows 与 Android 的构建文件未改。C 接口的测试用例放在 `core_test.cpp` 里，由宏 `OC_C_API_TEST` 开关，只有共享 CMake 的测试目标打开它，Windows 现有的 `orangecell_protocol_test` 仍编译原来的内容。
+- CI（`.github/workflows/ios-ci.yml`，推送到 `ios` / `ios/**` 时运行）：`core-linux`、`build-test`（macos-26，Xcode 26.6）、`ipa-device`（未签名真机构建，对 `.app` 与 `.appex` 临时签名并带上 App Group 权限，打成 IPA）、`release`（仅 `ios` 分支：`ios-nightly` 预发布 + SideStore 源）、`publish-results`（把状态、摘要、日志、截图写到孤儿分支 `ci-results`）。`ios/scripts/ci_wait.py <sha>` 等待并取回结果。
+- 模拟器里启用第三方键盘：方法①（启动前往模拟器全局偏好写入 `AppleKeyboards`，条目就是扩展的 Bundle ID）直接可用，系统在 OCTestHost 里显示出橘脑一颗键盘；方法②（XCUITest 驱动「设置 → 通用 → 键盘 → 键盘 → 添加新键盘」并打开「允许完全访问」）也跑通，用来在模拟器里打开完全访问。XCUITest 看不到键盘扩展内部，按键改用坐标点击，再用宿主文本框的内容验证（点「你」「好」得到「你好」，删除键得到「你」）。
+- 本机已验证：用 MSVC 编译 `core_test.cpp` + `core.cpp` + `c_api.cpp` 并运行，780 项通过（含 2 项 C 接口用例）；去掉 `OC_C_API_TEST` 的 Windows 形态同样编译通过，778 项；`ci_publish.py` / `ci_wait.py` 对本地裸仓库跑通。
+- CI 验证（运行 #3，提交 `64602d0`，全部任务通过）：Linux 上 native-core 的 CMake 测试 780 项、OCCore `swift test` 28 项；macOS 上 OCCore `swift test` 32 项，模拟器应用单元测试 6 项（librime 版本 1.17.0，模块 default / core / dict / gears / levers / deployer / lua / octagram / grammar / predict / qjs 全部注册，Rime 启动成功，`oc_invoke` 的 encode 往返正确）；模拟器端到端通过，截图里系统在 OCTestHost 里显示了橘脑一颗键盘。键盘扩展进程内存（只初始化了 Rime、没有加载词库）：自报 phys_footprint 43.2 MB，宿主机 `footprint` 测得 43 MB（其中 dyld 私有内存 15 MB、MALLOC_SMALL 10 MB；模拟器的数字只作代理，真机要重测）。
+- 构建与发布状态：未签名 IPA（约 4.3 MB，arm64，最低 iOS 17.0）已在 GitHub Release `ios-nightly`（预发布），SideStore 源 JSON 在 `ci-results` 分支的 `sidestore/source.json`。设备安装：未做（推迟到 M2 之后与用户一起在 iPhone 上用 SideStore 验证 App Group 名、Key 存储后端和到期时间）。已推送到 `origin/ios`，未动 `main`。
 
 ### 2026-11-24 · iOS 版规划（文档更新）
 

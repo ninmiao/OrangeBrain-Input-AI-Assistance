@@ -120,7 +120,7 @@ def copy_job_outputs(collected, run_dir, summaries):
         if summary.exists():
             summaries.append(summary.read_text(encoding="utf8", errors="replace"))
         for pattern in ("logs/*.tail.txt", "logs/*.errors.txt", "logs/*.json", "logs/ui-*.txt", "logs/*-failures.txt",
-                        "logs/prefs-*.txt", "logs/footprint-*.txt", "logs/sim-*.txt", "logs/crash-*",
+                        "logs/prefs-*.txt", "logs/footprint-*.txt", "logs/vmmap-*.txt", "logs/sim-*.txt", "logs/crash-*",
                         "logs/toolchain.txt", "logs/ipa-info.txt", "logs/*.md"):
             for file in inner.glob(pattern):
                 if file.is_file() and file.stat().st_size > 0:

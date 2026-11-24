@@ -159,6 +159,12 @@ row "install OrangeCell.app (with keyboard extension)" "ok"
 if xcrun simctl install "$UDID" "$PRODUCTS/OCTestHost.app"; then row "install OCTestHost.app" "ok"; else row "install OCTestHost.app" "FAILED"; fi
 ls "$PRODUCTS/OrangeCell.app/PlugIns" > "$LOGS/appex-list.txt" 2>&1 || true
 
+# Run the app once so it leaves its probe file and key-storage sample in the
+# shared container; the keyboard's report then shows whether it can see them.
+xcrun simctl launch "$UDID" "$APP_ID" >/dev/null 2>&1
+sleep 6
+xcrun simctl terminate "$UDID" "$APP_ID" >/dev/null 2>&1 || true
+
 # --------------------------------------------- method 1: seed preferences
 xcrun simctl spawn "$UDID" defaults write -g AppleKeyboards -array "$KB_ID" "en_US@sw=QWERTY;hw=Automatic" "emoji@sw=Emoji" > "$LOGS/seed.txt" 2>&1
 xcrun simctl spawn "$UDID" defaults write -g AppleKeyboardsExpanded -int 1 >> "$LOGS/seed.txt" 2>&1

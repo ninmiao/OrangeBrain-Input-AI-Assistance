@@ -1,6 +1,6 @@
 # 橘脑一颗 iOS 版：蓝图与执行方案
 
-> 状态：规划（2026-11-24），尚未开始实现。基线：Android 1.12.2、Windows 1.14.1。
+> 状态：M0 已在 CI 里跑通（2026-11-24，分支 `ios`；真机 SideStore 验证推迟到 M2 之后），详见第 15 节。基线：Android 1.12.2、Windows 1.14.1。
 > 约束：没有 Mac，iOS 的编译、测试、打包全部在 GitHub Actions 的 macOS 托管机器上完成；功能与 Android 基本一致；尽量复用现有开源方案。
 > **分发（已定）**：有 iPhone，不办付费开发者账号；用免费 Apple ID 通过 SideStore 侧载，7 天自动续签。
 > 本文经过三轮评审，并按「免费账号侧载」做了第四轮修订评审（见第 12 节），结论已并入正文。标注「M0 验证」的条目在第一个里程碑实测确认，不确认不往下走。
@@ -407,3 +407,22 @@ ios/
 | 5 | 打进 IPA 的权限文件只含 App Group，不含 `keychain-access-groups` | SideStore 重签时只依据二进制里的权限去注册能力；`$(AppIdentifierPrefix)` 在 CI 里没有团队 ID 可替换，写进去反而可能让安装后无法启动。Keychain 共享组改由诊断页在真机上用「团队 ID + 约定后缀」实测（第 4.6 节），结果决定后端 |
 | 6 | Linux 任务在 `swift:6.2-noble` 容器里跑，用 apt 装 cmake / g++ / JDK 头文件；CMake 的 JNI 查找用缓存变量手工回答 AWT / JVM 库 | ubuntu 托管机没有 Swift 工具链；`default-jdk-headless` 不含 libjawt，FindJNI 会失败，而编 `jni.cpp` 只需要头文件 |
 | 7 | 增加结果通道：每个 iOS 工作流最后的 `publish-results` 任务把状态、摘要、失败日志、截图写到孤儿分支 `ci-results`；`ios/scripts/ci_wait.py <sha>` 等待并取回 | 没有带令牌的 GitHub API，看不到日志与产物下载 |
+| 8 | 模拟器启用键盘的方法①（启动前在模拟器全局偏好写入 `AppleKeyboards`，条目为扩展的 Bundle ID，如 `io.github.ninmiao.orangecell.keyboard`）直接可用；方法②（XCUITest 驱动「设置」）也跑通，用来打开「允许完全访问」。不需要 Appium | 第 8 节的三种方法按顺序试，前两种已足够；真机上没有这一步，仍由用户在设置里手动添加 |
+| 9 | 键盘扩展里的按键用坐标点击，不用无障碍标识；键盘界面用固定高度保证按键位置稳定 | XCUITest 的 `app.keyboards` 看不到第三方键盘扩展（它是远程视图），只能看到宿主文本框；效果用宿主文本框的内容验证。M1 起键盘布局变化时要同步更新坐标，或改为进程内的界面测试（宿主内嵌 `KeyboardViewController`） |
+| 10 | 工程里设 `ENABLE_DEBUG_DYLIB = NO` | Xcode 的 Debug 构建默认把二进制拆成桩 + `.debug.dylib`，会扭曲键盘进程的内存数字 |
+
+### M0 实测结果（CI 运行 #3，提交 `64602d0`）
+
+| 项目 | 结果 |
+| --- | --- |
+| 编译链接 | librime 1.17.0 + 8 个依赖静态库在 Xcode 26.6 下一次链接通过；真机（arm64，iOS 17.0+）与 arm64 模拟器都能构建；`-force_load` 后 lua / octagram / grammar / predict / qjs 模块全部注册；需要系统的 JavaScriptCore |
+| 单元测试 | Linux：native-core 780 项（含 C 接口）、OCCore 28 项；macOS：OCCore 32 项；模拟器应用测试 6 项 |
+| 系统里显示键盘 | 方法①，系统在 `OCTestHost` 里显示橘脑一颗键盘；点「你」「好」、删除键，宿主文本框得到「你好」→「你」 |
+| IPA | 约 4.3 MB，主应用与扩展各带 App Group 权限的临时签名，`ios-nightly` 预发布可下载；SideStore 源在 `ci-results` 分支 `sidestore/source.json` |
+| 键盘内存（模拟器） | 只初始化 Rime、不加载词库时 43 MB（`phys_footprint`，自报与 `footprint` 一致）；其中 dyld 私有内存 15 MB、MALLOC_SMALL 10 MB，模拟器的数字偏大，只作代理 |
+| 未验证 | 真机：App Group 实际名字、Keychain 共享组是否可用、描述文件到期时间、内存上限、SideStore 安装本身 |
+
+对 M1 的影响：
+1. 键盘基线 43 MB（模拟器）已经超过「无语法模型 ≤ 55 MB」预算的七成，M1 加载万象词库前先分析内存构成（`vmmap -summary` 已随 CI 产出），优先查 MALLOC_SMALL 里 Rime 初始化和 JavaScriptCore / Lua 的占用；必要时只在需要时才初始化 qjs / lua 模块。
+2. 模拟器里无法区分「真机共享目录权限」：未开完全访问时模拟器也能读写 App Group，真机可能不能；诊断页会显示真实结果。
+3. 键盘界面测试改用坐标点击，布局变化要同步更新。

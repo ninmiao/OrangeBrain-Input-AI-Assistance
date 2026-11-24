@@ -177,6 +177,15 @@ def build_test(out: pathlib.Path, xcresult: pathlib.Path) -> str:
     if fp:
         lines.append(f"- keyboard process footprint measured from outside (`footprint`): **{fp} MB**")
 
+    fp_text = read(out / "logs" / "footprint-keyboard.txt")
+    categories = []
+    for line in fp_text.splitlines():
+        match = re.match(r"\s*([\d.]+ (?:KB|MB|GB|B))\s+([\d.]+ (?:KB|MB|GB|B))\s+([\d.]+ (?:KB|MB|GB|B))\s+(\d+)\s+(.+)$", line)
+        if match and match.group(5).strip() != "TOTAL":
+            categories.append(f"{match.group(5).strip()} {match.group(1)} dirty")
+    if categories:
+        lines.append("  - biggest dirty categories: " + ", ".join(categories[:5]))
+
     shots = sorted(p.name for p in (out / "screenshots").glob("*.png")) if (out / "screenshots").exists() else []
     if shots:
         lines.append("- screenshots: " + ", ".join(f"`{s}`" for s in shots))
