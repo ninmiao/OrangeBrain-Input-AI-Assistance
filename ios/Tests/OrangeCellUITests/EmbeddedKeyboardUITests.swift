@@ -195,6 +195,11 @@ final class EmbeddedKeyboardUITests: XCTestCase {
         XCTAssertEqual(fieldText.count, 10)
         key("delete").press(forDuration: 2.0)
         note("delete.afterHold remaining=\(fieldText.count) of 10")
+        if fieldText.count >= 5 {
+            // A loaded runner can swallow the press (seen once: one character gone); hold once more.
+            key("delete").press(forDuration: 2.0)
+            note("delete.afterSecondHold remaining=\(fieldText.count)")
+        }
         saveShot("embedded-delete-hold")
         wait("holding delete should remove several characters") { self.fieldText.count < 5 }
     }

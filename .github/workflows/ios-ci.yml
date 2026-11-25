@@ -31,7 +31,7 @@ concurrency:
 env:
   # Marketing version per milestone, last number = run number: strictly increasing, so
   # SideStore always sees a new build as an update. CFBundleVersion is the run number too.
-  OC_VERSION: '0.2.${{ github.run_number }}'
+  OC_VERSION: '0.3.${{ github.run_number }}'
   XCODE_APP: /Applications/Xcode_26.6.app
 
 jobs:
