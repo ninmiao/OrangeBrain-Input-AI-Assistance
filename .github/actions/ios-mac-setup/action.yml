@@ -44,6 +44,10 @@ runs:
       with:
         name: rime-shared
         path: ios/.rime-data/rime-shared
+    - name: Leave the Rime data directory empty (the rime-data job generates the project before the data exists)
+      if: ${{ inputs.rime-data != 'true' }}
+      shell: bash
+      run: mkdir -p ios/.rime-data/rime-shared
     - name: Install the pinned XcodeGen and generate the project
       shell: bash
       run: |
