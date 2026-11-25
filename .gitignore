@@ -181,6 +181,7 @@ secrets.properties
 !/docs/DEVELOPMENT.md
 !/docs/PUBLISHING.md
 !/docs/IOS_PLAN.md
+!/docs/IOS_SIDELOAD.md
 !/docs/ai/
 !/docs/windows/
 /docs/ai/*

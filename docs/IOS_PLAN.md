@@ -251,7 +251,7 @@ ios/
 
 ## 7. 签名与分发
 
-**已定路线：免费 Apple ID + SideStore。**
+**已定路线：免费 Apple ID + SideStore。**详细的手机侧步骤见 [IOS_SIDELOAD.md](IOS_SIDELOAD.md)。
 
 | 项目 | 说明 |
 | --- | --- |
