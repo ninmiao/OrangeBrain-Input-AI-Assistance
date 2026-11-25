@@ -1,0 +1,5 @@
+222:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:603: error: -[OrangeCellUITests.KeyboardUITests testAiNeverSendsFromASecureField] : XCTAssertTrue failed - the letters themselves still go in (typed: . cz09); true
+224:Test Case '-[OrangeCellUITests.KeyboardUITests testAiNeverSendsFromASecureField]' failed (77.990 seconds).
+225:Test Suite 'KeyboardUITests' failed at 2026-11-25 09:03:26.740.
+227:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-25 09:03:26.741.
+229:Test Suite 'Selected tests' failed at 2026-11-25 09:03:26.741.

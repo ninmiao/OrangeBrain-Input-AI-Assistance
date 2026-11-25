@@ -1,0 +1,7 @@
+settings.open General ok
+settings.open Keyboard ok
+settings.open Keyboards ok
+settings.alreadyListed=true
+settings.open OrangeCell ok
+settings.fullAccess.before=0
+settings.fullAccess.after=1

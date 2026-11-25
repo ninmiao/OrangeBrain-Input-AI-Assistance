@@ -1,0 +1,88 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/OrangeCell.xcodeproj -scheme OCUITests -configuration Release -destination id=4D1959A6-9562-4C7C-A6D2-832486A8608B -derivedDataPath /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd "-only-testing:OrangeCellUITests/KeyboardUITests/testLearnedPhraseIsFirst" -resultBundlePath /Users/runner/work/_temp/results/ui-fullaccess-off.xcresult
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  OCKeyboardUI: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCKeyboardUI
+  OCRime: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCRime
+  OCCore: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore
+
+Writing result bundle at path:
+	/Users/runner/work/_temp/results/ui-fullaccess-off.xcresult
+
+2026-11-25 03:56:38.776112+0000 OrangeCellUITests-Runner[36619:111220] [Default] Running tests...
+2026-11-25 03:56:38.840308+0000 OrangeCellUITests-Runner[36619:111978] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-11-25 03:56:38.884230+0000 OrangeCellUITests-Runner[36619:111978] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+objc[36619]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10ad44310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x109d8c398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-25 03:56:43.853.
+Test Suite 'OrangeCellUITests.xctest' started at 2026-11-25 03:56:43.854.
+Test Suite 'KeyboardUITests' started at 2026-11-25 03:56:43.856.
+Test Case '-[OrangeCellUITests.KeyboardUITests testLearnedPhraseIsFirst]' started.
+    t =     0.00s Start Test at 2026-11-25 03:56:43.857
+    t =     0.91s Set Up
+    t =     0.91s Open io.github.ninmiao.orangecell.testhost
+    t =     0.91s     Launch io.github.ninmiao.orangecell.testhost
+2026-11-25 03:56:46.049 xcodebuild[34660:105298] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-25 03:56:46.049 xcodebuild[34660:105298] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     5.92s         Setting up automation session
+    t =     7.98s         Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =     9.70s Waiting 30.0s for "oc.testhost.field" TextField to exist
+    t =    10.73s     Checking `Expect predicate `existsNoRetry == 1` for object "oc.testhost.field" TextField`
+    t =    10.73s         Checking existence of `"oc.testhost.field" TextField`
+    t =    11.00s Tap "oc.testhost.field" TextField
+    t =    11.00s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    11.00s     Find the "oc.testhost.field" TextField
+    t =    11.05s     Check for interrupting elements affecting "oc.testhost.field" TextField
+    t =    11.14s     Synthesize event
+    t =    11.58s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    22.88s Checking existence of `"inputView" Other`
+    t =    23.23s Find the "inputView" Other
+    t =    23.74s Find the Window (First Match)
+    t =    25.11s Find the Window (First Match)
+    t =    26.49s Find the Window (First Match)
+    t =    27.81s Find the Window (First Match)
+    t =    29.22s Find the Window (First Match)
+    t =    30.63s Find the Window (First Match)
+    t =    32.19s Find the Window (First Match)
+    t =    33.50s Find the Window (First Match)
+    t =    34.81s Find the Window (First Match)
+    t =    36.23s Find the Window (First Match)
+    t =    37.61s Find the Window (First Match)
+    t =    38.99s Find the Window (First Match)
+    t =    40.34s Find the Window (First Match)
+    t =    41.65s Find the Window (First Match)
+    t =    42.98s Find the Window (First Match)
+    t =    44.29s Find the Window (First Match)
+    t =    45.61s Find the Window (First Match)
+    t =    47.00s Find the Window (First Match)
+    t =    48.31s Find the Window (First Match)
+    t =    49.39s Find the Window (First Match)
+OCUI keyboardTop pixels=n/a tree=538.0 width=402.0
+    t =    49.79s Added attachment named 'system-keyboard-not-found'
+    t =    49.97s Find the Window (First Match)
+OCUI bottom row key centres: [201]
+/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:249: error: -[OrangeCellUITests.KeyboardUITests testLearnedPhraseIsFirst] : XCTAssertTrue failed - expected 4 or 5 keys on the bottom row, found 1
+    t =    51.70s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testLearnedPhraseIsFirst]' failed (52.193 seconds).
+Test Suite 'KeyboardUITests' failed at 2026-11-25 03:57:36.050.
+	 Executed 1 test, with 1 failure (0 unexpected) in 52.193 (52.195) seconds
+Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-25 03:57:36.051.
+	 Executed 1 test, with 1 failure (0 unexpected) in 52.193 (52.197) seconds
+Test Suite 'Selected tests' failed at 2026-11-25 03:57:36.052.
+	 Executed 1 test, with 1 failure (0 unexpected) in 52.193 (52.199) seconds
+2026-11-25 03:58:17.977 xcodebuild[34660:105298] [MT] IDETestOperationsObserverDebug: 124.761 elapsed -- Testing started completed.
+2026-11-25 03:58:17.978 xcodebuild[34660:105298] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 03:58:17.978 xcodebuild[34660:105298] [MT] IDETestOperationsObserverDebug: 124.761 sec, +124.761 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-fullaccess-off.xcresult
+
+Failing tests:
+	KeyboardUITests.testLearnedPhraseIsFirst()
+
+** TEST EXECUTE FAILED **
+
+Testing started

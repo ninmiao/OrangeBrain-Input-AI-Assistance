@@ -1,0 +1,67 @@
+{
+  "appVersion" : "0.2.21 (21)",
+  "bundleIdentifier" : "io.github.ninmiao.orangecell.keyboard",
+  "containerPath" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/DC5CB768-E7C8-430E-9E04-F5EE449AC446\/data\/Containers\/Shared\/AppGroup\/F5EB96BC-3474-41E9-BE23-0C97C8B3CD2F",
+  "containerWritable" : true,
+  "engineReadyMs" : 56.63800239562988,
+  "firstCandidatesMs" : 1174.862027168274,
+  "footprintMB" : 47.8,
+  "fullAccess" : false,
+  "generatedAt" : "2026-11-25T08:54:51Z",
+  "groupNominal" : "group.io.github.ninmiao.orangecell",
+  "groupResolved" : "group.io.github.ninmiao.orangecell",
+  "groupSource" : "nominalNoProfile",
+  "keyStorage" : [
+    {
+      "backend" : "keychain-default",
+      "crossProcessReadOK" : false,
+      "detail" : "sample not found"
+    },
+    {
+      "backend" : "encrypted-file",
+      "crossProcessReadOK" : true,
+      "detail" : ""
+    }
+  ],
+  "notes" : [
+    "no embedded.mobileprovision (simulator or test bundle)"
+  ],
+  "ocCoreOK" : true,
+  "peerProbe" : {
+    "bundleIdentifier" : "io.github.ninmiao.orangecell",
+    "groupIdentifier" : "group.io.github.ninmiao.orangecell",
+    "nonce" : "B192B632-2DC8-4558-B75E-CA13E11484FF",
+    "processID" : 7208,
+    "role" : "app",
+    "writtenAt" : "2026-11-25T08:48:45Z"
+  },
+  "probeWritten" : true,
+  "profileGroups" : [
+
+  ],
+  "rimeDataBuiltWithLibrime" : "1.17.0",
+  "rimeDataBytes" : 59178777,
+  "rimeDataDictionary" : "wanxiang v18.1.13",
+  "rimeDataSchema" : "orangecell_wanxiang",
+  "rimeDictionaryBytes" : 58714452,
+  "rimeModules" : [
+    "default",
+    "core",
+    "dict",
+    "gears",
+    "levers",
+    "deployer",
+    "lua",
+    "octagram",
+    "grammar",
+    "predict",
+    "qjs"
+  ],
+  "rimeRunning" : true,
+  "rimeVersion" : "1.17.0",
+  "role" : "keyboard",
+  "unhandledLetters" : 0,
+  "userDataDirectory" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/DC5CB768-E7C8-430E-9E04-F5EE449AC446\/data\/Containers\/Data\/PluginKitPlugin\/DF0A171E-AAFF-4CBE-B9D2-23466668E5FF\/Library\/Application Support\/rime-user",
+  "userDataShared" : false,
+  "userDictionaryMode" : "learning"
+}

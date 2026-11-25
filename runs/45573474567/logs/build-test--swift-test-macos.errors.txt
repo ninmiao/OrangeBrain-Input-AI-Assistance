@@ -1,0 +1,2 @@
+142:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiChatClient.swift:145: error: -[OCCoreTests.AiTransportTests testABrokenStreamKeepsWhatAlreadyArrived] : failed: caught error: "network"
+143:Test Case '-[OCCoreTests.AiTransportTests testABrokenStreamKeepsWhatAlreadyArrived]' failed (0.619 seconds).

@@ -1,0 +1,30 @@
+    t =    84.78s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    86.34s Added attachment named 'system-kill-2-earlier-word'
+    t =    86.34s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (35.0, 503.0)
+    t =    86.34s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    86.35s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    86.43s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    86.49s     Synthesize event
+    t =    86.50s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    86.54s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    86.60s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    86.92s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    86.93s Find the "oc.testhost.field" TextField
+    t =    87.01s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testLearningSurvivesAKillRightAfterTheCommit]' passed (87.289 seconds).
+Test Suite 'KeyboardUITests' passed at 2026-11-25 09:32:21.567.
+	 Executed 1 test, with 0 failures (0 unexpected) in 87.289 (87.291) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-25 09:32:21.568.
+	 Executed 1 test, with 0 failures (0 unexpected) in 87.289 (87.292) seconds
+Test Suite 'Selected tests' passed at 2026-11-25 09:32:21.569.
+	 Executed 1 test, with 0 failures (0 unexpected) in 87.289 (87.294) seconds
+2026-11-25 09:32:23.311 xcodebuild[20788:66725] [MT] IDETestOperationsObserverDebug: 107.714 elapsed -- Testing started completed.
+2026-11-25 09:32:23.312 xcodebuild[20788:66725] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 09:32:23.312 xcodebuild[20788:66725] [MT] IDETestOperationsObserverDebug: 107.714 sec, +107.714 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-kill.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

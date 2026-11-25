@@ -1,0 +1,30 @@
+    t =    31.51s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    32.90s Added attachment named 'system-learned-candidates'
+    t =    32.91s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (35.0, 503.0)
+    t =    32.91s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    32.91s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    32.94s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    32.98s     Synthesize event
+    t =    32.99s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    33.02s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    33.05s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    33.36s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    33.37s Find the "oc.testhost.field" TextField
+    t =    33.40s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testLearnedPhraseIsFirst]' passed (33.766 seconds).
+Test Suite 'KeyboardUITests' passed at 2026-11-25 09:04:16.917.
+	 Executed 1 test, with 0 failures (0 unexpected) in 33.766 (33.767) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-25 09:04:16.917.
+	 Executed 1 test, with 0 failures (0 unexpected) in 33.766 (33.767) seconds
+Test Suite 'Selected tests' passed at 2026-11-25 09:04:16.918.
+	 Executed 1 test, with 0 failures (0 unexpected) in 33.766 (33.769) seconds
+2026-11-25 09:04:17.588 xcodebuild[31912:98173] [MT] IDETestOperationsObserverDebug: 60.752 elapsed -- Testing started completed.
+2026-11-25 09:04:17.588 xcodebuild[31912:98173] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 09:04:17.588 xcodebuild[31912:98173] [MT] IDETestOperationsObserverDebug: 60.752 sec, +60.752 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-fullaccess-off.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

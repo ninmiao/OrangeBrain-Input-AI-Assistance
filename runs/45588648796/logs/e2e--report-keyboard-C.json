@@ -1,0 +1,68 @@
+{
+  "appVersion" : "0.3.23 (23)",
+  "bundleIdentifier" : "io.github.ninmiao.orangecell.keyboard",
+  "containerPath" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/340D362A-1085-473A-B3A6-264E54F4966D\/data\/Containers\/Shared\/AppGroup\/E8DE06C7-E9AA-4568-A8F9-61E1E6DF6A3B",
+  "containerWritable" : true,
+  "deployStamp" : "2026-11-25T10:13:38Z-4EB82C76",
+  "engineReadyMs" : 216.34793281555176,
+  "firstCandidatesMs" : 8557.874917984009,
+  "footprintMB" : 42.8,
+  "fullAccess" : false,
+  "generatedAt" : "2026-11-25T10:20:23Z",
+  "groupNominal" : "group.io.github.ninmiao.orangecell",
+  "groupResolved" : "group.io.github.ninmiao.orangecell",
+  "groupSource" : "nominalNoProfile",
+  "keyStorage" : [
+    {
+      "backend" : "keychain-default",
+      "crossProcessReadOK" : false,
+      "detail" : "sample not found"
+    },
+    {
+      "backend" : "encrypted-file",
+      "crossProcessReadOK" : true,
+      "detail" : ""
+    }
+  ],
+  "notes" : [
+    "no embedded.mobileprovision (simulator or test bundle)"
+  ],
+  "ocCoreOK" : true,
+  "peerProbe" : {
+    "bundleIdentifier" : "io.github.ninmiao.orangecell",
+    "groupIdentifier" : "group.io.github.ninmiao.orangecell",
+    "nonce" : "0CD6729D-D4A0-42FC-BC9F-D4007D37DE30",
+    "processID" : 9458,
+    "role" : "app",
+    "writtenAt" : "2026-11-25T09:55:43Z"
+  },
+  "probeWritten" : true,
+  "profileGroups" : [
+
+  ],
+  "rimeDataBuiltWithLibrime" : "1.17.0",
+  "rimeDataBytes" : 59178777,
+  "rimeDataDictionary" : "wanxiang v18.1.13",
+  "rimeDataSchema" : "orangecell_wanxiang",
+  "rimeDictionaryBytes" : 58714452,
+  "rimeModules" : [
+    "default",
+    "core",
+    "dict",
+    "gears",
+    "levers",
+    "deployer",
+    "lua",
+    "octagram",
+    "grammar",
+    "predict",
+    "qjs"
+  ],
+  "rimeRunning" : true,
+  "rimeVersion" : "1.17.0",
+  "role" : "keyboard",
+  "unhandledLetters" : 0,
+  "userDataDirectory" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/340D362A-1085-473A-B3A6-264E54F4966D\/data\/Containers\/Data\/PluginKitPlugin\/EACB4F3D-D8ED-4042-A348-2EB79935C714\/Library\/Application Support\/rime-user",
+  "userDataShared" : false,
+  "userDictionaryMode" : "learning"
+}

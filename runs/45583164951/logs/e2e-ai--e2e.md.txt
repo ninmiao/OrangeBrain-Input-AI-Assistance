@@ -1,0 +1,32 @@
+### Simulator end-to-end (Release, ai)
+
+| step | result |
+| --- | --- |
+| install | ok (app with keyboard extension, test host) |
+| ai: the mock service listens on 127.0.0.1:18765 (no real network, no real key) | PASS  |
+| Settings UI: Allow Full Access | PASS  |
+| ai: the app wrote the configuration and the loopback routes into the App Group | PASS (/Users/runner/Library/Developer/CoreSimulator/Devices/6E202963-822D-4F76-A620-1A96503F3D12/data/Containers/Shared/AppGroup/E7E9F944-F1A4-4C1E-A20E-6A6A0DA98133) |
+| ai: the configuration file holds no key | PASS  |
+| keyboard process footprint after ai (Release, pid 14907) | 48.0 MB |
+| no letter fell through to plain text in 中 mode (until ai) | PASS (unhandledLetters=0) |
+| ai: typo corrected and adopted, assistant then emoji key mid-stream (emoji wins), memory after the requests | PASS  |
+| ai (ai): every request carried the stored key in its header | PASS  |
+| ai (ai): the key is never inside a request body | PASS  |
+| ai (ai): the shared core built bodies the service could read | PASS  |
+| ai (ai): typing the pinyin of a typo sent an automatic request (correction + assistant) with that pinyin | PASS  |
+| ai (ai): the assistant key and then the emoji key each sent a request, the emoji one last | PASS  |
+| ai (ai): the assistant request was dropped by the keyboard when the emoji key took over (the service saw the connection close) | PASS  |
+| ai (ai): at least one running request was cancelled by a newer one | PASS  |
+| mock service stats | {"requests": 17, "unauthorized": 0, "aborted": 4, "complete": 13} |
+| keyboard process footprint after ai-secure (Release, pid 14907) | 48.0 MB |
+| no letter fell through to plain text in 中 mode (until ai-secure) | PASS (unhandledLetters=0) |
+| ai: nothing is sent from a password field | PASS  |
+| ai (secure): every request carried the stored key in its header | PASS  |
+| ai (secure): the key is never inside a request body | PASS  |
+| ai (secure): the shared core built bodies the service could read | PASS  |
+| ai (secure): nothing typed in the password field was sent | PASS  |
+| Settings UI: Full Access off again | PASS  |
+| ai: without Full Access the AI row shows its hint and the keys do nothing | PASS  |
+| ai: no request reached the service without Full Access | PASS (before 17, after 17) |
+| memory budget: the highest keyboard footprint of 2 samples <= 55 MB | PASS (highest 48 MB; after typing n/a MB) |
+| failed checks | 0 |

@@ -1,0 +1,7 @@
+toolchain	0	37
+fetch-deps	0	8
+xcodegen-install	0	0
+xcodegen	0	0
+simulator-create	0	1
+build-e2e	0	103
+e2e-run	0	1433

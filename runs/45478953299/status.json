@@ -1,0 +1,477 @@
+{
+  "run_id": 45478953299,
+  "run_number": "14",
+  "workflow": "iOS CI",
+  "event": "push",
+  "branch": "ios",
+  "head_sha": "1c69509b7b022fa8ca6f5388332258ee6151abe4",
+  "conclusion": "success",
+  "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45478953299",
+  "published_at": "2026-11-24T20:36:04Z",
+  "jobs": [
+    {
+      "name": "core-linux",
+      "id": 138746585485,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-24T20:15:53Z",
+      "completed_at": "2026-11-24T20:17:18Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45478953299/job/138746585485",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Prepare",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install build tools",
+          "conclusion": "success"
+        },
+        {
+          "name": "native-core C++ test (CMake, includes the C API cases)",
+          "conclusion": "success"
+        },
+        {
+          "name": "OCCore swift test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Summary",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload job results",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "rime-data",
+      "id": 138746585992,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-24T20:15:54Z",
+      "completed_at": "2026-11-24T20:16:26Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45478953299/job/138746585992",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Cache the compiled data",
+          "conclusion": "success"
+        },
+        {
+          "name": "Compile the Rime data",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Record the size of what was built",
+          "conclusion": "success"
+        },
+        {
+          "name": "Publish the data for the other jobs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload job results",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Cache the compiled data",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "ipa-device",
+      "id": 138746939393,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-24T20:16:33Z",
+      "completed_at": "2026-11-24T20:19:10Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45478953299/job/138746939393",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build for device (unsigned)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Package the IPA (ad-hoc signature with entitlements)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload IPA",
+          "conclusion": "success"
+        },
+        {
+          "name": "Summary",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload job results",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "e2e-debug",
+      "id": 138746939396,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-24T20:16:30Z",
+      "completed_at": "2026-11-24T20:31:27Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45478953299/job/138746939396",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Create the simulator",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build the app, the keyboard and the UI tests (Debug)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Typing run (Debug)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Summary",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload job results",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "e2e",
+      "id": 138746939467,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-24T20:16:32Z",
+      "completed_at": "2026-11-24T20:35:33Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45478953299/job/138746939467",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Create the simulator",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build the app, the keyboard and the UI tests (Release)",
+          "conclusion": "success"
+        },
+        {
+          "name": "End-to-end run (Release)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Summary",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload job results",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "memory-release",
+      "id": 138746939476,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-24T20:16:34Z",
+      "completed_at": "2026-11-24T20:21:54Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45478953299/job/138746939476",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Create the simulator",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build for the simulator (Release)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Memory with the shipped dictionary (Release, minimal modules)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Memory with the shipped dictionary (Release, all modules)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Summary",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload job results",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "build-test",
+      "id": 138746939602,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-24T20:16:29Z",
+      "completed_at": "2026-11-24T20:34:00Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45478953299/job/138746939602",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Create the simulator",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build for the simulator (Debug)",
+          "conclusion": "success"
+        },
+        {
+          "name": "App unit tests (simulator, real Rime data)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build the UI tests",
+          "conclusion": "success"
+        },
+        {
+          "name": "In-process keyboard UI tests (the real KeyboardView as a text view's input view)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Memory with the shipped dictionary (Debug, minimal modules)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Memory with the shipped dictionary (Debug, all modules)",
+          "conclusion": "success"
+        },
+        {
+          "name": "OCCore swift test (macOS)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Summary",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload job results",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "release",
+      "id": 138758737953,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-24T20:35:36Z",
+      "completed_at": "2026-11-24T20:35:51Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45478953299/job/138758737953",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Prepare",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
+          "conclusion": "success"
+        },
+        {
+          "name": "Publish the ios-nightly prerelease and write the SideStore source",
+          "conclusion": "success"
+        },
+        {
+          "name": "Summary",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload job results",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+ipa: OrangeCell-iOS-0.2.14.ipa  31983170 bytes
+sha256: ac52192938a0736ad12d8f63df3bf98eb7695c66748307f2e423041fcc99465a
+
+== Info.plist (app)
+  "CFBundleDisplayName" => "橘脑一颗"
+  "CFBundleIdentifier" => "io.github.ninmiao.orangecell"
+  "CFBundleShortVersionString" => "0.2.14"
+  "CFBundleVersion" => "14"
+  "DTPlatformName" => "iphoneos"
+  "DTSDKName" => "iphoneos26.5"
+  "MinimumOSVersion" => "17.0"
+== Info.plist (keyboard)
+  "CFBundleDisplayName" => "橘脑一颗"
+  "CFBundleIdentifier" => "io.github.ninmiao.orangecell.keyboard"
+  "CFBundleShortVersionString" => "0.2.14"
+  "CFBundleVersion" => "14"
+  "MinimumOSVersion" => "17.0"
+      "IsASCIICapable" => true
+      "PrimaryLanguage" => "zh-Hans"
+      "RequestsOpenAccess" => true
+    "NSExtensionPointIdentifier" => "com.apple.keyboard-service"
+    "NSExtensionPrincipalClass" => "OrangeCellKeyboard.KeyboardViewController"
+== architectures
+Non-fat file: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd-device/Build/Products/Release-iphoneos/OrangeCell.app/OrangeCell is architecture: arm64
+Non-fat file: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd-device/Build/Products/Release-iphoneos/OrangeCell.app/PlugIns/OrangeCellKeyboard.appex/OrangeCellKeyboard is architecture: arm64
+== platform
+/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd-device/Build/Products/Release-iphoneos/OrangeCell.app/OrangeCell:
+Load command 11
+      cmd LC_BUILD_VERSION
+  cmdsize 32
+ platform IOS
+    minos 17.0
+      sdk 26.5
+   ntools 1
+== entitlements (app)
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>com.apple.security.application-groups</key><array><string>group.io.github.ninmiao.orangecell</string></array></dict></plist>
+== entitlements (keyboard)
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>com.apple.security.application-groups</key><array><string>group.io.github.ninmiao.orangecell</string></array></dict></plist>
+== signature
+Identifier=io.github.ninmiao.orangecell
+Format=app bundle with Mach-O thin (arm64)
+Signature=adhoc
+TeamIdentifier=not set
+== librime linked in (symbol present)
+1
+== payload
+     4655  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/opencc/TWVariantsRev.ocd2
+    14362  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/opencc/TSCharactersExt.ocd2
+      676  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/opencc/s2t.json
+      479  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/opencc/jp2t.json
+    13843  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/opencc/CJK_Compatibility_Ideographs.ocd2
+     1034  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/opencc/tw2sp.json
+      370  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/default.custom.yaml
+     2954  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/key_bindings.yaml
+      996  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/oc-data.json
+     2107  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/punctuation.yaml
+        0  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/build/
+     8600  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/build/orangecell_wanxiang.schema.yaml
+   275236  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/build/orangecell_wanxiang_d_2a94c48aa51e.reverse.bin
+ 58714452  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/build/orangecell_wanxiang_d_2a94c48aa51e.table.bin
+   175732  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/build/orangecell_wanxiang_d_2a94c48aa51e.prism.bin
+     4757  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/build/default.yaml
+    28356  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/symbols.yaml
+     1227  11-24-2026 20:18   Payload/OrangeCell.app/rime-shared/default.yaml
+  7109168  11-24-2026 20:18   Payload/OrangeCell.app/OrangeCell
+    64360  11-24-2026 20:18   Payload/OrangeCell.app/Assets.car
+    15754  11-24-2026 20:18   Payload/OrangeCell.app/AppIcon76x76@2x~ipad.png
+     1151  11-24-2026 20:18   Payload/OrangeCell.app/Info.plist
+        8  11-24-2026 20:18   Payload/OrangeCell.app/PkgInfo
+---------                     -------
+ 74775556                     111 files

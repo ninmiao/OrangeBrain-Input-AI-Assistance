@@ -1,0 +1,65 @@
+{
+  "appVersion" : "0.2.15 (15)",
+  "bundleIdentifier" : "io.github.ninmiao.orangecell.keyboard",
+  "containerPath" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/42970DA0-0FD0-4FEC-B1A9-39B434013445\/data\/Containers\/Shared\/AppGroup\/84DDBAEC-61E0-45E2-AFFC-0CE0147C2CF7",
+  "containerWritable" : true,
+  "footprintMB" : 49.5,
+  "fullAccess" : true,
+  "generatedAt" : "2026-11-25T03:17:49Z",
+  "groupNominal" : "group.io.github.ninmiao.orangecell",
+  "groupResolved" : "group.io.github.ninmiao.orangecell",
+  "groupSource" : "nominalNoProfile",
+  "keyStorage" : [
+    {
+      "backend" : "keychain-default",
+      "crossProcessReadOK" : false,
+      "detail" : "sample not found"
+    },
+    {
+      "backend" : "encrypted-file",
+      "crossProcessReadOK" : true,
+      "detail" : ""
+    }
+  ],
+  "notes" : [
+    "no embedded.mobileprovision (simulator or test bundle)"
+  ],
+  "ocCoreOK" : true,
+  "peerProbe" : {
+    "bundleIdentifier" : "io.github.ninmiao.orangecell",
+    "groupIdentifier" : "group.io.github.ninmiao.orangecell",
+    "nonce" : "395C2900-3C2B-4F87-8EB2-721D230C5667",
+    "processID" : 7437,
+    "role" : "app",
+    "writtenAt" : "2026-11-25T03:04:12Z"
+  },
+  "probeWritten" : true,
+  "profileGroups" : [
+
+  ],
+  "rimeDataBuiltWithLibrime" : "1.17.0",
+  "rimeDataBytes" : 59178777,
+  "rimeDataDictionary" : "wanxiang v18.1.13",
+  "rimeDataSchema" : "orangecell_wanxiang",
+  "rimeDictionaryBytes" : 58714452,
+  "rimeModules" : [
+    "default",
+    "core",
+    "dict",
+    "gears",
+    "levers",
+    "deployer",
+    "lua",
+    "octagram",
+    "grammar",
+    "predict",
+    "qjs"
+  ],
+  "rimeRunning" : true,
+  "rimeVersion" : "1.17.0",
+  "role" : "keyboard",
+  "stagingDirectory" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/42970DA0-0FD0-4FEC-B1A9-39B434013445\/data\/Containers\/Shared\/AppGroup\/84DDBAEC-61E0-45E2-AFFC-0CE0147C2CF7\/rime-build",
+  "unhandledLetters" : 0,
+  "userDataDirectory" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/42970DA0-0FD0-4FEC-B1A9-39B434013445\/data\/Containers\/Data\/PluginKitPlugin\/418C3733-9653-4A94-923C-F0DB73801E9C\/Library\/Application Support\/rime-user",
+  "userDataShared" : false
+}

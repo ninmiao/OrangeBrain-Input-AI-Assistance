@@ -1,0 +1,40 @@
+Test Case '-[OCCoreTests.NativeCoreTests testErrorsComeBackAsNativeCoreError]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testLargeAndUnicodeInput]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testLargeAndUnicodeInput]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testMalformedAndNullInputAreRejectedWithoutCrashing]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testMalformedAndNullInputAreRejectedWithoutCrashing]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testRawInvokeMatchesTheDocumentedEnvelope]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testRawInvokeMatchesTheDocumentedEnvelope]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testReasoningTextIsNotAccepted]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testReasoningTextIsNotAccepted]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testSelfTestPasses]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testSelfTestPasses]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testSharedTruncationCorpus]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testSharedTruncationCorpus]' passed (0.003 seconds).
+Test Suite 'NativeCoreTests' passed at 2026-11-24 19:48:05.747.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+Test Suite 'ProvisioningProfileTests' started at 2026-11-24 19:48:05.747.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiredProfile]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiredProfile]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiryParsing]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiryParsing]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExtractsPlistFromCmsEnvelope]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExtractsPlistFromCmsEnvelope]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testPlainXmlPlistWithoutEnvelopeIsAccepted]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testPlainXmlPlistWithoutEnvelopeIsAccepted]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsBrokenPropertyList]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsBrokenPropertyList]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsDataWithoutPropertyList]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsDataWithoutPropertyList]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testUnknownExpiryIsNotReportedAsExpiring]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testUnknownExpiryIsNotReportedAsExpiring]' passed (0.000 seconds).
+Test Suite 'ProvisioningProfileTests' passed at 2026-11-24 19:48:05.750.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.003 (0.003) seconds
+Test Suite 'OCCorePackageTests.xctest' passed at 2026-11-24 19:48:05.750.
+	 Executed 40 tests, with 0 failures (0 unexpected) in 0.086 (0.092) seconds
+Test Suite 'All tests' passed at 2026-11-24 19:48:05.750.
+	 Executed 40 tests, with 0 failures (0 unexpected) in 0.086 (0.098) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

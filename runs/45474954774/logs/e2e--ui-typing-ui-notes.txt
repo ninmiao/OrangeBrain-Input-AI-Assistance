@@ -1,0 +1,3 @@
+keyboardTop pixels=517.0 tree=517.0 width=402.0
+bottom row key centres: [28, 83, 208, 353]
+helper footprint-typing: answered

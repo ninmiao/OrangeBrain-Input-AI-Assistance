@@ -1,0 +1,107 @@
+Attributes: Application, 0x10a45c140, pid: 10952, label: 'OCTestHost'
+Element subtree:
+ →Application, 0x10a45c140, pid: 10952, label: 'OCTestHost'
+    Window (Main), 0x10a45c280, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x10a45c3c0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10a45c500, {{0.0, 0.0}, {402.0, 874.0}}
+          Other, 0x10a45c640, {{0.0, 0.0}, {402.0, 874.0}}
+            Other, 0x10a45c780, {{0.0, 0.0}, {402.0, 874.0}}
+              StaticText, 0x10a45c8c0, {{16.0, 78.0}, {96.3, 20.3}}, label: 'OCTestHost'
+              TextField, 0x10a45ca00, {{16.0, 110.3}, {370.0, 34.0}}, identifier: 'oc.testhost.field', placeholderValue: 'type here', Keyboard Focused
+              StaticText, 0x10a45cb40, {{16.0, 156.3}, {42.3, 15.7}}, identifier: 'oc.testhost.mirror', label: 'typed: '
+    Window, 0x10a45cc80, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x10a45cdc0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10a45cf00, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10a45d040, {{0.0, 444.0}, {402.0, 430.0}}
+          Other, 0x10a45d180, {{0.0, 461.0}, {402.0, 413.0}}, identifier: 'inputView'
+    Window, 0x10a45d2c0, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x10a45d400, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10a45d540, {{0.0, 444.0}, {402.0, 430.0}}
+          Other, 0x10a45d680, {{0.0, 444.0}, {402.0, 430.0}}
+            Other, 0x10a45d7c0, {{0.0, 444.0}, {402.0, 430.0}}
+              Other, 0x10a45d900, {{0.0, 444.0}, {402.0, 430.0}}
+          Other, 0x10a45da40, {{0.0, 461.0}, {402.0, 338.0}}
+            Other, 0x10a45db80, {{0.0, 461.0}, {402.0, 338.0}}
+              Other, 0x10a45dcc0, {{0.0, 461.0}, {402.0, 338.0}}
+                Other, 0x10a45de00, {{0.0, 461.0}, {402.0, 338.0}}
+                  Other, 0x10a45df40, {{0.0, 461.0}, {402.0, 338.0}}
+                    Other, 0x10a45e080, {{0.0, 461.0}, {402.0, 338.0}}
+                      Other, 0x10a45e1c0, {{0.0, 461.0}, {402.0, 338.0}}
+                        Other, 0x10a45e300, {{0.0, 461.0}, {402.0, 338.0}}
+                          Other, 0x10a45e440, {{0.0, 461.0}, {402.0, 338.0}}
+                            Other, 0x10a45e580, {{0.0, 461.0}, {402.0, 338.0}}, identifier: 'oc.keyboard'
+                              StaticText, 0x10a45e6c0, {{12.0, 465.0}, {378.0, 18.0}}, identifier: 'oc.composition'
+                              CollectionView, 0x10a45e800, {{0.0, 483.0}, {402.0, 40.0}}, identifier: 'oc.candidates'
+                                Other, 0x10a45e940, {{369.0, 483.0}, {30.0, 40.0}}, label: 'Vertical scroll bar, 1 pages', value: 0%
+                                  Other, 0x10a45ea80, {{396.0, -17.0}, {3.0, 36.0}}
+                                Other, 0x10a45ebc0, {{369.0, 483.0}, {30.0, 40.0}}, label: 'Vertical scroll bar, 1 pages', value: 0%
+                                  Other, 0x10a45ed00, {{396.0, -17.0}, {3.0, 36.0}}
+                              Other, 0x10a45ee40, {{0.0, 523.0}, {402.0, 0.3}}
+                              Other, 0x10a45ef80, {{0.0, 523.0}, {402.0, 30.0}}, identifier: 'oc.ai.bar'
+                                StaticText, 0x10a45f0c0, {{6.0, 523.0}, {16.0, 30.0}}, identifier: 'oc.ai.dot', label: 'AI 状态：AI 未启用'
+                                ScrollView, 0x10a45f200, {{24.0, 523.0}, {298.0, 30.0}}, identifier: 'oc.ai.items'
+                                  Other, 0x10a45f340, {{289.0, 523.0}, {30.0, 30.0}}, label: 'Vertical scroll bar, 1 pages', value: 0%
+                                    Other, 0x10a45f480, {{316.0, 484.0}, {3.0, 36.0}}
+                                  Other, 0x10a45f5c0, {{289.0, 523.0}, {30.0, 30.0}}, label: 'Vertical scroll bar, 1 pages', value: 0%
+                                    Other, 0x10a45f700, {{316.0, 484.0}, {3.0, 36.0}}
+                                Button, 0x10a45f840, {{324.0, 523.0}, {38.0, 30.0}}, identifier: 'oc.ai.emoji', label: 'AI 表情'
+                                Button, 0x10a45f980, {{362.0, 523.0}, {38.0, 30.0}}, identifier: 'oc.ai.assistant', label: 'AI 助手', value: AI 未启用
+                              Button, 0x10a45fac0, {{3.0, 559.0}, {35.0, 40.0}}, identifier: 'oc.key.d1', label: '1'
+                              Button, 0x10a45fc00, {{43.0, 559.0}, {35.0, 40.0}}, identifier: 'oc.key.d2', label: '2'
+                              Button, 0x10a45fd40, {{83.0, 559.0}, {35.0, 40.0}}, identifier: 'oc.key.d3', label: '3'
+                              Button, 0x10a45fe80, {{123.0, 559.0}, {35.0, 40.0}}, identifier: 'oc.key.d4', label: '4'
+                              Button, 0x106dfad00, {{163.0, 559.0}, {35.0, 40.0}}, identifier: 'oc.key.d5', label: '5'
+                              Button, 0x106dfae40, {{204.0, 559.0}, {35.0, 40.0}}, identifier: 'oc.key.d6', label: '6'
+                              Button, 0x106dfaf80, {{244.0, 559.0}, {35.0, 40.0}}, identifier: 'oc.key.d7', label: '7'
+                              Button, 0x106dfb0c0, {{284.0, 559.0}, {35.0, 40.0}}, identifier: 'oc.key.d8', label: '8'
+                              Button, 0x106dfb200, {{324.0, 559.0}, {35.0, 40.0}}, identifier: 'oc.key.d9', label: '9'
+                              Button, 0x106dfb340, {{364.0, 559.0}, {35.0, 40.0}}, identifier: 'oc.key.d0', label: '0'
+                              Button, 0x106dfb480, {{3.0, 607.0}, {35.0, 40.0}}, identifier: 'oc.key.q', label: 'q'
+                              Button, 0x10a484000, {{43.0, 607.0}, {35.0, 40.0}}, identifier: 'oc.key.w', label: 'w'
+                              Button, 0x10a484140, {{83.0, 607.0}, {35.0, 40.0}}, identifier: 'oc.key.e', label: 'e'
+                              Button, 0x10a484280, {{123.0, 607.0}, {35.0, 40.0}}, identifier: 'oc.key.r', label: 'r'
+                              Button, 0x10a4843c0, {{163.0, 607.0}, {35.0, 40.0}}, identifier: 'oc.key.t', label: 't'
+                              Button, 0x10a484500, {{204.0, 607.0}, {35.0, 40.0}}, identifier: 'oc.key.y', label: 'y'
+                              Button, 0x10a484640, {{244.0, 607.0}, {35.0, 40.0}}, identifier: 'oc.key.u', label: 'u'
+                              Button, 0x10a484780, {{284.0, 607.0}, {35.0, 40.0}}, identifier: 'oc.key.i', label: 'i'
+                              Button, 0x10a4848c0, {{324.0, 607.0}, {35.0, 40.0}}, identifier: 'oc.key.o', label: 'o'
+                              Button, 0x10a484a00, {{364.0, 607.0}, {35.0, 40.0}}, identifier: 'oc.key.p', label: 'p'
+                              Button, 0x10a484b40, {{25.0, 655.0}, {35.0, 40.0}}, identifier: 'oc.key.a', label: 'a'
+                              Button, 0x10a484c80, {{65.0, 655.0}, {34.0, 40.0}}, identifier: 'oc.key.s', label: 's'
+                              Button, 0x10a484dc0, {{105.0, 655.0}, {34.0, 40.0}}, identifier: 'oc.key.d', label: 'd'
+                              Button, 0x10a484f00, {{144.0, 655.0}, {35.0, 40.0}}, identifier: 'oc.key.f', label: 'f'
+                              Button, 0x10a485040, {{184.0, 655.0}, {34.0, 40.0}}, identifier: 'oc.key.g', label: 'g'
+                              Button, 0x10a485180, {{223.0, 655.0}, {35.0, 40.0}}, identifier: 'oc.key.h', label: 'h'
+                              Button, 0x10a4852c0, {{263.0, 655.0}, {34.0, 40.0}}, identifier: 'oc.key.j', label: 'j'
+                              Button, 0x10a485400, {{303.0, 655.0}, {34.0, 40.0}}, identifier: 'oc.key.k', label: 'k'
+                              Button, 0x10a485540, {{342.0, 655.0}, {35.0, 40.0}}, identifier: 'oc.key.l', label: 'l'
+                              Button, 0x10a485680, {{3.0, 703.0}, {53.0, 40.0}}, identifier: 'oc.key.shift-disabled', label: 'shift'
+                                Image, 0x10a4857c0, {{3.0, 703.0}, {53.0, 40.0}}, identifier: 'shift', label: 'shift'
+                              Button, 0x10a485900, {{61.0, 703.0}, {35.0, 40.0}}, identifier: 'oc.key.z', label: 'z'
+                              Button, 0x10a485a40, {{102.0, 703.0}, {35.0, 40.0}}, identifier: 'oc.key.x', label: 'x'
+                              Button, 0x10a485b80, {{142.0, 703.0}, {36.0, 40.0}}, identifier: 'oc.key.c', label: 'c'
+                              Button, 0x10a485cc0, {{183.0, 703.0}, {36.0, 40.0}}, identifier: 'oc.key.v', label: 'v'
+                              Button, 0x10a485e00, {{224.0, 703.0}, {36.0, 40.0}}, identifier: 'oc.key.b', label: 'b'
+                              Button, 0x10a485f40, {{265.0, 703.0}, {36.0, 40.0}}, identifier: 'oc.key.n', label: 'n'
+                              Button, 0x10a486080, {{306.0, 703.0}, {35.0, 40.0}}, identifier: 'oc.key.m', label: 'm'
+                              Button, 0x10a4861c0, {{346.0, 703.0}, {54.0, 40.0}}, identifier: 'oc.key.delete', label: 'delete'
+                                Image, 0x10a486300, {{346.0, 703.0}, {54.0, 40.0}}, identifier: 'delete.left', label: 'backspace'
+                              Button, 0x10a486440, {{3.0, 751.0}, {50.0, 40.0}}, identifier: 'oc.key.numbers', label: '123'
+                              Button, 0x10a486580, {{58.0, 751.0}, {50.0, 40.0}}, identifier: 'oc.key.language', label: '中'
+                              Button, 0x10a4866c0, {{113.0, 751.0}, {190.0, 40.0}}, identifier: 'oc.key.space', label: '空格'
+                              Button, 0x10a486800, {{308.0, 751.0}, {91.0, 40.0}}, identifier: 'oc.key.return', label: 'return'
+                                Image, 0x10a486940, {{308.0, 751.0}, {91.0, 40.0}}, identifier: 'return.left', label: 'return.left'
+          Other, 0x10a486a80, {{0.0, 461.0}, {402.0, 413.0}}
+            Button, 0x10a486bc0, {{8.5, 805.7}, {68.1, 68.7}}, label: '下一个键盘', value: English (US)
+              StaticText, 0x10a486d00, {{8.5, 805.7}, {0.0, 0.0}}
+            Button, 0x10a486e40, {{325.4, 805.4}, {68.1, 68.7}}, identifier: 'dictation', label: '听写'
+              StaticText, 0x10a486f80, {{325.4, 805.4}, {0.0, 0.0}}
+            Button, 0x10a4870c0, {{325.4, 805.4}, {68.1, 68.7}}, identifier: 'dictation', label: '听写'
+              StaticText, 0x10a487200, {{325.4, 805.4}, {0.0, 0.0}}
+Path to element:
+ →Application, 0x10a45c140, pid: 10952, label: 'OCTestHost'
+Query chain:
+ →Find: Target Application 'io.github.ninmiao.orangecell.testhost'
+  Output: {
+    Application, 0x10a487340, pid: 10952, label: 'OCTestHost'
+  }

@@ -1,0 +1,9 @@
+[e2e] install: ok (app with keyboard extension, test host)
+[ui-test] typing: OrangeCellUITests/KeyboardUITests/testRealExtensionTypesChineseAndEnglish
+	 Executed 1 test, with 1 failure (0 unexpected) in 24.053 (24.056) seconds
+[e2e] phase A: typing through the real keyboard extension (nihao, sentence, backspace, 中/EN): **FAIL** (see ui-typing logs and screenshots)
+[e2e] keyboard report (A): fullAccess=false userDataShared=false rimeRunning=true dictionary=wanxiang v18.1.13
+[e2e] phase A: engine running inside the extension: PASS 
+[e2e] phase A: without Full Access the user dictionary is private: PASS (userDataShared=false)
+[e2e] memory (Debug, information only): after typing n/a MB, highest 0 MB
+[e2e] failed checks: 1

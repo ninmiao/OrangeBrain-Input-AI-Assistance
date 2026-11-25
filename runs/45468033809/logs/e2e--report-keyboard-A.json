@@ -1,0 +1,63 @@
+{
+  "appVersion" : "0.2.11 (11)",
+  "bundleIdentifier" : "io.github.ninmiao.orangecell.keyboard",
+  "containerPath" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/2BCF8C5A-4964-470D-8C98-9F5E58ECC92E\/data\/Containers\/Shared\/AppGroup\/0F12F9FC-00C6-4AF7-9B36-B096A1A49F0C",
+  "containerWritable" : true,
+  "footprintMB" : 39.9,
+  "fullAccess" : false,
+  "generatedAt" : "2026-11-24T19:25:10Z",
+  "groupNominal" : "group.io.github.ninmiao.orangecell",
+  "groupResolved" : "group.io.github.ninmiao.orangecell",
+  "groupSource" : "nominalNoProfile",
+  "keyStorage" : [
+    {
+      "backend" : "keychain-default",
+      "crossProcessReadOK" : false,
+      "detail" : "sample not found"
+    },
+    {
+      "backend" : "encrypted-file",
+      "crossProcessReadOK" : true,
+      "detail" : ""
+    }
+  ],
+  "notes" : [
+    "no embedded.mobileprovision (simulator or test bundle)"
+  ],
+  "ocCoreOK" : true,
+  "peerProbe" : {
+    "bundleIdentifier" : "io.github.ninmiao.orangecell",
+    "groupIdentifier" : "group.io.github.ninmiao.orangecell",
+    "nonce" : "F0388BA5-70B8-4561-BE17-557177A73CDB",
+    "processID" : 6544,
+    "role" : "app",
+    "writtenAt" : "2026-11-24T19:21:48Z"
+  },
+  "probeWritten" : true,
+  "profileGroups" : [
+
+  ],
+  "rimeDataBuiltWithLibrime" : "1.17.0",
+  "rimeDataBytes" : 59178777,
+  "rimeDataDictionary" : "wanxiang v18.1.13",
+  "rimeDataSchema" : "orangecell_wanxiang",
+  "rimeDictionaryBytes" : 58714452,
+  "rimeModules" : [
+    "default",
+    "core",
+    "dict",
+    "gears",
+    "levers",
+    "deployer",
+    "lua",
+    "octagram",
+    "grammar",
+    "predict",
+    "qjs"
+  ],
+  "rimeRunning" : true,
+  "rimeVersion" : "1.17.0",
+  "role" : "keyboard",
+  "userDataDirectory" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/2BCF8C5A-4964-470D-8C98-9F5E58ECC92E\/data\/Containers\/Data\/PluginKitPlugin\/13135696-18A4-4D07-A447-5C1705C91944\/Library\/Application Support\/rime-user",
+  "userDataShared" : false
+}

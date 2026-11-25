@@ -1,0 +1,17 @@
+### Simulator end-to-end (Release, hosts)
+
+| step | result |
+| --- | --- |
+| install | ok (app with keyboard extension, test host) |
+| two host apps take turns typing and learning (one dictionary, both phrases) | **FAIL** (see ui-hosts logs and screenshots) |
+| after the two hosts: the user dictionary folder exists with a CURRENT file | PASS (/Users/runner/Library/Developer/CoreSimulator/Devices/F92199FE-EE0C-41CB-BEE5-A31EE01E4E9E/data/Containers/Data/PluginKitPlugin/16242CB5-7456-42B8-9556-4A9B70F00E36/Library/Application Support/rime-user) |
+| after the two hosts: no *.userdb.old (librime did not repair or rename the dictionary) | PASS (0 found) |
+| after the two hosts: user dictionary folders | 1 |
+| keyboard report (two hosts) | userDictionaryMode=learning unhandledLetters=0 engineReadyMs=29.057979583740234 firstCandidatesMs=9224.658966064453 |
+| two hosts: no letter fell through to plain text | PASS (unhandledLetters=0) |
+| kill -9 right after a commit (no hide, no deployment): the last word and the earlier one are both learned | **FAIL** (see ui-kill logs and screenshots) |
+| after the kill: the user dictionary folder exists with a CURRENT file | PASS (/Users/runner/Library/Developer/CoreSimulator/Devices/F92199FE-EE0C-41CB-BEE5-A31EE01E4E9E/data/Containers/Data/PluginKitPlugin/16242CB5-7456-42B8-9556-4A9B70F00E36/Library/Application Support/rime-user) |
+| after the kill: no *.userdb.old (librime did not repair or rename the dictionary) | PASS (0 found) |
+| after the kill: user dictionary folders | 1 |
+| memory budget: the highest keyboard footprint of 0 samples <= 55 MB | **FAIL** (highest 0 MB; after typing n/a MB) |
+| failed checks | 3 |

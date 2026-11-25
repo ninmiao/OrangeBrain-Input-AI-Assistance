@@ -1,0 +1,300 @@
+    t =    13.72s     Check for interrupting elements affecting "oc.key.delete" Button
+    t =    13.81s     Synthesize event
+    t =    14.12s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    14.12s Tap "oc.key.delete" Any
+    t =    14.12s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    14.13s     Find the "oc.key.delete" Any
+    t =    14.46s     Check for interrupting elements affecting "oc.key.delete" Button
+    t =    14.54s     Synthesize event
+    t =    14.85s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    14.86s Tap "oc.key.language" Any
+    t =    14.86s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    14.87s     Find the "oc.key.language" Any
+    t =    15.27s     Check for interrupting elements affecting "oc.key.language" Button
+    t =    15.35s     Synthesize event
+    t =    15.65s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    15.66s Tap "oc.key.h" Any
+    t =    15.66s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    15.66s     Find the "oc.key.h" Any
+    t =    16.10s     Check for interrupting elements affecting "oc.key.h" Button
+    t =    16.21s     Synthesize event
+    t =    16.52s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    16.53s Tap "oc.key.e" Any
+    t =    16.53s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    16.54s     Find the "oc.key.e" Any
+    t =    16.89s     Check for interrupting elements affecting "oc.key.e" Button
+    t =    17.02s     Synthesize event
+    t =    17.36s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    17.36s Tap "oc.key.l" Any
+    t =    17.37s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    17.37s     Find the "oc.key.l" Any
+    t =    17.92s     Check for interrupting elements affecting "oc.key.l" Button
+    t =    18.09s     Synthesize event
+    t =    18.43s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    18.44s Tap "oc.key.l" Any
+    t =    18.44s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    18.44s     Find the "oc.key.l" Any
+    t =    18.97s     Check for interrupting elements affecting "oc.key.l" Button
+    t =    19.08s     Synthesize event
+    t =    19.41s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    19.41s Tap "oc.key.o" Any
+    t =    19.41s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    19.44s     Find the "oc.key.o" Any
+    t =    19.89s     Check for interrupting elements affecting "oc.key.o" Button
+    t =    20.05s     Synthesize event
+    t =    20.46s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    20.67s Added attachment named 'embedded-dark-3-en'
+    t =    20.68s Tap "oc.key.numbers" Any
+    t =    20.68s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    20.69s     Find the "oc.key.numbers" Any
+    t =    21.63s     Check for interrupting elements affecting "oc.key.numbers" Button
+    t =    21.73s     Synthesize event
+    t =    22.09s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    22.29s Added attachment named 'embedded-dark-4-123'
+    t =    22.29s Tap "oc.key.symbols" Any
+    t =    22.29s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    22.29s     Find the "oc.key.symbols" Any
+    t =    22.51s     Check for interrupting elements affecting "oc.key.symbols" Button
+    t =    22.60s     Synthesize event
+    t =    22.92s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    23.10s Added attachment named 'embedded-dark-5-symbols'
+    t =    23.11s Tear Down
+Test Case '-[OrangeCellUITests.EmbeddedKeyboardUITests testScreenshotsDark]' passed (23.346 seconds).
+Test Case '-[OrangeCellUITests.EmbeddedKeyboardUITests testScreenshotsLight]' started.
+    t =     0.00s Start Test at 2026-11-25 09:29:30.495
+    t =     0.04s Set Up
+    t =     0.04s Open io.github.ninmiao.orangecell.testhost
+    t =     0.04s     Launch io.github.ninmiao.orangecell.testhost
+    t =     0.04s         Terminate io.github.ninmiao.orangecell.testhost:17104
+2026-11-25 09:29:31.623 xcodebuild[4982:20799] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-25 09:29:31.623 xcodebuild[4982:20799] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.31s         Setting up automation session
+    t =     4.39s         Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =     6.00s Waiting 30.0s for "oc.testhost.field" TextView to exist
+    t =     7.00s     Checking `Expect predicate `existsNoRetry == 1` for object "oc.testhost.field" TextView`
+    t =     7.01s         Checking existence of `"oc.testhost.field" TextView`
+    t =     7.16s Tap "oc.testhost.field" TextView
+    t =     7.16s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =     7.17s     Find the "oc.testhost.field" TextView
+    t =     7.21s     Check for interrupting elements affecting "oc.testhost.field" TextView
+    t =     7.26s     Synthesize event
+    t =     7.58s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =     8.09s Waiting 20.0s for "oc.key.space" Any to exist
+    t =     9.14s     Checking `Expect predicate `existsNoRetry == 1` for object "oc.key.space" Any`
+    t =     9.14s         Checking existence of `"oc.key.space" Any`
+    t =    10.04s Added attachment named 'embedded-light-1-zh-idle'
+    t =    10.04s Tap "oc.key.n" Any
+    t =    10.04s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    10.05s     Find the "oc.key.n" Any
+    t =    11.30s     Check for interrupting elements affecting "oc.key.n" Button
+    t =    11.49s     Synthesize event
+    t =    11.88s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    11.88s Tap "oc.key.i" Any
+    t =    11.88s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    11.88s     Find the "oc.key.i" Any
+    t =    12.58s     Check for interrupting elements affecting "oc.key.i" Button
+    t =    12.69s     Synthesize event
+    t =    13.05s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    13.06s Checking existence of `"oc.candidate.5" Any`
+    t =    14.13s Added attachment named 'embedded-light-2-zh-candidates'
+    t =    14.13s Tap "oc.key.delete" Any
+    t =    14.13s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    14.14s     Find the "oc.key.delete" Any
+    t =    15.02s     Check for interrupting elements affecting "oc.key.delete" Button
+    t =    15.12s     Synthesize event
+    t =    15.45s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    15.46s Tap "oc.key.delete" Any
+    t =    15.46s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    15.47s     Find the "oc.key.delete" Any
+    t =    15.90s     Check for interrupting elements affecting "oc.key.delete" Button
+    t =    16.06s     Synthesize event
+    t =    16.36s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    16.37s Tap "oc.key.language" Any
+    t =    16.37s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    16.38s     Find the "oc.key.language" Any
+    t =    16.79s     Check for interrupting elements affecting "oc.key.language" Button
+    t =    16.90s     Synthesize event
+    t =    17.21s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    17.22s Tap "oc.key.h" Any
+    t =    17.22s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    17.22s     Find the "oc.key.h" Any
+    t =    17.98s     Check for interrupting elements affecting "oc.key.h" Button
+    t =    18.15s     Synthesize event
+    t =    18.47s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    18.48s Tap "oc.key.e" Any
+    t =    18.48s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    18.49s     Find the "oc.key.e" Any
+    t =    19.81s     Check for interrupting elements affecting "oc.key.e" Button
+    t =    20.05s     Synthesize event
+    t =    20.40s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    20.42s Tap "oc.key.l" Any
+    t =    20.42s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    20.43s     Find the "oc.key.l" Any
+    t =    20.83s     Check for interrupting elements affecting "oc.key.l" Button
+    t =    20.94s     Synthesize event
+    t =    21.28s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    21.28s Tap "oc.key.l" Any
+    t =    21.28s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    21.29s     Find the "oc.key.l" Any
+    t =    21.77s     Check for interrupting elements affecting "oc.key.l" Button
+    t =    21.95s     Synthesize event
+    t =    22.26s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    22.27s Tap "oc.key.o" Any
+    t =    22.27s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    22.28s     Find the "oc.key.o" Any
+    t =    22.78s     Check for interrupting elements affecting "oc.key.o" Button
+    t =    22.88s     Synthesize event
+    t =    23.20s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    23.42s Added attachment named 'embedded-light-3-en'
+    t =    23.43s Tap "oc.key.numbers" Any
+    t =    23.43s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    23.44s     Find the "oc.key.numbers" Any
+    t =    23.92s     Check for interrupting elements affecting "oc.key.numbers" Button
+    t =    24.05s     Synthesize event
+    t =    24.36s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    24.57s Added attachment named 'embedded-light-4-123'
+    t =    24.57s Tap "oc.key.symbols" Any
+    t =    24.57s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    24.58s     Find the "oc.key.symbols" Any
+    t =    24.93s     Check for interrupting elements affecting "oc.key.symbols" Button
+    t =    25.06s     Synthesize event
+    t =    25.38s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    25.61s Added attachment named 'embedded-light-5-symbols'
+    t =    25.61s Tear Down
+Test Case '-[OrangeCellUITests.EmbeddedKeyboardUITests testScreenshotsLight]' passed (25.881 seconds).
+Test Case '-[OrangeCellUITests.EmbeddedKeyboardUITests testSentenceIsCommittedBySpace]' started.
+    t =     0.00s Start Test at 2026-11-25 09:29:56.378
+    t =     0.07s Set Up
+    t =     0.07s Open io.github.ninmiao.orangecell.testhost
+    t =     0.07s     Launch io.github.ninmiao.orangecell.testhost
+    t =     0.07s         Terminate io.github.ninmiao.orangecell.testhost:18013
+2026-11-25 09:29:57.511 xcodebuild[4982:20799] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-25 09:29:57.511 xcodebuild[4982:20799] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.85s         Setting up automation session
+    t =     4.53s         Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =     6.25s Waiting 30.0s for "oc.testhost.field" TextView to exist
+    t =     7.30s     Checking `Expect predicate `existsNoRetry == 1` for object "oc.testhost.field" TextView`
+    t =     7.31s         Checking existence of `"oc.testhost.field" TextView`
+    t =     8.93s Tap "oc.testhost.field" TextView
+    t =     8.93s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =     8.93s     Find the "oc.testhost.field" TextView
+    t =     8.96s     Check for interrupting elements affecting "oc.testhost.field" TextView
+    t =     9.06s     Synthesize event
+    t =     9.39s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    10.56s Waiting 20.0s for "oc.key.space" Any to exist
+    t =    11.60s     Checking `Expect predicate `existsNoRetry == 1` for object "oc.key.space" Any`
+    t =    11.61s         Checking existence of `"oc.key.space" Any`
+    t =    12.09s Tap "oc.key.w" Any
+    t =    12.09s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    12.12s     Find the "oc.key.w" Any
+    t =    12.51s     Check for interrupting elements affecting "oc.key.w" Button
+    t =    12.64s     Synthesize event
+    t =    12.98s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    13.01s Tap "oc.key.o" Any
+    t =    13.01s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    13.03s     Find the "oc.key.o" Any
+    t =    13.76s     Check for interrupting elements affecting "oc.key.o" Button
+    t =    14.00s     Synthesize event
+    t =    14.34s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    14.34s Tap "oc.key.y" Any
+    t =    14.34s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    14.34s     Find the "oc.key.y" Any
+    t =    14.91s     Check for interrupting elements affecting "oc.key.y" Button
+    t =    15.07s     Synthesize event
+    t =    15.39s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    15.40s Tap "oc.key.a" Any
+    t =    15.40s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    15.44s     Find the "oc.key.a" Any
+    t =    16.27s     Check for interrupting elements affecting "oc.key.a" Button
+    t =    16.47s     Synthesize event
+    t =    16.81s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    16.82s Tap "oc.key.o" Any
+    t =    16.82s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    16.83s     Find the "oc.key.o" Any
+    t =    17.22s     Check for interrupting elements affecting "oc.key.o" Button
+    t =    17.34s     Synthesize event
+    t =    17.68s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    17.69s Tap "oc.key.c" Any
+    t =    17.69s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    17.70s     Find the "oc.key.c" Any
+    t =    18.34s     Check for interrupting elements affecting "oc.key.c" Button
+    t =    18.45s     Synthesize event
+    t =    18.78s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    18.79s Tap "oc.key.h" Any
+    t =    18.79s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    18.79s     Find the "oc.key.h" Any
+    t =    19.31s     Check for interrupting elements affecting "oc.key.h" Button
+    t =    19.47s     Synthesize event
+    t =    19.85s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    19.86s Tap "oc.key.i" Any
+    t =    19.86s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    19.87s     Find the "oc.key.i" Any
+    t =    20.26s     Check for interrupting elements affecting "oc.key.i" Button
+    t =    20.41s     Synthesize event
+    t =    20.73s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    20.74s Tap "oc.key.h" Any
+    t =    20.75s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    20.75s     Find the "oc.key.h" Any
+    t =    21.08s     Check for interrupting elements affecting "oc.key.h" Button
+    t =    21.18s     Synthesize event
+    t =    21.50s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    21.50s Tap "oc.key.u" Any
+    t =    21.50s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    21.51s     Find the "oc.key.u" Any
+    t =    21.85s     Check for interrupting elements affecting "oc.key.u" Button
+    t =    21.98s     Synthesize event
+    t =    22.30s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    22.30s Tap "oc.key.o" Any
+    t =    22.30s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    22.32s     Find the "oc.key.o" Any
+    t =    22.66s     Check for interrupting elements affecting "oc.key.o" Button
+    t =    22.78s     Synthesize event
+    t =    23.09s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    23.10s Tap "oc.key.g" Any
+    t =    23.10s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    23.11s     Find the "oc.key.g" Any
+    t =    23.84s     Check for interrupting elements affecting "oc.key.g" Button
+    t =    23.98s     Synthesize event
+    t =    24.36s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    24.36s Tap "oc.key.u" Any
+    t =    24.36s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    24.37s     Find the "oc.key.u" Any
+    t =    24.89s     Check for interrupting elements affecting "oc.key.u" Button
+    t =    25.17s     Synthesize event
+    t =    25.54s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    25.55s Tap "oc.key.o" Any
+    t =    25.55s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    25.56s     Find the "oc.key.o" Any
+    t =    25.94s     Check for interrupting elements affecting "oc.key.o" Button
+    t =    26.29s     Synthesize event
+    t =    26.62s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    26.63s Checking existence of `"oc.candidate.0" Any`
+    t =    27.59s Added attachment named 'embedded-sentence-light'
+    t =    27.60s Tap "oc.key.space" Any
+    t =    27.60s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    27.61s     Find the "oc.key.space" Any
+    t =    28.21s     Check for interrupting elements affecting "oc.key.space" Button
+    t =    28.33s     Synthesize event
+    t =    28.64s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    28.65s Find the "oc.testhost.field" TextView
+    t =    28.74s Tear Down
+Test Case '-[OrangeCellUITests.EmbeddedKeyboardUITests testSentenceIsCommittedBySpace]' passed (29.051 seconds).
+Test Suite 'EmbeddedKeyboardUITests' failed at 2026-11-25 09:30:25.432.
+	 Executed 12 tests, with 1 failure (0 unexpected) in 304.251 (304.268) seconds
+Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-25 09:30:25.440.
+	 Executed 12 tests, with 1 failure (0 unexpected) in 304.251 (304.276) seconds
+Test Suite 'Selected tests' failed at 2026-11-25 09:30:25.441.
+	 Executed 12 tests, with 1 failure (0 unexpected) in 304.251 (304.278) seconds
+2026-11-25 09:31:27.825 xcodebuild[4982:20799] [MT] IDETestOperationsObserverDebug: 630.375 elapsed -- Testing started completed.
+2026-11-25 09:31:27.827 xcodebuild[4982:20799] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 09:31:27.827 xcodebuild[4982:20799] [MT] IDETestOperationsObserverDebug: 630.375 sec, +630.375 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-embedded.xcresult
+
+Failing tests:
+	EmbeddedKeyboardUITests.testDeleteRepeatsWhenHeld()
+
+** TEST EXECUTE FAILED **
+
+Testing started

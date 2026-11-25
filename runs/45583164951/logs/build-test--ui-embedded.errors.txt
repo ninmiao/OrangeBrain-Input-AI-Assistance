@@ -1,0 +1,5 @@
+401:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/EmbeddedKeyboardUITests.swift:51: error: -[OrangeCellUITests.EmbeddedKeyboardUITests testDeleteRepeatsWhenHeld] : failed - holding delete should remove several characters
+403:Test Case '-[OrangeCellUITests.EmbeddedKeyboardUITests testDeleteRepeatsWhenHeld]' failed (44.458 seconds).
+1210:Test Suite 'EmbeddedKeyboardUITests' failed at 2026-11-25 09:30:25.432.
+1212:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-25 09:30:25.440.
+1214:Test Suite 'Selected tests' failed at 2026-11-25 09:30:25.441.

@@ -1,0 +1,283 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/OrangeCell.xcodeproj -scheme OCUITests -configuration Release -destination id=F92199FE-EE0C-41CB-BEE5-A31EE01E4E9E -derivedDataPath /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd "-only-testing:OrangeCellUITests/KeyboardUITests/testLearningSurvivesAKillRightAfterTheCommit" -resultBundlePath /Users/runner/work/_temp/results/ui-kill.xcresult
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  OCRime: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCRime
+  OCKeyboardUI: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCKeyboardUI
+  OCCore: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore
+
+Writing result bundle at path:
+	/Users/runner/work/_temp/results/ui-kill.xcresult
+
+2026-11-25 03:51:43.229541+0000 OrangeCellUITests-Runner[20146:66661] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-25 03:51:45.984.
+Test Suite 'OrangeCellUITests.xctest' started at 2026-11-25 03:51:45.985.
+Test Suite 'KeyboardUITests' started at 2026-11-25 03:51:45.985.
+2026-11-25 03:51:49.114 xcodebuild[18858:63275] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-25 03:51:49.127 xcodebuild[18858:63275] [MT] IDELaunchParametersSnapshot: no debugger version
+Test Case '-[OrangeCellUITests.KeyboardUITests testLearningSurvivesAKillRightAfterTheCommit]' started.
+    t =     0.00s Start Test at 2026-11-25 03:51:45.987
+    t =     0.22s Set Up
+    t =     0.23s Open io.github.ninmiao.orangecell.testhost
+    t =     0.23s     Launch io.github.ninmiao.orangecell.testhost
+objc[20146]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x1060e4310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x106048398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =    17.62s         Setting up automation session
+    t =    20.56s         Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    22.64s Waiting 30.0s for "oc.testhost.field" TextField to exist
+    t =    23.69s     Checking `Expect predicate `existsNoRetry == 1` for object "oc.testhost.field" TextField`
+    t =    23.69s         Checking existence of `"oc.testhost.field" TextField`
+    t =    23.89s Tap "oc.testhost.field" TextField
+    t =    23.89s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    23.90s     Find the "oc.testhost.field" TextField
+    t =    23.97s     Check for interrupting elements affecting "oc.testhost.field" TextField
+    t =    24.07s     Synthesize event
+    t =    24.45s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    33.29s Checking existence of `"inputView" Other`
+    t =    35.37s Find the "inputView" Other
+    t =    35.84s Find the Window (First Match)
+    t =    35.98s Find the Window (First Match)
+OCUI keyboardTop pixels=461.0 tree=478.0 width=402.0
+    t =    36.23s Find the Window (First Match)
+OCUI bottom row key centres: [28, 83, 208, 353]
+    t =    36.30s Find the "oc.testhost.field" TextField
+    t =    36.36s Find the Window (First Match)
+    t =    36.37s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (282.6, 723.0)
+    t =    36.37s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    36.37s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    36.43s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    36.51s     Synthesize event
+    t =    36.52s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    36.56s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    36.60s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    36.93s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    38.19s Find the Window (First Match)
+    t =    38.24s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (372.9, 723.0)
+    t =    38.25s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    38.25s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    38.34s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    38.40s     Synthesize event
+    t =    38.41s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    38.46s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    38.51s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    38.84s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    39.35s Find the Window (First Match)
+    t =    39.37s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (372.9, 723.0)
+    t =    39.37s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    39.37s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    39.43s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    39.49s     Synthesize event
+    t =    39.50s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    39.54s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    39.58s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    39.91s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    40.43s Find the "oc.testhost.field" TextField
+OCUI warm-up: field before= after=
+    t =    40.52s Find the Window (First Match)
+    t =    40.53s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (60.3, 627.0)
+    t =    40.53s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    40.53s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    40.59s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    40.66s     Synthesize event
+    t =    40.67s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    40.71s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    40.78s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    41.11s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    41.37s Find the Window (First Match)
+    t =    41.43s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (341.7, 627.0)
+    t =    41.43s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    41.44s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    41.65s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    41.78s     Synthesize event
+    t =    41.80s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    41.87s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    42.04s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    42.42s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    42.68s Find the Window (First Match)
+    t =    42.71s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (221.1, 627.0)
+    t =    42.71s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    42.71s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    42.78s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    42.85s     Synthesize event
+    t =    42.88s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    42.99s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    43.07s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    43.40s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    43.66s Find the Window (First Match)
+    t =    43.70s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (42.6, 675.0)
+    t =    43.70s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    43.70s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    43.75s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    43.82s     Synthesize event
+    t =    43.82s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    43.87s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    43.90s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    44.25s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    44.51s Find the Window (First Match)
+    t =    44.52s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (341.7, 627.0)
+    t =    44.52s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    44.53s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    44.60s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    44.65s     Synthesize event
+    t =    44.66s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    44.70s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    44.77s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    45.11s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    45.36s Find the Window (First Match)
+    t =    45.38s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (160.2, 723.0)
+    t =    45.38s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    45.38s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    45.43s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    45.48s     Synthesize event
+    t =    45.49s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    45.55s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    45.61s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    45.95s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    46.21s Find the Window (First Match)
+    t =    46.24s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (240.6, 675.0)
+    t =    46.24s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    46.24s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    46.30s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    46.37s     Synthesize event
+    t =    46.38s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    46.43s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    46.50s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    46.84s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    47.10s Find the Window (First Match)
+    t =    47.11s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (301.5, 627.0)
+    t =    47.11s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    47.11s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    47.16s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    47.20s     Synthesize event
+    t =    47.21s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    47.25s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    47.32s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    47.65s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    47.91s Find the Window (First Match)
+    t =    47.95s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (240.6, 675.0)
+    t =    47.95s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    47.95s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    48.00s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    48.08s     Synthesize event
+    t =    48.09s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    48.13s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    48.20s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    48.56s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    48.82s Find the Window (First Match)
+    t =    48.83s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (261.3, 627.0)
+    t =    48.83s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    48.83s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    48.88s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    48.95s     Synthesize event
+    t =    48.96s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    48.99s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    49.05s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    49.38s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    49.65s Find the Window (First Match)
+    t =    49.66s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (341.7, 627.0)
+    t =    49.66s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    49.67s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    49.73s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    49.79s     Synthesize event
+    t =    49.80s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    49.84s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    49.90s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    50.23s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    50.59s Find the Window (First Match)
+    t =    50.63s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (201.0, 675.0)
+    t =    50.63s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    50.63s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    50.69s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    50.79s     Synthesize event
+    t =    50.80s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    50.86s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    50.92s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    51.27s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    51.53s Find the Window (First Match)
+    t =    51.55s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (261.3, 627.0)
+    t =    51.55s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    51.55s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    51.59s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    51.64s     Synthesize event
+    t =    51.65s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    51.69s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    51.74s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    52.08s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    52.35s Find the Window (First Match)
+    t =    52.37s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (341.7, 627.0)
+    t =    52.37s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    52.38s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    52.43s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    52.49s     Synthesize event
+    t =    52.50s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    52.55s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    52.62s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    52.96s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    54.23s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (167.0, 503.0)
+    t =    54.23s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    54.24s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    54.33s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    54.39s     Synthesize event
+    t =    54.40s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    54.45s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    54.49s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    54.84s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    54.85s Find the "oc.testhost.field" TextField
+    t =    55.33s Find the "oc.testhost.field" TextField
+    t =    55.82s Find the "oc.testhost.field" TextField
+    t =    56.28s Find the "oc.testhost.field" TextField
+    t =    56.75s Find the "oc.testhost.field" TextField
+    t =    57.22s Find the "oc.testhost.field" TextField
+    t =    57.70s Find the "oc.testhost.field" TextField
+    t =    58.17s Find the "oc.testhost.field" TextField
+    t =    58.65s Find the "oc.testhost.field" TextField
+    t =    59.11s Find the "oc.testhost.field" TextField
+    t =    59.59s Find the "oc.testhost.field" TextField
+    t =    60.08s Find the "oc.testhost.field" TextField
+    t =    60.57s Find the "oc.testhost.field" TextField
+    t =    61.17s Find the "oc.testhost.field" TextField
+    t =    61.66s Find the "oc.testhost.field" TextField
+    t =    62.19s Find the "oc.testhost.field" TextField
+    t =    62.68s Find the "oc.testhost.field" TextField
+    t =    63.15s Find the "oc.testhost.field" TextField
+    t =    63.64s Find the "oc.testhost.field" TextField
+    t =    64.15s Find the "oc.testhost.field" TextField
+    t =    64.63s Find the "oc.testhost.field" TextField
+    t =    65.11s Find the "oc.testhost.field" TextField
+    t =    65.60s Find the "oc.testhost.field" TextField
+    t =    66.12s Find the "oc.testhost.field" TextField
+    t =    66.60s Find the "oc.testhost.field" TextField
+    t =    67.08s Find the "oc.testhost.field" TextField
+    t =    67.55s Find the "oc.testhost.field" TextField
+    t =    68.05s Find the "oc.testhost.field" TextField
+    t =    68.51s Find the "oc.testhost.field" TextField
+    t =    68.97s Find the "oc.testhost.field" TextField
+    t =    69.45s Find the "oc.testhost.field" TextField
+    t =    70.17s Added attachment named 'failure'
+    t =    70.18s Find the "oc.testhost.field" TextField
+OCUI field=
+/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:283: error: -[OrangeCellUITests.KeyboardUITests testLearningSurvivesAKillRightAfterTheCommit] : failed - the second candidate should have inserted 我要吃
+    t =    70.45s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testLearningSurvivesAKillRightAfterTheCommit]' failed (70.819 seconds).
+Test Suite 'KeyboardUITests' failed at 2026-11-25 03:52:56.806.
+	 Executed 1 test, with 1 failure (0 unexpected) in 70.819 (70.821) seconds
+Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-25 03:52:56.807.
+	 Executed 1 test, with 1 failure (0 unexpected) in 70.819 (70.822) seconds
+Test Suite 'Selected tests' failed at 2026-11-25 03:52:56.807.
+	 Executed 1 test, with 1 failure (0 unexpected) in 70.819 (70.823) seconds
+2026-11-25 03:53:50.741 xcodebuild[18858:63275] [MT] IDETestOperationsObserverDebug: 156.047 elapsed -- Testing started completed.
+2026-11-25 03:53:50.742 xcodebuild[18858:63275] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 03:53:50.742 xcodebuild[18858:63275] [MT] IDETestOperationsObserverDebug: 156.047 sec, +156.047 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-kill.xcresult
+
+Failing tests:
+	KeyboardUITests.testLearningSurvivesAKillRightAfterTheCommit()
+
+** TEST EXECUTE FAILED **
+
+Testing started

@@ -1,0 +1,8 @@
+total 31240
+-rw-r--r-- 1 runner runner 31983170 Nov 24 20:35 OrangeCell-iOS-0.2.14.ipa
+-rw-r--r-- 1 runner runner       46 Nov 24 20:35 entitlements.json
+wrote /home/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/release/sidestore/source.json (OrangeCell-iOS-0.2.14.ipa, 31983170 bytes, sha256 ac52192938a0736ad12d8f63df3bf98eb7695c66748307f2e423041fcc99465a)
+entitlements declared in the source: ['com.apple.security.application-groups']
+https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/tag/ios-nightly
+{"assets":["OrangeCell-iOS-0.2.0.ipa","OrangeCell-iOS-0.2.14.ipa"],"url":"https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/tag/ios-nightly"}
+SideStore source: https://raw.githubusercontent.com/ninmiao/OrangeBrain-Input-AI-Assistance/ci-results/sidestore/source.json (published by the publish-results job)

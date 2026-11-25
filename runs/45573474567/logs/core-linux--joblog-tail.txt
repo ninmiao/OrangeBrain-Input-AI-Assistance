@@ -1,0 +1,400 @@
+2026-11-25T08:07:55.4871067Z env:
+2026-11-25T08:07:55.4871280Z   OC_VERSION: 0.2.19
+2026-11-25T08:07:55.4871523Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T08:07:55.4871934Z   CI_OUT: /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/core-linux
+2026-11-25T08:07:55.4872333Z ##[endgroup]
+2026-11-25T08:07:55.5253697Z ##[group]swift-test-linux
+2026-11-25T08:07:55.8896856Z Building for debugging...
+2026-11-25T08:07:55.8929811Z [0/16] Write sources
+2026-11-25T08:07:59.4351279Z [2/16] Write swift-version-24593BA9C3E375BF.txt
+2026-11-25T08:07:59.4352040Z [3/16] Compiling CNativeCore shim.cpp
+2026-11-25T08:08:00.5021472Z [5/29] Emitting module OCCore
+2026-11-25T08:08:03.6781483Z [6/33] Compiling OCCore NativeCore.swift
+2026-11-25T08:08:03.6782140Z [7/33] Compiling OCCore ProvisioningProfile.swift
+2026-11-25T08:08:03.6782595Z [8/33] Compiling OCCore RimeData.swift
+2026-11-25T08:08:03.6783379Z [9/33] Compiling OCCore TextTraits.swift
+2026-11-25T08:08:03.6788297Z [10/33] Compiling OCCore AiBarState.swift
+2026-11-25T08:08:03.6789262Z [11/33] Compiling OCCore AiCall.swift
+2026-11-25T08:08:03.6789770Z [12/33] Compiling OCCore AiChatClient.swift
+2026-11-25T08:08:03.6790234Z [13/33] Compiling OCCore AiController.swift
+2026-11-25T08:08:03.6790642Z [14/33] Compiling OCCore AppGroupLocator.swift
+2026-11-25T08:08:03.6791185Z [15/33] Compiling OCCore Diagnostics.swift
+2026-11-25T08:08:03.6791550Z [16/33] Compiling OCCore KeyStorage.swift
+2026-11-25T08:08:03.6791934Z [17/33] Compiling OCCore KeyboardSettings.swift
+2026-11-25T08:08:03.7121008Z [18/33] Compiling OCCore AiModes.swift
+2026-11-25T08:08:03.7121541Z [19/33] Compiling OCCore AiRequestCoordinator.swift
+2026-11-25T08:08:03.7122005Z [20/33] Compiling OCCore AiStore.swift
+2026-11-25T08:08:03.7122266Z [21/33] Compiling OCCore AiTypes.swift
+2026-11-25T08:08:03.7697655Z [22/34] Wrapping AST for OCCore for debugging
+2026-11-25T08:08:03.7700265Z [23/34] Write Objects.LinkFileList
+2026-11-25T08:08:03.7822817Z [24/37] Archiving libOCCore.a
+2026-11-25T08:08:04.0930944Z [26/42] Compiling OCCoreTests AiControllerTests.swift
+2026-11-25T08:08:04.0932687Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:86:9: error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.0934724Z  79 | @MainActor
+2026-11-25T08:08:04.0935242Z  80 | final class AiRequestCoordinatorTests: XCTestCase {
+2026-11-25T08:08:04.0935693Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.0936313Z     |                 `- note: mutation of this property is only permitted within the actor
+2026-11-25T08:08:04.0936855Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.0937351Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.0937712Z  84 | 
+2026-11-25T08:08:04.0937981Z  85 |     override func setUp() {
+2026-11-25T08:08:04.0938369Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.0939186Z     |         `- error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.0939752Z  87 |         states = []
+2026-11-25T08:08:04.0940347Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.0940872Z 
+2026-11-25T08:08:04.0941672Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:87:9: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.0943132Z  80 | final class AiRequestCoordinatorTests: XCTestCase {
+2026-11-25T08:08:04.0943641Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.0944456Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.0944940Z     |                 `- note: mutation of this property is only permitted within the actor
+2026-11-25T08:08:04.0945467Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.0945964Z  84 | 
+2026-11-25T08:08:04.0946241Z  85 |     override func setUp() {
+2026-11-25T08:08:04.0946620Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.0946971Z  87 |         states = []
+2026-11-25T08:08:04.0947462Z     |         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.0948368Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.0949228Z  89 |     }
+2026-11-25T08:08:04.0949406Z 
+2026-11-25T08:08:04.0950350Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:9: error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.0951689Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.0952442Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.0952904Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.0953500Z     |                 `- note: mutation of this property is only permitted within the actor
+2026-11-25T08:08:04.0953984Z  84 | 
+2026-11-25T08:08:04.0954310Z  85 |     override func setUp() {
+2026-11-25T08:08:04.0954824Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.0955242Z  87 |         states = []
+2026-11-25T08:08:04.0955881Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.0956714Z     |         `- error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.0957324Z  89 |     }
+2026-11-25T08:08:04.0957572Z  90 | 
+2026-11-25T08:08:04.0957717Z 
+2026-11-25T08:08:04.0979323Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:23: error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+2026-11-25T08:08:04.0980788Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.0981161Z  87 |         states = []
+2026-11-25T08:08:04.0981850Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.0982917Z     |                       `- error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+2026-11-25T08:08:04.0983660Z  89 |     }
+2026-11-25T08:08:04.0983938Z  90 | 
+2026-11-25T08:08:04.0984107Z 
+2026-11-25T08:08:04.0985134Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiRequestCoordinator.swift:30:12: note: calls to initializer 'init(transport:publish:)' from outside of its actor context are implicitly asynchronous
+2026-11-25T08:08:04.0986604Z 28 |     private let publish: (AiState) -> Void
+2026-11-25T08:08:04.0986994Z 29 | 
+2026-11-25T08:08:04.0987471Z 30 |     public init(transport: @escaping AiTransportCall, publish: @escaping (AiState) -> Void) {
+2026-11-25T08:08:04.0988342Z    |            `- note: calls to initializer 'init(transport:publish:)' from outside of its actor context are implicitly asynchronous
+2026-11-25T08:08:04.0989197Z 31 |         self.transport = transport
+2026-11-25T08:08:04.0989626Z 32 |         self.publish = publish
+2026-11-25T08:08:04.0989849Z 
+2026-11-25T08:08:04.0991035Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:55: error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+2026-11-25T08:08:04.0992228Z  79 | @MainActor
+2026-11-25T08:08:04.0992612Z  80 | final class AiRequestCoordinatorTests: XCTestCase {
+2026-11-25T08:08:04.0993103Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.0993554Z     |                 `- note: property declared here
+2026-11-25T08:08:04.0993984Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.0994458Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.0994870Z     :
+2026-11-25T08:08:04.0995180Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.0995602Z  87 |         states = []
+2026-11-25T08:08:04.0996241Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.0997225Z     |                                                       `- error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+2026-11-25T08:08:04.0997925Z  89 |     }
+2026-11-25T08:08:04.0998197Z  90 | 
+2026-11-25T08:08:04.0998356Z 
+2026-11-25T08:08:04.0999455Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:105: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1000797Z  80 | final class AiRequestCoordinatorTests: XCTestCase {
+2026-11-25T08:08:04.1001246Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.1001707Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.1002214Z     |                 `- note: mutation of this property is only permitted within the actor
+2026-11-25T08:08:04.1002802Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.1003207Z  84 | 
+2026-11-25T08:08:04.1003459Z     :
+2026-11-25T08:08:04.1003803Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1004167Z  87 |         states = []
+2026-11-25T08:08:04.1004825Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1005880Z     |                                                                                                         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1006591Z  89 |     }
+2026-11-25T08:08:04.1006879Z  90 | 
+2026-11-25T08:08:04.1007043Z 
+2026-11-25T08:08:04.1007450Z [#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+2026-11-25T08:08:04.1008204Z [27/42] Compiling OCCoreTests AiCoordinatorTests.swift
+2026-11-25T08:08:04.1009551Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:86:9: error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1010729Z  79 | @MainActor
+2026-11-25T08:08:04.1011108Z  80 | final class AiRequestCoordinatorTests: XCTestCase {
+2026-11-25T08:08:04.1011576Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.1012118Z     |                 `- note: mutation of this property is only permitted within the actor
+2026-11-25T08:08:04.1012672Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.1013143Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.1013549Z  84 | 
+2026-11-25T08:08:04.1013834Z  85 |     override func setUp() {
+2026-11-25T08:08:04.1014214Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1014857Z     |         `- error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1015464Z  87 |         states = []
+2026-11-25T08:08:04.1016247Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1016828Z 
+2026-11-25T08:08:04.1017714Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:87:9: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1019212Z  80 | final class AiRequestCoordinatorTests: XCTestCase {
+2026-11-25T08:08:04.1019734Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.1020165Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.1020659Z     |                 `- note: mutation of this property is only permitted within the actor
+2026-11-25T08:08:04.1021233Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.1021628Z  84 | 
+2026-11-25T08:08:04.1021928Z  85 |     override func setUp() {
+2026-11-25T08:08:04.1022295Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1022712Z  87 |         states = []
+2026-11-25T08:08:04.1023272Z     |         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1024173Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1024994Z  89 |     }
+2026-11-25T08:08:04.1025182Z 
+2026-11-25T08:08:04.1026205Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:9: error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1027393Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.1027900Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.1028356Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.1029097Z     |                 `- note: mutation of this property is only permitted within the actor
+2026-11-25T08:08:04.1029586Z  84 | 
+2026-11-25T08:08:04.1029924Z  85 |     override func setUp() {
+2026-11-25T08:08:04.1030351Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1030739Z  87 |         states = []
+2026-11-25T08:08:04.1031392Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1032283Z     |         `- error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1032830Z  89 |     }
+2026-11-25T08:08:04.1033186Z  90 | 
+2026-11-25T08:08:04.1033362Z 
+2026-11-25T08:08:04.1034300Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:23: error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+2026-11-25T08:08:04.1035565Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1035974Z  87 |         states = []
+2026-11-25T08:08:04.1036584Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1037664Z     |                       `- error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+2026-11-25T08:08:04.1038353Z  89 |     }
+2026-11-25T08:08:04.1038863Z  90 | 
+2026-11-25T08:08:04.1039063Z 
+2026-11-25T08:08:04.1039984Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiRequestCoordinator.swift:30:12: note: calls to initializer 'init(transport:publish:)' from outside of its actor context are implicitly asynchronous
+2026-11-25T08:08:04.1041169Z 28 |     private let publish: (AiState) -> Void
+2026-11-25T08:08:04.1041617Z 29 | 
+2026-11-25T08:08:04.1042103Z 30 |     public init(transport: @escaping AiTransportCall, publish: @escaping (AiState) -> Void) {
+2026-11-25T08:08:04.1043059Z    |            `- note: calls to initializer 'init(transport:publish:)' from outside of its actor context are implicitly asynchronous
+2026-11-25T08:08:04.1043739Z 31 |         self.transport = transport
+2026-11-25T08:08:04.1044155Z 32 |         self.publish = publish
+2026-11-25T08:08:04.1044418Z 
+2026-11-25T08:08:04.1045299Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:55: error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+2026-11-25T08:08:04.1046375Z  79 | @MainActor
+2026-11-25T08:08:04.1046758Z  80 | final class AiRequestCoordinatorTests: XCTestCase {
+2026-11-25T08:08:04.1047264Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.1047738Z     |                 `- note: property declared here
+2026-11-25T08:08:04.1048163Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.1048853Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.1049305Z     :
+2026-11-25T08:08:04.1049652Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1050059Z  87 |         states = []
+2026-11-25T08:08:04.1050701Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1051793Z     |                                                       `- error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+2026-11-25T08:08:04.1052405Z  89 |     }
+2026-11-25T08:08:04.1052738Z  90 | 
+2026-11-25T08:08:04.1052938Z 
+2026-11-25T08:08:04.1053776Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:105: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1054966Z  80 | final class AiRequestCoordinatorTests: XCTestCase {
+2026-11-25T08:08:04.1055453Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.1055863Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.1056400Z     |                 `- note: mutation of this property is only permitted within the actor
+2026-11-25T08:08:04.1056975Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.1057403Z  84 | 
+2026-11-25T08:08:04.1057696Z     :
+2026-11-25T08:08:04.1058008Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1058666Z  87 |         states = []
+2026-11-25T08:08:04.1059313Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1060304Z     |                                                                                                         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1060962Z  89 |     }
+2026-11-25T08:08:04.1061225Z  90 | 
+2026-11-25T08:08:04.1061388Z 
+2026-11-25T08:08:04.1061783Z [#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+2026-11-25T08:08:04.1062439Z [28/42] Compiling OCCoreTests AiStoreTests.swift
+2026-11-25T08:08:04.1063646Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:86:9: error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1064794Z  79 | @MainActor
+2026-11-25T08:08:04.1065149Z  80 | final class AiRequestCoordinatorTests: XCTestCase {
+2026-11-25T08:08:04.1065752Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.1066286Z     |                 `- note: mutation of this property is only permitted within the actor
+2026-11-25T08:08:04.1066780Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.1067244Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.1067670Z  84 | 
+2026-11-25T08:08:04.1068116Z  85 |     override func setUp() {
+2026-11-25T08:08:04.1068679Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1069128Z     |         `- error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1069599Z  87 |         states = []
+2026-11-25T08:08:04.1070146Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1070577Z 
+2026-11-25T08:08:04.1071474Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:87:9: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1072601Z  80 | final class AiRequestCoordinatorTests: XCTestCase {
+2026-11-25T08:08:04.1073050Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.1073490Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.1073971Z     |                 `- note: mutation of this property is only permitted within the actor
+2026-11-25T08:08:04.1074487Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.1074830Z  84 | 
+2026-11-25T08:08:04.1075093Z  85 |     override func setUp() {
+2026-11-25T08:08:04.1075592Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1075990Z  87 |         states = []
+2026-11-25T08:08:04.1076453Z     |         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1077213Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1077787Z  89 |     }
+2026-11-25T08:08:04.1077951Z 
+2026-11-25T08:08:04.1078914Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:9: error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1079918Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.1080278Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.1080722Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.1081199Z     |                 `- note: mutation of this property is only permitted within the actor
+2026-11-25T08:08:04.1081633Z  84 | 
+2026-11-25T08:08:04.1081916Z  85 |     override func setUp() {
+2026-11-25T08:08:04.1082228Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1082603Z  87 |         states = []
+2026-11-25T08:08:04.1083147Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1083906Z     |         `- error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1084466Z  89 |     }
+2026-11-25T08:08:04.1084696Z  90 | 
+2026-11-25T08:08:04.1084836Z 
+2026-11-25T08:08:04.1085715Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:23: error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+2026-11-25T08:08:04.1086819Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1087171Z  87 |         states = []
+2026-11-25T08:08:04.1087756Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1088857Z     |                       `- error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+2026-11-25T08:08:04.1089535Z  89 |     }
+2026-11-25T08:08:04.1089804Z  90 | 
+2026-11-25T08:08:04.1089926Z 
+2026-11-25T08:08:04.1090900Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiRequestCoordinator.swift:30:12: note: calls to initializer 'init(transport:publish:)' from outside of its actor context are implicitly asynchronous
+2026-11-25T08:08:04.1092084Z 28 |     private let publish: (AiState) -> Void
+2026-11-25T08:08:04.1092413Z 29 | 
+2026-11-25T08:08:04.1092896Z 30 |     public init(transport: @escaping AiTransportCall, publish: @escaping (AiState) -> Void) {
+2026-11-25T08:08:04.1093669Z    |            `- note: calls to initializer 'init(transport:publish:)' from outside of its actor context are implicitly asynchronous
+2026-11-25T08:08:04.1094228Z 31 |         self.transport = transport
+2026-11-25T08:08:04.1094573Z 32 |         self.publish = publish
+2026-11-25T08:08:04.1094758Z 
+2026-11-25T08:08:04.1095509Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:55: error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+2026-11-25T08:08:04.1096478Z  79 | @MainActor
+2026-11-25T08:08:04.1096793Z  80 | final class AiRequestCoordinatorTests: XCTestCase {
+2026-11-25T08:08:04.1097182Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.1097636Z     |                 `- note: property declared here
+2026-11-25T08:08:04.1097979Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.1098692Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.1099036Z     :
+2026-11-25T08:08:04.1099316Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1099681Z  87 |         states = []
+2026-11-25T08:08:04.1100200Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1101010Z     |                                                       `- error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+2026-11-25T08:08:04.1101569Z  89 |     }
+2026-11-25T08:08:04.1101826Z  90 | 
+2026-11-25T08:08:04.1101968Z 
+2026-11-25T08:08:04.1102761Z /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:105: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1103809Z  80 | final class AiRequestCoordinatorTests: XCTestCase {
+2026-11-25T08:08:04.1104242Z  81 |     private var transport = ScriptedTransport()
+2026-11-25T08:08:04.1104622Z  82 |     private var states: [AiState] = []
+2026-11-25T08:08:04.1105081Z     |                 `- note: mutation of this property is only permitted within the actor
+2026-11-25T08:08:04.1105727Z  83 |     private var coordinator: AiRequestCoordinator!
+2026-11-25T08:08:04.1106073Z  84 | 
+2026-11-25T08:08:04.1106328Z     :
+2026-11-25T08:08:04.1106614Z  86 |         transport = ScriptedTransport()
+2026-11-25T08:08:04.1106968Z  87 |         states = []
+2026-11-25T08:08:04.1107574Z  88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+2026-11-25T08:08:04.1108667Z     |                                                                                                         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.1109249Z  89 |     }
+2026-11-25T08:08:04.1109561Z  90 | 
+2026-11-25T08:08:04.1109683Z 
+2026-11-25T08:08:04.1110080Z [#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+2026-11-25T08:08:04.1159650Z [29/44] Compiling OCCoreTests NativeCoreTests.swift
+2026-11-25T08:08:04.1160122Z [30/44] Compiling OCCoreTests ProvisioningProfileTests.swift
+2026-11-25T08:08:04.1160576Z [31/44] Emitting module OCCoreTests
+2026-11-25T08:08:04.1160988Z [32/44] Compiling OCCoreTests AiTransportTests.swift
+2026-11-25T08:08:04.1161424Z [33/44] Compiling OCCoreTests KeyStorageTests.swift
+2026-11-25T08:08:04.2975586Z [34/44] Compiling OCCoreTests TextTraitsTests.swift
+2026-11-25T08:08:04.2976477Z [35/44] Compiling OCCoreTests UserDictionaryTests.swift
+2026-11-25T08:08:04.3170005Z error: fatalError
+2026-11-25T08:08:04.3212706Z ##[endgroup]
+2026-11-25T08:08:04.3245460Z ##[error]step 'swift-test-linux' failed with exit code 1
+2026-11-25T08:08:04.3253900Z ##[error]26:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:86:9: error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.3264705Z ##[error]36:    |         `- error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.3276944Z ##[error]40:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:87:9: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.3287977Z ##[error]50:    |         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.3300586Z ##[error]54:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:9: error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.3311609Z ##[error]64:    |         `- error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+2026-11-25T08:08:04.3325526Z ##[error]68:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:23: error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+2026-11-25T08:08:04.3336077Z ##[error]72:    |                       `- error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+2026-11-25T08:08:04.3366058Z ##[error]Process completed with exit code 1.
+2026-11-25T08:08:04.3402416Z ##[group]Run python3 ios/scripts/check_tests.py "$CI_OUT/logs/swift-test-linux.log"
+2026-11-25T08:08:04.3402905Z [36;1mpython3 ios/scripts/check_tests.py "$CI_OUT/logs/swift-test-linux.log"[0m
+2026-11-25T08:08:04.3403527Z shell: bash --noprofile --norc -e -o pipefail {0}
+2026-11-25T08:08:04.3403786Z env:
+2026-11-25T08:08:04.3404270Z   OC_VERSION: 0.2.19
+2026-11-25T08:08:04.3404513Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T08:08:04.3404916Z   CI_OUT: /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/core-linux
+2026-11-25T08:08:04.3405314Z ##[endgroup]
+2026-11-25T08:08:04.3955826Z check_tests: no test was executed
+2026-11-25T08:08:04.4005185Z ##[error]Process completed with exit code 1.
+2026-11-25T08:08:04.4030065Z ##[group]Run python3 ios/scripts/ci_summary.py core-linux --out "$CI_OUT"
+2026-11-25T08:08:04.4030671Z [36;1mpython3 ios/scripts/ci_summary.py core-linux --out "$CI_OUT"[0m
+2026-11-25T08:08:04.4031110Z shell: bash --noprofile --norc -e -o pipefail {0}
+2026-11-25T08:08:04.4031377Z env:
+2026-11-25T08:08:04.4031582Z   OC_VERSION: 0.2.19
+2026-11-25T08:08:04.4031807Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T08:08:04.4032213Z   CI_OUT: /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/core-linux
+2026-11-25T08:08:04.4032618Z ##[endgroup]
+2026-11-25T08:08:04.4624662Z #### core-linux
+2026-11-25T08:08:04.4625171Z - native-core C++ test (CMake, with the C API cases): 780 cases passed
+2026-11-25T08:08:04.4625830Z - OCCore `swift test` on Linux: no result
+2026-11-25T08:08:04.4626123Z 
+2026-11-25T08:08:04.4626284Z | step | result | time |
+2026-11-25T08:08:04.4626601Z | --- | --- | --- |
+2026-11-25T08:08:04.4626881Z | apt | ok | 8s |
+2026-11-25T08:08:04.4627314Z | native-core-test | ok | 13s |
+2026-11-25T08:08:04.4627666Z | swift-test-linux | FAILED (1) | 9s |
+2026-11-25T08:08:04.4627900Z 
+2026-11-25T08:08:04.4726391Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-25T08:08:04.4726805Z with:
+2026-11-25T08:08:04.4727027Z   name: ci-core-linux
+2026-11-25T08:08:04.4727300Z   path: ci-out/core-linux
+!ci-out/core-linux/logs/*.log
+
+2026-11-25T08:08:04.4727584Z   if-no-files-found: ignore
+2026-11-25T08:08:04.4727848Z   retention-days: 7
+2026-11-25T08:08:04.4728097Z   compression-level: 6
+2026-11-25T08:08:04.4728320Z   overwrite: false
+2026-11-25T08:08:04.4728876Z   include-hidden-files: false
+2026-11-25T08:08:04.4729117Z   archive: true
+2026-11-25T08:08:04.4729363Z env:
+2026-11-25T08:08:04.4729576Z   OC_VERSION: 0.2.19
+2026-11-25T08:08:04.4729811Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T08:08:04.4730221Z   CI_OUT: /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/core-linux
+2026-11-25T08:08:04.4730637Z ##[endgroup]
+2026-11-25T08:08:04.4734519Z ##[command]/usr/bin/docker exec  c4687d7bbf3dce837f98342d5381c225b04d7644fc2ca08dcb05cc2c3510e2da sh -c "cat /etc/*release | grep ^ID"
+2026-11-25T08:08:04.6640746Z With the provided path, there will be 6 files uploaded
+2026-11-25T08:08:04.6643610Z Artifact name is valid!
+2026-11-25T08:08:04.6644147Z Root directory input is valid!
+2026-11-25T08:08:04.9798556Z Uploading artifact: ci-core-linux.zip
+2026-11-25T08:08:04.9825373Z Beginning upload of artifact content to blob storage
+2026-11-25T08:08:05.1141095Z Uploaded bytes 4308
+2026-11-25T08:08:05.1277742Z Finished uploading artifact content to blob storage!
+2026-11-25T08:08:05.1278710Z SHA256 digest of uploaded artifact is b7a5004a8c956968f890f0d17fbbcbb39ba54bf3aaf8b239a9e309ca586eea63
+2026-11-25T08:08:05.1279344Z Finalizing artifact upload
+2026-11-25T08:08:05.4719953Z Artifact ci-core-linux successfully finalized. Artifact ID 15002837445
+2026-11-25T08:08:05.4720714Z Artifact ci-core-linux has been successfully uploaded! Final size is 4308 bytes. Artifact ID is 15002837445
+2026-11-25T08:08:05.4724147Z Artifact download URL: https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45573474567/artifacts/15002837445
+2026-11-25T08:08:05.4891847Z Post job cleanup.
+2026-11-25T08:08:05.4899455Z ##[command]/usr/bin/docker exec  c4687d7bbf3dce837f98342d5381c225b04d7644fc2ca08dcb05cc2c3510e2da sh -c "cat /etc/*release | grep ^ID"
+2026-11-25T08:08:05.6225005Z [command]/usr/bin/git version
+2026-11-25T08:08:05.6254748Z git version 2.43.0
+2026-11-25T08:08:05.6293882Z Temporarily overriding HOME='/__w/_temp/260fe983-c8e3-4c47-b259-c011973757c8' before making global git config changes
+2026-11-25T08:08:05.6294619Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-25T08:08:05.6295401Z [command]/usr/bin/git config --global --add safe.directory /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance
+2026-11-25T08:08:05.6310425Z Removing SSH command configuration
+2026-11-25T08:08:05.6313482Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-25T08:08:05.6338097Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-25T08:08:05.6492725Z Removing HTTP extra header
+2026-11-25T08:08:05.6495828Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-25T08:08:05.6515695Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-25T08:08:05.6794058Z Removing includeIf entries pointing to credentials config files
+2026-11-25T08:08:05.6794585Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-25T08:08:05.6795725Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-25T08:08:05.7001854Z Stop and remove container: 30856fc8f08246bfac2009852a9a5a49_swift62noblesha256576698469fd3cf95b2abdeb91a7571d3afcd91806c87283dd01d564803554c0f_a7ac80
+2026-11-25T08:08:05.7005938Z ##[command]/usr/bin/docker rm --force c4687d7bbf3dce837f98342d5381c225b04d7644fc2ca08dcb05cc2c3510e2da
+2026-11-25T08:08:05.9348317Z c4687d7bbf3dce837f98342d5381c225b04d7644fc2ca08dcb05cc2c3510e2da
+2026-11-25T08:08:05.9369463Z Remove container network: github_network_ad92e3c8a1b24ca4ae4981bd1d043f38
+2026-11-25T08:08:05.9372559Z ##[command]/usr/bin/docker network rm github_network_ad92e3c8a1b24ca4ae4981bd1d043f38
+2026-11-25T08:08:06.0448368Z github_network_ad92e3c8a1b24ca4ae4981bd1d043f38
+2026-11-25T08:08:06.0511344Z Cleaning up orphan processes

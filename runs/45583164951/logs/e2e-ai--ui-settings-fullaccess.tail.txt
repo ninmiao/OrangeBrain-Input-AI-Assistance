@@ -1,0 +1,30 @@
+    t =    27.20s Tap Button (First Match)
+    t =    27.20s     Wait for com.apple.Preferences to idle
+    t =    27.20s     Find the Button (First Match)
+    t =    27.23s     Check for interrupting elements affecting "Allow" Button
+    t =    27.28s     Synthesize event
+    t =    27.65s     Wait for com.apple.Preferences to idle
+    t =    29.19s Added attachment named 'settings-06-full-access-done'
+    t =    29.19s Requesting snapshot of accessibility hierarchy for app with pid 9378
+    t =    29.27s Requesting snapshot of accessibility hierarchy for app with pid 9378
+    t =    29.32s Added attachment named 'settings-06-full-access-done-tree'
+    t =    29.32s Find the "Allow Full Access" Switch
+OCUI settings.fullAccess.after=1
+    t =    29.35s Tear Down
+Test Case '-[OrangeCellUITests.EnableKeyboardUITests testAddOrangeCellKeyboardAndAllowFullAccess]' passed (30.685 seconds).
+Test Suite 'EnableKeyboardUITests' passed at 2026-11-25 09:21:28.430.
+	 Executed 1 test, with 0 failures (0 unexpected) in 30.685 (30.687) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-25 09:21:28.430.
+	 Executed 1 test, with 0 failures (0 unexpected) in 30.685 (30.687) seconds
+Test Suite 'Selected tests' passed at 2026-11-25 09:21:28.431.
+	 Executed 1 test, with 0 failures (0 unexpected) in 30.685 (30.689) seconds
+2026-11-25 09:21:29.284 xcodebuild[6221:25186] [MT] IDETestOperationsObserverDebug: 65.724 elapsed -- Testing started completed.
+2026-11-25 09:21:29.284 xcodebuild[6221:25186] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 09:21:29.284 xcodebuild[6221:25186] [MT] IDETestOperationsObserverDebug: 65.724 sec, +65.724 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-settings-fullaccess.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

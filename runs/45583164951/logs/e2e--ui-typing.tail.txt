@@ -1,0 +1,30 @@
+    t =    66.46s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (341.7, 627.0)
+    t =    66.46s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    66.46s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    66.52s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    66.60s     Synthesize event
+    t =    66.61s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    66.67s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    66.73s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    67.10s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    67.37s Find the "oc.testhost.field" TextField
+    t =    67.72s Added attachment named 'system-5-english'
+OCUI helper footprint-typing: answered
+    t =   145.29s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testRealExtensionTypesChineseAndEnglish]' passed (146.160 seconds).
+Test Suite 'KeyboardUITests' passed at 2026-11-25 09:28:30.485.
+	 Executed 1 test, with 0 failures (0 unexpected) in 146.160 (146.162) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-25 09:28:30.486.
+	 Executed 1 test, with 0 failures (0 unexpected) in 146.160 (146.163) seconds
+Test Suite 'Selected tests' passed at 2026-11-25 09:28:30.486.
+	 Executed 1 test, with 0 failures (0 unexpected) in 146.160 (146.164) seconds
+2026-11-25 09:28:32.733 xcodebuild[10353:37167] [MT] IDETestOperationsObserverDebug: 255.332 elapsed -- Testing started completed.
+2026-11-25 09:28:32.734 xcodebuild[10353:37167] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 09:28:32.734 xcodebuild[10353:37167] [MT] IDETestOperationsObserverDebug: 255.332 sec, +255.332 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-typing.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

@@ -1,0 +1,5 @@
+49:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:231: error: -[OrangeCellUITests.KeyboardUITests testRealExtensionTypesChineseAndEnglish] : XCTAssertTrue failed - expected 4 or 5 keys on the bottom row, found 1
+51:Test Case '-[OrangeCellUITests.KeyboardUITests testRealExtensionTypesChineseAndEnglish]' failed (44.153 seconds).
+52:Test Suite 'KeyboardUITests' failed at 2026-11-24 19:25:40.862.
+54:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-24 19:25:40.863.
+56:Test Suite 'Selected tests' failed at 2026-11-24 19:25:40.865.

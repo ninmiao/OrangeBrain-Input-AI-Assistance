@@ -1,0 +1,8 @@
+toolchain	0	83
+fetch-deps	0	11
+xcodegen-install	0	0
+xcodegen	0	0
+simulator-create	0	1
+build-sim-release	0	109
+memory-release-minimal	0	138
+memory-release-all	0	151

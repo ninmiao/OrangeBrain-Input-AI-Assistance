@@ -1,0 +1,400 @@
+2026-11-25T08:21:26.9627430Z [0/10] /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/.build/arm64-apple-macosx/debug/OCCorePackageTests.derived/runner.swift
+2026-11-25T08:21:26.9642040Z [2/10] Write sources
+2026-11-25T08:21:27.2957340Z [4/10] Write swift-version-7974D3F7F03D5E95.txt
+2026-11-25T08:21:39.0329770Z [5/10] Compiling CNativeCore shim.cpp
+2026-11-25T08:21:53.7078260Z [7/22] Emitting module OCCore
+2026-11-25T08:21:53.7130020Z [8/22] Compiling OCCore AiStore.swift
+2026-11-25T08:21:53.7343230Z [9/22] Compiling OCCore AiTypes.swift
+2026-11-25T08:21:53.7475110Z [10/22] Compiling OCCore AppGroupLocator.swift
+2026-11-25T08:21:53.7579680Z [11/22] Compiling OCCore Diagnostics.swift
+2026-11-25T08:21:53.7681040Z [12/22] Compiling OCCore KeyStorage.swift
+2026-11-25T08:21:53.7782330Z [13/22] Compiling OCCore AiBarState.swift
+2026-11-25T08:21:53.7891530Z [14/22] Compiling OCCore AiCall.swift
+2026-11-25T08:21:53.8020080Z [15/22] Compiling OCCore AiChatClient.swift
+2026-11-25T08:21:53.8252880Z [16/22] Compiling OCCore AiController.swift
+2026-11-25T08:21:53.8366100Z [17/22] Compiling OCCore AiModes.swift
+2026-11-25T08:21:53.8368650Z [18/22] Compiling OCCore AiRequestCoordinator.swift
+2026-11-25T08:21:56.3314830Z [19/27] Compiling OCCore KeyboardSettings.swift
+2026-11-25T08:21:56.3361320Z [20/27] Compiling OCCore NativeCore.swift
+2026-11-25T08:21:56.3362020Z [21/27] Compiling OCCore ProvisioningProfile.swift
+2026-11-25T08:21:56.3362900Z [22/27] Compiling OCCore RimeData.swift
+2026-11-25T08:21:56.3363300Z [23/27] Compiling OCCore TextTraits.swift
+2026-11-25T08:21:56.3659110Z [23/27] Write Objects.LinkFileList
+2026-11-25T08:21:56.4388670Z [24/27] Archiving libOCCore.a
+2026-11-25T08:22:24.4260570Z [26/34] Compiling OCCoreTests AiControllerTests.swift
+2026-11-25T08:22:24.4369440Z [27/34] Compiling OCCoreTests AiCoordinatorTests.swift
+2026-11-25T08:22:24.4517390Z [28/34] Compiling OCCoreTests AiStoreTests.swift
+2026-11-25T08:22:24.4781420Z [29/37] Emitting module OCCoreTests
+2026-11-25T08:22:24.4893740Z [30/37] Compiling OCCoreTests AiTransportTests.swift
+2026-11-25T08:22:24.4998900Z [31/37] Compiling OCCoreTests KeyStorageTests.swift
+2026-11-25T08:22:24.5026440Z [32/37] Compiling OCCoreTests NativeCoreTests.swift
+2026-11-25T08:22:26.0596810Z [33/37] Compiling OCCoreTests ProvisioningProfileTests.swift
+2026-11-25T08:22:26.0597680Z [34/37] Compiling OCCoreTests TextTraitsTests.swift
+2026-11-25T08:22:26.0606180Z [35/37] Compiling OCCoreTests UserDictionaryTests.swift
+2026-11-25T08:22:28.5615600Z [36/39] Emitting module OCCorePackageTests
+2026-11-25T08:22:28.5617120Z [37/39] Compiling OCCorePackageTests runner.swift
+2026-11-25T08:22:28.5712190Z [37/39] Write Objects.LinkFileList
+2026-11-25T08:22:30.2595060Z [38/39] Linking OCCorePackageTests
+2026-11-25T08:22:30.2692120Z Build complete! (63.49s)
+2026-11-25T08:22:45.0659460Z Test Suite 'All tests' started at 2026-11-25 08:22:31.556.
+2026-11-25T08:22:45.0684410Z Test Suite 'OCCorePackageTests.xctest' started at 2026-11-25 08:22:31.570.
+2026-11-25T08:22:45.0687120Z Test Suite 'AiControllerTests' started at 2026-11-25 08:22:31.570.
+2026-11-25T08:22:45.0689450Z Test Case '-[OCCoreTests.AiControllerTests testACaretMoveFromOutsideClearsTheHold]' started.
+2026-11-25T08:22:45.0728030Z Test Case '-[OCCoreTests.AiControllerTests testACaretMoveFromOutsideClearsTheHold]' passed (0.113 seconds).
+2026-11-25T08:22:45.0729600Z Test Case '-[OCCoreTests.AiControllerTests testACompositionStartsAnAutomaticCorrectionAfterTheDebounce]' started.
+2026-11-25T08:22:45.0731030Z Test Case '-[OCCoreTests.AiControllerTests testACompositionStartsAnAutomaticCorrectionAfterTheDebounce]' passed (0.187 seconds).
+2026-11-25T08:22:45.0732160Z Test Case '-[OCCoreTests.AiControllerTests testAdoptingCommittedTextReplacesTheSentenceAfterCheckingTheProxy]' started.
+2026-11-25T08:22:45.0736950Z Test Case '-[OCCoreTests.AiControllerTests testAdoptingCommittedTextReplacesTheSentenceAfterCheckingTheProxy]' passed (0.119 seconds).
+2026-11-25T08:22:45.0738160Z Test Case '-[OCCoreTests.AiControllerTests testAdoptingWhileComposingClearsTheCompositionThenInserts]' started.
+2026-11-25T08:22:45.0741900Z Test Case '-[OCCoreTests.AiControllerTests testAdoptingWhileComposingClearsTheCompositionThenInserts]' passed (0.191 seconds).
+2026-11-25T08:22:45.0742880Z Test Case '-[OCCoreTests.AiControllerTests testAdoptionAbortsWhenTheTextBeforeTheCaretNoLongerEndsWithTheOriginal]' started.
+2026-11-25T08:22:45.0744050Z Test Case '-[OCCoreTests.AiControllerTests testAdoptionAbortsWhenTheTextBeforeTheCaretNoLongerEndsWithTheOriginal]' passed (0.182 seconds).
+2026-11-25T08:22:45.0744980Z Test Case '-[OCCoreTests.AiControllerTests testAKeyPressAndACandidateTapEndTheManualHoldAndDropTheRequest]' started.
+2026-11-25T08:22:45.0746430Z Test Case '-[OCCoreTests.AiControllerTests testAKeyPressAndACandidateTapEndTheManualHoldAndDropTheRequest]' passed (0.278 seconds).
+2026-11-25T08:22:45.0747340Z Test Case '-[OCCoreTests.AiControllerTests testALongCandidateOpensTheFullTextBeforeItIsAdopted]' started.
+2026-11-25T08:22:45.0748120Z Test Case '-[OCCoreTests.AiControllerTests testALongCandidateOpensTheFullTextBeforeItIsAdopted]' passed (0.132 seconds).
+2026-11-25T08:22:45.0752910Z Test Case '-[OCCoreTests.AiControllerTests testALongPressCancelsTheRequest]' started.
+2026-11-25T08:22:45.0753590Z Test Case '-[OCCoreTests.AiControllerTests testALongPressCancelsTheRequest]' passed (0.018 seconds).
+2026-11-25T08:22:45.0754490Z Test Case '-[OCCoreTests.AiControllerTests testAManualAssistantKeyTakesOverTheRunningAutomaticRequestAndItsLateDataIsDropped]' started.
+2026-11-25T08:22:45.0755610Z Test Case '-[OCCoreTests.AiControllerTests testAManualAssistantKeyTakesOverTheRunningAutomaticRequestAndItsLateDataIsDropped]' passed (0.397 seconds).
+2026-11-25T08:22:45.0756680Z Test Case '-[OCCoreTests.AiControllerTests testAnAutomaticRequestAfterACommitWaitsForTheProxyToCatchUp]' started.
+2026-11-25T08:22:45.0757570Z Test Case '-[OCCoreTests.AiControllerTests testAnAutomaticRequestAfterACommitWaitsForTheProxyToCatchUp]' passed (0.557 seconds).
+2026-11-25T08:22:45.0758500Z Test Case '-[OCCoreTests.AiControllerTests testAResultOfAnOlderRevisionIsNeverAdopted]' started.
+2026-11-25T08:22:45.0759350Z Test Case '-[OCCoreTests.AiControllerTests testAResultOfAnOlderRevisionIsNeverAdopted]' passed (0.120 seconds).
+2026-11-25T08:22:45.0774310Z Test Case '-[OCCoreTests.AiControllerTests testBackgroundEventsNeverReplaceAManualRequest]' started.
+2026-11-25T08:22:45.0781670Z Test Case '-[OCCoreTests.AiControllerTests testBackgroundEventsNeverReplaceAManualRequest]' passed (0.373 seconds).
+2026-11-25T08:22:45.0784490Z Test Case '-[OCCoreTests.AiControllerTests testEmoticonsGoAfterTheCommittedTextInsteadOfReplacingIt]' started.
+2026-11-25T08:22:45.0786990Z Test Case '-[OCCoreTests.AiControllerTests testEmoticonsGoAfterTheCommittedTextInsteadOfReplacingIt]' passed (0.054 seconds).
+2026-11-25T08:22:45.0793960Z Test Case '-[OCCoreTests.AiControllerTests testNothingIsSentWithoutConsentFromASensitiveFieldOrWithoutFullAccess]' started.
+2026-11-25T08:22:45.0796260Z Test Case '-[OCCoreTests.AiControllerTests testNothingIsSentWithoutConsentFromASensitiveFieldOrWithoutFullAccess]' passed (1.095 seconds).
+2026-11-25T08:22:45.0797560Z Test Case '-[OCCoreTests.AiControllerTests testPressingTheSameKeyAgainKeepsTheRunningRequest]' started.
+2026-11-25T08:22:45.0857660Z Test Case '-[OCCoreTests.AiControllerTests testPressingTheSameKeyAgainKeepsTheRunningRequest]' passed (0.274 seconds).
+2026-11-25T08:22:45.0863040Z Test Case '-[OCCoreTests.AiControllerTests testTheEmojiKeyTakesOverARunningAssistantRequestAndTheLateAssistantDataIsDropped]' started.
+2026-11-25T08:22:45.0864200Z Test Case '-[OCCoreTests.AiControllerTests testTheEmojiKeyTakesOverARunningAssistantRequestAndTheLateAssistantDataIsDropped]' passed (0.345 seconds).
+2026-11-25T08:22:45.0865120Z Test Case '-[OCCoreTests.AiControllerTests testTrailingSentence]' started.
+2026-11-25T08:22:45.0865970Z Test Case '-[OCCoreTests.AiControllerTests testTrailingSentence]' passed (0.003 seconds).
+2026-11-25T08:22:45.0866620Z Test Suite 'AiControllerTests' passed at 2026-11-25 08:22:36.016.
+2026-11-25T08:22:45.0867260Z 	 Executed 17 tests, with 0 failures (0 unexpected) in 4.437 (4.446) seconds
+2026-11-25T08:22:45.0868440Z Test Suite 'AiRequestCoordinatorTests' started at 2026-11-25 08:22:36.016.
+2026-11-25T08:22:45.0873000Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testACancelledRequestPublishesNoFailure]' started.
+2026-11-25T08:22:45.0873900Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testACancelledRequestPublishesNoFailure]' passed (0.165 seconds).
+2026-11-25T08:22:45.0874900Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testAnewSubmitCancelsTheRunningRequestAndItsLateResultIsDropped]' started.
+2026-11-25T08:22:45.0875950Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testAnewSubmitCancelsTheRunningRequestAndItsLateResultIsDropped]' passed (0.229 seconds).
+2026-11-25T08:22:45.0876870Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testASubmittedRequestIsLoadingThenReady]' started.
+2026-11-25T08:22:45.0877640Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testASubmittedRequestIsLoadingThenReady]' passed (0.089 seconds).
+2026-11-25T08:22:45.0878720Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testFailuresAreCategorisedAndATimeoutNamesItsPhase]' started.
+2026-11-25T08:22:45.0879740Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testFailuresAreCategorisedAndATimeoutNamesItsPhase]' passed (0.148 seconds).
+2026-11-25T08:22:45.0880560Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testInvalidatePublishesIdleAndDropsLateData]' started.
+2026-11-25T08:22:45.0881430Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testInvalidatePublishesIdleAndDropsLateData]' passed (0.161 seconds).
+2026-11-25T08:22:45.0882370Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testNothingIsSentWhenDisabledSensitiveOrBlank]' started.
+2026-11-25T08:22:45.0883300Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testNothingIsSentWhenDisabledSensitiveOrBlank]' passed (0.185 seconds).
+2026-11-25T08:22:45.0884220Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testPartialResultsStreamIntoReadyUntilTheFinalOneAndLaterOnesAreDropped]' started.
+2026-11-25T08:22:45.0885430Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testPartialResultsStreamIntoReadyUntilTheFinalOneAndLaterOnesAreDropped]' passed (0.321 seconds).
+2026-11-25T08:22:45.0886900Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testTheDebounceDelaysTheSendAndInvalidateWithinItSendsNothing]' started.
+2026-11-25T08:22:45.0888220Z Test Case '-[OCCoreTests.AiRequestCoordinatorTests testTheDebounceDelaysTheSendAndInvalidateWithinItSendsNothing]' passed (0.618 seconds).
+2026-11-25T08:22:45.0896250Z Test Suite 'AiRequestCoordinatorTests' passed at 2026-11-25 08:22:37.937.
+2026-11-25T08:22:45.0896770Z 	 Executed 8 tests, with 0 failures (0 unexpected) in 1.917 (1.920) seconds
+2026-11-25T08:22:45.1135430Z Test Suite 'AiStoreTests' started at 2026-11-25 08:22:37.937.
+2026-11-25T08:22:45.1136220Z Test Case '-[OCCoreTests.AiStoreTests testAFreshStoreStartsWithTheThreeDefaultPoliciesAndNothingSwitchedOn]' started.
+2026-11-25T08:22:45.1137090Z Test Case '-[OCCoreTests.AiStoreTests testAFreshStoreStartsWithTheThreeDefaultPoliciesAndNothingSwitchedOn]' passed (0.016 seconds).
+2026-11-25T08:22:45.1137850Z Test Case '-[OCCoreTests.AiStoreTests testAKeyBelongsToTheOriginItWasEnteredFor]' started.
+2026-11-25T08:22:45.1138660Z Test Case '-[OCCoreTests.AiStoreTests testAKeyBelongsToTheOriginItWasEnteredFor]' passed (0.002 seconds).
+2026-11-25T08:22:45.1139380Z Test Case '-[OCCoreTests.AiStoreTests testAnAndroidConfigWithMissingAndUnknownKeysDecodes]' started.
+2026-11-25T08:22:45.1140100Z Test Case '-[OCCoreTests.AiStoreTests testAnAndroidConfigWithMissingAndUnknownKeysDecodes]' passed (0.010 seconds).
+2026-11-25T08:22:45.1145330Z Test Case '-[OCCoreTests.AiStoreTests testAnUpdateIsValidatedAndRejectedWithoutChangingAnything]' started.
+2026-11-25T08:22:45.1147190Z Test Case '-[OCCoreTests.AiStoreTests testAnUpdateIsValidatedAndRejectedWithoutChangingAnything]' passed (0.061 seconds).
+2026-11-25T08:22:45.1148160Z Test Case '-[OCCoreTests.AiStoreTests testAPolicyExportHasNoKeyAndImportsUnderAFreshIdWithAUniqueName]' started.
+2026-11-25T08:22:45.1149040Z Test Case '-[OCCoreTests.AiStoreTests testAPolicyExportHasNoKeyAndImportsUnderAFreshIdWithAUniqueName]' passed (0.039 seconds).
+2026-11-25T08:22:45.1150430Z Test Case '-[OCCoreTests.AiStoreTests testChangingTheEndpointDropsTheCapabilitiesOfTheOldOne]' started.
+2026-11-25T08:22:45.1151190Z Test Case '-[OCCoreTests.AiStoreTests testChangingTheEndpointDropsTheCapabilitiesOfTheOldOne]' passed (0.009 seconds).
+2026-11-25T08:22:45.1151980Z Test Case '-[OCCoreTests.AiStoreTests testCopyingAPolicyCopiesItsKey]' started.
+2026-11-25T08:22:45.1153630Z Test Case '-[OCCoreTests.AiStoreTests testCopyingAPolicyCopiesItsKey]' passed (0.000 seconds).
+2026-11-25T08:22:45.1154420Z Test Case '-[OCCoreTests.AiStoreTests testImportRefusesPlainHttpOversizedAndBrokenFiles]' started.
+2026-11-25T08:22:45.1157100Z Test Case '-[OCCoreTests.AiStoreTests testImportRefusesPlainHttpOversizedAndBrokenFiles]' passed (0.005 seconds).
+2026-11-25T08:22:45.1159350Z Test Case '-[OCCoreTests.AiStoreTests testKeysThatAreNotPlainSingleLineSecretsOrEndpointsThatAreNotHttpsAreRefused]' started.
+2026-11-25T08:22:45.1164620Z Test Case '-[OCCoreTests.AiStoreTests testKeysThatAreNotPlainSingleLineSecretsOrEndpointsThatAreNotHttpsAreRefused]' passed (0.004 seconds).
+2026-11-25T08:22:45.1165440Z Test Case '-[OCCoreTests.AiStoreTests testPoliciesCanBeAddedSelectedRenamedAndDeleted]' started.
+2026-11-25T08:22:45.1166270Z Test Case '-[OCCoreTests.AiStoreTests testPoliciesCanBeAddedSelectedRenamedAndDeleted]' passed (0.045 seconds).
+2026-11-25T08:22:45.1167080Z Test Case '-[OCCoreTests.AiStoreTests testSelectingOpenRouterBringsItsEndpointModelAndParameters]' started.
+2026-11-25T08:22:45.1168110Z Test Case '-[OCCoreTests.AiStoreTests testSelectingOpenRouterBringsItsEndpointModelAndParameters]' passed (0.014 seconds).
+2026-11-25T08:22:45.1169150Z Test Case '-[OCCoreTests.AiStoreTests testTheChosenBackendIsRecordedOnceAndFollowed]' started.
+2026-11-25T08:22:45.1169880Z Test Case '-[OCCoreTests.AiStoreTests testTheChosenBackendIsRecordedOnceAndFollowed]' passed (0.008 seconds).
+2026-11-25T08:22:45.1171200Z Test Case '-[OCCoreTests.AiStoreTests testTheLastPolicyCannotBeDeletedAndTheListIsCapped]' started.
+2026-11-25T08:22:45.1179090Z Test Case '-[OCCoreTests.AiStoreTests testTheLastPolicyCannotBeDeletedAndTheListIsCapped]' passed (0.310 seconds).
+2026-11-25T08:22:45.1180440Z Test Case '-[OCCoreTests.AiStoreTests testTheModelListExportsAndImportsAndDropsValuesItNoLongerAllows]' started.
+2026-11-25T08:22:45.1181310Z Test Case '-[OCCoreTests.AiStoreTests testTheModelListExportsAndImportsAndDropsValuesItNoLongerAllows]' passed (0.032 seconds).
+2026-11-25T08:22:45.1182100Z Test Case '-[OCCoreTests.AiStoreTests testThePromptPackageIsUpgradedAndTheLimitsHold]' started.
+2026-11-25T08:22:45.1183110Z Test Case '-[OCCoreTests.AiStoreTests testThePromptPackageIsUpgradedAndTheLimitsHold]' passed (0.001 seconds).
+2026-11-25T08:22:45.1183980Z Test Case '-[OCCoreTests.AiStoreTests testTheStoreReadsBackWhatItWroteAndTheKeyboardSideReadsTheSameFile]' started.
+2026-11-25T08:22:45.1184830Z Test Case '-[OCCoreTests.AiStoreTests testTheStoreReadsBackWhatItWroteAndTheKeyboardSideReadsTheSameFile]' passed (0.013 seconds).
+2026-11-25T08:22:45.1185590Z Test Case '-[OCCoreTests.AiStoreTests testTheSystemPromptComesFromTheSharedCore]' started.
+2026-11-25T08:22:45.1186210Z Test Case '-[OCCoreTests.AiStoreTests testTheSystemPromptComesFromTheSharedCore]' passed (0.001 seconds).
+2026-11-25T08:22:45.1187030Z Test Case '-[OCCoreTests.AiStoreTests testTheVaultFallsBackToTheNextBackendWhenTheChosenOneHasNoKey]' started.
+2026-11-25T08:22:45.1187890Z Test Case '-[OCCoreTests.AiStoreTests testTheVaultFallsBackToTheNextBackendWhenTheChosenOneHasNoKey]' passed (0.000 seconds).
+2026-11-25T08:22:45.1188930Z Test Case '-[OCCoreTests.AiStoreTests testTheWholeConfigurationSurvivesAJsonRoundTrip]' started.
+2026-11-25T08:22:45.1189680Z Test Case '-[OCCoreTests.AiStoreTests testTheWholeConfigurationSurvivesAJsonRoundTrip]' passed (0.007 seconds).
+2026-11-25T08:22:45.1197960Z Test Suite 'AiStoreTests' passed at 2026-11-25 08:22:38.518.
+2026-11-25T08:22:45.1198590Z 	 Executed 19 tests, with 0 failures (0 unexpected) in 0.575 (0.581) seconds
+2026-11-25T08:22:45.1199100Z Test Suite 'AiTransportTests' started at 2026-11-25 08:22:38.518.
+2026-11-25T08:22:45.1199680Z Test Case '-[OCCoreTests.AiTransportTests testABrokenStreamKeepsWhatAlreadyArrived]' started.
+2026-11-25T08:22:45.1200940Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiChatClient.swift:145: error: -[OCCoreTests.AiTransportTests testABrokenStreamKeepsWhatAlreadyArrived] : failed: caught error: "network"
+2026-11-25T08:22:45.1205850Z Test Case '-[OCCoreTests.AiTransportTests testABrokenStreamKeepsWhatAlreadyArrived]' failed (0.619 seconds).
+2026-11-25T08:22:45.1208060Z Test Case '-[OCCoreTests.AiTransportTests testABrokenStreamWithNothingBeforeItIsANetworkFailure]' started.
+2026-11-25T08:22:45.1210090Z Test Case '-[OCCoreTests.AiTransportTests testABrokenStreamWithNothingBeforeItIsANetworkFailure]' passed (0.005 seconds).
+2026-11-25T08:22:45.1211070Z Test Case '-[OCCoreTests.AiTransportTests testALoopbackRouteSendsToTheLocalServerWithTheSameBody]' started.
+2026-11-25T08:22:45.1212180Z Test Case '-[OCCoreTests.AiTransportTests testALoopbackRouteSendsToTheLocalServerWithTheSameBody]' passed (0.010 seconds).
+2026-11-25T08:22:45.1213860Z Test Case '-[OCCoreTests.AiTransportTests testAnEndpointThatIsNotPlainHttpsOrAKeyWithANewlineIsRefusedBeforeAnythingIsSent]' started.
+2026-11-25T08:22:45.1214830Z Test Case '-[OCCoreTests.AiTransportTests testAnEndpointThatIsNotPlainHttpsOrAKeyWithANewlineIsRefusedBeforeAnythingIsSent]' passed (0.002 seconds).
+2026-11-25T08:22:45.1215750Z Test Case '-[OCCoreTests.AiTransportTests testAPlainJsonAnswerIsAcceptedWhenAGatewayIgnoresStreaming]' started.
+2026-11-25T08:22:45.1216740Z Test Case '-[OCCoreTests.AiTransportTests testAPlainJsonAnswerIsAcceptedWhenAGatewayIgnoresStreaming]' passed (0.004 seconds).
+2026-11-25T08:22:45.1217930Z Test Case '-[OCCoreTests.AiTransportTests testARedirectIsNeverFollowed]' started.
+2026-11-25T08:22:45.1218770Z Test Case '-[OCCoreTests.AiTransportTests testARedirectIsNeverFollowed]' passed (1.549 seconds).
+2026-11-25T08:22:45.1219580Z Test Case '-[OCCoreTests.AiTransportTests testAStreamThatEndsWithoutAnyAnswerIsAnInvalidResponse]' started.
+2026-11-25T08:22:45.1220820Z Test Case '-[OCCoreTests.AiTransportTests testAStreamThatEndsWithoutAnyAnswerIsAnInvalidResponse]' passed (0.006 seconds).
+2026-11-25T08:22:45.1221560Z Test Case '-[OCCoreTests.AiTransportTests testATimeoutAfterTheFirstCandidateKeepsIt]' started.
+2026-11-25T08:22:45.1222330Z Test Case '-[OCCoreTests.AiTransportTests testATimeoutAfterTheFirstCandidateKeepsIt]' passed (1.034 seconds).
+2026-11-25T08:22:45.1223110Z Test Case '-[OCCoreTests.AiTransportTests testCancellingStopsTheConnectionAndDropsEverythingThatComesLater]' started.
+2026-11-25T08:22:45.1224230Z Test Case '-[OCCoreTests.AiTransportTests testCancellingStopsTheConnectionAndDropsEverythingThatComesLater]' passed (0.491 seconds).
+2026-11-25T08:22:45.1225120Z Test Case '-[OCCoreTests.AiTransportTests testChunkedStreamShowsOnlyClosedCandidatesAndTheFinalResultHasBoth]' started.
+2026-11-25T08:22:45.1226090Z Test Case '-[OCCoreTests.AiTransportTests testChunkedStreamShowsOnlyClosedCandidatesAndTheFinalResultHasBoth]' passed (0.626 seconds).
+2026-11-25T08:22:45.1227020Z Test Case '-[OCCoreTests.AiTransportTests testHttpFailuresAreReportedByStatusAndNeverWithTheBody]' started.
+2026-11-25T08:22:45.1227800Z Test Case '-[OCCoreTests.AiTransportTests testHttpFailuresAreReportedByStatusAndNeverWithTheBody]' passed (0.039 seconds).
+2026-11-25T08:22:45.1228740Z Test Case '-[OCCoreTests.AiTransportTests testTheRequestCarriesTheKeyInTheHeaderOnlyAndTheBodyComesFromTheSharedCore]' started.
+2026-11-25T08:22:45.1229790Z Test Case '-[OCCoreTests.AiTransportTests testTheRequestCarriesTheKeyInTheHeaderOnlyAndTheBodyComesFromTheSharedCore]' passed (0.017 seconds).
+2026-11-25T08:22:45.1230790Z Test Case '-[OCCoreTests.AiTransportTests testTheTimeoutNamesWhereItHappened]' started.
+2026-11-25T08:22:45.1231500Z Test Case '-[OCCoreTests.AiTransportTests testTheTimeoutNamesWhereItHappened]' passed (2.122 seconds).
+2026-11-25T08:22:45.1232870Z Test Suite 'AiTransportTests' failed at 2026-11-25 08:22:45.048.
+2026-11-25T08:22:45.1234990Z 	 Executed 13 tests, with 1 failure (1 unexpected) in 6.525 (6.530) seconds
+2026-11-25T08:22:45.1235510Z Test Suite 'AppGroupLocatorTests' started at 2026-11-25 08:22:45.048.
+2026-11-25T08:22:45.1236370Z Test Case '-[OCCoreTests.AppGroupLocatorTests testBareDotSuffixIsNotAMatch]' started.
+2026-11-25T08:22:45.1237040Z Test Case '-[OCCoreTests.AppGroupLocatorTests testBareDotSuffixIsNotAMatch]' passed (0.006 seconds).
+2026-11-25T08:22:45.1237860Z Test Case '-[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing]' started.
+2026-11-25T08:22:45.1238700Z Test Case '-[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing]' passed (0.006 seconds).
+2026-11-25T08:22:45.1239400Z Test Case '-[OCCoreTests.AppGroupLocatorTests testExactNameBeatsSuffixedNames]' started.
+2026-11-25T08:22:45.1240150Z Test Case '-[OCCoreTests.AppGroupLocatorTests testExactNameBeatsSuffixedNames]' passed (0.000 seconds).
+2026-11-25T08:22:45.1240860Z Test Case '-[OCCoreTests.AppGroupLocatorTests testGroupWithTeamIdSuffix]' started.
+2026-11-25T08:22:45.1241710Z Test Case '-[OCCoreTests.AppGroupLocatorTests testGroupWithTeamIdSuffix]' passed (0.000 seconds).
+2026-11-25T08:22:45.1242330Z Test Case '-[OCCoreTests.AppGroupLocatorTests testMissingGroupMeansNoSharing]' started.
+2026-11-25T08:22:45.1243080Z Test Case '-[OCCoreTests.AppGroupLocatorTests testMissingGroupMeansNoSharing]' passed (0.000 seconds).
+2026-11-25T08:22:45.1243860Z Test Case '-[OCCoreTests.AppGroupLocatorTests testNoProfileFallsBackToNominalName]' started.
+2026-11-25T08:22:45.1244640Z Test Case '-[OCCoreTests.AppGroupLocatorTests testNoProfileFallsBackToNominalName]' passed (0.000 seconds).
+2026-11-25T08:22:45.1245420Z Test Case '-[OCCoreTests.AppGroupLocatorTests testPlainGroupIsUsedAsIs]' started.
+2026-11-25T08:22:45.1246270Z Test Case '-[OCCoreTests.AppGroupLocatorTests testPlainGroupIsUsedAsIs]' passed (0.000 seconds).
+2026-11-25T08:22:45.1246980Z Test Case '-[OCCoreTests.AppGroupLocatorTests testTeamSuffixIsPreferredAmongSeveral]' started.
+2026-11-25T08:22:45.1247920Z Test Case '-[OCCoreTests.AppGroupLocatorTests testTeamSuffixIsPreferredAmongSeveral]' passed (0.000 seconds).
+2026-11-25T08:22:45.1248540Z Test Case '-[OCCoreTests.AppGroupLocatorTests testUnparsableProfileIsReportedAsSuch]' started.
+2026-11-25T08:22:45.1249150Z Test Case '-[OCCoreTests.AppGroupLocatorTests testUnparsableProfileIsReportedAsSuch]' passed (0.000 seconds).
+2026-11-25T08:22:45.1249840Z Test Case '-[OCCoreTests.AppGroupLocatorTests testUnrelatedGroupsAreIgnored]' started.
+2026-11-25T08:22:45.8327470Z Test Case '-[OCCoreTests.AppGroupLocatorTests testUnrelatedGroupsAreIgnored]' passed (0.000 seconds).
+2026-11-25T08:22:45.8332940Z Test Suite 'AppGroupLocatorTests' passed at 2026-11-25 08:22:45.063.
+2026-11-25T08:22:45.8335650Z 	 Executed 10 tests, with 0 failures (0 unexpected) in 0.014 (0.016) seconds
+2026-11-25T08:22:45.8337310Z Test Suite 'DiagnosticsTests' started at 2026-11-25 08:22:45.063.
+2026-11-25T08:22:45.8338130Z Test Case '-[OCCoreTests.DiagnosticsTests testMemoryProbeReportsPlausibleValueOnApplePlatforms]' started.
+2026-11-25T08:22:45.8339020Z Test Case '-[OCCoreTests.DiagnosticsTests testMemoryProbeReportsPlausibleValueOnApplePlatforms]' passed (0.001 seconds).
+2026-11-25T08:22:45.8340000Z Test Case '-[OCCoreTests.DiagnosticsTests testProbeWithoutContainerIsNil]' started.
+2026-11-25T08:22:45.8341900Z Test Case '-[OCCoreTests.DiagnosticsTests testProbeWithoutContainerIsNil]' passed (0.000 seconds).
+2026-11-25T08:22:45.8343750Z Test Case '-[OCCoreTests.DiagnosticsTests testProbeWrittenByOneRoleIsReadByTheOther]' started.
+2026-11-25T08:22:45.8346000Z Test Case '-[OCCoreTests.DiagnosticsTests testProbeWrittenByOneRoleIsReadByTheOther]' passed (0.005 seconds).
+2026-11-25T08:22:45.8347760Z Test Case '-[OCCoreTests.DiagnosticsTests testReportRoundTripsThroughJson]' started.
+2026-11-25T08:22:45.8349360Z Test Case '-[OCCoreTests.DiagnosticsTests testReportRoundTripsThroughJson]' passed (0.004 seconds).
+2026-11-25T08:22:45.8350810Z Test Suite 'DiagnosticsTests' passed at 2026-11-25 08:22:45.075.
+2026-11-25T08:22:45.8351940Z 	 Executed 4 tests, with 0 failures (0 unexpected) in 0.011 (0.011) seconds
+2026-11-25T08:22:45.8352660Z Test Suite 'KeyStorageTests' started at 2026-11-25 08:22:45.075.
+2026-11-25T08:22:45.8353230Z Test Case '-[OCCoreTests.KeyStorageTests testChoosesBackendFromKeyboardProbes]' started.
+2026-11-25T08:22:45.8354010Z Test Case '-[OCCoreTests.KeyStorageTests testChoosesBackendFromKeyboardProbes]' passed (0.000 seconds).
+2026-11-25T08:22:45.8354720Z Test Case '-[OCCoreTests.KeyStorageTests testConcurrentFirstUseCreatesOneKey]' started.
+2026-11-25T08:22:45.8355510Z Test Case '-[OCCoreTests.KeyStorageTests testConcurrentFirstUseCreatesOneKey]' passed (0.032 seconds).
+2026-11-25T08:22:45.8356330Z Test Case '-[OCCoreTests.KeyStorageTests testEncryptedFileStoreRoundTrip]' started.
+2026-11-25T08:22:45.8362650Z Test Case '-[OCCoreTests.KeyStorageTests testEncryptedFileStoreRoundTrip]' passed (0.009 seconds).
+2026-11-25T08:22:45.8365700Z Test Case '-[OCCoreTests.KeyStorageTests testFilesOnDiskDoNotContainThePlaintext]' started.
+2026-11-25T08:22:45.8366550Z Test Case '-[OCCoreTests.KeyStorageTests testFilesOnDiskDoNotContainThePlaintext]' passed (0.007 seconds).
+2026-11-25T08:22:45.8367420Z Test Case '-[OCCoreTests.KeyStorageTests testRemoveIsQuietForMissingFilesAndRemovesRealOnes]' started.
+2026-11-25T08:22:45.8368240Z Test Case '-[OCCoreTests.KeyStorageTests testRemoveIsQuietForMissingFilesAndRemovesRealOnes]' passed (0.015 seconds).
+2026-11-25T08:22:45.8369150Z Test Case '-[OCCoreTests.KeyStorageTests testSecretFileCopiedToAnotherAccountDoesNotDecrypt]' started.
+2026-11-25T08:22:45.8374280Z Test Case '-[OCCoreTests.KeyStorageTests testSecretFileCopiedToAnotherAccountDoesNotDecrypt]' passed (0.021 seconds).
+2026-11-25T08:22:45.8386240Z Test Case '-[OCCoreTests.KeyStorageTests testSelfTestSampleThroughEncryptedStore]' started.
+2026-11-25T08:22:45.8388280Z Test Case '-[OCCoreTests.KeyStorageTests testSelfTestSampleThroughEncryptedStore]' passed (0.043 seconds).
+2026-11-25T08:22:45.8394680Z Test Case '-[OCCoreTests.KeyStorageTests testTamperedFileIsRejected]' started.
+2026-11-25T08:22:45.8402750Z Test Case '-[OCCoreTests.KeyStorageTests testTamperedFileIsRejected]' passed (0.018 seconds).
+2026-11-25T08:22:45.8408390Z Test Case '-[OCCoreTests.KeyStorageTests testUnreadableKeyFileIsAnErrorAndNeverReplaced]' started.
+2026-11-25T08:22:45.8411960Z Test Case '-[OCCoreTests.KeyStorageTests testUnreadableKeyFileIsAnErrorAndNeverReplaced]' passed (0.033 seconds).
+2026-11-25T08:22:45.8412940Z Test Case '-[OCCoreTests.KeyStorageTests testWrongSizedKeyFileIsRejectedNotReplaced]' started.
+2026-11-25T08:22:45.8414570Z Test Case '-[OCCoreTests.KeyStorageTests testWrongSizedKeyFileIsRejectedNotReplaced]' passed (0.002 seconds).
+2026-11-25T08:22:45.8415340Z Test Suite 'KeyStorageTests' passed at 2026-11-25 08:22:45.258.
+2026-11-25T08:22:45.8415840Z 	 Executed 10 tests, with 0 failures (0 unexpected) in 0.179 (0.183) seconds
+2026-11-25T08:22:45.8416760Z Test Suite 'NativeCoreTests' started at 2026-11-25 08:22:45.258.
+2026-11-25T08:22:45.8417850Z Test Case '-[OCCoreTests.NativeCoreTests testDecodeKeepsCompleteCandidatesOfTruncatedOutput]' started.
+2026-11-25T08:22:45.8422610Z Test Case '-[OCCoreTests.NativeCoreTests testDecodeKeepsCompleteCandidatesOfTruncatedOutput]' passed (0.002 seconds).
+2026-11-25T08:22:45.8424070Z Test Case '-[OCCoreTests.NativeCoreTests testEncodeRoundTripThroughCApi]' started.
+2026-11-25T08:22:45.8436480Z Test Case '-[OCCoreTests.NativeCoreTests testEncodeRoundTripThroughCApi]' passed (0.000 seconds).
+2026-11-25T08:22:45.8438800Z Test Case '-[OCCoreTests.NativeCoreTests testErrorsComeBackAsNativeCoreError]' started.
+2026-11-25T08:22:45.8443980Z Test Case '-[OCCoreTests.NativeCoreTests testErrorsComeBackAsNativeCoreError]' passed (0.000 seconds).
+2026-11-25T08:22:45.8444660Z Test Case '-[OCCoreTests.NativeCoreTests testLargeAndUnicodeInput]' started.
+2026-11-25T08:22:45.8445360Z Test Case '-[OCCoreTests.NativeCoreTests testLargeAndUnicodeInput]' passed (0.001 seconds).
+2026-11-25T08:22:45.8446140Z Test Case '-[OCCoreTests.NativeCoreTests testMalformedAndNullInputAreRejectedWithoutCrashing]' started.
+2026-11-25T08:22:45.8447020Z Test Case '-[OCCoreTests.NativeCoreTests testMalformedAndNullInputAreRejectedWithoutCrashing]' passed (0.002 seconds).
+2026-11-25T08:22:45.8447810Z Test Case '-[OCCoreTests.NativeCoreTests testRawInvokeMatchesTheDocumentedEnvelope]' started.
+2026-11-25T08:22:45.8448570Z Test Case '-[OCCoreTests.NativeCoreTests testRawInvokeMatchesTheDocumentedEnvelope]' passed (0.001 seconds).
+2026-11-25T08:22:45.8460550Z Test Case '-[OCCoreTests.NativeCoreTests testReasoningTextIsNotAccepted]' started.
+2026-11-25T08:22:45.8461430Z Test Case '-[OCCoreTests.NativeCoreTests testReasoningTextIsNotAccepted]' passed (0.001 seconds).
+2026-11-25T08:22:45.8462340Z Test Case '-[OCCoreTests.NativeCoreTests testSelfTestPasses]' started.
+2026-11-25T08:22:45.8463040Z Test Case '-[OCCoreTests.NativeCoreTests testSelfTestPasses]' passed (0.001 seconds).
+2026-11-25T08:22:45.8463720Z Test Case '-[OCCoreTests.NativeCoreTests testSharedTruncationCorpus]' started.
+2026-11-25T08:22:45.8464490Z Test Case '-[OCCoreTests.NativeCoreTests testSharedTruncationCorpus]' passed (0.009 seconds).
+2026-11-25T08:22:45.8465510Z Test Suite 'NativeCoreTests' passed at 2026-11-25 08:22:45.276.
+2026-11-25T08:22:45.8470220Z 	 Executed 9 tests, with 0 failures (0 unexpected) in 0.016 (0.018) seconds
+2026-11-25T08:22:45.8470750Z Test Suite 'ProvisioningProfileTests' started at 2026-11-25 08:22:45.276.
+2026-11-25T08:22:45.8471310Z Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiredProfile]' started.
+2026-11-25T08:22:45.8472630Z Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiredProfile]' passed (0.001 seconds).
+2026-11-25T08:22:45.8475330Z Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiryParsing]' started.
+2026-11-25T08:22:45.8477370Z Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiryParsing]' passed (0.001 seconds).
+2026-11-25T08:22:45.8480370Z Test Case '-[OCCoreTests.ProvisioningProfileTests testExtractsPlistFromCmsEnvelope]' started.
+2026-11-25T08:22:45.8482420Z Test Case '-[OCCoreTests.ProvisioningProfileTests testExtractsPlistFromCmsEnvelope]' passed (0.001 seconds).
+2026-11-25T08:22:45.8484310Z Test Case '-[OCCoreTests.ProvisioningProfileTests testPlainXmlPlistWithoutEnvelopeIsAccepted]' started.
+2026-11-25T08:22:45.8494620Z Test Case '-[OCCoreTests.ProvisioningProfileTests testPlainXmlPlistWithoutEnvelopeIsAccepted]' passed (0.000 seconds).
+2026-11-25T08:22:45.8495540Z Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsBrokenPropertyList]' started.
+2026-11-25T08:22:45.8496190Z Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsBrokenPropertyList]' passed (0.000 seconds).
+2026-11-25T08:22:45.8496930Z Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsDataWithoutPropertyList]' started.
+2026-11-25T08:22:45.8497840Z Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsDataWithoutPropertyList]' passed (0.000 seconds).
+2026-11-25T08:22:45.8498670Z Test Case '-[OCCoreTests.ProvisioningProfileTests testUnknownExpiryIsNotReportedAsExpiring]' started.
+2026-11-25T08:22:45.8499450Z Test Case '-[OCCoreTests.ProvisioningProfileTests testUnknownExpiryIsNotReportedAsExpiring]' passed (0.000 seconds).
+2026-11-25T08:22:45.8500170Z Test Suite 'ProvisioningProfileTests' passed at 2026-11-25 08:22:45.281.
+2026-11-25T08:22:45.8500690Z 	 Executed 7 tests, with 0 failures (0 unexpected) in 0.004 (0.005) seconds
+2026-11-25T08:22:45.8501120Z Test Suite 'TextTraitsTests' started at 2026-11-25 08:22:45.281.
+2026-11-25T08:22:45.8501700Z Test Case '-[OCCoreTests.TextTraitsTests testAChangeWithoutAnOwnChangeBeforeItIsTheHosts]' started.
+2026-11-25T08:22:45.8502490Z Test Case '-[OCCoreTests.TextTraitsTests testAChangeWithoutAnOwnChangeBeforeItIsTheHosts]' passed (0.000 seconds).
+2026-11-25T08:22:45.8507230Z Test Case '-[OCCoreTests.TextTraitsTests testAnOwnChangeThatNeverGetsItsNotificationStopsMaskingAfterAWhile]' started.
+2026-11-25T08:22:45.8508180Z Test Case '-[OCCoreTests.TextTraitsTests testAnOwnChangeThatNeverGetsItsNotificationStopsMaskingAfterAWhile]' passed (0.000 seconds).
+2026-11-25T08:22:45.8509040Z Test Case '-[OCCoreTests.TextTraitsTests testFieldsThatTakeOnlyLatinTextForceEnglishAndPadsTakeOverTheKeys]' started.
+2026-11-25T08:22:45.8514730Z Test Case '-[OCCoreTests.TextTraitsTests testFieldsThatTakeOnlyLatinTextForceEnglishAndPadsTakeOverTheKeys]' passed (0.000 seconds).
+2026-11-25T08:22:45.8517230Z Test Case '-[OCCoreTests.TextTraitsTests testPlainTextEmailAndUrlFieldsMayUseAi]' started.
+2026-11-25T08:22:45.8519680Z Test Case '-[OCCoreTests.TextTraitsTests testPlainTextEmailAndUrlFieldsMayUseAi]' passed (0.001 seconds).
+2026-11-25T08:22:45.8521790Z Test Case '-[OCCoreTests.TextTraitsTests testSecretAndNumericFieldsNeverGoToAi]' started.
+2026-11-25T08:22:45.8523910Z Test Case '-[OCCoreTests.TextTraitsTests testSecretAndNumericFieldsNeverGoToAi]' passed (0.000 seconds).
+2026-11-25T08:22:45.8526070Z Test Case '-[OCCoreTests.TextTraitsTests testSentencesCapitaliseAtTheStartAfterATerminatorAndAfterANewline]' started.
+2026-11-25T08:22:45.8527630Z Test Case '-[OCCoreTests.TextTraitsTests testSentencesCapitaliseAtTheStartAfterATerminatorAndAfterANewline]' passed (0.002 seconds).
+2026-11-25T08:22:45.8529770Z Test Case '-[OCCoreTests.TextTraitsTests testTheKeyboardsOwnChangeIsNotAHostChangeEvenWhenTheProxyReportsItLate]' started.
+2026-11-25T08:22:45.8532330Z Test Case '-[OCCoreTests.TextTraitsTests testTheKeyboardsOwnChangeIsNotAHostChangeEvenWhenTheProxyReportsItLate]' passed (0.000 seconds).
+2026-11-25T08:22:45.8533770Z Test Case '-[OCCoreTests.TextTraitsTests testTheReturnKeyWaitsForTextOnlyWhenTheHostAsksForIt]' started.
+2026-11-25T08:22:45.8534590Z Test Case '-[OCCoreTests.TextTraitsTests testTheReturnKeyWaitsForTextOnlyWhenTheHostAsksForIt]' passed (0.000 seconds).
+2026-11-25T08:22:45.8537180Z Test Case '-[OCCoreTests.TextTraitsTests testTwoQuickInsertsAreBothOurs]' started.
+2026-11-25T08:22:45.8539790Z Test Case '-[OCCoreTests.TextTraitsTests testTwoQuickInsertsAreBothOurs]' passed (0.000 seconds).
+2026-11-25T08:22:45.8541380Z Test Case '-[OCCoreTests.TextTraitsTests testWordsCapitaliseAfterWhiteSpaceAndAllCharactersAlways]' started.
+2026-11-25T08:22:45.8542430Z Test Case '-[OCCoreTests.TextTraitsTests testWordsCapitaliseAfterWhiteSpaceAndAllCharactersAlways]' passed (0.000 seconds).
+2026-11-25T08:22:45.8545110Z Test Suite 'TextTraitsTests' passed at 2026-11-25 08:22:45.288.
+2026-11-25T08:22:45.8546670Z 	 Executed 10 tests, with 0 failures (0 unexpected) in 0.005 (0.006) seconds
+2026-11-25T08:22:45.8547500Z Test Suite 'UserDictionaryTests' started at 2026-11-25 08:22:45.288.
+2026-11-25T08:22:45.8549480Z Test Case '-[OCCoreTests.UserDictionaryTests testInstallationFileGetsTheSyncDirectoryOnce]' started.
+2026-11-25T08:22:45.8552780Z Test Case '-[OCCoreTests.UserDictionaryTests testInstallationFileGetsTheSyncDirectoryOnce]' passed (0.005 seconds).
+2026-11-25T08:22:45.8554840Z Test Case '-[OCCoreTests.UserDictionaryTests testKeyboardDirectoriesDoNotDependOnFullAccess]' started.
+2026-11-25T08:22:45.8557540Z Test Case '-[OCCoreTests.UserDictionaryTests testKeyboardDirectoriesDoNotDependOnFullAccess]' passed (0.002 seconds).
+2026-11-25T08:22:45.8559750Z Test Case '-[OCCoreTests.UserDictionaryTests testLegacyDictionaryMovesWhenThePrivateFolderHasNone]' started.
+2026-11-25T08:22:45.8562350Z Test Case '-[OCCoreTests.UserDictionaryTests testLegacyDictionaryMovesWhenThePrivateFolderHasNone]' passed (0.003 seconds).
+2026-11-25T08:22:45.8564640Z Test Case '-[OCCoreTests.UserDictionaryTests testNothingMovesWhenThePrivateFolderAlreadyHasADictionary]' started.
+2026-11-25T08:22:45.8567100Z Test Case '-[OCCoreTests.UserDictionaryTests testNothingMovesWhenThePrivateFolderAlreadyHasADictionary]' passed (0.004 seconds).
+2026-11-25T08:22:45.8569430Z Test Case '-[OCCoreTests.UserDictionaryTests testNothingToMoveWithoutALegacyDictionary]' started.
+2026-11-25T08:22:45.8571380Z Test Case '-[OCCoreTests.UserDictionaryTests testNothingToMoveWithoutALegacyDictionary]' passed (0.001 seconds).
+2026-11-25T08:22:45.8573110Z Test Suite 'UserDictionaryTests' passed at 2026-11-25 08:22:45.304.
+2026-11-25T08:22:45.8574200Z 	 Executed 5 tests, with 0 failures (0 unexpected) in 0.015 (0.016) seconds
+2026-11-25T08:22:45.8575270Z Test Suite 'OCCorePackageTests.xctest' failed at 2026-11-25 08:22:45.304.
+2026-11-25T08:22:45.8576360Z 	 Executed 112 tests, with 1 failure (1 unexpected) in 13.698 (13.734) seconds
+2026-11-25T08:22:45.8577340Z Test Suite 'All tests' failed at 2026-11-25 08:22:45.304.
+2026-11-25T08:22:45.8578310Z 	 Executed 112 tests, with 1 failure (1 unexpected) in 13.698 (13.748) seconds
+2026-11-25T08:22:45.8586760Z ◇ Test run started.
+2026-11-25T08:22:45.8587350Z ↳ Testing Library Version: 1902
+2026-11-25T08:22:45.8587700Z ↳ Target Platform: arm64e-apple-macos14.0
+2026-11-25T08:22:45.8588260Z ✔ Test run with 0 tests in 0 suites passed after 0.002 seconds.
+2026-11-25T08:22:45.8761680Z ##[endgroup]
+2026-11-25T08:22:45.9369030Z ##[error]step 'swift-test-macos' failed with exit code 1
+2026-11-25T08:22:45.9571990Z ##[error]142:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiChatClient.swift:145: error: -[OCCoreTests.AiTransportTests testABrokenStreamKeepsWhatAlreadyArrived] : failed: caught error: "network"
+2026-11-25T08:22:45.9698710Z ##[error]143:Test Case '-[OCCoreTests.AiTransportTests testABrokenStreamKeepsWhatAlreadyArrived]' failed (0.619 seconds).
+2026-11-25T08:22:45.9744870Z ##[error]Process completed with exit code 1.
+2026-11-25T08:22:45.9968200Z ##[group]Run python3 ios/scripts/check_tests.py "$CI_OUT/logs/swift-test-macos.log"
+2026-11-25T08:22:45.9968860Z [36;1mpython3 ios/scripts/check_tests.py "$CI_OUT/logs/swift-test-macos.log"[0m
+2026-11-25T08:22:46.0550890Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-25T08:22:46.0551580Z env:
+2026-11-25T08:22:46.0551990Z   OC_VERSION: 0.2.19
+2026-11-25T08:22:46.0552500Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T08:22:46.0553640Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-25T08:22:46.0554780Z   SIM_UDID: 4A8069E2-8B25-4DDC-A597-5F691CE169F3
+2026-11-25T08:22:46.0555040Z ##[endgroup]
+2026-11-25T08:22:46.3762680Z check_tests: 112 tests executed, none skipped
+2026-11-25T08:22:46.3911150Z ##[group]Run python3 ios/scripts/ci_summary.py build-test --out "$CI_OUT" --xcresult "$RUNNER_TEMP/results/unit.xcresult"
+2026-11-25T08:22:46.3911940Z [36;1mpython3 ios/scripts/ci_summary.py build-test --out "$CI_OUT" --xcresult "$RUNNER_TEMP/results/unit.xcresult"[0m
+2026-11-25T08:22:46.4015730Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-25T08:22:46.4016040Z env:
+2026-11-25T08:22:46.4016290Z   OC_VERSION: 0.2.19
+2026-11-25T08:22:46.4016510Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T08:22:46.4017010Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-25T08:22:46.4017510Z   SIM_UDID: 4A8069E2-8B25-4DDC-A597-5F691CE169F3
+2026-11-25T08:22:46.4017760Z ##[endgroup]
+2026-11-25T08:22:46.5881570Z #### build-test (macos-26)
+2026-11-25T08:22:46.5883280Z - toolchain: Xcode 26.6; Build version 17F113; swift-driver version: 1.148.6 Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)
+2026-11-25T08:22:46.5884800Z - app unit tests (OrangeCellTests, simulator): no result
+2026-11-25T08:22:46.5885680Z - OCCore `swift test` on macOS: 112 tests, 1 failures
+2026-11-25T08:22:46.5886450Z - UI tests `ui-embedded`: no result
+2026-11-25T08:22:46.5886830Z 
+2026-11-25T08:22:46.5887050Z | step | result | time |
+2026-11-25T08:22:46.5887690Z | --- | --- | --- |
+2026-11-25T08:22:46.5888190Z | toolchain | ok | 45s |
+2026-11-25T08:22:46.5888770Z | fetch-deps | ok | 14s |
+2026-11-25T08:22:46.5889380Z | xcodegen-install | ok | 1s |
+2026-11-25T08:22:46.5889950Z | xcodegen | ok | 0s |
+2026-11-25T08:22:46.5891140Z | simulator-create | ok | 2s |
+2026-11-25T08:22:46.5891760Z | build-sim | FAILED (65) | 67s |
+2026-11-25T08:22:46.5892360Z | uitests-embedded | FAILED (65) | 30s |
+2026-11-25T08:22:46.5893030Z | memory-debug-minimal | FAILED (65) | 383s |
+2026-11-25T08:22:46.5894020Z | memory-debug-all | FAILED (65) | 222s |
+2026-11-25T08:22:46.5894730Z | swift-test-macos | FAILED (1) | 99s |
+2026-11-25T08:22:46.5895250Z 
+2026-11-25T08:22:46.6150490Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-25T08:22:46.6150920Z with:
+2026-11-25T08:22:46.6151080Z   name: ci-build-test
+2026-11-25T08:22:46.6151370Z   path: ci-out/build-test
+!ci-out/build-test/logs/*.log
+
+2026-11-25T08:22:46.6151700Z   if-no-files-found: ignore
+2026-11-25T08:22:46.6151910Z   retention-days: 7
+2026-11-25T08:22:46.6152080Z   compression-level: 6
+2026-11-25T08:22:46.6152340Z   overwrite: false
+2026-11-25T08:22:46.6152530Z   include-hidden-files: false
+2026-11-25T08:22:46.6152760Z   archive: true
+2026-11-25T08:22:46.6152910Z env:
+2026-11-25T08:22:46.6153100Z   OC_VERSION: 0.2.19
+2026-11-25T08:22:46.6153340Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T08:22:46.6153800Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-25T08:22:46.6154270Z   SIM_UDID: 4A8069E2-8B25-4DDC-A597-5F691CE169F3
+2026-11-25T08:22:46.6154530Z ##[endgroup]
+2026-11-25T08:22:47.3618990Z With the provided path, there will be 21 files uploaded
+2026-11-25T08:22:47.3619850Z Artifact name is valid!
+2026-11-25T08:22:47.3620120Z Root directory input is valid!
+2026-11-25T08:22:47.6970300Z Uploading artifact: ci-build-test.zip
+2026-11-25T08:22:47.6971150Z Beginning upload of artifact content to blob storage
+2026-11-25T08:22:47.7930130Z Uploaded bytes 19942
+2026-11-25T08:22:47.8145530Z Finished uploading artifact content to blob storage!
+2026-11-25T08:22:47.8205660Z SHA256 digest of uploaded artifact is 0eedf0cdad257b0a92e5b8ad2c2d075704482309cb243fc38bfb543105af3bf0
+2026-11-25T08:22:47.8207430Z Finalizing artifact upload
+2026-11-25T08:22:48.1966270Z Artifact ci-build-test successfully finalized. Artifact ID 15004546014
+2026-11-25T08:22:48.1976720Z Artifact ci-build-test has been successfully uploaded! Final size is 19942 bytes. Artifact ID is 15004546014
+2026-11-25T08:22:48.1977940Z Artifact download URL: https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45573474567/artifacts/15004546014
+2026-11-25T08:22:48.2241870Z Post job cleanup.
+2026-11-25T08:22:48.2248280Z ##[start-action display=Cache prebuilt libraries;id=__31332d56-824a-4545-b7d7-833913c1a7eb.__actions_cache]
+2026-11-25T08:22:48.2272570Z ##[end-action id=__31332d56-824a-4545-b7d7-833913c1a7eb.__actions_cache;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-11-25T08:22:48.2385570Z Post job cleanup.
+2026-11-25T08:22:48.4387740Z [command]/opt/homebrew/bin/git version
+2026-11-25T08:22:48.4659510Z git version 2.56.1
+2026-11-25T08:22:48.4861790Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/87959c81-e3fd-41ea-8f8d-7cc22ee62dc1/.gitconfig'
+2026-11-25T08:22:48.4964240Z Temporarily overriding HOME='/Users/runner/work/_temp/87959c81-e3fd-41ea-8f8d-7cc22ee62dc1' before making global git config changes
+2026-11-25T08:22:48.5065610Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-25T08:22:48.5129090Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance
+2026-11-25T08:22:48.5323900Z Removing SSH command configuration
+2026-11-25T08:22:48.5680870Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-25T08:22:48.6391460Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-25T08:22:48.9093200Z Removing HTTP extra header
+2026-11-25T08:22:48.9196280Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-25T08:22:48.9396890Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-25T08:22:49.1676200Z Removing includeIf entries pointing to credentials config files
+2026-11-25T08:22:49.1777630Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-25T08:22:49.2090070Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-25T08:22:49.4125270Z Cleaning up orphan processes
+2026-11-25T08:22:51.7257570Z Terminate orphan process: pid (12605) (Python)

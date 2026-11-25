@@ -1,0 +1,31 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Debug -destination id=4A8069E2-8B25-4DDC-A597-5F691CE169F3 -derivedDataPath build/dd "-only-testing:OrangeCellTests/MemoryBudgetTests"
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  OCKeyboardUI: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCKeyboardUI
+  OCCore: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore
+  OCRime: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCRime
+
+2026-11-25 08:12:38.835093+0000 xctest[5402:20927] [loading] Cannot find executable for CFBundle 0x1071b48c0 </Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Debug-iphonesimulator/OrangeCellTests.xctest> (not loaded)
+2026-11-25 08:12:38.846243+0000 xctest[5402:20927] [general] NSBundle file:///Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Debug-iphonesimulator/OrangeCellTests.xctest/ loading failed because of an error Error Domain=NSCocoaErrorDomain Code=4 "The bundle “OrangeCellTests.xctest” couldn’t be loaded because its executable couldn’t be located." UserInfo={NSLocalizedFailureReason=The bundle’s executable couldn’t be located., NSLocalizedRecoverySuggestion=Try reinstalling the bundle., NSBundlePath=/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Debug-iphonesimulator/OrangeCellTests.xctest, NSLocalizedDescription=The bundle “OrangeCellTests.xctest” couldn’t be loaded because its executable couldn’t be located.}
+2026-11-25 08:12:38.848069+0000 xctest[5402:20927] [Default] The bundle “OrangeCellTests.xctest” couldn’t be loaded because its executable couldn’t be located. Try reinstalling the bundle.
+
+
+*** If you believe this error represents a bug, please attach the result bundle at /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Logs/Test/Test-OrangeCell-2026.11.25_08-11-02-+0000.xcresult
+
+2026-11-25 08:17:05.869 xcodebuild[4838:18126] [MT] IDETestOperationsObserverDebug: 363.223 elapsed -- Testing started completed.
+2026-11-25 08:17:05.870 xcodebuild[4838:18126] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 08:17:05.870 xcodebuild[4838:18126] [MT] IDETestOperationsObserverDebug: 363.225 sec, +363.225 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Logs/Test/Test-OrangeCell-2026.11.25_08-11-02-+0000.xcresult
+
+Testing failed:
+	xctest (5402) encountered an error (Failed to load the test bundle. (Underlying Error: The bundle “OrangeCellTests.xctest” couldn’t be loaded because its executable couldn’t be located. The bundle’s executable couldn’t be located. Try reinstalling the bundle.))
+
+** TEST EXECUTE FAILED **
+
+Testing started

@@ -1,0 +1,5 @@
+410:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/EmbeddedKeyboardUITests.swift:60: error: -[OrangeCellUITests.EmbeddedKeyboardUITests testNihaoThenChooseTheFirstCandidate] : XCTAssertEqual failed: ("niho") is not equal to ("nihao")
+412:Test Case '-[OrangeCellUITests.EmbeddedKeyboardUITests testNihaoThenChooseTheFirstCandidate]' failed (123.168 seconds).
+896:Test Suite 'EmbeddedKeyboardUITests' failed at 2026-11-24 19:08:07.490.
+898:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-24 19:08:07.491.
+900:Test Suite 'Selected tests' failed at 2026-11-24 19:08:07.491.

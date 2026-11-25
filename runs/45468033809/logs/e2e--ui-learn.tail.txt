@@ -1,0 +1,67 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/OrangeCell.xcodeproj -scheme OCUITests -configuration Release -destination id=2BCF8C5A-4964-470D-8C98-9F5E58ECC92E -derivedDataPath /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd "-only-testing:OrangeCellUITests/KeyboardUITests/testUserDictionaryAcrossDeployAndKeyboardRestart" -resultBundlePath /Users/runner/work/_temp/results/ui-learn.xcresult
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  OCCore: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore
+  OCKeyboardUI: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCKeyboardUI
+  OCRime: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCRime
+
+Writing result bundle at path:
+	/Users/runner/work/_temp/results/ui-learn.xcresult
+
+2026-11-24 19:30:50.482918+0000 OrangeCellUITests-Runner[17331:61723] [Default] Running tests...
+objc[17331]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x104b60310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x1079dc398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-24 19:30:57.520.
+Test Suite 'OrangeCellUITests.xctest' started at 2026-11-24 19:30:57.521.
+Test Suite 'KeyboardUITests' started at 2026-11-24 19:30:57.521.
+Test Case '-[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart]' started.
+    t =     0.00s Start Test at 2026-11-24 19:30:57.522
+    t =     1.33s Set Up
+    t =     1.33s Open io.github.ninmiao.orangecell.testhost
+    t =     1.33s     Launch io.github.ninmiao.orangecell.testhost
+2026-11-24 19:31:02.105 xcodebuild[15877:56913] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-24 19:31:02.106 xcodebuild[15877:56913] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    10.98s         Setting up automation session
+    t =    13.22s         Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    15.39s Waiting 30.0s for "oc.testhost.field" TextField to exist
+    t =    16.41s     Checking `Expect predicate `existsNoRetry == 1` for object "oc.testhost.field" TextField`
+    t =    16.41s         Checking existence of `"oc.testhost.field" TextField`
+    t =    20.48s Tap "oc.testhost.field" TextField
+    t =    20.48s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    20.75s     Find the "oc.testhost.field" TextField
+    t =    21.68s     Check for interrupting elements affecting "oc.testhost.field" TextField
+    t =    22.04s     Synthesize event
+    t =    23.13s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    31.14s Checking existence of `"inputView" Other`
+    t =    31.48s Find the "inputView" Other
+    t =    32.13s Find the Window (First Match)
+    t =    32.27s Find the Window (First Match)
+OCUI keyboardTop pixels=821.6666666666666 tree=534.0 width=402.0
+    t =    32.58s Find the Window (First Match)
+OCUI bottom row key centres: [201]
+/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:231: error: -[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart] : XCTAssertTrue failed - expected 4 or 5 keys on the bottom row, found 1
+    t =    33.98s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart]' failed (35.335 seconds).
+Test Suite 'KeyboardUITests' failed at 2026-11-24 19:31:32.858.
+	 Executed 1 test, with 1 failure (0 unexpected) in 35.335 (35.337) seconds
+Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-24 19:31:32.859.
+	 Executed 1 test, with 1 failure (0 unexpected) in 35.335 (35.338) seconds
+Test Suite 'Selected tests' failed at 2026-11-24 19:31:32.859.
+	 Executed 1 test, with 1 failure (0 unexpected) in 35.335 (35.339) seconds
+2026-11-24 19:32:43.708 xcodebuild[15877:56913] [MT] IDETestOperationsObserverDebug: 151.577 elapsed -- Testing started completed.
+2026-11-24 19:32:43.710 xcodebuild[15877:56913] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-24 19:32:43.710 xcodebuild[15877:56913] [MT] IDETestOperationsObserverDebug: 151.577 sec, +151.577 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-learn.xcresult
+
+Failing tests:
+	KeyboardUITests.testUserDictionaryAcrossDeployAndKeyboardRestart()
+
+** TEST EXECUTE FAILED **
+
+Testing started

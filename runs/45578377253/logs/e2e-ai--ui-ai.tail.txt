@@ -1,0 +1,30 @@
+    t =    63.21s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (54.0, 538.0)
+    t =    63.21s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    63.21s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    63.30s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    63.40s     Synthesize event
+    t =    63.42s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    63.51s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    63.61s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    63.95s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    63.96s Find the "oc.testhost.field" TextField
+    t =    64.35s Added attachment named 'ai-6-emoticon-adopted'
+OCUI helper footprint-ai: answered
+    t =    96.34s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testAiRowCorrectsAssistsAndPrefersTheEmojiKey]' passed (96.712 seconds).
+Test Suite 'KeyboardUITests' passed at 2026-11-25 09:01:25.925.
+	 Executed 1 test, with 0 failures (0 unexpected) in 96.712 (96.714) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-25 09:01:25.926.
+	 Executed 1 test, with 0 failures (0 unexpected) in 96.712 (96.715) seconds
+Test Suite 'Selected tests' passed at 2026-11-25 09:01:25.926.
+	 Executed 1 test, with 0 failures (0 unexpected) in 96.712 (96.716) seconds
+2026-11-25 09:01:27.928 xcodebuild[16148:56282] [MT] IDETestOperationsObserverDebug: 140.306 elapsed -- Testing started completed.
+2026-11-25 09:01:27.928 xcodebuild[16148:56282] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 09:01:27.928 xcodebuild[16148:56282] [MT] IDETestOperationsObserverDebug: 140.306 sec, +140.306 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-ai.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

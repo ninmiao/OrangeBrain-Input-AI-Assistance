@@ -1,0 +1,40 @@
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  OCRime: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCRime
+  OCCore: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore
+  OCKeyboardUI: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCKeyboardUI
+
+Test Suite 'Selected tests' started at 2026-11-25 10:09:52.420.
+Test Suite 'OrangeCellTests.xctest' started at 2026-11-25 10:09:52.421.
+Test Suite 'MemoryBudgetTests' started at 2026-11-25 10:09:52.421.
+Test Case '-[OrangeCellTests.MemoryBudgetTests testFootprintStagesWithTheShippedDictionary]' started.
+OCINFO memory.all.0-baseline=22.7
+OCINFO memory.all.1-engine-and-session=23.1
+OCINFO memory.all.2-first-sentence-typed=23.1
+OCINFO memory.all.3-committed=23.1
+OCINFO memory.all.4-five-more-phrases=23.1
+OCINFO memory.all.5-stopped=22.7
+Test Case '-[OrangeCellTests.MemoryBudgetTests testFootprintStagesWithTheShippedDictionary]' passed (0.652 seconds).
+Test Case '-[OrangeCellTests.MemoryBudgetTests testMatureUserDictionaryAndAVeryLongInput]' started.
+OCINFO memory.mature.commits=3025 userdbBytes=198082
+OCINFO memory.mature.baseline=22.7 afterStart=22.8 afterLongInput=23.8 afterGrid=23.8 candidates=30
+Test Case '-[OrangeCellTests.MemoryBudgetTests testMatureUserDictionaryAndAVeryLongInput]' passed (13.019 seconds).
+Test Suite 'MemoryBudgetTests' passed at 2026-11-25 10:10:06.094.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 13.671 (13.673) seconds
+Test Suite 'OrangeCellTests.xctest' passed at 2026-11-25 10:10:06.095.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 13.671 (13.674) seconds
+Test Suite 'Selected tests' passed at 2026-11-25 10:10:06.095.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 13.671 (13.675) seconds
+2026-11-25 10:10:13.891 xcodebuild[7705:27952] [MT] IDETestOperationsObserverDebug: 130.203 elapsed -- Testing started completed.
+2026-11-25 10:10:13.891 xcodebuild[7705:27952] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 10:10:13.891 xcodebuild[7705:27952] [MT] IDETestOperationsObserverDebug: 130.203 sec, +130.203 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Logs/Test/Test-OrangeCell-2026.11.25_10-08-00-+0000.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

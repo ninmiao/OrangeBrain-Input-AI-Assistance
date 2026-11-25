@@ -1,0 +1,27 @@
+[e2e] install: ok (app with keyboard extension, test host)
+[ui-test] hosts: OrangeCellUITests/KeyboardUITests/testLearningAcrossTwoHostApps
+[e2e] request: footprint-host2
+[e2e] keyboard process footprint after host2 (Release, pid 13341): 49.0 MB
+[e2e] no letter fell through to plain text in 中 mode (until host2): PASS (unhandledLetters=0)
+[e2e] request: footprint-hosts-done
+[e2e] keyboard process footprint after hosts-done (Release, pid 17985): 48.0 MB
+[e2e] no letter fell through to plain text in 中 mode (until hosts-done): PASS (unhandledLetters=0)
+	 Executed 1 test, with 0 failures (0 unexpected) in 280.936 (280.945) seconds
+check_tests: 1 tests executed, none skipped
+[e2e] two host apps take turns typing and learning (one dictionary, both phrases): PASS 
+[e2e] after the two hosts: the user dictionary folder exists with a CURRENT file: PASS (/Users/runner/Library/Developer/CoreSimulator/Devices/C5C05989-4E86-4560-9790-14EE9B36CB24/data/Containers/Data/PluginKitPlugin/F2B666E7-6F70-4EC6-AF48-D2ACB79002A4/Library/Application Support/rime-user)
+[e2e] after the two hosts: no *.userdb.old (librime did not repair or rename the dictionary): PASS (0 found)
+[e2e] after the two hosts: user dictionary folders: 1
+[e2e] keyboard report (two hosts): userDictionaryMode=learning unhandledLetters=0 engineReadyMs=248.87502193450928 firstCandidatesMs=2827.517032623291
+[e2e] two hosts: no letter fell through to plain text: PASS (unhandledLetters=0)
+[ui-test] kill: OrangeCellUITests/KeyboardUITests/testLearningSurvivesAKillRightAfterTheCommit
+[e2e] request: kill-keyboard
+[e2e] kill keyboard process: killed pid 17985
+	 Executed 1 test, with 0 failures (0 unexpected) in 87.289 (87.294) seconds
+check_tests: 1 tests executed, none skipped
+[e2e] kill -9 right after a commit (no hide, no deployment): the last word and the earlier one are both learned: PASS 
+[e2e] after the kill: the user dictionary folder exists with a CURRENT file: PASS (/Users/runner/Library/Developer/CoreSimulator/Devices/C5C05989-4E86-4560-9790-14EE9B36CB24/data/Containers/Data/PluginKitPlugin/F2B666E7-6F70-4EC6-AF48-D2ACB79002A4/Library/Application Support/rime-user)
+[e2e] after the kill: no *.userdb.old (librime did not repair or rename the dictionary): PASS (0 found)
+[e2e] after the kill: user dictionary folders: 1
+[e2e] memory budget: the highest keyboard footprint of 2 samples <= 55 MB: PASS (highest 49 MB; after typing n/a MB)
+[e2e] failed checks: 0

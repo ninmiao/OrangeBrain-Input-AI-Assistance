@@ -1,0 +1,64 @@
+{
+  "appVersion" : "0.2.14 (14)",
+  "bundleIdentifier" : "io.github.ninmiao.orangecell.keyboard",
+  "containerPath" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/DF361A28-4CE1-4C7E-94C7-9F6F65807926\/data\/Containers\/Shared\/AppGroup\/C53A460D-97A7-454E-9EDD-4FBD8E495E8E",
+  "containerWritable" : true,
+  "footprintMB" : 44.7,
+  "fullAccess" : true,
+  "generatedAt" : "2026-11-24T20:32:25Z",
+  "groupNominal" : "group.io.github.ninmiao.orangecell",
+  "groupResolved" : "group.io.github.ninmiao.orangecell",
+  "groupSource" : "nominalNoProfile",
+  "keyStorage" : [
+    {
+      "backend" : "keychain-default",
+      "crossProcessReadOK" : false,
+      "detail" : "sample not found"
+    },
+    {
+      "backend" : "encrypted-file",
+      "crossProcessReadOK" : true,
+      "detail" : ""
+    }
+  ],
+  "notes" : [
+    "no embedded.mobileprovision (simulator or test bundle)"
+  ],
+  "ocCoreOK" : true,
+  "peerProbe" : {
+    "bundleIdentifier" : "io.github.ninmiao.orangecell",
+    "groupIdentifier" : "group.io.github.ninmiao.orangecell",
+    "nonce" : "71C5B2AE-F919-471E-887D-59445432CEDA",
+    "processID" : 5552,
+    "role" : "app",
+    "writtenAt" : "2026-11-24T20:22:09Z"
+  },
+  "probeWritten" : true,
+  "profileGroups" : [
+
+  ],
+  "rimeDataBuiltWithLibrime" : "1.17.0",
+  "rimeDataBytes" : 59178777,
+  "rimeDataDictionary" : "wanxiang v18.1.13",
+  "rimeDataSchema" : "orangecell_wanxiang",
+  "rimeDictionaryBytes" : 58714452,
+  "rimeModules" : [
+    "default",
+    "core",
+    "dict",
+    "gears",
+    "levers",
+    "deployer",
+    "lua",
+    "octagram",
+    "grammar",
+    "predict",
+    "qjs"
+  ],
+  "rimeRunning" : true,
+  "rimeVersion" : "1.17.0",
+  "role" : "keyboard",
+  "unhandledLetters" : 0,
+  "userDataDirectory" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/DF361A28-4CE1-4C7E-94C7-9F6F65807926\/data\/Containers\/Shared\/AppGroup\/C53A460D-97A7-454E-9EDD-4FBD8E495E8E\/rime-user",
+  "userDataShared" : true
+}

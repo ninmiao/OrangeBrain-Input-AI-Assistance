@@ -1,0 +1,30 @@
+    t =   147.97s Added attachment named 'system-restart-2-candidates'
+    t =   147.98s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (35.0, 559.0)
+    t =   147.98s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =   147.99s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =   148.15s     Check for interrupting elements affecting "OCTestHost" Application
+    t =   148.27s     Synthesize event
+    t =   148.28s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =   148.35s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =   148.43s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =   148.80s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =   149.18s Find the "oc.testhost.field" TextField
+OCUI helper footprint-restarted: answered
+    t =   171.59s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart]' passed (171.972 seconds).
+Test Suite 'KeyboardUITests' passed at 2026-11-24 20:34:31.006.
+	 Executed 1 test, with 0 failures (0 unexpected) in 171.972 (171.984) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-24 20:34:31.007.
+	 Executed 1 test, with 0 failures (0 unexpected) in 171.972 (171.985) seconds
+Test Suite 'Selected tests' passed at 2026-11-24 20:34:31.007.
+	 Executed 1 test, with 0 failures (0 unexpected) in 171.972 (171.986) seconds
+2026-11-24 20:34:32.402 xcodebuild[14286:51555] [MT] IDETestOperationsObserverDebug: 216.185 elapsed -- Testing started completed.
+2026-11-24 20:34:32.402 xcodebuild[14286:51555] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-24 20:34:32.402 xcodebuild[14286:51555] [MT] IDETestOperationsObserverDebug: 216.185 sec, +216.185 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-learn.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

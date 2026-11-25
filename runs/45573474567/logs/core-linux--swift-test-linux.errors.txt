@@ -1,0 +1,37 @@
+26:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:86:9: error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+36:    |         `- error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+40:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:87:9: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+50:    |         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+54:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:9: error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+64:    |         `- error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+68:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:23: error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+72:    |                       `- error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+84:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:55: error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+95:    |                                                       `- error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+99:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:105: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+110:    |                                                                                                         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+116:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:86:9: error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+126:    |         `- error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+130:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:87:9: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+140:    |         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+144:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:9: error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+154:    |         `- error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+158:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:23: error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+162:    |                       `- error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+174:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:55: error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+185:    |                                                       `- error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+189:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:105: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+200:    |                                                                                                         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+206:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:86:9: error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+216:    |         `- error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+220:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:87:9: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+230:    |         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+234:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:9: error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+244:    |         `- error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+248:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:23: error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+252:    |                       `- error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+264:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:55: error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+275:    |                                                       `- error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+279:/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:105: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+290:    |                                                                                                         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+302:error: fatalError

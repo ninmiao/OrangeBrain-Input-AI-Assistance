@@ -1,0 +1,5 @@
+578:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:89:24: error: type 'RequestStamp' does not conform to protocol 'Hashable'
+581:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:93:14: error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+587:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:94:44: error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+590:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:99:22: error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+597:** TEST BUILD FAILED **

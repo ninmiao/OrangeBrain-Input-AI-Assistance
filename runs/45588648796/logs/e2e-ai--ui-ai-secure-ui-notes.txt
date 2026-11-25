@@ -1,0 +1,2 @@
+keyboardTop pixels=n/a tree=539.0 width=402.0
+helper footprint-ai-secure: answered

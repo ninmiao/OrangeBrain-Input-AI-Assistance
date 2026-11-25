@@ -1,0 +1,7 @@
+85:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/EmbeddedKeyboardUITests.swift:112: error: -[OrangeCellUITests.EmbeddedKeyboardUITests testChineseEnglishToggleAndShift] : XCTAssertEqual failed: ("Hello") is not equal to ("hello")
+87:Test Case '-[OrangeCellUITests.EmbeddedKeyboardUITests testChineseEnglishToggleAndShift]' failed (137.006 seconds).
+129:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/EmbeddedKeyboardUITests.swift:82: error: -[OrangeCellUITests.EmbeddedKeyboardUITests testDeleteEditsCompositionThenDocument] : XCTAssertEqual failed: ("Ab") is not equal to ("ab")
+131:Test Case '-[OrangeCellUITests.EmbeddedKeyboardUITests testDeleteEditsCompositionThenDocument]' failed (16.182 seconds).
+1039:Test Suite 'EmbeddedKeyboardUITests' failed at 2026-11-25 08:51:56.897.
+1041:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-25 08:51:56.898.
+1043:Test Suite 'Selected tests' failed at 2026-11-25 08:51:56.899.

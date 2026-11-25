@@ -1,0 +1,40 @@
+Test Case 'NativeCoreTests.testErrorsComeBackAsNativeCoreError' passed (0.0 seconds)
+Test Case 'NativeCoreTests.testLargeAndUnicodeInput' started at 2026-11-24 18:44:29.925
+Test Case 'NativeCoreTests.testLargeAndUnicodeInput' passed (0.001 seconds)
+Test Case 'NativeCoreTests.testMalformedAndNullInputAreRejectedWithoutCrashing' started at 2026-11-24 18:44:29.926
+Test Case 'NativeCoreTests.testMalformedAndNullInputAreRejectedWithoutCrashing' passed (0.0 seconds)
+Test Case 'NativeCoreTests.testRawInvokeMatchesTheDocumentedEnvelope' started at 2026-11-24 18:44:29.926
+Test Case 'NativeCoreTests.testRawInvokeMatchesTheDocumentedEnvelope' passed (0.0 seconds)
+Test Case 'NativeCoreTests.testReasoningTextIsNotAccepted' started at 2026-11-24 18:44:29.926
+Test Case 'NativeCoreTests.testReasoningTextIsNotAccepted' passed (0.0 seconds)
+Test Case 'NativeCoreTests.testSelfTestPasses' started at 2026-11-24 18:44:29.927
+Test Case 'NativeCoreTests.testSelfTestPasses' passed (0.0 seconds)
+Test Case 'NativeCoreTests.testSharedTruncationCorpus' started at 2026-11-24 18:44:29.927
+Test Case 'NativeCoreTests.testSharedTruncationCorpus' passed (0.004 seconds)
+Test Suite 'NativeCoreTests' passed at 2026-11-24 18:44:29.931
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.008 (0.008) seconds
+Test Suite 'ProvisioningProfileTests' started at 2026-11-24 18:44:29.931
+Test Case 'ProvisioningProfileTests.testExpiredProfile' started at 2026-11-24 18:44:29.931
+Test Case 'ProvisioningProfileTests.testExpiredProfile' passed (0.001 seconds)
+Test Case 'ProvisioningProfileTests.testExpiryParsing' started at 2026-11-24 18:44:29.931
+Test Case 'ProvisioningProfileTests.testExpiryParsing' passed (0.001 seconds)
+Test Case 'ProvisioningProfileTests.testExtractsPlistFromCmsEnvelope' started at 2026-11-24 18:44:29.933
+Test Case 'ProvisioningProfileTests.testExtractsPlistFromCmsEnvelope' passed (0.001 seconds)
+Test Case 'ProvisioningProfileTests.testPlainXmlPlistWithoutEnvelopeIsAccepted' started at 2026-11-24 18:44:29.933
+Test Case 'ProvisioningProfileTests.testPlainXmlPlistWithoutEnvelopeIsAccepted' passed (0.0 seconds)
+Test Case 'ProvisioningProfileTests.testRejectsBrokenPropertyList' started at 2026-11-24 18:44:29.933
+Test Case 'ProvisioningProfileTests.testRejectsBrokenPropertyList' passed (0.0 seconds)
+Test Case 'ProvisioningProfileTests.testRejectsDataWithoutPropertyList' started at 2026-11-24 18:44:29.934
+Test Case 'ProvisioningProfileTests.testRejectsDataWithoutPropertyList' passed (0.0 seconds)
+Test Case 'ProvisioningProfileTests.testUnknownExpiryIsNotReportedAsExpiring' started at 2026-11-24 18:44:29.934
+Test Case 'ProvisioningProfileTests.testUnknownExpiryIsNotReportedAsExpiring' passed (0.0 seconds)
+Test Suite 'ProvisioningProfileTests' passed at 2026-11-24 18:44:29.934
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.003 (0.003) seconds
+Test Suite 'debug.xctest' passed at 2026-11-24 18:44:29.934
+	 Executed 30 tests, with 0 failures (0 unexpected) in 0.119 (0.119) seconds
+Test Suite 'All tests' passed at 2026-11-24 18:44:29.934
+	 Executed 30 tests, with 0 failures (0 unexpected) in 0.119 (0.119) seconds
+◇ Test run started.
+↳ Testing Library Version: 6.2.4 (5ee435b15ad40ec)
+↳ Target Platform: x86_64-unknown-linux-gnu
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

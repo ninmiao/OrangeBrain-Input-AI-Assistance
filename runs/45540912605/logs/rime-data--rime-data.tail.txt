@@ -1,0 +1,40 @@
+I20261125 03:35:08.166724 0x1f89aa240 table.cc:341] estimated file size: 111745952
+I20261125 03:35:08.166738 0x1f89aa240 mapped_file.cc:59] creating file '/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/rime-shared/build/orangecell_wanxiang_d_2a94c48aa51e.table.bin'.
+I20261125 03:35:08.167090 0x1f89aa240 mapped_file.cc:70] opening file for read/write access.
+I20261125 03:35:08.167187 0x1f89aa240 table.cc:347] creating metadata.
+I20261125 03:35:08.167239 0x1f89aa240 table.cc:361] creating syllabary.
+I20261125 03:35:08.167876 0x1f89aa240 table.cc:374] creating table index.
+I20261125 03:35:09.596449 0x1f89aa240 table.cc:316] saving table file: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/rime-shared/build/orangecell_wanxiang_d_2a94c48aa51e.table.bin
+I20261125 03:35:09.596486 0x1f89aa240 mapped_file.cc:118] shrinking file to fit data size. capacity: 111745952
+I20261125 03:35:09.596490 0x1f89aa240 mapped_file.cc:129] resize file to: 58714452
+I20261125 03:35:09.607837 0x1f89aa240 reverse_lookup_dictionary.cc:89] building reversedb...
+I20261125 03:35:09.639481 0x1f89aa240 mapped_file.cc:59] creating file '/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/rime-shared/build/orangecell_wanxiang_d_2a94c48aa51e.reverse.bin'.
+I20261125 03:35:09.639964 0x1f89aa240 mapped_file.cc:70] opening file for read/write access.
+I20261125 03:35:09.645240 0x1f89aa240 reverse_lookup_dictionary.cc:197] saving reverse file: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/rime-shared/build/orangecell_wanxiang_d_2a94c48aa51e.reverse.bin
+I20261125 03:35:09.645273 0x1f89aa240 mapped_file.cc:118] shrinking file to fit data size. capacity: 276196
+I20261125 03:35:09.645277 0x1f89aa240 mapped_file.cc:129] resize file to: 275236
+I20261125 03:35:09.901583 0x1f89aa240 dict_compiler.cc:299] building prism...
+I20261125 03:35:09.901645 0x1f89aa240 table.cc:270] loading table file: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/rime-shared/build/orangecell_wanxiang_d_2a94c48aa51e.table.bin
+I20261125 03:35:09.902482 0x1f89aa240 config_data.cc:73] loading config file '/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/rime-shared/build/orangecell_wanxiang.schema.yaml'.
+I20261125 03:35:09.993153 0x1f89aa240 mapped_file.cc:59] creating file '/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/rime-shared/build/orangecell_wanxiang_d_2a94c48aa51e.prism.bin'.
+I20261125 03:35:09.993512 0x1f89aa240 mapped_file.cc:70] opening file for read/write access.
+I20261125 03:35:09.995070 0x1f89aa240 prism.cc:135] saving prism file: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/rime-shared/build/orangecell_wanxiang_d_2a94c48aa51e.prism.bin
+I20261125 03:35:09.995083 0x1f89aa240 mapped_file.cc:118] shrinking file to fit data size. capacity: 320816
+I20261125 03:35:09.995086 0x1f89aa240 mapped_file.cc:129] resize file to: 175732
+I20261125 03:35:09.995637 0x1f89aa240 deployment_tasks.cc:379] dictionary 'orangecell_wanxiang_d_2a94c48aa51e' is ready.
+I20261125 03:35:09.997295 0x1f89aa240 config_data.cc:73] loading config file '/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/rime-shared/build/orangecell_wanxiang.schema.yaml'.
+I20261125 03:35:09.998483 0x1f89aa240 deployment_tasks.cc:247] finished updating schemas: 1 success, 0 failure.
+W20261125 03:35:09.998551 0x1f89aa240 config_data.cc:70] nonexistent config file '/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/work/user/user.yaml'.
+I20261125 03:35:09.998561 0x1f89aa240 config_data.cc:202] write: var/last_build_time
+I20261125 03:35:09.998565 0x1f89aa240 config_data.cc:92] saving config file '/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/work/user/user.yaml'.
+I20261125 03:35:09.998784 0x1f89aa240 deployment_tasks.cc:584] clean up trash.
+oc_deployer: librime 1.17.0
+oc_deployer: deploy succeeded
+deploy took 7 s
+build output: 5 files, 56.4 MiB
+     55.99 MiB  build/orangecell_wanxiang_d_2a94c48aa51e.table.bin
+      0.26 MiB  build/orangecell_wanxiang_d_2a94c48aa51e.reverse.bin
+      0.17 MiB  build/orangecell_wanxiang_d_2a94c48aa51e.prism.bin
+      0.01 MiB  build/orangecell_wanxiang.schema.yaml
+      0.00 MiB  build/default.yaml
+ 26M	/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/rime-shared

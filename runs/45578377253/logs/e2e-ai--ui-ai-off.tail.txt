@@ -1,0 +1,30 @@
+    t =    32.82s Find the Window (First Match)
+    t =    32.84s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (343.0, 538.0)
+    t =    32.84s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    32.84s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    32.87s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    32.91s     Synthesize event
+    t =    32.92s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    32.97s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    33.02s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    33.33s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    35.01s Added attachment named 'ai-nofullaccess-2-keys-pressed'
+    t =    35.01s Find the "oc.testhost.field" TextField
+    t =    35.10s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testAiNeedsFullAccess]' passed (35.577 seconds).
+Test Suite 'KeyboardUITests' passed at 2026-11-25 09:07:43.886.
+	 Executed 1 test, with 0 failures (0 unexpected) in 35.577 (35.580) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-25 09:07:43.887.
+	 Executed 1 test, with 0 failures (0 unexpected) in 35.577 (35.581) seconds
+Test Suite 'Selected tests' passed at 2026-11-25 09:07:43.887.
+	 Executed 1 test, with 0 failures (0 unexpected) in 35.577 (35.583) seconds
+2026-11-25 09:07:44.933 xcodebuild[33216:103034] [MT] IDETestOperationsObserverDebug: 71.106 elapsed -- Testing started completed.
+2026-11-25 09:07:44.933 xcodebuild[33216:103034] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 09:07:44.933 xcodebuild[33216:103034] [MT] IDETestOperationsObserverDebug: 71.106 sec, +71.106 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-ai-off.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

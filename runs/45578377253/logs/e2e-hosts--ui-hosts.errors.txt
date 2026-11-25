@@ -1,0 +1,5 @@
+519:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:292: error: -[OrangeCellUITests.KeyboardUITests testLearningAcrossTwoHostApps] : failed - host 1 should see the phrase host 2 learned
+521:Test Case '-[OrangeCellUITests.KeyboardUITests testLearningAcrossTwoHostApps]' failed (206.877 seconds).
+522:Test Suite 'KeyboardUITests' failed at 2026-11-25 08:55:07.224.
+524:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-25 08:55:07.225.
+526:Test Suite 'Selected tests' failed at 2026-11-25 08:55:07.225.

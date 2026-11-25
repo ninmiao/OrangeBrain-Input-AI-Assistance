@@ -1,0 +1,5 @@
+143:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:274: error: -[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart] : failed - round 1: candidate 2 should have inserted 拟好
+145:Test Case '-[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart]' failed (66.712 seconds).
+146:Test Suite 'KeyboardUITests' failed at 2026-11-24 20:10:40.685.
+148:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-24 20:10:40.686.
+150:Test Suite 'Selected tests' failed at 2026-11-24 20:10:40.687.

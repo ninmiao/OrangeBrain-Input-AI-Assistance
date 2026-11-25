@@ -1,0 +1,2 @@
+[ui-test] embedded: OrangeCellUITests/EmbeddedKeyboardUITests
+	 Executed 12 tests, with 1 failure (0 unexpected) in 304.251 (304.278) seconds

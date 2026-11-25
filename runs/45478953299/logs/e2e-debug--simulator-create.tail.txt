@@ -1,0 +1,3 @@
+runtime:     com.apple.CoreSimulator.SimRuntime.iOS-26-5
+device type: com.apple.CoreSimulator.SimDeviceType.iPhone-17
+udid:        F68F1541-42F2-42C6-BFA0-D1E314A10762

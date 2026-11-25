@@ -1,0 +1,14 @@
+### Simulator end-to-end (Debug, typing)
+
+| step | result |
+| --- | --- |
+| install | ok (app with keyboard extension, test host) |
+| keyboard process footprint after typing (Debug, pid 9229) | 47.0 MB |
+| no letter fell through to plain text in 中 mode (until typing) | PASS (unhandledLetters=0) |
+| phase A: typing through the real keyboard extension (nihao, sentence, backspace, 中/EN) | PASS  |
+| keyboard report (A) | fullAccess=false userDataShared=false rimeRunning=true dictionary=wanxiang v18.1.13 |
+| keyboard start-up after it appeared (A, simulator) | engine ready 236.05608940124512 ms, first candidates 10127.532005310059 ms, user dictionary learning |
+| phase A: engine running inside the extension | PASS  |
+| phase A: without Full Access the user dictionary is private | PASS (userDataShared=false) |
+| memory (Debug, information only) | after typing 47.0 MB, highest 47 MB |
+| failed checks | 0 |

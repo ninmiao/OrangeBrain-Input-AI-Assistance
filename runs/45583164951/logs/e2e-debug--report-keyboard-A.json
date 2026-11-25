@@ -1,0 +1,67 @@
+{
+  "appVersion" : "0.2.22 (22)",
+  "bundleIdentifier" : "io.github.ninmiao.orangecell.keyboard",
+  "containerPath" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/03E63172-8935-4363-A330-544F1F015D3B\/data\/Containers\/Shared\/AppGroup\/F156676C-A7CE-43DF-8D43-E3BB1629C4B2",
+  "containerWritable" : true,
+  "engineReadyMs" : 236.05608940124512,
+  "firstCandidatesMs" : 10127.532005310059,
+  "footprintMB" : 47.5,
+  "fullAccess" : false,
+  "generatedAt" : "2026-11-25T09:33:09Z",
+  "groupNominal" : "group.io.github.ninmiao.orangecell",
+  "groupResolved" : "group.io.github.ninmiao.orangecell",
+  "groupSource" : "nominalNoProfile",
+  "keyStorage" : [
+    {
+      "backend" : "keychain-default",
+      "crossProcessReadOK" : false,
+      "detail" : "sample not found"
+    },
+    {
+      "backend" : "encrypted-file",
+      "crossProcessReadOK" : true,
+      "detail" : ""
+    }
+  ],
+  "notes" : [
+    "no embedded.mobileprovision (simulator or test bundle)"
+  ],
+  "ocCoreOK" : true,
+  "peerProbe" : {
+    "bundleIdentifier" : "io.github.ninmiao.orangecell",
+    "groupIdentifier" : "group.io.github.ninmiao.orangecell",
+    "nonce" : "49274C00-EDAB-46D6-AD45-275FDB538DD1",
+    "processID" : 6983,
+    "role" : "app",
+    "writtenAt" : "2026-11-25T09:27:37Z"
+  },
+  "probeWritten" : true,
+  "profileGroups" : [
+
+  ],
+  "rimeDataBuiltWithLibrime" : "1.17.0",
+  "rimeDataBytes" : 59178777,
+  "rimeDataDictionary" : "wanxiang v18.1.13",
+  "rimeDataSchema" : "orangecell_wanxiang",
+  "rimeDictionaryBytes" : 58714452,
+  "rimeModules" : [
+    "default",
+    "core",
+    "dict",
+    "gears",
+    "levers",
+    "deployer",
+    "lua",
+    "octagram",
+    "grammar",
+    "predict",
+    "qjs"
+  ],
+  "rimeRunning" : true,
+  "rimeVersion" : "1.17.0",
+  "role" : "keyboard",
+  "unhandledLetters" : 0,
+  "userDataDirectory" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/03E63172-8935-4363-A330-544F1F015D3B\/data\/Containers\/Data\/PluginKitPlugin\/7E3ED900-C3DA-4833-B0D0-D0118D59C303\/Library\/Application Support\/rime-user",
+  "userDataShared" : false,
+  "userDictionaryMode" : "learning"
+}

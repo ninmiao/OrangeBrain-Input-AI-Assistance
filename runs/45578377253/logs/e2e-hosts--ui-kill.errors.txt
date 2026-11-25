@@ -1,0 +1,5 @@
+206:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:292: error: -[OrangeCellUITests.KeyboardUITests testLearningSurvivesAKillRightAfterTheCommit] : failed - the second candidate should have inserted 种过
+208:Test Case '-[OrangeCellUITests.KeyboardUITests testLearningSurvivesAKillRightAfterTheCommit]' failed (56.218 seconds).
+209:Test Suite 'KeyboardUITests' failed at 2026-11-25 08:57:06.104.
+211:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-25 08:57:06.105.
+213:Test Suite 'Selected tests' failed at 2026-11-25 08:57:06.105.

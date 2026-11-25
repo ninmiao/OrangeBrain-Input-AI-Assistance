@@ -1,0 +1,40 @@
+    cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest
+
+CodeSign /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app (in target 'OrangeCellUITests' from project 'OrangeCell')
+    cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app
+/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app: replacing existing signature
+
+RegisterExecutionPolicyException /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest (in target 'OrangeCellUITests' from project 'OrangeCell')
+    cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+    builtin-RegisterExecutionPolicyException /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest
+
+Touch /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest (in target 'OrangeCellUITests' from project 'OrangeCell')
+    cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+    /usr/bin/touch -c /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest
+
+ValidateEmbeddedBinary /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/PlugIns/OrangeCellKeyboard.appex (in target 'OrangeCell' from project 'OrangeCell')
+    cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/embeddedBinaryValidationUtility /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/PlugIns/OrangeCellKeyboard.appex -signing-cert - -info-plist-path /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/Info.plist
+
+RegisterExecutionPolicyException /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app (in target 'OrangeCell' from project 'OrangeCell')
+    cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+    builtin-RegisterExecutionPolicyException /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app
+
+Validate /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app (in target 'OrangeCell' from project 'OrangeCell')
+    cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+    builtin-validationUtility /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app -shallow-bundle -infoplist-subpath Info.plist
+
+Touch /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app (in target 'OrangeCell' from project 'OrangeCell')
+    cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+    /usr/bin/touch -c /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app
+
+** TEST BUILD SUCCEEDED **
+

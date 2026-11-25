@@ -1,0 +1,53 @@
+[e2e] install: ok (app with keyboard extension, test host)
+[ui-test] typing: OrangeCellUITests/KeyboardUITests/testRealExtensionTypesChineseAndEnglish
+[e2e] request: footprint-typing
+[e2e] keyboard process footprint after typing (Release, pid 11105): 54.0 MB
+[e2e] no letter fell through to plain text in 中 mode (until typing): PASS (unhandledLetters=0)
+	 Executed 1 test, with 0 failures (0 unexpected) in 177.879 (177.886) seconds
+[e2e] phase A: typing through the real keyboard extension (nihao, sentence, backspace, 中/EN): PASS 
+[e2e] keyboard report (A): fullAccess=false userDataShared=false rimeRunning=true dictionary=wanxiang v18.1.13
+[e2e] phase A: engine running inside the extension: PASS 
+[e2e] phase A: without Full Access the user dictionary is private: PASS (userDataShared=false)
+[ui-test] learn: OrangeCellUITests/KeyboardUITests/testLearnAPhrase
+[e2e] request: footprint-learned
+[e2e] keyboard process footprint after learned (Release, pid 11105): 56.0 MB
+[e2e] no letter fell through to plain text in 中 mode (until learned): PASS (unhandledLetters=0)
+	 Executed 1 test, with 0 failures (0 unexpected) in 63.246 (63.250) seconds
+[e2e] phase A: learn 拟好 without Full Access: PASS 
+[ui-test] settings-fullaccess: OrangeCellUITests/EnableKeyboardUITests
+	 Executed 1 test, with 0 failures (0 unexpected) in 44.151 (44.159) seconds
+[e2e] Settings UI: Allow Full Access: PASS 
+[ui-test] fullaccess: OrangeCellUITests/KeyboardUITests/testLearnedPhraseSurvivesDeployAndKeyboardRestart
+[e2e] request: footprint-fullaccess
+[e2e] keyboard process footprint after fullaccess (Release, pid 25969): 49.0 MB
+[e2e] no letter fell through to plain text in 中 mode (until fullaccess): PASS (unhandledLetters=0)
+[e2e] request: deploy
+[e2e] app deployment while the keyboard runs: PASS (0s)
+[e2e] deploy stamp changed: PASS (before: none, after: 2026-11-25T03:18:43Z-C1FD2C0F)
+[e2e] request: kill-keyboard
+[e2e] kill keyboard process: killed pid 25969
+[e2e] request: footprint-restarted
+[e2e] keyboard process footprint after restarted (Release, pid 29590): 51.0 MB
+[e2e] no letter fell through to plain text in 中 mode (until restarted): PASS (unhandledLetters=0)
+	 Executed 1 test, with 0 failures (0 unexpected) in 198.184 (198.189) seconds
+[e2e] phase B: with Full Access 拟好 is still first, the app deploys, the keyboard restarts, 拟好 is still first: PASS 
+[e2e] keyboard report (B): fullAccess=true userDataShared=false rimeRunning=true deployStamp=2026-11-25T03:18:43Z-C1FD2C0F staging=set snapshot=none
+[e2e] phase B: the keyboard runs with Full Access: PASS 
+[e2e] phase B: the live user dictionary is the same private folder as without Full Access: PASS (userDataShared=false)
+[e2e] phase B: with Full Access the keyboard reads the app deployments from the App Group: PASS 
+[e2e] phase B: oc_core round trip inside the extension: PASS 
+[e2e] phase B: librime modules registered (lua, octagram, predict, qjs): PASS 
+[e2e] phase B: Rime data stamp readable and built by the linked librime: PASS 
+[e2e] phase B: the extension sees the app probe file (App Group shared): PASS 
+[e2e] phase B: encrypted-file key store readable across processes: PASS 
+[e2e] phase B: the user dictionary files are in the keyboard private folder: PASS 
+[e2e] snapshot export in the App Group (information): 0 file(s)
+[ui-test] settings-fullaccess-off: OrangeCellUITests/EnableKeyboardUITests
+	 Executed 1 test, with 0 failures (0 unexpected) in 32.198 (32.202) seconds
+[e2e] Settings UI: Full Access off again: PASS 
+[ui-test] fullaccess-off: OrangeCellUITests/KeyboardUITests/testLearnedPhraseIsFirst
+	 Executed 1 test, with 1 failure (0 unexpected) in 56.705 (56.715) seconds
+[e2e] phase C: Full Access off again, 拟好 is still first: **FAIL** (see ui-fullaccess-off logs and screenshots)
+[e2e] phase C: Full Access off and the same private user dictionary folder: **FAIL** (fullAccess=true)
+[e2e] memory budget: keyboard footprint after typing <= 55 MB: PASS (measured 54.0 MB, highest of all measurements 56 MB)
+[e2e] failed checks: 2

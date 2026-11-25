@@ -1,0 +1,92 @@
+Attributes: Application, 0x10521ee40, pid: 18112, label: 'Settings'
+Element subtree:
+ →Application, 0x10521ee40, pid: 18112, label: 'Settings'
+    Window (Main), 0x10521ef80, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x10521f700, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10521f980, {{0.0, 0.0}, {402.0, 874.0}}
+          Other, 0x10521f480, {{0.0, 0.0}, {402.0, 874.0}}
+            Other, 0x116577200, {{0.0, 0.0}, {402.0, 874.0}}
+              Other, 0x1165770c0, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x116574140, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x116576080, {{0.0, 0.0}, {402.0, 874.0}}
+                    Other, 0x116574000, {{0.0, 0.0}, {402.0, 874.0}}
+                      NavigationBar, 0x1165766c0, {{0.0, 62.0}, {402.0, 54.0}}, identifier: 'UIAlert'
+                        Button, 0x116574280, {{16.0, 62.0}, {44.0, 44.0}}, identifier: 'BackButton', label: 'Keyboards'
+                      Other, 0x1165761c0, {{0.0, 0.0}, {402.0, 874.0}}
+                        Other, 0x116576300, {{0.0, 0.0}, {402.0, 874.0}}
+                          Other, 0x116575e00, {{0.0, 0.0}, {402.0, 874.0}}
+                            Other, 0x116576580, {{0.0, 0.0}, {402.0, 874.0}}
+                              Other, 0x116576440, {{0.0, 116.0}, {402.0, 724.0}}
+                                Table, 0x116576800, {{0.0, 0.0}, {402.0, 874.0}}
+                                  Other, 0x116576d00, {{0.0, 116.0}, {402.0, 17.7}}
+                                  Cell, 0x116576e40, {{20.0, 133.7}, {362.0, 53.0}}, identifier: 'Allow Full Access'
+                                    Other, 0x116576f80, {{20.0, 133.7}, {362.0, 53.0}}
+                                      Other, 0x116576a80, {{20.0, 133.7}, {362.0, 53.0}}
+                                        Switch, 0x116600000, {{34.0, 146.3}, {332.0, 28.0}}, identifier: 'Allow Full Access', label: 'Allow Full Access', value: 1
+                                          Button, 0x116600140, {{76.0, 150.0}, {131.0, 20.3}}, identifier: 'Allow Full Access', label: 'Allow Full Access'
+                                          Switch, 0x116600280, {{305.0, 146.3}, {63.0, 28.0}}, value: 1
+                                          Button, 0x1166003c0, {{34.0, 146.3}, {28.0, 28.0}}, identifier: 'Allow Full Access'
+                                  Other, 0x116600500, {{0.0, 186.7}, {402.0, 17.3}}
+                                  Other, 0x116600640, {{369.0, 116.0}, {30.0, 696.0}}, label: 'Vertical scroll bar, 1 page', value: 0%
+                                    Other, 0x116600780, {{396.0, 735.0}, {3.0, 74.0}}
+                                  Other, 0x1166008c0, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Horizontal scroll bar, 1 page', value: 0%
+                                    Other, 0x116600a00, {{65.0, 868.0}, {272.0, 3.0}}
+                      Other, 0x116600b40, {{0.0, 0.0}, {402.0, 874.0}}
+                        Other, 0x116600c80, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x116600dc0, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x116600f00, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x116601040, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x116601180, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x1166012c0, {{0.0, 0.0}, {402.0, 874.0}}
+        Alert, 0x116601400, {{41.0, 304.0}, {320.0, 294.0}}, label: 'Allow Full Access for “橘脑一颗” Keyboards?'
+          Other, 0x116601540, {{41.0, 304.0}, {320.0, 294.0}}
+            Other, 0x116601680, {{41.0, 304.0}, {320.0, 294.0}}
+              Other, 0x1166017c0, {{41.0, 304.0}, {320.0, 294.0}}
+              Other, 0x116601900, {{41.0, 304.0}, {320.0, 294.0}}
+                ScrollView, 0x116601a40, {{41.0, 304.0}, {320.0, 214.0}}
+                  Other, 0x116601b80, {{41.0, 304.0}, {320.0, 214.0}}
+                    StaticText, 0x116601cc0, {{71.0, 326.0}, {260.0, 42.3}}, label: 'Allow Full Access for “橘脑一颗” Keyboards?'
+                    StaticText, 0x116601e00, {{71.0, 375.7}, {260.0, 138.0}}, label: 'Full access allows the developer of
+this keyboard to transmit anything
+you type, including things you have
+previously typed with this keyboard.
+This could include sensitive
+information such as your credit card
+number or street address.'
+                  Other, 0x116601f40, {{41.0, 516.0}, {320.0, 2.0}}
+                  Other, 0x116602080, {{328.0, 304.0}, {30.0, 214.0}}, label: 'Vertical scroll bar, 2 pages', value: 0%
+                    Other, 0x1166021c0, {{355.0, 265.0}, {3.0, 36.0}}
+                  Other, 0x116602300, {{41.0, 485.0}, {320.0, 30.0}}, label: 'Horizontal scroll bar, 1 page', value: 0%
+                    Other, 0x116602440, {{2.0, 512.0}, {36.0, 3.0}}
+                  Other, 0x116602580, {{328.0, 304.0}, {30.0, 214.0}}, label: 'Vertical scroll bar, 2 pages', value: 0%
+                    Other, 0x1166026c0, {{355.0, 265.0}, {3.0, 36.0}}
+                  Other, 0x116602800, {{41.0, 485.0}, {320.0, 30.0}}, label: 'Horizontal scroll bar, 1 page', value: 0%
+                    Other, 0x116602940, {{2.0, 512.0}, {36.0, 3.0}}
+                ScrollView, 0x116602a80, {{41.0, 518.0}, {320.0, 80.0}}
+                  Other, 0x116602bc0, {{41.0, 518.0}, {320.0, 80.0}}
+                    Other, 0x116602d00, {{57.0, 534.0}, {288.0, 48.0}}
+                      Button, 0x116602e40, {{57.0, 534.0}, {140.0, 48.0}}, label: 'Don’t Allow'
+                      Button, 0x116602f80, {{205.0, 534.0}, {140.0, 48.0}}, label: 'Allow'
+                  Other, 0x1166030c0, {{328.0, 518.0}, {30.0, 80.0}}, label: 'Vertical scroll bar, 1 page', value: 0%
+                    Other, 0x116603200, {{355.0, 608.0}, {3.0, 7.0}}
+                  Other, 0x116603340, {{41.0, 565.0}, {320.0, 30.0}}, label: 'Horizontal scroll bar, 1 page', value: 0%
+                    Other, 0x116603480, {{131.0, 592.0}, {7.0, 3.0}}
+                  Other, 0x1166035c0, {{328.0, 518.0}, {30.0, 80.0}}, label: 'Vertical scroll bar, 1 page', value: 0%
+                    Other, 0x116603700, {{355.0, 608.0}, {3.0, 7.0}}
+                  Other, 0x116603840, {{41.0, 565.0}, {320.0, 30.0}}, label: 'Horizontal scroll bar, 1 page', value: 0%
+                    Other, 0x116603980, {{131.0, 592.0}, {7.0, 3.0}}
+          Other, 0x116603ac0, {{41.0, 304.0}, {320.0, 294.0}}
+            Other, 0x116603c00, {{41.0, 304.0}, {320.0, 294.0}}
+              Other, 0x116603d40, {{41.0, 304.0}, {320.0, 294.0}}
+                Other, 0x116603e80, {{41.0, 304.0}, {320.0, 294.0}}
+                  Other, 0x116554000, {{41.0, 304.0}, {320.0, 294.0}}
+                    Other, 0x116554140, {{41.0, 304.0}, {402.0, 874.0}}
+                Other, 0x116554280, {{41.0, 304.0}, {320.0, 294.0}}
+                  Other, 0x1165543c0, {{41.0, 304.0}, {402.0, 874.0}}
+Path to element:
+ →Application, 0x10521ee40, pid: 18112, label: 'Settings'
+Query chain:
+ →Find: Application 'com.apple.Preferences'
+  Output: {
+    Application, 0x116554500, pid: 18112, label: 'Settings'
+  }

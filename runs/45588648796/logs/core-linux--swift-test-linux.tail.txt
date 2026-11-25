@@ -1,0 +1,40 @@
+Test Case 'TextTraitsTests.testAnOwnChangeThatNeverGetsItsNotificationStopsMaskingAfterAWhile' passed (0.101 seconds)
+Test Case 'TextTraitsTests.testFieldsThatTakeOnlyLatinTextForceEnglishAndPadsTakeOverTheKeys' started at 2026-11-25 09:48:10.887
+Test Case 'TextTraitsTests.testFieldsThatTakeOnlyLatinTextForceEnglishAndPadsTakeOverTheKeys' passed (0.0 seconds)
+Test Case 'TextTraitsTests.testPlainTextEmailAndUrlFieldsMayUseAi' started at 2026-11-25 09:48:10.888
+Test Case 'TextTraitsTests.testPlainTextEmailAndUrlFieldsMayUseAi' passed (0.0 seconds)
+Test Case 'TextTraitsTests.testSecretAndNumericFieldsNeverGoToAi' started at 2026-11-25 09:48:10.888
+Test Case 'TextTraitsTests.testSecretAndNumericFieldsNeverGoToAi' passed (0.0 seconds)
+Test Case 'TextTraitsTests.testSentencesCapitaliseAtTheStartAfterATerminatorAndAfterANewline' started at 2026-11-25 09:48:10.888
+Test Case 'TextTraitsTests.testSentencesCapitaliseAtTheStartAfterATerminatorAndAfterANewline' passed (0.0 seconds)
+Test Case 'TextTraitsTests.testTheKeyboardsOwnChangeIsNotAHostChangeEvenWhenTheProxyReportsItLate' started at 2026-11-25 09:48:10.888
+Test Case 'TextTraitsTests.testTheKeyboardsOwnChangeIsNotAHostChangeEvenWhenTheProxyReportsItLate' passed (0.0 seconds)
+Test Case 'TextTraitsTests.testTheReturnKeyWaitsForTextOnlyWhenTheHostAsksForIt' started at 2026-11-25 09:48:10.888
+Test Case 'TextTraitsTests.testTheReturnKeyWaitsForTextOnlyWhenTheHostAsksForIt' passed (0.0 seconds)
+Test Case 'TextTraitsTests.testTwoQuickInsertsAreBothOurs' started at 2026-11-25 09:48:10.888
+Test Case 'TextTraitsTests.testTwoQuickInsertsAreBothOurs' passed (0.0 seconds)
+Test Case 'TextTraitsTests.testWordsCapitaliseAfterWhiteSpaceAndAllCharactersAlways' started at 2026-11-25 09:48:10.888
+Test Case 'TextTraitsTests.testWordsCapitaliseAfterWhiteSpaceAndAllCharactersAlways' passed (0.0 seconds)
+Test Suite 'TextTraitsTests' passed at 2026-11-25 09:48:10.888
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.102 (0.102) seconds
+Test Suite 'UserDictionaryTests' started at 2026-11-25 09:48:10.888
+Test Case 'UserDictionaryTests.testInstallationFileGetsTheSyncDirectoryOnce' started at 2026-11-25 09:48:10.888
+Test Case 'UserDictionaryTests.testInstallationFileGetsTheSyncDirectoryOnce' passed (0.001 seconds)
+Test Case 'UserDictionaryTests.testKeyboardDirectoriesDoNotDependOnFullAccess' started at 2026-11-25 09:48:10.889
+Test Case 'UserDictionaryTests.testKeyboardDirectoriesDoNotDependOnFullAccess' passed (0.0 seconds)
+Test Case 'UserDictionaryTests.testLegacyDictionaryMovesWhenThePrivateFolderHasNone' started at 2026-11-25 09:48:10.889
+Test Case 'UserDictionaryTests.testLegacyDictionaryMovesWhenThePrivateFolderHasNone' passed (0.001 seconds)
+Test Case 'UserDictionaryTests.testNothingMovesWhenThePrivateFolderAlreadyHasADictionary' started at 2026-11-25 09:48:10.890
+Test Case 'UserDictionaryTests.testNothingMovesWhenThePrivateFolderAlreadyHasADictionary' passed (0.001 seconds)
+Test Case 'UserDictionaryTests.testNothingToMoveWithoutALegacyDictionary' started at 2026-11-25 09:48:10.892
+Test Case 'UserDictionaryTests.testNothingToMoveWithoutALegacyDictionary' passed (0.067 seconds)
+Test Suite 'UserDictionaryTests' passed at 2026-11-25 09:48:10.959
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.071 (0.071) seconds
+Test Suite 'debug.xctest' passed at 2026-11-25 09:48:10.959
+	 Executed 89 tests, with 0 failures (0 unexpected) in 4.231 (4.231) seconds
+Test Suite 'All tests' passed at 2026-11-25 09:48:10.959
+	 Executed 89 tests, with 0 failures (0 unexpected) in 4.231 (4.231) seconds
+◇ Test run started.
+↳ Testing Library Version: 6.2.4 (5ee435b15ad40ec)
+↳ Target Platform: x86_64-unknown-linux-gnu
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

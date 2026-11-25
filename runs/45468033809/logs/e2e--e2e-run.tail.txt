@@ -1,0 +1,23 @@
+[e2e] install: ok (app with keyboard extension, test host)
+[ui-test] typing: OrangeCellUITests/KeyboardUITests/testRealExtensionTypesChineseAndEnglish
+	 Executed 1 test, with 1 failure (0 unexpected) in 44.153 (44.161) seconds
+[e2e] phase A: typing through the real keyboard extension (nihao, sentence, backspace, 中/EN): **FAIL** (see ui-typing logs and screenshots)
+[e2e] keyboard report (A): fullAccess=false userDataShared=false rimeRunning=true dictionary=wanxiang v18.1.13
+[e2e] phase A: engine running inside the extension: PASS 
+[e2e] phase A: without Full Access the user dictionary is private: PASS (userDataShared=false)
+[ui-test] settings-fullaccess: OrangeCellUITests/EnableKeyboardUITests
+	 Executed 1 test, with 0 failures (0 unexpected) in 39.331 (39.334) seconds
+[e2e] Settings UI: Allow Full Access: PASS 
+[ui-test] learn: OrangeCellUITests/KeyboardUITests/testUserDictionaryAcrossDeployAndKeyboardRestart
+	 Executed 1 test, with 1 failure (0 unexpected) in 35.335 (35.339) seconds
+[e2e] phase B: learn 拟好, app deploys, keyboard restarts, 拟好 is still first: **FAIL** (see ui-learn logs and screenshots)
+[e2e] keyboard report (B): fullAccess=true userDataShared=true rimeRunning=true deployStamp=
+[e2e] phase B: with Full Access the user dictionary is in the App Group: PASS (userDataShared=true)
+[e2e] phase B: oc_core round trip inside the extension: PASS 
+[e2e] phase B: librime modules registered (lua, octagram, predict, qjs): PASS 
+[e2e] phase B: Rime data stamp readable and built by the linked librime: PASS 
+[e2e] phase B: the extension sees the app probe file (App Group shared): PASS 
+[e2e] phase B: encrypted-file key store readable across processes: PASS 
+[e2e] phase B: user dictionary files present in the App Group: PASS 
+[e2e] memory budget: keyboard footprint after typing <= 55 MB: **FAIL** (measured n/a MB, highest of all measurements 0 MB)
+[e2e] failed checks: 3

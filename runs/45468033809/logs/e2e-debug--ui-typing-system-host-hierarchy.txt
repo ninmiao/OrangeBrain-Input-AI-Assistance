@@ -1,0 +1,111 @@
+Attributes: Application, 0x10881c140, pid: 9255, label: 'OCTestHost'
+Element subtree:
+ →Application, 0x10881c140, pid: 9255, label: 'OCTestHost'
+    Window (Main), 0x10881c280, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x10881c3c0, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x10881c500, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10881c640, {{0.0, 0.0}, {402.0, 874.0}}
+          Other, 0x10881c780, {{0.0, 0.0}, {402.0, 874.0}}
+            Other, 0x10881c8c0, {{0.0, 0.0}, {402.0, 874.0}}
+              StaticText, 0x10881ca00, {{16.0, 78.0}, {96.3, 20.3}}, label: 'OCTestHost'
+              TextField, 0x10881cb40, {{16.0, 110.3}, {370.0, 34.0}}, identifier: 'oc.testhost.field', placeholderValue: 'type here', Keyboard Focused
+              StaticText, 0x10881cc80, {{16.0, 156.3}, {42.3, 15.7}}, identifier: 'oc.testhost.mirror', label: 'typed: '
+      Other, 0x10881cdc0, {{0.0, 0.0}, {402.0, 874.0}}
+    Window, 0x10881cf00, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x10881d040, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10881d180, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10881d2c0, {{0.0, 517.0}, {402.0, 357.0}}
+          Other, 0x10881d400, {{0.0, 534.0}, {402.0, 340.0}}, identifier: 'inputView'
+      Other, 0x10881d540, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10881d680, {{16.0, 153.3}, {91.7, 44.0}}
+          Other, 0x10881d7c0, {{16.0, 153.3}, {99.7, 44.0}}
+            Other, 0x10881d900, {{16.0, 153.3}, {91.7, 44.0}}
+              Other, 0x10881da40, {{20.0, 153.3}, {91.7, 44.0}}
+                CollectionView, 0x10881db80, {{16.0, 153.3}, {99.7, 44.0}}
+                  MenuItem, 0x10881dcc0, {{20.0, 153.3}, {91.7, 44.0}}, label: '自动填充'
+                    Other, 0x10881de00, {{36.0, 166.3}, {59.7, 18.0}}
+                      StaticText, 0x10881df40, {{36.0, 166.3}, {59.7, 18.0}}, label: '自动填充'
+              Button, 0x10881e080, {{-15.0, 157.3}, {36.0, 36.0}}, label: '返回'
+              Button, 0x10881e1c0, {{111.7, 157.3}, {36.0, 36.0}}, label: '前进'
+              Other, 0x10881e300, {{16.0, 153.3}, {0.0, 0.0}}
+                Other, 0x10881e440, {{16.0, 153.3}, {0.0, 0.0}}
+            Other, 0x10881e580, {{16.0, 153.3}, {99.7, 44.0}}
+              Other, 0x10881e6c0, {{16.0, 153.3}, {99.7, 44.0}}
+                Other, 0x10881e800, {{16.0, 153.3}, {99.7, 44.0}}
+                  Other, 0x10881e940, {{16.0, 153.3}, {99.7, 44.0}}
+                    Other, 0x10881ea80, {{16.0, 153.3}, {99.7, 44.0}}
+                      Other, 0x10881ebc0, {{16.0, 153.3}, {99.7, 44.0}}
+                  Other, 0x10881ed00, {{16.0, 153.3}, {99.7, 44.0}}
+                    Other, 0x10881ee40, {{16.0, 153.3}, {99.7, 44.0}}
+    Window, 0x10881ef80, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x10881f0c0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10881f200, {{0.0, 517.0}, {402.0, 357.0}}
+          Other, 0x10881f340, {{0.0, 517.0}, {402.0, 282.0}}
+            Other, 0x10881f480, {{0.0, 517.0}, {402.0, 282.0}}
+              Other, 0x10881f5c0, {{0.0, 517.0}, {402.0, 282.0}}
+                Other, 0x10881f700, {{0.0, 517.0}, {402.0, 282.0}}
+                  Other, 0x10881f840, {{0.0, 517.0}, {402.0, 282.0}}
+                    Other, 0x10881f980, {{0.0, 517.0}, {402.0, 282.0}}
+                      Other, 0x10881fac0, {{0.0, 517.0}, {402.0, 282.0}}
+                        Other, 0x10881fc00, {{0.0, 517.0}, {402.0, 282.0}}
+                          Other, 0x10881fd40, {{0.0, 517.0}, {402.0, 282.0}}
+                            Other, 0x10881fe80, {{0.0, 517.0}, {402.0, 282.0}}, identifier: 'oc.keyboard'
+                              StaticText, 0x105272d00, {{12.0, 521.0}, {378.0, 18.0}}, identifier: 'oc.composition'
+                              CollectionView, 0x105272e40, {{0.0, 539.0}, {402.0, 40.0}}, identifier: 'oc.candidates'
+                                Other, 0x105272f80, {{369.0, 539.0}, {30.0, 40.0}}, label: 'Vertical scroll bar, 1 pages', value: 0%
+                                  Other, 0x1052730c0, {{396.0, -17.0}, {3.0, 36.0}}
+                                Other, 0x105273200, {{369.0, 539.0}, {30.0, 40.0}}, label: 'Vertical scroll bar, 1 pages', value: 0%
+                                  Other, 0x105273340, {{396.0, -17.0}, {3.0, 36.0}}
+                              Other, 0x105273480, {{0.0, 579.0}, {402.0, 0.3}}
+                              Button, 0x108838000, {{3.0, 585.0}, {35.0, 44.0}}, identifier: 'oc.key.q', label: 'q'
+                              Button, 0x108838140, {{43.0, 585.0}, {35.0, 44.0}}, identifier: 'oc.key.w', label: 'w'
+                              Button, 0x108838280, {{83.0, 585.0}, {35.0, 44.0}}, identifier: 'oc.key.e', label: 'e'
+                              Button, 0x1088383c0, {{123.0, 585.0}, {35.0, 44.0}}, identifier: 'oc.key.r', label: 'r'
+                              Button, 0x108838500, {{163.0, 585.0}, {35.0, 44.0}}, identifier: 'oc.key.t', label: 't'
+                              Button, 0x108838640, {{204.0, 585.0}, {35.0, 44.0}}, identifier: 'oc.key.y', label: 'y'
+                              Button, 0x108838780, {{244.0, 585.0}, {35.0, 44.0}}, identifier: 'oc.key.u', label: 'u'
+                              Button, 0x1088388c0, {{284.0, 585.0}, {35.0, 44.0}}, identifier: 'oc.key.i', label: 'i'
+                              Button, 0x108838a00, {{324.0, 585.0}, {35.0, 44.0}}, identifier: 'oc.key.o', label: 'o'
+                              Button, 0x108838b40, {{364.0, 585.0}, {35.0, 44.0}}, identifier: 'oc.key.p', label: 'p'
+                              Button, 0x108838c80, {{25.0, 639.0}, {35.0, 44.0}}, identifier: 'oc.key.a', label: 'a'
+                              Button, 0x108838dc0, {{65.0, 639.0}, {34.0, 44.0}}, identifier: 'oc.key.s', label: 's'
+                              Button, 0x108838f00, {{105.0, 639.0}, {34.0, 44.0}}, identifier: 'oc.key.d', label: 'd'
+                              Button, 0x108839040, {{144.0, 639.0}, {35.0, 44.0}}, identifier: 'oc.key.f', label: 'f'
+                              Button, 0x108839180, {{184.0, 639.0}, {34.0, 44.0}}, identifier: 'oc.key.g', label: 'g'
+                              Button, 0x1088392c0, {{223.0, 639.0}, {35.0, 44.0}}, identifier: 'oc.key.h', label: 'h'
+                              Button, 0x108839400, {{263.0, 639.0}, {34.0, 44.0}}, identifier: 'oc.key.j', label: 'j'
+                              Button, 0x108839540, {{303.0, 639.0}, {34.0, 44.0}}, identifier: 'oc.key.k', label: 'k'
+                              Button, 0x108839680, {{342.0, 639.0}, {35.0, 44.0}}, identifier: 'oc.key.l', label: 'l'
+                              Button, 0x1088397c0, {{3.0, 693.0}, {53.0, 44.0}}, identifier: 'oc.key.shift', label: 'shift'
+                                Image, 0x108839900, {{3.0, 693.0}, {53.0, 44.0}}, identifier: 'shift', label: 'shift'
+                              Button, 0x108839a40, {{61.0, 693.0}, {35.0, 44.0}}, identifier: 'oc.key.z', label: 'z'
+                              Button, 0x108839b80, {{102.0, 693.0}, {35.0, 44.0}}, identifier: 'oc.key.x', label: 'x'
+                              Button, 0x108839cc0, {{142.0, 693.0}, {36.0, 44.0}}, identifier: 'oc.key.c', label: 'c'
+                              Button, 0x108839e00, {{183.0, 693.0}, {36.0, 44.0}}, identifier: 'oc.key.v', label: 'v'
+                              Button, 0x108839f40, {{224.0, 693.0}, {36.0, 44.0}}, identifier: 'oc.key.b', label: 'b'
+                              Button, 0x10883a080, {{265.0, 693.0}, {36.0, 44.0}}, identifier: 'oc.key.n', label: 'n'
+                              Button, 0x10883a1c0, {{306.0, 693.0}, {35.0, 44.0}}, identifier: 'oc.key.m', label: 'm'
+                              Button, 0x10883a300, {{346.0, 693.0}, {54.0, 44.0}}, identifier: 'oc.key.delete', label: 'delete'
+                                Image, 0x10883a440, {{346.0, 693.0}, {54.0, 44.0}}, identifier: 'delete.left', label: 'backspace'
+                              Button, 0x10883a580, {{3.0, 747.0}, {50.0, 44.0}}, identifier: 'oc.key.numbers', label: '123'
+                              Button, 0x10883a6c0, {{58.0, 747.0}, {50.0, 44.0}}, identifier: 'oc.key.language', label: 'EN'
+                              Button, 0x10883a800, {{113.0, 747.0}, {190.0, 44.0}}, identifier: 'oc.key.space', label: 'space'
+                              Button, 0x10883a940, {{308.0, 747.0}, {91.0, 44.0}}, identifier: 'oc.key.return', label: 'return'
+                                Image, 0x10883aa80, {{308.0, 747.0}, {91.0, 44.0}}, identifier: 'return.left', label: 'return.left'
+          Other, 0x10883abc0, {{0.0, 517.0}, {402.0, 357.0}}
+            Other, 0x10883ad00, {{0.0, 517.0}, {402.0, 357.0}}
+              Other, 0x10883ae40, {{0.0, 517.0}, {402.0, 357.0}}
+          Other, 0x10883af80, {{0.0, 517.0}, {402.0, 357.0}}
+            Button, 0x10883b0c0, {{8.5, 805.7}, {68.1, 68.7}}, label: '下一个键盘', value: English (US)
+              StaticText, 0x10883b200, {{8.5, 805.7}, {0.0, 0.0}}
+            Button, 0x10883b340, {{325.4, 805.4}, {68.1, 68.7}}, identifier: 'dictation', label: '听写'
+              StaticText, 0x10883b480, {{325.4, 805.4}, {0.0, 0.0}}
+            Button, 0x10883b5c0, {{325.4, 805.4}, {68.1, 68.7}}, identifier: 'dictation', label: '听写'
+              StaticText, 0x10883b700, {{325.4, 805.4}, {0.0, 0.0}}
+Path to element:
+ →Application, 0x10881c140, pid: 9255, label: 'OCTestHost'
+Query chain:
+ →Find: Target Application 'io.github.ninmiao.orangecell.testhost'
+  Output: {
+    Application, 0x10883b840, pid: 9255, label: 'OCTestHost'
+  }

@@ -1,0 +1,5 @@
+360:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:263: error: -[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart] : failed - typing must still work after the app deployed
+362:Test Case '-[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart]' failed (83.381 seconds).
+363:Test Suite 'KeyboardUITests' failed at 2026-11-24 19:50:35.431.
+365:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-24 19:50:35.432.
+367:Test Suite 'Selected tests' failed at 2026-11-24 19:50:35.432.

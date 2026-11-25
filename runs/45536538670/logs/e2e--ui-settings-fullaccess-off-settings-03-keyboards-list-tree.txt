@@ -1,0 +1,62 @@
+Attributes: Application, 0x1159bfc00, pid: 34004, label: 'Settings'
+Element subtree:
+ →Application, 0x1159bfc00, pid: 34004, label: 'Settings'
+    Window (Main), 0x1159bfd40, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x1159bfe80, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x1159c0000, {{0.0, 0.0}, {402.0, 874.0}}
+          Other, 0x1159c0140, {{0.0, 0.0}, {402.0, 874.0}}
+            Other, 0x1159c0280, {{0.0, 0.0}, {402.0, 874.0}}
+              Other, 0x1159c03c0, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x1159c0500, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x1159c0640, {{0.0, 0.0}, {402.0, 874.0}}
+                    Other, 0x1159c0780, {{0.0, 0.0}, {402.0, 874.0}}
+                      NavigationBar, 0x1159c08c0, {{0.0, 62.0}, {402.0, 54.0}}, identifier: 'Keyboards'
+                        Button, 0x1159c0a00, {{16.0, 62.0}, {44.0, 44.0}}, identifier: 'BackButton', label: 'Keyboards'
+                        StaticText, 0x1159c0b40, {{158.3, 73.7}, {85.0, 20.7}}, label: 'Keyboards'
+                        Button, 0x1159c0c80, {{327.7, 66.0}, {54.3, 36.0}}, label: 'Edit'
+                      Other, 0x1159c0dc0, {{0.0, 0.0}, {402.0, 874.0}}
+                        Other, 0x1159c0f00, {{0.0, 0.0}, {402.0, 874.0}}
+                          Other, 0x1159c1040, {{0.0, 0.0}, {402.0, 874.0}}
+                            Other, 0x1159c1180, {{0.0, 0.0}, {402.0, 874.0}}
+                              Other, 0x1159c12c0, {{0.0, 116.0}, {402.0, 724.0}}
+                                Table, 0x1159c1400, {{0.0, 0.0}, {402.0, 874.0}}
+                                  Other, 0x1159c1540, {{0.0, 116.0}, {402.0, 17.7}}
+                                  Cell, 0x1159c1680, {{20.0, 133.7}, {362.0, 62.0}}, identifier: 'io.github.ninmiao.orangecell.keyboard', label: '橘脑一颗', value: Chinese
+                                    StaticText, 0x1159c17c0, {{36.0, 142.7}, {67.7, 20.3}}, identifier: 'io.github.ninmiao.orangecell.keyboard', label: '橘脑一颗'
+                                    StaticText, 0x1159c1900, {{36.0, 166.0}, {55.7, 18.0}}, label: 'Chinese'
+                                    Other, 0x1159c1a40, {{36.0, 194.7}, {330.0, 1.0}}
+                                    Button, 0x1159c1b80, {{351.7, 157.7}, {10.3, 14.0}}, label: 'chevron', Disabled
+                                  Cell, 0x1159c1cc0, {{20.0, 195.7}, {362.0, 52.0}}, identifier: 'en_US@sw=QWERTY;hw=Automatic', label: 'English (US)'
+                                    StaticText, 0x1159c1e00, {{36.0, 211.7}, {94.0, 20.3}}, identifier: 'en_US@sw=QWERTY;hw=Automatic', label: 'English (US)'
+                                    Other, 0x1159c1f40, {{36.0, 246.7}, {330.0, 1.0}}
+                                    Button, 0x1159c2080, {{351.7, 214.7}, {10.3, 14.0}}, label: 'chevron', Disabled
+                                  Cell, 0x1159c21c0, {{20.0, 247.7}, {362.0, 52.0}}, identifier: 'emoji@sw=Emoji', label: 'Emoji'
+                                    StaticText, 0x1159c2300, {{36.0, 263.7}, {41.3, 20.3}}, identifier: 'emoji@sw=Emoji', label: 'Emoji'
+                                    Other, 0x1159c2440, {{20.0, 298.7}, {362.0, 1.0}}
+                                  Other, 0x1159c2580, {{0.0, 299.7}, {402.0, 78.0}}
+                                    Other, 0x1159c26c0, {{20.0, 299.7}, {362.0, 78.0}}, label: '
+When using one of these keyboards, the keyboard can access all the data you type. About Third-Party Keyboards & Privacy…'
+                                  Other, 0x1159c2800, {{0.0, 377.7}, {402.0, 17.7}}
+                                  Cell, 0x1159c2940, {{20.0, 395.3}, {362.0, 53.0}}, identifier: 'AddNewKeyboard', label: 'Add New Keyboard'
+                                    Other, 0x1159c2a80, {{20.0, 395.3}, {362.0, 53.0}}
+                                      Other, 0x1159c2bc0, {{20.0, 395.3}, {362.0, 53.0}}
+                                        Button, 0x1159c2d00, {{36.0, 411.7}, {146.0, 20.3}}, identifier: 'AddNewKeyboard', label: 'Add New Keyboard'
+                                    Other, 0x1159c2e40, {{20.0, 395.3}, {362.0, 53.0}}
+                                      Other, 0x1159c2f80, {{20.0, 395.3}, {362.0, 53.0}}
+                                    Other, 0x1159c30c0, {{20.0, 447.3}, {362.0, 1.0}}
+                                  Other, 0x1159c3200, {{0.0, 448.3}, {402.0, 17.3}}
+                                  Other, 0x1159c3340, {{369.0, 116.0}, {30.0, 696.0}}, label: 'Vertical scroll bar, 1 page', value: 0%
+                                    Other, 0x1159c3480, {{396.0, 473.3}, {3.0, 335.7}}
+                                  Other, 0x1159c35c0, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Horizontal scroll bar, 1 page', value: 0%
+                                    Other, 0x1159c3700, {{65.0, 868.0}, {272.0, 3.0}}
+                      Other, 0x1159c3840, {{0.0, 0.0}, {402.0, 874.0}}
+                        Other, 0x1159c3980, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x1159c3ac0, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x1159c3c00, {{0.0, 0.0}, {402.0, 874.0}}
+Path to element:
+ →Application, 0x1159bfc00, pid: 34004, label: 'Settings'
+Query chain:
+ →Find: Application 'com.apple.Preferences'
+  Output: {
+    Application, 0x1159c3d40, pid: 34004, label: 'Settings'
+  }

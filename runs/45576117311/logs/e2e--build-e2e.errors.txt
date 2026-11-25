@@ -1,0 +1,4 @@
+1354:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/OrangeCell/DiagnosticsView.swift:196:16: error: missing argument label 'content:' in call
+1356:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/OrangeCell/DiagnosticsView.swift:196:17: error: cannot convert value of type 'String' to expected argument type '() -> Content'
+1358:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/OrangeCell/DiagnosticsView.swift:196:9: error: generic parameter 'Content' could not be inferred
+1370:** TEST BUILD FAILED **

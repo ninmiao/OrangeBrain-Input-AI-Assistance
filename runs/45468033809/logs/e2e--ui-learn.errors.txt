@@ -1,0 +1,5 @@
+46:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:231: error: -[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart] : XCTAssertTrue failed - expected 4 or 5 keys on the bottom row, found 1
+48:Test Case '-[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart]' failed (35.335 seconds).
+49:Test Suite 'KeyboardUITests' failed at 2026-11-24 19:31:32.858.
+51:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-24 19:31:32.859.
+53:Test Suite 'Selected tests' failed at 2026-11-24 19:31:32.859.

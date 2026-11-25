@@ -1,0 +1,22 @@
+### Simulator end-to-end (Release, hosts)
+
+| step | result |
+| --- | --- |
+| install | ok (app with keyboard extension, test host) |
+| keyboard process footprint after host2 (Release, pid 13341) | 49.0 MB |
+| no letter fell through to plain text in 中 mode (until host2) | PASS (unhandledLetters=0) |
+| keyboard process footprint after hosts-done (Release, pid 17985) | 48.0 MB |
+| no letter fell through to plain text in 中 mode (until hosts-done) | PASS (unhandledLetters=0) |
+| two host apps take turns typing and learning (one dictionary, both phrases) | PASS  |
+| after the two hosts: the user dictionary folder exists with a CURRENT file | PASS (/Users/runner/Library/Developer/CoreSimulator/Devices/C5C05989-4E86-4560-9790-14EE9B36CB24/data/Containers/Data/PluginKitPlugin/F2B666E7-6F70-4EC6-AF48-D2ACB79002A4/Library/Application Support/rime-user) |
+| after the two hosts: no *.userdb.old (librime did not repair or rename the dictionary) | PASS (0 found) |
+| after the two hosts: user dictionary folders | 1 |
+| keyboard report (two hosts) | userDictionaryMode=learning unhandledLetters=0 engineReadyMs=248.87502193450928 firstCandidatesMs=2827.517032623291 |
+| two hosts: no letter fell through to plain text | PASS (unhandledLetters=0) |
+| kill keyboard process | killed pid 17985 |
+| kill -9 right after a commit (no hide, no deployment): the last word and the earlier one are both learned | PASS  |
+| after the kill: the user dictionary folder exists with a CURRENT file | PASS (/Users/runner/Library/Developer/CoreSimulator/Devices/C5C05989-4E86-4560-9790-14EE9B36CB24/data/Containers/Data/PluginKitPlugin/F2B666E7-6F70-4EC6-AF48-D2ACB79002A4/Library/Application Support/rime-user) |
+| after the kill: no *.userdb.old (librime did not repair or rename the dictionary) | PASS (0 found) |
+| after the kill: user dictionary folders | 1 |
+| memory budget: the highest keyboard footprint of 2 samples <= 55 MB | PASS (highest 49 MB; after typing n/a MB) |
+| failed checks | 0 |

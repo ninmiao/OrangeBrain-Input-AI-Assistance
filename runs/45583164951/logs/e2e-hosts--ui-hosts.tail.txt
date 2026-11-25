@@ -1,0 +1,30 @@
+    t =   230.22s     Wait for io.github.ninmiao.orangecell.testhost2 to idle
+    t =   231.50s Tap Application 'io.github.ninmiao.orangecell.testhost2'[0.00, 0.00] -> (35.0, 503.0)
+    t =   231.51s     Wait for io.github.ninmiao.orangecell.testhost2 to idle
+    t =   231.52s     Find the Application 'io.github.ninmiao.orangecell.testhost2'
+    t =   234.92s     Check for interrupting elements affecting "OCTestHost2" Application
+    t =   235.87s     Synthesize event
+    t =   235.89s         Find the Application 'io.github.ninmiao.orangecell.testhost2'
+    t =   235.99s         Find the Application 'io.github.ninmiao.orangecell.testhost2'
+    t =   236.26s         Find the Application 'io.github.ninmiao.orangecell.testhost2'
+    t =   236.61s     Wait for io.github.ninmiao.orangecell.testhost2 to idle
+    t =   236.64s Find the "oc.testhost.field" TextField
+OCUI helper footprint-hosts-done: answered
+    t =   280.49s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testLearningAcrossTwoHostApps]' passed (280.936 seconds).
+Test Suite 'KeyboardUITests' passed at 2026-11-25 09:30:01.709.
+	 Executed 1 test, with 0 failures (0 unexpected) in 280.936 (280.941) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-25 09:30:01.710.
+	 Executed 1 test, with 0 failures (0 unexpected) in 280.936 (280.943) seconds
+Test Suite 'Selected tests' passed at 2026-11-25 09:30:01.711.
+	 Executed 1 test, with 0 failures (0 unexpected) in 280.936 (280.945) seconds
+2026-11-25 09:30:03.717 xcodebuild[9825:36699] [MT] IDETestOperationsObserverDebug: 365.505 elapsed -- Testing started completed.
+2026-11-25 09:30:03.717 xcodebuild[9825:36699] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 09:30:03.717 xcodebuild[9825:36699] [MT] IDETestOperationsObserverDebug: 365.505 sec, +365.505 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-hosts.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

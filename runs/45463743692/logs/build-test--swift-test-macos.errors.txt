@@ -1,0 +1,2 @@
+31:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/ProvisioningProfileTests.swift:151: error: -[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing] : failed - a profile that cannot be parsed must not look like a missing one
+32:Test Case '-[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing]' failed (0.285 seconds).

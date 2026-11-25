@@ -1,0 +1,41 @@
+{
+  "name": "橘脑一颗 OrangeCell（iOS 预览）",
+  "identifier": "io.github.ninmiao.orangecell.source",
+  "subtitle": "橘脑一颗 iOS 版的夜间预览包",
+  "description": "由 GitHub Actions 构建的未签名 IPA，用 SideStore 以免费 Apple ID 安装。",
+  "iconURL": "https://raw.githubusercontent.com/ninmiao/OrangeBrain-Input-AI-Assistance/main/docs/images/orangecell-logo.png",
+  "website": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance",
+  "tintColor": "#F28C28",
+  "apps": [
+    {
+      "name": "橘脑一颗",
+      "bundleIdentifier": "io.github.ninmiao.orangecell",
+      "developerName": "ninmiao",
+      "subtitle": "拼音输入法 + 在线 AI 候选",
+      "localizedDescription": "橘脑一颗 OrangeCell 的 iOS 版：Rime 拼音输入法键盘加在线 AI 纠错与助手候选。当前为 M1 预览：拼音输入可用，AI 候选稍后加入。",
+      "iconURL": "https://raw.githubusercontent.com/ninmiao/OrangeBrain-Input-AI-Assistance/main/docs/images/orangecell-logo.png",
+      "tintColor": "#F28C28",
+      "category": "utilities",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "0.3.23",
+          "buildVersion": "23",
+          "date": "2026-11-25T10:22:04Z",
+          "localizedDescription": "iOS 预览版 0.3.23，提交 c7c1ceb25e0c：拼音输入与万象词库可用，在线 AI 候选在后续版本加入。",
+          "downloadURL": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/download/ios-nightly/OrangeCell-iOS-0.3.23.ipa",
+          "size": 32674872,
+          "sha256": "9910b1c808dc7362f5e481427c9d40e413f53b6526433700cb459bf18b5b44f0",
+          "minOSVersion": "17.0"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [
+          "com.apple.security.application-groups"
+        ],
+        "privacy": {}
+      }
+    }
+  ],
+  "news": []
+}

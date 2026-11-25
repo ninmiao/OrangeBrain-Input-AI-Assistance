@@ -1,0 +1,130 @@
+Building for debugging...
+[0/10] Write sources
+[0/10] /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/.build/arm64-apple-macosx/debug/OCCorePackageTests.derived/runner.swift
+[2/10] Write sources
+[4/10] Write swift-version-7974D3F7F03D5E95.txt
+[5/10] Compiling CNativeCore shim.cpp
+[7/15] Emitting module OCCore
+[8/15] Compiling OCCore KeyStorage.swift
+[9/15] Compiling OCCore NativeCore.swift
+[10/15] Compiling OCCore AppGroupLocator.swift
+[11/15] Compiling OCCore Diagnostics.swift
+[12/17] Compiling OCCore ProvisioningProfile.swift
+[13/17] Compiling OCCore RimeData.swift
+[13/17] Write Objects.LinkFileList
+[14/17] Archiving libOCCore.a
+[16/20] Compiling OCCoreTests NativeCoreTests.swift
+[17/20] Emitting module OCCoreTests
+[18/20] Compiling OCCoreTests KeyStorageTests.swift
+[19/21] Compiling OCCoreTests ProvisioningProfileTests.swift
+[20/23] Emitting module OCCorePackageTests
+[21/23] Compiling OCCorePackageTests runner.swift
+[21/23] Write Objects.LinkFileList
+[22/23] Linking OCCorePackageTests
+Build complete! (36.57s)
+Test Suite 'All tests' started at 2026-11-24 19:12:17.539.
+Test Suite 'OCCorePackageTests.xctest' started at 2026-11-24 19:12:17.546.
+Test Suite 'AppGroupLocatorTests' started at 2026-11-24 19:12:17.546.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testBareDotSuffixIsNotAMatch]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testBareDotSuffixIsNotAMatch]' passed (0.004 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing]' started.
+/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/ProvisioningProfileTests.swift:151: error: -[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing] : failed - a profile that cannot be parsed must not look like a missing one
+Test Case '-[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing]' failed (0.285 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testExactNameBeatsSuffixedNames]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testExactNameBeatsSuffixedNames]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testGroupWithTeamIdSuffix]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testGroupWithTeamIdSuffix]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testMissingGroupMeansNoSharing]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testMissingGroupMeansNoSharing]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testNoProfileFallsBackToNominalName]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testNoProfileFallsBackToNominalName]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testPlainGroupIsUsedAsIs]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testPlainGroupIsUsedAsIs]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testTeamSuffixIsPreferredAmongSeveral]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testTeamSuffixIsPreferredAmongSeveral]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testUnparsableProfileIsReportedAsSuch]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testUnparsableProfileIsReportedAsSuch]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testUnrelatedGroupsAreIgnored]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testUnrelatedGroupsAreIgnored]' passed (0.000 seconds).
+Test Suite 'AppGroupLocatorTests' failed at 2026-11-24 19:12:17.840.
+	 Executed 10 tests, with 1 failure (0 unexpected) in 0.292 (0.294) seconds
+Test Suite 'DiagnosticsTests' started at 2026-11-24 19:12:17.840.
+Test Case '-[OCCoreTests.DiagnosticsTests testMemoryProbeReportsPlausibleValueOnApplePlatforms]' started.
+Test Case '-[OCCoreTests.DiagnosticsTests testMemoryProbeReportsPlausibleValueOnApplePlatforms]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.DiagnosticsTests testProbeWithoutContainerIsNil]' started.
+Test Case '-[OCCoreTests.DiagnosticsTests testProbeWithoutContainerIsNil]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.DiagnosticsTests testProbeWrittenByOneRoleIsReadByTheOther]' started.
+Test Case '-[OCCoreTests.DiagnosticsTests testProbeWrittenByOneRoleIsReadByTheOther]' passed (0.004 seconds).
+Test Case '-[OCCoreTests.DiagnosticsTests testReportRoundTripsThroughJson]' started.
+Test Case '-[OCCoreTests.DiagnosticsTests testReportRoundTripsThroughJson]' passed (0.006 seconds).
+Test Suite 'DiagnosticsTests' passed at 2026-11-24 19:12:17.852.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.011 (0.012) seconds
+Test Suite 'KeyStorageTests' started at 2026-11-24 19:12:17.852.
+Test Case '-[OCCoreTests.KeyStorageTests testChoosesBackendFromKeyboardProbes]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testChoosesBackendFromKeyboardProbes]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testConcurrentFirstUseCreatesOneKey]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testConcurrentFirstUseCreatesOneKey]' passed (0.028 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testEncryptedFileStoreRoundTrip]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testEncryptedFileStoreRoundTrip]' passed (0.007 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testFilesOnDiskDoNotContainThePlaintext]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testFilesOnDiskDoNotContainThePlaintext]' passed (0.005 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testRemoveIsQuietForMissingFilesAndRemovesRealOnes]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testRemoveIsQuietForMissingFilesAndRemovesRealOnes]' passed (0.006 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testSecretFileCopiedToAnotherAccountDoesNotDecrypt]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testSecretFileCopiedToAnotherAccountDoesNotDecrypt]' passed (0.009 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testSelfTestSampleThroughEncryptedStore]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testSelfTestSampleThroughEncryptedStore]' passed (0.005 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testTamperedFileIsRejected]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testTamperedFileIsRejected]' passed (0.006 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testUnreadableKeyFileIsAnErrorAndNeverReplaced]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testUnreadableKeyFileIsAnErrorAndNeverReplaced]' passed (0.009 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testWrongSizedKeyFileIsRejectedNotReplaced]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testWrongSizedKeyFileIsRejectedNotReplaced]' passed (0.001 seconds).
+Test Suite 'KeyStorageTests' passed at 2026-11-24 19:12:17.932.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.077 (0.080) seconds
+Test Suite 'NativeCoreTests' started at 2026-11-24 19:12:17.932.
+Test Case '-[OCCoreTests.NativeCoreTests testDecodeKeepsCompleteCandidatesOfTruncatedOutput]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testDecodeKeepsCompleteCandidatesOfTruncatedOutput]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testEncodeRoundTripThroughCApi]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testEncodeRoundTripThroughCApi]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testErrorsComeBackAsNativeCoreError]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testErrorsComeBackAsNativeCoreError]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testLargeAndUnicodeInput]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testLargeAndUnicodeInput]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testMalformedAndNullInputAreRejectedWithoutCrashing]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testMalformedAndNullInputAreRejectedWithoutCrashing]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testRawInvokeMatchesTheDocumentedEnvelope]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testRawInvokeMatchesTheDocumentedEnvelope]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testReasoningTextIsNotAccepted]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testReasoningTextIsNotAccepted]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testSelfTestPasses]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testSelfTestPasses]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testSharedTruncationCorpus]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testSharedTruncationCorpus]' passed (0.003 seconds).
+Test Suite 'NativeCoreTests' passed at 2026-11-24 19:12:17.941.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.008 (0.009) seconds
+Test Suite 'ProvisioningProfileTests' started at 2026-11-24 19:12:17.941.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiredProfile]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiredProfile]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiryParsing]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiryParsing]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExtractsPlistFromCmsEnvelope]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExtractsPlistFromCmsEnvelope]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testPlainXmlPlistWithoutEnvelopeIsAccepted]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testPlainXmlPlistWithoutEnvelopeIsAccepted]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsBrokenPropertyList]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsBrokenPropertyList]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsDataWithoutPropertyList]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsDataWithoutPropertyList]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testUnknownExpiryIsNotReportedAsExpiring]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testUnknownExpiryIsNotReportedAsExpiring]' passed (0.000 seconds).
+Test Suite 'ProvisioningProfileTests' passed at 2026-11-24 19:12:17.945.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.003 (0.004) seconds
+Test Suite 'OCCorePackageTests.xctest' failed at 2026-11-24 19:12:17.945.
+	 Executed 40 tests, with 1 failure (0 unexpected) in 0.391 (0.399) seconds
+Test Suite 'All tests' failed at 2026-11-24 19:12:17.945.
+	 Executed 40 tests, with 1 failure (0 unexpected) in 0.391 (0.406) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

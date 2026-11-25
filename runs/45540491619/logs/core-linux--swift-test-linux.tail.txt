@@ -1,0 +1,40 @@
+Test Suite 'NativeCoreTests' passed at 2026-11-25 03:32:04.253
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+Test Suite 'ProvisioningProfileTests' started at 2026-11-25 03:32:04.253
+Test Case 'ProvisioningProfileTests.testExpiredProfile' started at 2026-11-25 03:32:04.253
+Test Case 'ProvisioningProfileTests.testExpiredProfile' passed (0.0 seconds)
+Test Case 'ProvisioningProfileTests.testExpiryParsing' started at 2026-11-25 03:32:04.254
+Test Case 'ProvisioningProfileTests.testExpiryParsing' passed (0.001 seconds)
+Test Case 'ProvisioningProfileTests.testExtractsPlistFromCmsEnvelope' started at 2026-11-25 03:32:04.254
+Test Case 'ProvisioningProfileTests.testExtractsPlistFromCmsEnvelope' passed (0.0 seconds)
+Test Case 'ProvisioningProfileTests.testPlainXmlPlistWithoutEnvelopeIsAccepted' started at 2026-11-25 03:32:04.255
+Test Case 'ProvisioningProfileTests.testPlainXmlPlistWithoutEnvelopeIsAccepted' passed (0.0 seconds)
+Test Case 'ProvisioningProfileTests.testRejectsBrokenPropertyList' started at 2026-11-25 03:32:04.255
+Test Case 'ProvisioningProfileTests.testRejectsBrokenPropertyList' passed (0.0 seconds)
+Test Case 'ProvisioningProfileTests.testRejectsDataWithoutPropertyList' started at 2026-11-25 03:32:04.255
+Test Case 'ProvisioningProfileTests.testRejectsDataWithoutPropertyList' passed (0.0 seconds)
+Test Case 'ProvisioningProfileTests.testUnknownExpiryIsNotReportedAsExpiring' started at 2026-11-25 03:32:04.255
+Test Case 'ProvisioningProfileTests.testUnknownExpiryIsNotReportedAsExpiring' passed (0.0 seconds)
+Test Suite 'ProvisioningProfileTests' passed at 2026-11-25 03:32:04.255
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+Test Suite 'UserDictionaryTests' started at 2026-11-25 03:32:04.255
+Test Case 'UserDictionaryTests.testInstallationFileGetsTheSyncDirectoryOnce' started at 2026-11-25 03:32:04.255
+Test Case 'UserDictionaryTests.testInstallationFileGetsTheSyncDirectoryOnce' passed (0.001 seconds)
+Test Case 'UserDictionaryTests.testKeyboardDirectoriesDoNotDependOnFullAccess' started at 2026-11-25 03:32:04.256
+Test Case 'UserDictionaryTests.testKeyboardDirectoriesDoNotDependOnFullAccess' passed (0.0 seconds)
+Test Case 'UserDictionaryTests.testLegacyDictionaryMovesWhenThePrivateFolderHasNone' started at 2026-11-25 03:32:04.257
+Test Case 'UserDictionaryTests.testLegacyDictionaryMovesWhenThePrivateFolderHasNone' passed (0.001 seconds)
+Test Case 'UserDictionaryTests.testNothingMovesWhenThePrivateFolderAlreadyHasADictionary' started at 2026-11-25 03:32:04.257
+Test Case 'UserDictionaryTests.testNothingMovesWhenThePrivateFolderAlreadyHasADictionary' passed (0.001 seconds)
+Test Case 'UserDictionaryTests.testNothingToMoveWithoutALegacyDictionary' started at 2026-11-25 03:32:04.259
+Test Case 'UserDictionaryTests.testNothingToMoveWithoutALegacyDictionary' passed (0.0 seconds)
+Test Suite 'UserDictionaryTests' passed at 2026-11-25 03:32:04.259
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+Test Suite 'debug.xctest' passed at 2026-11-25 03:32:04.259
+	 Executed 35 tests, with 0 failures (0 unexpected) in 0.015 (0.015) seconds
+Test Suite 'All tests' passed at 2026-11-25 03:32:04.259
+	 Executed 35 tests, with 0 failures (0 unexpected) in 0.015 (0.015) seconds
+◇ Test run started.
+↳ Testing Library Version: 6.2.4 (5ee435b15ad40ec)
+↳ Target Platform: x86_64-unknown-linux-gnu
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

@@ -1,0 +1,12 @@
+toolchain	0	65
+fetch-deps	0	8
+xcodegen-install	0	1
+xcodegen	0	0
+simulator-create	0	1
+build-sim	0	64
+unit-tests	0	69
+build-ui-tests	0	22
+uitests-embedded	0	567
+memory-debug-minimal	0	76
+memory-debug-all	0	75
+swift-test-macos	0	58

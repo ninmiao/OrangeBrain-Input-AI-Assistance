@@ -1,0 +1,19 @@
+[os64] downloading librime.tar.bz2
+[os64]   from https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/download/ios-deps-20261124/librime.tar.bz2
+[os64] downloading boost.tar.bz2
+[os64]   from https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/download/ios-deps-20261124/boost.tar.bz2
+[os64] downloading glog.tar.bz2
+[os64]   from https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/download/ios-deps-20261124/glog.tar.bz2
+[os64] downloading leveldb.tar.bz2
+[os64]   from https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/download/ios-deps-20261124/leveldb.tar.bz2
+[os64] downloading lua.tar.bz2
+[os64]   from https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/download/ios-deps-20261124/lua.tar.bz2
+[os64] downloading marisa.tar.bz2
+[os64]   from https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/download/ios-deps-20261124/marisa.tar.bz2
+[os64] downloading opencc.tar.bz2
+[os64]   from https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/download/ios-deps-20261124/opencc.tar.bz2
+[os64] downloading yaml-cpp.tar.bz2
+[os64]   from https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/download/ios-deps-20261124/yaml-cpp.tar.bz2
+[os64] downloading zstd.tar.bz2
+[os64]   from https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/releases/download/ios-deps-20261124/zstd.tar.bz2
+[os64] ready: 12 static libraries

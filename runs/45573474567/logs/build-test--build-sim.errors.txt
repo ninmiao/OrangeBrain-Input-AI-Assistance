@@ -1,0 +1,2 @@
+847:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCKeyboardUI/Sources/OCKeyboardUI/TextTraits.swift:26:75: error: value of optional type 'UITextContentType?' must be unwrapped to a value of type 'UITextContentType'
+907:** TEST BUILD FAILED **

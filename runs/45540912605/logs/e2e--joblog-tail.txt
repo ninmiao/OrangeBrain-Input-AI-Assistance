@@ -1,0 +1,400 @@
+2026-11-25T03:36:44.2988850Z     builtin-validationUtility /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OCTestHost2.app -shallow-bundle -infoplist-subpath Info.plist
+2026-11-25T03:36:44.2989740Z 
+2026-11-25T03:36:44.2990730Z CodeSign /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OCTestHost.app (in target 'OCTestHost' from project 'OrangeCell')
+2026-11-25T03:36:44.2991760Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.2992130Z     
+2026-11-25T03:36:44.2992290Z     Signing Identity:     "Sign to Run Locally"
+2026-11-25T03:36:44.2992510Z     
+2026-11-25T03:36:44.2993230Z     /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OCTestHost.app
+2026-11-25T03:36:44.2993940Z 
+2026-11-25T03:36:44.2994590Z Touch /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OCTestHost2.app (in target 'OCTestHost2' from project 'OrangeCell')
+2026-11-25T03:36:44.2995680Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.2996470Z     /usr/bin/touch -c /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OCTestHost2.app
+2026-11-25T03:36:44.2997090Z 
+2026-11-25T03:36:44.2997760Z RegisterExecutionPolicyException /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OCTestHost.app (in target 'OCTestHost' from project 'OrangeCell')
+2026-11-25T03:36:44.2999080Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3000030Z     builtin-RegisterExecutionPolicyException /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OCTestHost.app
+2026-11-25T03:36:44.3000670Z 
+2026-11-25T03:36:44.3001390Z Validate /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OCTestHost.app (in target 'OCTestHost' from project 'OrangeCell')
+2026-11-25T03:36:44.3002390Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3003330Z     builtin-validationUtility /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OCTestHost.app -shallow-bundle -infoplist-subpath Info.plist
+2026-11-25T03:36:44.3004060Z 
+2026-11-25T03:36:44.3004770Z Touch /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OCTestHost.app (in target 'OCTestHost' from project 'OrangeCell')
+2026-11-25T03:36:44.3005750Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3006520Z     /usr/bin/touch -c /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OCTestHost.app
+2026-11-25T03:36:44.3008490Z 
+2026-11-25T03:36:44.3010260Z ProcessInfoPlistFile /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/Info.plist /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/empty-OrangeCellUITests.plist (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3012510Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3015830Z     builtin-infoPlistUtility /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/empty-OrangeCellUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/ProductTypeInfoPlistAdditions.plist -o /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/Info.plist
+2026-11-25T03:36:44.3018830Z 
+2026-11-25T03:36:44.3019840Z Ld /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/OrangeCellUITests normal (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3020970Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3035230Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -bundle -isysroot /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -Os -L/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphonesimulator -L/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator -L/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphonesimulator -F/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator -iframework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk/Developer/Library/Frameworks -filelist /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/Objects-normal/arm64/OrangeCellUITests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/Objects-normal/arm64/OrangeCellUITests_lto.o -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/Objects-normal/arm64/OrangeCellUITests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/Objects-normal/arm64/OrangeCellUITests.swiftmodule @/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/Objects-normal/arm64/OrangeCellUITests-linker-args.resp -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/OrangeCellUITests.xctest-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/OrangeCellUITests.xctest-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/OrangeCellUITests
+2026-11-25T03:36:44.3049630Z 
+2026-11-25T03:36:44.3050270Z LinkAssetCatalog /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Resources/Assets.xcassets (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:44.3051510Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3058290Z     builtin-linkAssetCatalog --thinned /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/assetcatalog_output/thinned --thinned-dependencies /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/assetcatalog_generated_info.plist_unthinned --output /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app --plist-output /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/assetcatalog_generated_info.plist
+2026-11-25T03:36:44.3066150Z note: Emplaced /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/AppIcon60x60@2x.png (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:44.3067550Z note: Emplaced /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/Assets.car (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:44.3068970Z note: Emplaced /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/AppIcon76x76@2x~ipad.png (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:44.3069960Z 
+2026-11-25T03:36:44.3071270Z Copy /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/PlugIns/OrangeCellKeyboard.appex /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellKeyboard.appex (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:44.3073010Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3075450Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks -remove-static-executable /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellKeyboard.appex /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/PlugIns
+2026-11-25T03:36:44.3077330Z 
+2026-11-25T03:36:44.3078510Z ProcessInfoPlistFile /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/Info.plist /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Config/OrangeCell-Info.plist (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:44.3080010Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3084540Z     builtin-infoPlistUtility /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Config/OrangeCell-Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/PlugIns/OrangeCellKeyboard.appex -o /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/Info.plist
+2026-11-25T03:36:44.3088310Z 
+2026-11-25T03:36:44.3088610Z ExtractAppIntentsMetadata (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:44.3089130Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3098520Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.i9yPp0/Metal.xctoolchain --module-name OrangeCell --sdk-root /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk --xcode-version 17F113 --platform-family iOS --deployment-target 17.0 --bundle-identifier io.github.ninmiao.orangecell --output /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app --target-triple arm64-apple-ios17.0-simulator --binary-file /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/OrangeCell --dependency-file /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/Objects-normal/arm64/OrangeCell_dependency_info.dat --stringsdata-file /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/Objects-normal/arm64/OrangeCell.SwiftFileList --metadata-file-list /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/OrangeCell.DependencyMetadataFileList --static-metadata-file-list /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/OrangeCell.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/Objects-normal/arm64/OrangeCell.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-11-25T03:36:44.3108320Z 2026-11-25 03:36:43.546 appintentsmetadataprocessor[3285:13801] Starting appintentsmetadataprocessor export
+2026-11-25T03:36:44.3109200Z 2026-11-25 03:36:43.549 appintentsmetadataprocessor[3285:13801] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+2026-11-25T03:36:44.3109640Z 
+2026-11-25T03:36:44.3110340Z CopySwiftLibs /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:44.3111550Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3118680Z     builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/OrangeCell --scan-folder /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/Frameworks --scan-folder /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/PlugIns --scan-folder /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/SystemExtensions --scan-folder /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/Extensions --scan-folder /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk/System/Library/Frameworks/JavaScriptCore.framework --platform iphonesimulator --toolchain /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.i9yPp0/Metal.xctoolchain --toolchain /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+2026-11-25T03:36:44.3127040Z 
+2026-11-25T03:36:44.3129480Z GenerateDSYMFile /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app.dSYM /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/OrangeCell (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:44.3131040Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3132830Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/OrangeCell -o /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app.dSYM
+2026-11-25T03:36:44.3134370Z 
+2026-11-25T03:36:44.3134600Z AppIntentsSSUTraining (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:44.3135180Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3140260Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/Info.plist --temp-dir-path /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/ssu --bundle-id io.github.ninmiao.orangecell --product-path /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app --extracted-metadata-path /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/Metadata.appintents --metadata-file-list /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/OrangeCell.DependencyMetadataFileList --source-file /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/Info.plist --archive-ssu-assets
+2026-11-25T03:36:44.3145730Z 2026-11-25 03:36:43.583 appintentsnltrainingprocessor[3293:13815] Parsing options for appintentsnltrainingprocessor
+2026-11-25T03:36:44.3146650Z 2026-11-25 03:36:43.584 appintentsnltrainingprocessor[3293:13815] Starting AppIntents SSU YAML Generation
+2026-11-25T03:36:44.3147250Z 2026-11-25 03:36:43.584 appintentsnltrainingprocessor[3293:13815] No AppShortcuts found - Skipping.
+2026-11-25T03:36:44.3147630Z 
+2026-11-25T03:36:44.3149250Z GenerateDSYMFile /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest.dSYM /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/OrangeCellUITests (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3151260Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3153300Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/OrangeCellUITests -o /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest.dSYM
+2026-11-25T03:36:44.3155180Z 
+2026-11-25T03:36:44.3155470Z ExtractAppIntentsMetadata (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3156390Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3166400Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.i9yPp0/Metal.xctoolchain --module-name OrangeCellUITests --sdk-root /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk --xcode-version 17F113 --platform-family iOS --deployment-target 17.0 --bundle-identifier io.github.ninmiao.orangecell.uitests --output /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest --target-triple arm64-apple-ios17.0-simulator --binary-file /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/OrangeCellUITests --dependency-file /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/Objects-normal/arm64/OrangeCellUITests_dependency_info.dat --stringsdata-file /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/Objects-normal/arm64/OrangeCellUITests.SwiftFileList --metadata-file-list /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/OrangeCellUITests.DependencyMetadataFileList --static-metadata-file-list /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/OrangeCellUITests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/Objects-normal/arm64/OrangeCellUITests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-11-25T03:36:44.3176770Z 2026-11-25 03:36:43.869 appintentsmetadataprocessor[3315:13871] Starting appintentsmetadataprocessor export
+2026-11-25T03:36:44.3177530Z 2026-11-25 03:36:43.871 appintentsmetadataprocessor[3315:13871] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+2026-11-25T03:36:44.3178000Z 
+2026-11-25T03:36:44.3178990Z CopySwiftLibs /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3180230Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3188060Z     builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/OrangeCellUITests --scan-folder /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/Frameworks --scan-folder /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/PlugIns --scan-folder /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/SystemExtensions --scan-folder /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/Extensions --platform iphonesimulator --toolchain /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.i9yPp0/Metal.xctoolchain --toolchain /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+2026-11-25T03:36:44.3196320Z 
+2026-11-25T03:36:44.3196530Z AppIntentsSSUTraining (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3197100Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3202790Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/Info.plist --temp-dir-path /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/ssu --bundle-id io.github.ninmiao.orangecell.uitests --product-path /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest --extracted-metadata-path /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/Metadata.appintents --metadata-file-list /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCellUITests.build/OrangeCellUITests.DependencyMetadataFileList --source-file /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/Info.plist --archive-ssu-assets
+2026-11-25T03:36:44.3208300Z 2026-11-25 03:36:43.998 appintentsnltrainingprocessor[3322:13886] Parsing options for appintentsnltrainingprocessor
+2026-11-25T03:36:44.3208930Z 2026-11-25 03:36:44.001 appintentsnltrainingprocessor[3322:13886] Starting AppIntents SSU YAML Generation
+2026-11-25T03:36:44.3209730Z 2026-11-25 03:36:44.001 appintentsnltrainingprocessor[3322:13886] No AppShortcuts found - Skipping.
+2026-11-25T03:36:44.3210390Z 
+2026-11-25T03:36:44.3211230Z MkDir /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3212290Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3213230Z     /bin/mkdir -p /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app
+2026-11-25T03:36:44.3214280Z 
+2026-11-25T03:36:44.3215440Z CopyPlistFile /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Info.plist /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/Info.plist (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3217410Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3220880Z     builtin-copyPlist --validate --convert xml1 --macro-expansion WRAPPEDPRODUCTNAME OrangeCellUITests-Runner --macro-expansion WRAPPEDPRODUCTBUNDLEIDENTIFIER io.github.ninmiao.orangecell.uitests.xctrunner --macro-expansion TESTPRODUCTNAME OrangeCellUITests --macro-expansion TESTPRODUCTBUNDLEIDENTIFIER io.github.ninmiao.orangecell.uitests --copy-value UIDeviceFamily /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest/Info.plist --outdir /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app -- /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/Info.plist
+2026-11-25T03:36:44.3223950Z 
+2026-11-25T03:36:44.3224830Z CopyAndPreserveArchs /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/OrangeCellUITests-Runner (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3226030Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3228130Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/XCTRunner -output /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/OrangeCellUITests-Runner -extract arm64
+2026-11-25T03:36:44.3230110Z 
+2026-11-25T03:36:44.3234140Z Copy /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PkgInfo /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/PkgInfo (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3237620Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3239860Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/PkgInfo /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app
+2026-11-25T03:36:44.3241540Z 
+2026-11-25T03:36:44.3243470Z Copy /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks/libXCTestSwiftSupport.dylib /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3245130Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3247930Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks
+2026-11-25T03:36:44.3249510Z 
+2026-11-25T03:36:44.3250660Z Copy /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks/XCUnit.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCUnit.framework (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3252960Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3254710Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCUnit.framework /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks
+2026-11-25T03:36:44.3256240Z 
+2026-11-25T03:36:44.3257570Z Copy /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks/XCUIAutomation.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCUIAutomation.framework (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3259080Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3260940Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCUIAutomation.framework /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks
+2026-11-25T03:36:44.3262650Z 
+2026-11-25T03:36:44.3264080Z Copy /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks/XCTestSupport.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3266090Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3268710Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks
+2026-11-25T03:36:44.3270710Z 
+2026-11-25T03:36:44.3272860Z Copy /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks/XCTestCore.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestCore.framework (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3275360Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3277290Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestCore.framework /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks
+2026-11-25T03:36:44.3279440Z 
+2026-11-25T03:36:44.3280720Z Copy /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks/XCTest.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3283570Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3286910Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks
+2026-11-25T03:36:44.3289970Z 
+2026-11-25T03:36:44.3291230Z Copy /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks/XCTAutomationSupport.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTAutomationSupport.framework (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3292880Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3294970Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTAutomationSupport.framework /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks
+2026-11-25T03:36:44.3296620Z 
+2026-11-25T03:36:44.3297740Z Copy /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks/Testing.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/Testing.framework (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3299400Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3301230Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/Testing.framework /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/Frameworks
+2026-11-25T03:36:44.3302690Z 
+2026-11-25T03:36:44.3303280Z CodeSign /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:44.3307450Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3307840Z     
+2026-11-25T03:36:44.3308010Z     Signing Identity:     "Sign to Run Locally"
+2026-11-25T03:36:44.3308230Z     
+2026-11-25T03:36:44.3309650Z     /usr/bin/codesign --force --sign - --entitlements /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Intermediates.noindex/OrangeCell.build/Release-iphonesimulator/OrangeCell.build/OrangeCell.app.xcent --timestamp\=none --generate-entitlement-der /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app
+2026-11-25T03:36:44.3311130Z 
+2026-11-25T03:36:44.3311880Z CodeSign /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3313040Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3313440Z     
+2026-11-25T03:36:44.3313590Z     Signing Identity:     "Sign to Run Locally"
+2026-11-25T03:36:44.3313810Z     
+2026-11-25T03:36:44.3314700Z     /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest
+2026-11-25T03:36:44.3315600Z 
+2026-11-25T03:36:44.3316250Z CodeSign /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3320650Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3321040Z     
+2026-11-25T03:36:44.3321230Z     Signing Identity:     "Sign to Run Locally"
+2026-11-25T03:36:44.3321470Z     
+2026-11-25T03:36:44.3322240Z     /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app
+2026-11-25T03:36:44.3323550Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app: replacing existing signature
+2026-11-25T03:36:44.3324170Z 
+2026-11-25T03:36:44.3325890Z RegisterExecutionPolicyException /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3327250Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3328670Z     builtin-RegisterExecutionPolicyException /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest
+2026-11-25T03:36:44.3331530Z 
+2026-11-25T03:36:44.3332400Z Touch /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-25T03:36:44.3333680Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3334650Z     /usr/bin/touch -c /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest
+2026-11-25T03:36:44.3335460Z 
+2026-11-25T03:36:44.3336260Z ValidateEmbeddedBinary /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/PlugIns/OrangeCellKeyboard.appex (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:44.3337350Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:44.3339280Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/embeddedBinaryValidationUtility /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/PlugIns/OrangeCellKeyboard.appex -signing-cert - -info-plist-path /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app/Info.plist
+2026-11-25T03:36:46.0774960Z 
+2026-11-25T03:36:46.0777030Z RegisterExecutionPolicyException /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:46.0778410Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:46.0779570Z     builtin-RegisterExecutionPolicyException /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app
+2026-11-25T03:36:46.0780400Z 
+2026-11-25T03:36:46.0781220Z Validate /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:46.0782400Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:46.0783580Z     builtin-validationUtility /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app -shallow-bundle -infoplist-subpath Info.plist
+2026-11-25T03:36:46.0784440Z 
+2026-11-25T03:36:46.0785170Z Touch /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app (in target 'OrangeCell' from project 'OrangeCell')
+2026-11-25T03:36:46.0786360Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-25T03:36:46.0793080Z     /usr/bin/touch -c /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator/OrangeCell.app
+2026-11-25T03:36:46.0793880Z 
+2026-11-25T03:36:46.1850800Z ** TEST BUILD SUCCEEDED **
+2026-11-25T03:36:46.1854230Z 
+2026-11-25T03:36:46.3257010Z ##[endgroup]
+2026-11-25T03:36:46.3582930Z ##[group]Run bash ios/scripts/ci_step.sh e2e-run -- bash ios/scripts/e2e-sim.sh
+2026-11-25T03:36:46.3583490Z [36;1mbash ios/scripts/ci_step.sh e2e-run -- bash ios/scripts/e2e-sim.sh[0m
+2026-11-25T03:36:46.3757390Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-25T03:36:46.3757690Z env:
+2026-11-25T03:36:46.3757850Z   OC_VERSION: 0.2.17
+2026-11-25T03:36:46.3758040Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T03:36:46.3758460Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/e2e
+2026-11-25T03:36:46.3758900Z   SIM_UDID: 4D1959A6-9562-4C7C-A6D2-832486A8608B
+2026-11-25T03:36:46.3759380Z   DERIVED_DATA: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd
+2026-11-25T03:36:46.3760160Z   PRODUCTS_DIR: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Release-iphonesimulator
+2026-11-25T03:36:46.3760750Z   CONFIGURATION: Release
+2026-11-25T03:36:46.3760930Z   E2E_MODE: full
+2026-11-25T03:36:46.3761080Z ##[endgroup]
+2026-11-25T03:36:46.4759460Z ##[group]e2e-run
+2026-11-25T03:41:12.2892370Z [e2e] install: ok (app with keyboard extension, test host)
+2026-11-25T03:42:19.8399660Z [ui-test] typing: OrangeCellUITests/KeyboardUITests/testRealExtensionTypesChineseAndEnglish
+2026-11-25T03:44:55.1155190Z [e2e] request: footprint-typing
+2026-11-25T03:46:30.3690930Z [e2e] keyboard process footprint after typing (Release, pid 9919): 48.0 MB
+2026-11-25T03:46:34.2235900Z [e2e] no letter fell through to plain text in 中 mode (until typing): PASS (unhandledLetters=0)
+2026-11-25T03:46:38.3397110Z 	 Executed 1 test, with 0 failures (0 unexpected) in 171.105 (171.109) seconds
+2026-11-25T03:46:38.4245920Z check_tests: 1 tests executed, none skipped
+2026-11-25T03:46:38.8283510Z [e2e] phase A: typing through the real keyboard extension (nihao, sentence, backspace, 中/EN): PASS 
+2026-11-25T03:46:40.2431800Z [e2e] keyboard report (A): fullAccess=false userDataShared=false rimeRunning=true dictionary=wanxiang v18.1.13
+2026-11-25T03:46:40.4536710Z [e2e] keyboard start-up after it appeared (A, simulator): engine ready 110.42702198028564 ms, first candidates 9405.04002571106 ms, user dictionary learning
+2026-11-25T03:46:40.4547030Z [e2e] phase A: engine running inside the extension: PASS 
+2026-11-25T03:46:40.4553990Z [e2e] phase A: without Full Access the user dictionary is private: PASS (userDataShared=false)
+2026-11-25T03:46:40.5056690Z [ui-test] learn: OrangeCellUITests/KeyboardUITests/testLearnAPhrase
+2026-11-25T03:47:37.9686810Z [e2e] request: footprint-learned
+2026-11-25T03:47:51.1108070Z [e2e] keyboard process footprint after learned (Release, pid 9919): 48.0 MB
+2026-11-25T03:47:54.8243590Z [e2e] no letter fell through to plain text in 中 mode (until learned): PASS (unhandledLetters=0)
+2026-11-25T03:47:56.6065830Z 	 Executed 1 test, with 0 failures (0 unexpected) in 52.834 (52.837) seconds
+2026-11-25T03:47:56.6559770Z check_tests: 1 tests executed, none skipped
+2026-11-25T03:47:57.0921170Z [e2e] phase A: learn 拟好 without Full Access: PASS 
+2026-11-25T03:47:57.5167880Z [ui-test] settings-fullaccess: OrangeCellUITests/EnableKeyboardUITests
+2026-11-25T03:49:00.6589510Z 	 Executed 1 test, with 0 failures (0 unexpected) in 30.961 (30.965) seconds
+2026-11-25T03:49:00.8106300Z check_tests: 1 tests executed, none skipped
+2026-11-25T03:49:01.3150850Z [e2e] Settings UI: Allow Full Access: PASS 
+2026-11-25T03:49:34.3698900Z [ui-test] fullaccess: OrangeCellUITests/KeyboardUITests/testLearnedPhraseSurvivesDeployAndKeyboardRestart
+2026-11-25T03:51:30.3100340Z [e2e] request: footprint-fullaccess
+2026-11-25T03:51:58.6713750Z [e2e] keyboard process footprint after fullaccess (Release, pid 25353): 47.0 MB
+2026-11-25T03:52:03.5644040Z [e2e] no letter fell through to plain text in 中 mode (until fullaccess): PASS (unhandledLetters=0)
+2026-11-25T03:52:04.6706060Z [e2e] request: deploy
+2026-11-25T03:52:18.8504270Z [e2e] app deployment while the keyboard runs: PASS (0s)
+2026-11-25T03:52:18.8584960Z [e2e] deploy stamp changed: PASS (before: none, after: 2026-11-25T03:52:14Z-12F1E288)
+2026-11-25T03:52:41.5250650Z [e2e] request: kill-keyboard
+2026-11-25T03:52:43.8575800Z [e2e] kill keyboard process: killed pid 25353
+2026-11-25T03:53:13.1434670Z [e2e] request: footprint-restarted
+2026-11-25T03:53:26.4180050Z [e2e] keyboard process footprint after restarted (Release, pid 29455): 46.0 MB
+2026-11-25T03:53:30.0705330Z [e2e] no letter fell through to plain text in 中 mode (until restarted): PASS (unhandledLetters=0)
+2026-11-25T03:53:33.3417570Z 	 Executed 1 test, with 0 failures (0 unexpected) in 167.519 (167.524) seconds
+2026-11-25T03:53:33.4871590Z check_tests: 1 tests executed, none skipped
+2026-11-25T03:53:34.4628760Z [e2e] phase B: with Full Access 拟好 is still first, the app deploys, the keyboard restarts, 拟好 is still first: PASS 
+2026-11-25T03:53:35.6663540Z [e2e] keyboard report (B): fullAccess=true userDataShared=false rimeRunning=true deployStamp=2026-11-25T03:52:14Z-12F1E288 staging=set snapshot=none
+2026-11-25T03:53:35.6672150Z [e2e] phase B: the keyboard runs with Full Access: PASS 
+2026-11-25T03:53:35.6672940Z [e2e] phase B: the live user dictionary is the same private folder as without Full Access: PASS (userDataShared=false)
+2026-11-25T03:53:35.6681320Z [e2e] phase B: with Full Access the keyboard reads the app deployments from the App Group: PASS 
+2026-11-25T03:53:35.7238140Z [e2e] phase B: oc_core round trip inside the extension: PASS 
+2026-11-25T03:53:35.7306140Z [e2e] phase B: librime modules registered (lua, octagram, predict, qjs): PASS 
+2026-11-25T03:53:35.7453200Z [e2e] phase B: Rime data stamp readable and built by the linked librime: PASS 
+2026-11-25T03:53:35.7457650Z [e2e] phase B: the extension sees the app probe file (App Group shared): PASS 
+2026-11-25T03:53:35.7461480Z [e2e] phase B: encrypted-file key store readable across processes: PASS 
+2026-11-25T03:53:35.7509230Z [e2e] phase B: the user dictionary files are in the keyboard private folder: PASS 
+2026-11-25T03:53:35.7847060Z [e2e] snapshot export in the App Group (information): 0 file(s)
+2026-11-25T03:53:35.8108680Z [ui-test] settings-fullaccess-off: OrangeCellUITests/EnableKeyboardUITests
+2026-11-25T03:54:35.4595470Z 	 Executed 1 test, with 0 failures (0 unexpected) in 30.502 (30.505) seconds
+2026-11-25T03:54:35.6222030Z check_tests: 1 tests executed, none skipped
+2026-11-25T03:54:35.8688830Z [e2e] Settings UI: Full Access off again: PASS 
+2026-11-25T03:55:28.4729620Z [ui-test] fullaccess-off: OrangeCellUITests/KeyboardUITests/testLearnedPhraseIsFirst
+2026-11-25T03:58:25.2240660Z 	 Executed 1 test, with 1 failure (0 unexpected) in 52.193 (52.199) seconds
+2026-11-25T03:58:25.8280360Z [e2e] phase C: Full Access off again, 拟好 is still first: **FAIL** (see ui-fullaccess-off logs and screenshots)
+2026-11-25T03:58:27.2665620Z [e2e] phase C: Full Access off and the same private user dictionary folder: **FAIL** (fullAccess=true)
+2026-11-25T03:58:51.9990390Z [e2e] memory budget: the highest keyboard footprint of 4 samples <= 55 MB: PASS (highest 48 MB; after typing 48.0 MB)
+2026-11-25T03:58:59.5833130Z [e2e] failed checks: 2
+2026-11-25T03:58:59.6201440Z ##[endgroup]
+2026-11-25T03:58:59.7185180Z ##[error]step 'e2e-run' failed with exit code 2
+2026-11-25T03:58:59.7425070Z ##[error]Process completed with exit code 2.
+2026-11-25T03:58:59.8789330Z ##[group]Run python3 ios/scripts/ci_summary.py e2e --out "$CI_OUT"
+2026-11-25T03:58:59.8793730Z [36;1mpython3 ios/scripts/ci_summary.py e2e --out "$CI_OUT"[0m
+2026-11-25T03:59:00.4490750Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-25T03:59:00.4491270Z env:
+2026-11-25T03:59:00.4491650Z   OC_VERSION: 0.2.17
+2026-11-25T03:59:00.4501890Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T03:59:00.4503200Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/e2e
+2026-11-25T03:59:00.4503730Z   SIM_UDID: 4D1959A6-9562-4C7C-A6D2-832486A8608B
+2026-11-25T03:59:00.4504220Z ##[endgroup]
+2026-11-25T03:59:01.7144780Z #### e2e (macos-26)
+2026-11-25T03:59:01.7147320Z - toolchain: Xcode 26.6; Build version 17F113; swift-driver version: 1.148.6 Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)
+2026-11-25T03:59:01.7149090Z - UI tests `ui-fullaccess-off`: 1 tests, 1 failures
+2026-11-25T03:59:01.7160910Z - UI tests `ui-fullaccess`: 1 tests, 0 failures
+2026-11-25T03:59:01.7162270Z - UI tests `ui-learn`: 1 tests, 0 failures
+2026-11-25T03:59:01.7163390Z - UI tests `ui-settings-fullaccess-off`: 1 tests, 0 failures
+2026-11-25T03:59:01.7164920Z - UI tests `ui-settings-fullaccess`: 1 tests, 0 failures
+2026-11-25T03:59:01.7177070Z - UI tests `ui-typing`: 1 tests, 0 failures
+2026-11-25T03:59:01.7178350Z 
+2026-11-25T03:59:01.7178570Z ### Simulator end-to-end (Release, full)
+2026-11-25T03:59:01.7178730Z 
+2026-11-25T03:59:01.7178950Z | step | result |
+2026-11-25T03:59:01.7179560Z | --- | --- |
+2026-11-25T03:59:01.7183890Z | install | ok (app with keyboard extension, test host) |
+2026-11-25T03:59:01.7184620Z | keyboard process footprint after typing (Release, pid 9919) | 48.0 MB |
+2026-11-25T03:59:01.7206320Z | no letter fell through to plain text in 中 mode (until typing) | PASS (unhandledLetters=0) |
+2026-11-25T03:59:01.7207720Z | phase A: typing through the real keyboard extension (nihao, sentence, backspace, 中/EN) | PASS  |
+2026-11-25T03:59:01.7208730Z | keyboard report (A) | fullAccess=false userDataShared=false rimeRunning=true dictionary=wanxiang v18.1.13 |
+2026-11-25T03:59:01.7209770Z | keyboard start-up after it appeared (A, simulator) | engine ready 110.42702198028564 ms, first candidates 9405.04002571106 ms, user dictionary learning |
+2026-11-25T03:59:01.7210570Z | phase A: engine running inside the extension | PASS  |
+2026-11-25T03:59:01.7211530Z | phase A: without Full Access the user dictionary is private | PASS (userDataShared=false) |
+2026-11-25T03:59:01.7212540Z | keyboard process footprint after learned (Release, pid 9919) | 48.0 MB |
+2026-11-25T03:59:01.7213360Z | no letter fell through to plain text in 中 mode (until learned) | PASS (unhandledLetters=0) |
+2026-11-25T03:59:01.7214340Z | phase A: learn 拟好 without Full Access | PASS  |
+2026-11-25T03:59:01.7215160Z | Settings UI: Allow Full Access | PASS  |
+2026-11-25T03:59:01.7215990Z | keyboard process footprint after fullaccess (Release, pid 25353) | 47.0 MB |
+2026-11-25T03:59:01.7216700Z | no letter fell through to plain text in 中 mode (until fullaccess) | PASS (unhandledLetters=0) |
+2026-11-25T03:59:01.7217590Z | app deployment while the keyboard runs | PASS (0s) |
+2026-11-25T03:59:01.7218180Z | deploy stamp changed | PASS (before: none, after: 2026-11-25T03:52:14Z-12F1E288) |
+2026-11-25T03:59:01.7218860Z | kill keyboard process | killed pid 25353 |
+2026-11-25T03:59:01.7219450Z | keyboard process footprint after restarted (Release, pid 29455) | 46.0 MB |
+2026-11-25T03:59:01.7224380Z | no letter fell through to plain text in 中 mode (until restarted) | PASS (unhandledLetters=0) |
+2026-11-25T03:59:01.7225420Z | phase B: with Full Access 拟好 is still first, the app deploys, the keyboard restarts, 拟好 is still first | PASS  |
+2026-11-25T03:59:01.7226560Z | keyboard report (B) | fullAccess=true userDataShared=false rimeRunning=true deployStamp=2026-11-25T03:52:14Z-12F1E288 staging=set snapshot=none |
+2026-11-25T03:59:01.7231830Z | phase B: the keyboard runs with Full Access | PASS  |
+2026-11-25T03:59:01.7232750Z | phase B: the live user dictionary is the same private folder as without Full Access | PASS (userDataShared=false) |
+2026-11-25T03:59:01.7233660Z | phase B: with Full Access the keyboard reads the app deployments from the App Group | PASS  |
+2026-11-25T03:59:01.7234590Z | phase B: oc_core round trip inside the extension | PASS  |
+2026-11-25T03:59:01.7235410Z | phase B: librime modules registered (lua, octagram, predict, qjs) | PASS  |
+2026-11-25T03:59:01.7235940Z | phase B: Rime data stamp readable and built by the linked librime | PASS  |
+2026-11-25T03:59:01.7236620Z | phase B: the extension sees the app probe file (App Group shared) | PASS  |
+2026-11-25T03:59:01.7237350Z | phase B: encrypted-file key store readable across processes | PASS  |
+2026-11-25T03:59:01.7238100Z | phase B: the user dictionary files are in the keyboard private folder | PASS  |
+2026-11-25T03:59:01.7238770Z | snapshot export in the App Group (information) | 0 file(s) |
+2026-11-25T03:59:01.7239680Z | Settings UI: Full Access off again | PASS  |
+2026-11-25T03:59:01.7240890Z | phase C: Full Access off again, 拟好 is still first | **FAIL** (see ui-fullaccess-off logs and screenshots) |
+2026-11-25T03:59:01.7242040Z | phase C: Full Access off and the same private user dictionary folder | **FAIL** (fullAccess=true) |
+2026-11-25T03:59:01.7243250Z | memory budget: the highest keyboard footprint of 4 samples <= 55 MB | PASS (highest 48 MB; after typing 48.0 MB) |
+2026-11-25T03:59:01.7244050Z | failed checks | 2 |
+2026-11-25T03:59:01.7244310Z 
+2026-11-25T03:59:01.7244760Z - keyboard process footprint (`footprint`, MB): typing **48.0**, learned **48.0**, fullaccess **47.0**, restarted **46.0**
+2026-11-25T03:59:01.7251580Z - keyboard report (A): librime `1.17.0`, full access `False`, engine running `True`, user dictionary shared `False` (`/Users/runner/Library/Developer/CoreSimulator/Devices/4D1959A6-9562-4C7C-A6D2-832486A8608B/data/Containers/Data/PluginKitPlugin/DFE633C0-44AE-48AC-B3F6-F185CB4BF872/Library/Application Support/rime-user`), deploy stamp `None`, data `wanxiang v18.1.13` / schema `orangecell_wanxiang`, in-process phys_footprint 47.5 MB, start-up (after the keyboard appeared) engine ready 110.42702198028564 ms / first candidates 9405.04002571106 ms, user dictionary `learning`, user build `None`, letters through to plain text 0
+2026-11-25T03:59:01.7337740Z   - key storage `keychain-default`: cross-process read `False` sample not found
+2026-11-25T03:59:01.7339090Z   - key storage `encrypted-file`: cross-process read `True` 
+2026-11-25T03:59:01.7347310Z - keyboard report (A2): librime `1.17.0`, full access `False`, engine running `True`, user dictionary shared `False` (`/Users/runner/Library/Developer/CoreSimulator/Devices/4D1959A6-9562-4C7C-A6D2-832486A8608B/data/Containers/Data/PluginKitPlugin/DFE633C0-44AE-48AC-B3F6-F185CB4BF872/Library/Application Support/rime-user`), deploy stamp `None`, data `wanxiang v18.1.13` / schema `orangecell_wanxiang`, in-process phys_footprint 48.4 MB, start-up (after the keyboard appeared) engine ready 52.0169734954834 ms / first candidates 9211.228966712952 ms, user dictionary `learning`, user build `None`, letters through to plain text 0
+2026-11-25T03:59:01.7349960Z   - key storage `keychain-default`: cross-process read `False` sample not found
+2026-11-25T03:59:01.7350590Z   - key storage `encrypted-file`: cross-process read `True` 
+2026-11-25T03:59:01.7353760Z - keyboard report (B): librime `1.17.0`, full access `True`, engine running `True`, user dictionary shared `False` (`/Users/runner/Library/Developer/CoreSimulator/Devices/4D1959A6-9562-4C7C-A6D2-832486A8608B/data/Containers/Data/PluginKitPlugin/DFE633C0-44AE-48AC-B3F6-F185CB4BF872/Library/Application Support/rime-user`), deploy stamp `2026-11-25T03:52:14Z-12F1E288`, data `wanxiang v18.1.13` / schema `orangecell_wanxiang`, in-process phys_footprint 46 MB, start-up (after the keyboard appeared) engine ready 78.31895351409912 ms / first candidates 7454.361915588379 ms, user dictionary `learning`, user build `valid`, letters through to plain text 0
+2026-11-25T03:59:01.7356750Z   - key storage `keychain-default`: cross-process read `False` sample not found
+2026-11-25T03:59:01.7358440Z   - key storage `encrypted-file`: cross-process read `True` 
+2026-11-25T03:59:01.7361080Z - keyboard report (C): librime `1.17.0`, full access `True`, engine running `True`, user dictionary shared `False` (`/Users/runner/Library/Developer/CoreSimulator/Devices/4D1959A6-9562-4C7C-A6D2-832486A8608B/data/Containers/Data/PluginKitPlugin/DFE633C0-44AE-48AC-B3F6-F185CB4BF872/Library/Application Support/rime-user`), deploy stamp `2026-11-25T03:52:14Z-12F1E288`, data `wanxiang v18.1.13` / schema `orangecell_wanxiang`, in-process phys_footprint 46 MB, start-up (after the keyboard appeared) engine ready 78.31895351409912 ms / first candidates 7454.361915588379 ms, user dictionary `learning`, user build `valid`, letters through to plain text 0
+2026-11-25T03:59:01.7363960Z   - key storage `keychain-default`: cross-process read `False` sample not found
+2026-11-25T03:59:01.7365020Z   - key storage `encrypted-file`: cross-process read `True` 
+2026-11-25T03:59:01.7365900Z   - biggest dirty categories after typing: dyld private memory 16 MB dirty, MALLOC_SMALL 13 MB dirty, __DATA 7185 KB dirty, __DATA_CONST 6710 KB dirty, page table 1638 KB dirty, CoreAnimation 1424 KB dirty
+2026-11-25T03:59:01.7371740Z - screenshots: `e2e-00-springboard.png`, `e2e-app-diagnostics.png`, `e2e-app-home.png`, `e2e-app-licenses.png`, `fullaccess-off-system-keyboard-not-found.png`, `fullaccess-system-learn-3-after-deploy.png`, `fullaccess-system-learned-candidates.png`, `fullaccess-system-restart-1-keyboard.png`, `fullaccess-system-restart-2-candidates.png`, `learn-system-learn-1-before.png`, `learn-system-learn-2-learned.png`, `settings-fullaccess-off-settings-01-launch.png`, `settings-fullaccess-off-settings-02-keyboard-page.png`, `settings-fullaccess-off-settings-03-keyboards-list.png`, `settings-fullaccess-off-settings-04-our-keyboard-page.png`, `settings-fullaccess-off-settings-05-full-access-off.png`, `settings-fullaccess-off-settings-06-full-access-done.png`, `settings-fullaccess-settings-01-launch.png`, `settings-fullaccess-settings-02-keyboard-page.png`, `settings-fullaccess-settings-03-keyboards-list.png`, `settings-fullaccess-settings-04-our-keyboard-page.png`, `settings-fullaccess-settings-05-full-access-alert.png`, `settings-fullaccess-settings-06-full-access-done.png`, `typing-system-1-keyboard.png`, `typing-system-2-nihao.png`, `typing-system-3-sentence.png`, `typing-system-4-committed.png`, `typing-system-5-english.png`
+2026-11-25T03:59:01.7381550Z 
+2026-11-25T03:59:01.7381670Z | step | result | time |
+2026-11-25T03:59:01.7384300Z | --- | --- | --- |
+2026-11-25T03:59:01.7385360Z | toolchain | ok | 8s |
+2026-11-25T03:59:01.7385890Z | fetch-deps | ok | 9s |
+2026-11-25T03:59:01.7387350Z | xcodegen-install | ok | 0s |
+2026-11-25T03:59:01.7388330Z | xcodegen | ok | 0s |
+2026-11-25T03:59:01.7389540Z | simulator-create | ok | 0s |
+2026-11-25T03:59:01.7390410Z | build-e2e | ok | 53s |
+2026-11-25T03:59:01.7391370Z | e2e-run | FAILED (2) | 1333s |
+2026-11-25T03:59:01.7392070Z 
+2026-11-25T03:59:01.7553760Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-25T03:59:01.7555080Z with:
+2026-11-25T03:59:01.7555730Z   name: ci-e2e
+2026-11-25T03:59:01.7556300Z   path: ci-out/e2e
+!ci-out/e2e/logs/*.log
+
+2026-11-25T03:59:01.7556980Z   if-no-files-found: ignore
+2026-11-25T03:59:01.7557700Z   retention-days: 7
+2026-11-25T03:59:01.7558930Z   compression-level: 6
+2026-11-25T03:59:01.7559470Z   overwrite: false
+2026-11-25T03:59:01.7559760Z   include-hidden-files: false
+2026-11-25T03:59:01.7560310Z   archive: true
+2026-11-25T03:59:01.7560630Z env:
+2026-11-25T03:59:01.7560990Z   OC_VERSION: 0.2.17
+2026-11-25T03:59:01.7561320Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T03:59:01.7562620Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/e2e
+2026-11-25T03:59:01.7563340Z   SIM_UDID: 4D1959A6-9562-4C7C-A6D2-832486A8608B
+2026-11-25T03:59:01.7564760Z ##[endgroup]
+2026-11-25T03:59:02.7127670Z With the provided path, there will be 145 files uploaded
+2026-11-25T03:59:02.7128340Z Artifact name is valid!
+2026-11-25T03:59:02.7128600Z Root directory input is valid!
+2026-11-25T03:59:03.0443690Z Uploading artifact: ci-e2e.zip
+2026-11-25T03:59:03.0444360Z Beginning upload of artifact content to blob storage
+2026-11-25T03:59:03.8283530Z Uploaded bytes 8388608
+2026-11-25T03:59:03.8544630Z Uploaded bytes 8661314
+2026-11-25T03:59:03.8695580Z Finished uploading artifact content to blob storage!
+2026-11-25T03:59:03.8701020Z SHA256 digest of uploaded artifact is 9ab4d2cf022059388ad926fa98225653197699a5c7e7df7174003de52e8ba8ba
+2026-11-25T03:59:03.8702190Z Finalizing artifact upload
+2026-11-25T03:59:04.2099800Z Artifact ci-e2e successfully finalized. Artifact ID 14990003773
+2026-11-25T03:59:04.2100370Z Artifact ci-e2e has been successfully uploaded! Final size is 8661314 bytes. Artifact ID is 14990003773
+2026-11-25T03:59:04.2120290Z Artifact download URL: https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45540912605/artifacts/14990003773
+2026-11-25T03:59:04.2760760Z Post job cleanup.
+2026-11-25T03:59:04.2765520Z ##[start-action display=Cache prebuilt libraries;id=__d1933e9d-eb9a-46c8-af26-0418f746902e.__actions_cache]
+2026-11-25T03:59:04.2767880Z ##[end-action id=__d1933e9d-eb9a-46c8-af26-0418f746902e.__actions_cache;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-11-25T03:59:04.2829940Z Post job cleanup.
+2026-11-25T03:59:04.4817520Z [command]/opt/homebrew/bin/git version
+2026-11-25T03:59:04.5423890Z git version 2.56.1
+2026-11-25T03:59:04.5453380Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/290a9fbb-e8fb-4283-93bb-d3ae34e80002/.gitconfig'
+2026-11-25T03:59:04.5465520Z Temporarily overriding HOME='/Users/runner/work/_temp/290a9fbb-e8fb-4283-93bb-d3ae34e80002' before making global git config changes
+2026-11-25T03:59:04.5467700Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-25T03:59:04.5470980Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance
+2026-11-25T03:59:04.5621360Z Removing SSH command configuration
+2026-11-25T03:59:04.5627710Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-25T03:59:04.5770590Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-25T03:59:04.7483670Z Removing HTTP extra header
+2026-11-25T03:59:04.7484140Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-25T03:59:04.7550370Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-25T03:59:04.8570830Z Removing includeIf entries pointing to credentials config files
+2026-11-25T03:59:04.8571380Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-25T03:59:04.8894880Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-25T03:59:05.1770260Z Cleaning up orphan processes
+2026-11-25T03:59:07.7233910Z Terminate orphan process: pid (36685) (DTServiceHub)

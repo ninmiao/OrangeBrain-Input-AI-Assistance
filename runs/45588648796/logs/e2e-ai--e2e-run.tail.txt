@@ -1,0 +1,40 @@
+[e2e] ai: the app wrote the configuration and the loopback routes into the App Group: PASS (/Users/runner/Library/Developer/CoreSimulator/Devices/68F50539-8F26-4A6D-8EA9-ECB980D7E0AF/data/Containers/Shared/AppGroup/BDA512E8-F806-4073-8363-1FA9874C3A6F)
+[e2e] ai: the configuration file holds no key: PASS 
+[ui-test] ai: OrangeCellUITests/KeyboardUITests/testAiRowCorrectsAssistsAndPrefersTheEmojiKey
+[e2e] request: footprint-ai
+[e2e] keyboard process footprint after ai (Release, pid 23762): 48.0 MB
+[e2e] no letter fell through to plain text in 中 mode (until ai): PASS (unhandledLetters=0)
+	 Executed 1 test, with 0 failures (0 unexpected) in 104.851 (104.856) seconds
+check_tests: 1 tests executed, none skipped
+[e2e] ai: typo corrected and adopted, assistant then emoji key mid-stream (emoji wins), memory after the requests: PASS 
+[e2e] ai (ai): every request carried the stored key in its header: PASS 
+[e2e] ai (ai): the key is never inside a request body: PASS 
+[e2e] ai (ai): the shared core built bodies the service could read: PASS 
+[e2e] ai (ai): typing the pinyin of a typo sent an automatic request (correction + assistant) with that pinyin: PASS 
+[e2e] ai (ai): the assistant key and then the emoji key each sent a request, the emoji one last: PASS 
+[e2e] ai (ai): the assistant request was dropped by the keyboard when the emoji key took over (the service saw the connection close): PASS 
+[e2e] ai (ai): at least one running request was cancelled by a newer one: PASS 
+[e2e] mock service stats: {"requests": 17, "unauthorized": 0, "aborted": 9, "complete": 8}
+[ui-test] ai-secure: OrangeCellUITests/KeyboardUITests/testAiNeverSendsFromASecureField
+[e2e] request: footprint-ai-secure
+[e2e] keyboard process footprint after ai-secure (Release, pid 23762): 47.0 MB
+[e2e] no letter fell through to plain text in 中 mode (until ai-secure): PASS (unhandledLetters=0)
+	 Executed 1 test, with 0 failures (0 unexpected) in 88.839 (88.844) seconds
+check_tests: 1 tests executed, none skipped
+[e2e] ai: nothing is sent from a password field: PASS 
+[e2e] ai (secure): every request carried the stored key in its header: PASS 
+[e2e] ai (secure): the key is never inside a request body: PASS 
+[e2e] ai (secure): the shared core built bodies the service could read: PASS 
+[e2e] ai (secure): nothing typed in the password field was sent: PASS 
+[ui-test] settings-fullaccess-off: OrangeCellUITests/EnableKeyboardUITests
+	 Executed 1 test, with 0 failures (0 unexpected) in 25.995 (25.998) seconds
+check_tests: 1 tests executed, none skipped
+[e2e] Settings UI: Full Access off again: PASS 
+[ui-test] ai-off: OrangeCellUITests/KeyboardUITests/testAiNeedsFullAccess
+	 Executed 1 test, with 0 failures (0 unexpected) in 42.650 (42.657) seconds
+check_tests: 1 tests executed, none skipped
+[e2e] ai: without Full Access the AI row shows its hint and the keys do nothing: PASS 
+[e2e] ai: no request reached the service without Full Access: PASS (before 17, after 17)
+ios/scripts/e2e-sim.sh: line 562:  9152 Terminated: 15          python3 "$SCRIPTS/mock_ai_server.py" --port "$MOCK_PORT" --log "$MOCK_LOG" --ready-file "$MOCK_READY" > "$LOGS/mock-ai.out" 2>&1
+[e2e] memory budget: the highest keyboard footprint of 2 samples <= 55 MB: PASS (highest 48 MB; after typing n/a MB)
+[e2e] failed checks: 0

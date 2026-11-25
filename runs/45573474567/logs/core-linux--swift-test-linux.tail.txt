@@ -1,0 +1,302 @@
+Building for debugging...
+[0/16] Write sources
+[2/16] Write swift-version-24593BA9C3E375BF.txt
+[3/16] Compiling CNativeCore shim.cpp
+[5/29] Emitting module OCCore
+[6/33] Compiling OCCore NativeCore.swift
+[7/33] Compiling OCCore ProvisioningProfile.swift
+[8/33] Compiling OCCore RimeData.swift
+[9/33] Compiling OCCore TextTraits.swift
+[10/33] Compiling OCCore AiBarState.swift
+[11/33] Compiling OCCore AiCall.swift
+[12/33] Compiling OCCore AiChatClient.swift
+[13/33] Compiling OCCore AiController.swift
+[14/33] Compiling OCCore AppGroupLocator.swift
+[15/33] Compiling OCCore Diagnostics.swift
+[16/33] Compiling OCCore KeyStorage.swift
+[17/33] Compiling OCCore KeyboardSettings.swift
+[18/33] Compiling OCCore AiModes.swift
+[19/33] Compiling OCCore AiRequestCoordinator.swift
+[20/33] Compiling OCCore AiStore.swift
+[21/33] Compiling OCCore AiTypes.swift
+[22/34] Wrapping AST for OCCore for debugging
+[23/34] Write Objects.LinkFileList
+[24/37] Archiving libOCCore.a
+[26/42] Compiling OCCoreTests AiControllerTests.swift
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:86:9: error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+ 79 | @MainActor
+ 80 | final class AiRequestCoordinatorTests: XCTestCase {
+ 81 |     private var transport = ScriptedTransport()
+    |                 `- note: mutation of this property is only permitted within the actor
+ 82 |     private var states: [AiState] = []
+ 83 |     private var coordinator: AiRequestCoordinator!
+ 84 | 
+ 85 |     override func setUp() {
+ 86 |         transport = ScriptedTransport()
+    |         `- error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:87:9: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+ 80 | final class AiRequestCoordinatorTests: XCTestCase {
+ 81 |     private var transport = ScriptedTransport()
+ 82 |     private var states: [AiState] = []
+    |                 `- note: mutation of this property is only permitted within the actor
+ 83 |     private var coordinator: AiRequestCoordinator!
+ 84 | 
+ 85 |     override func setUp() {
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+    |         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+ 89 |     }
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:9: error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+ 81 |     private var transport = ScriptedTransport()
+ 82 |     private var states: [AiState] = []
+ 83 |     private var coordinator: AiRequestCoordinator!
+    |                 `- note: mutation of this property is only permitted within the actor
+ 84 | 
+ 85 |     override func setUp() {
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+    |         `- error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+ 89 |     }
+ 90 | 
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:23: error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+    |                       `- error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 89 |     }
+ 90 | 
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiRequestCoordinator.swift:30:12: note: calls to initializer 'init(transport:publish:)' from outside of its actor context are implicitly asynchronous
+28 |     private let publish: (AiState) -> Void
+29 | 
+30 |     public init(transport: @escaping AiTransportCall, publish: @escaping (AiState) -> Void) {
+   |            `- note: calls to initializer 'init(transport:publish:)' from outside of its actor context are implicitly asynchronous
+31 |         self.transport = transport
+32 |         self.publish = publish
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:55: error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+ 79 | @MainActor
+ 80 | final class AiRequestCoordinatorTests: XCTestCase {
+ 81 |     private var transport = ScriptedTransport()
+    |                 `- note: property declared here
+ 82 |     private var states: [AiState] = []
+ 83 |     private var coordinator: AiRequestCoordinator!
+    :
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+    |                                                       `- error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+ 89 |     }
+ 90 | 
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:105: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+ 80 | final class AiRequestCoordinatorTests: XCTestCase {
+ 81 |     private var transport = ScriptedTransport()
+ 82 |     private var states: [AiState] = []
+    |                 `- note: mutation of this property is only permitted within the actor
+ 83 |     private var coordinator: AiRequestCoordinator!
+ 84 | 
+    :
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+    |                                                                                                         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+ 89 |     }
+ 90 | 
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+[27/42] Compiling OCCoreTests AiCoordinatorTests.swift
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:86:9: error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+ 79 | @MainActor
+ 80 | final class AiRequestCoordinatorTests: XCTestCase {
+ 81 |     private var transport = ScriptedTransport()
+    |                 `- note: mutation of this property is only permitted within the actor
+ 82 |     private var states: [AiState] = []
+ 83 |     private var coordinator: AiRequestCoordinator!
+ 84 | 
+ 85 |     override func setUp() {
+ 86 |         transport = ScriptedTransport()
+    |         `- error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:87:9: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+ 80 | final class AiRequestCoordinatorTests: XCTestCase {
+ 81 |     private var transport = ScriptedTransport()
+ 82 |     private var states: [AiState] = []
+    |                 `- note: mutation of this property is only permitted within the actor
+ 83 |     private var coordinator: AiRequestCoordinator!
+ 84 | 
+ 85 |     override func setUp() {
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+    |         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+ 89 |     }
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:9: error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+ 81 |     private var transport = ScriptedTransport()
+ 82 |     private var states: [AiState] = []
+ 83 |     private var coordinator: AiRequestCoordinator!
+    |                 `- note: mutation of this property is only permitted within the actor
+ 84 | 
+ 85 |     override func setUp() {
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+    |         `- error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+ 89 |     }
+ 90 | 
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:23: error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+    |                       `- error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 89 |     }
+ 90 | 
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiRequestCoordinator.swift:30:12: note: calls to initializer 'init(transport:publish:)' from outside of its actor context are implicitly asynchronous
+28 |     private let publish: (AiState) -> Void
+29 | 
+30 |     public init(transport: @escaping AiTransportCall, publish: @escaping (AiState) -> Void) {
+   |            `- note: calls to initializer 'init(transport:publish:)' from outside of its actor context are implicitly asynchronous
+31 |         self.transport = transport
+32 |         self.publish = publish
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:55: error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+ 79 | @MainActor
+ 80 | final class AiRequestCoordinatorTests: XCTestCase {
+ 81 |     private var transport = ScriptedTransport()
+    |                 `- note: property declared here
+ 82 |     private var states: [AiState] = []
+ 83 |     private var coordinator: AiRequestCoordinator!
+    :
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+    |                                                       `- error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+ 89 |     }
+ 90 | 
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:105: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+ 80 | final class AiRequestCoordinatorTests: XCTestCase {
+ 81 |     private var transport = ScriptedTransport()
+ 82 |     private var states: [AiState] = []
+    |                 `- note: mutation of this property is only permitted within the actor
+ 83 |     private var coordinator: AiRequestCoordinator!
+ 84 | 
+    :
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+    |                                                                                                         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+ 89 |     }
+ 90 | 
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+[28/42] Compiling OCCoreTests AiStoreTests.swift
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:86:9: error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+ 79 | @MainActor
+ 80 | final class AiRequestCoordinatorTests: XCTestCase {
+ 81 |     private var transport = ScriptedTransport()
+    |                 `- note: mutation of this property is only permitted within the actor
+ 82 |     private var states: [AiState] = []
+ 83 |     private var coordinator: AiRequestCoordinator!
+ 84 | 
+ 85 |     override func setUp() {
+ 86 |         transport = ScriptedTransport()
+    |         `- error: main actor-isolated property 'transport' can not be mutated from a nonisolated context
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:87:9: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+ 80 | final class AiRequestCoordinatorTests: XCTestCase {
+ 81 |     private var transport = ScriptedTransport()
+ 82 |     private var states: [AiState] = []
+    |                 `- note: mutation of this property is only permitted within the actor
+ 83 |     private var coordinator: AiRequestCoordinator!
+ 84 | 
+ 85 |     override func setUp() {
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+    |         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+ 89 |     }
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:9: error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+ 81 |     private var transport = ScriptedTransport()
+ 82 |     private var states: [AiState] = []
+ 83 |     private var coordinator: AiRequestCoordinator!
+    |                 `- note: mutation of this property is only permitted within the actor
+ 84 | 
+ 85 |     override func setUp() {
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+    |         `- error: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+ 89 |     }
+ 90 | 
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:23: error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+    |                       `- error: call to main actor-isolated initializer 'init(transport:publish:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 89 |     }
+ 90 | 
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiRequestCoordinator.swift:30:12: note: calls to initializer 'init(transport:publish:)' from outside of its actor context are implicitly asynchronous
+28 |     private let publish: (AiState) -> Void
+29 | 
+30 |     public init(transport: @escaping AiTransportCall, publish: @escaping (AiState) -> Void) {
+   |            `- note: calls to initializer 'init(transport:publish:)' from outside of its actor context are implicitly asynchronous
+31 |         self.transport = transport
+32 |         self.publish = publish
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:55: error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+ 79 | @MainActor
+ 80 | final class AiRequestCoordinatorTests: XCTestCase {
+ 81 |     private var transport = ScriptedTransport()
+    |                 `- note: property declared here
+ 82 |     private var states: [AiState] = []
+ 83 |     private var coordinator: AiRequestCoordinator!
+    :
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+    |                                                       `- error: main actor-isolated property 'transport' can not be referenced from a nonisolated context
+ 89 |     }
+ 90 | 
+
+/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/AiCoordinatorTests.swift:88:105: error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+ 80 | final class AiRequestCoordinatorTests: XCTestCase {
+ 81 |     private var transport = ScriptedTransport()
+ 82 |     private var states: [AiState] = []
+    |                 `- note: mutation of this property is only permitted within the actor
+ 83 |     private var coordinator: AiRequestCoordinator!
+ 84 | 
+    :
+ 86 |         transport = ScriptedTransport()
+ 87 |         states = []
+ 88 |         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
+    |                                                                                                         `- error: main actor-isolated property 'states' can not be mutated from a nonisolated context
+ 89 |     }
+ 90 | 
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+[29/44] Compiling OCCoreTests NativeCoreTests.swift
+[30/44] Compiling OCCoreTests ProvisioningProfileTests.swift
+[31/44] Emitting module OCCoreTests
+[32/44] Compiling OCCoreTests AiTransportTests.swift
+[33/44] Compiling OCCoreTests KeyStorageTests.swift
+[34/44] Compiling OCCoreTests TextTraitsTests.swift
+[35/44] Compiling OCCoreTests UserDictionaryTests.swift
+error: fatalError

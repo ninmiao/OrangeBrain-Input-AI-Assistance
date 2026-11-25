@@ -1,0 +1,30 @@
+    t =    71.02s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (54.0, 538.0)
+    t =    71.02s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    71.02s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    71.06s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    71.12s     Synthesize event
+    t =    71.13s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    71.17s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    71.28s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    71.62s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    71.62s Find the "oc.testhost.field" TextField
+    t =    71.87s Added attachment named 'ai-6-emoticon-adopted'
+OCUI helper footprint-ai: answered
+    t =   104.33s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testAiRowCorrectsAssistsAndPrefersTheEmojiKey]' passed (104.851 seconds).
+Test Suite 'KeyboardUITests' passed at 2026-11-25 10:06:35.742.
+	 Executed 1 test, with 0 failures (0 unexpected) in 104.851 (104.854) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-25 10:06:35.742.
+	 Executed 1 test, with 0 failures (0 unexpected) in 104.851 (104.855) seconds
+Test Suite 'Selected tests' passed at 2026-11-25 10:06:35.743.
+	 Executed 1 test, with 0 failures (0 unexpected) in 104.851 (104.856) seconds
+2026-11-25 10:06:36.591 xcodebuild[21092:68783] [MT] IDETestOperationsObserverDebug: 137.660 elapsed -- Testing started completed.
+2026-11-25 10:06:36.591 xcodebuild[21092:68783] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 10:06:36.591 xcodebuild[21092:68783] [MT] IDETestOperationsObserverDebug: 137.660 sec, +137.660 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-ai.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

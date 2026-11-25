@@ -1,0 +1,40 @@
+Test Case '-[OrangeCellTests.RimeSessionTests testBackspaceEditsTheCompositionAndEnterCommitsRawInput]' started.
+Test Case '-[OrangeCellTests.RimeSessionTests testBackspaceEditsTheCompositionAndEnterCommitsRawInput]' passed (0.067 seconds).
+Test Case '-[OrangeCellTests.RimeSessionTests testChinesePunctuationAndCommitDoNotComposeWithoutInput]' started.
+OCINFO comma.handled=true commit=， composing=false
+Test Case '-[OrangeCellTests.RimeSessionTests testChinesePunctuationAndCommitDoNotComposeWithoutInput]' passed (0.319 seconds).
+Test Case '-[OrangeCellTests.RimeSessionTests testDataBundleMatchesTheLinkedLibrime]' started.
+OCINFO data.builtWithLibrime=1.17.0 linked=1.17.0
+Test Case '-[OrangeCellTests.RimeSessionTests testDataBundleMatchesTheLinkedLibrime]' passed (0.002 seconds).
+Test Case '-[OrangeCellTests.RimeSessionTests testNihaoGivesNiHaoAndCommitsIt]' started.
+OCINFO nihao.candidates=你好|你号|拟好|你|泥|拟|腻|逆
+OCINFO nihao.preedit=ni hao
+Test Case '-[OrangeCellTests.RimeSessionTests testNihaoGivesNiHaoAndCommitsIt]' passed (0.026 seconds).
+Test Case '-[OrangeCellTests.RimeSessionTests testPagingMovesTheHighlight]' started.
+Test Case '-[OrangeCellTests.RimeSessionTests testPagingMovesTheHighlight]' passed (0.025 seconds).
+Test Case '-[OrangeCellTests.RimeSessionTests testSelectingAnotherCandidateTeachesTheUserDictionaryAndSurvivesARestart]' started.
+OCINFO learning.before=你好|你号|拟好|你|泥 learn=拟好
+OCINFO learning.orderAfterEachRound=拟好,你好,你号 | 拟好,你好,你号 | 拟好,你好,你号 | 拟好,你好,你号 | 拟好,你好,你号 | 拟好,你好,你号
+OCINFO learning.tapIndices=2,0,0,0,0,0
+OCINFO learning.roundsToTop=1
+OCINFO learning.after=拟好|你好|你号|你|泥
+Test Case '-[OrangeCellTests.RimeSessionTests testSelectingAnotherCandidateTeachesTheUserDictionaryAndSurvivesARestart]' passed (0.073 seconds).
+Test Case '-[OrangeCellTests.RimeSessionTests testSentenceCommitsWithSpace]' started.
+OCINFO woyaochihuoguo.candidates=我要吃火锅|我要吃|我要|窝腰|我呀
+Test Case '-[OrangeCellTests.RimeSessionTests testSentenceCommitsWithSpace]' passed (0.158 seconds).
+Test Suite 'RimeSessionTests' passed at 2026-11-24 18:48:15.623.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.792 (1.131) seconds
+Test Suite 'OrangeCellTests.xctest' passed at 2026-11-24 18:48:15.624.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 1.052 (1.395) seconds
+Test Suite 'Selected tests' passed at 2026-11-24 18:48:15.625.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 1.052 (1.398) seconds
+2026-11-24 18:48:16.598 xcodebuild[4904:18161] [MT] IDETestOperationsObserverDebug: 80.931 elapsed -- Testing started completed.
+2026-11-24 18:48:16.598 xcodebuild[4904:18161] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-24 18:48:16.598 xcodebuild[4904:18161] [MT] IDETestOperationsObserverDebug: 80.931 sec, +80.931 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/unit.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

@@ -1,0 +1,70 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/OrangeCell.xcodeproj -scheme OCUITests -configuration Release -destination id=2BCF8C5A-4964-470D-8C98-9F5E58ECC92E -derivedDataPath /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd "-only-testing:OrangeCellUITests/KeyboardUITests/testRealExtensionTypesChineseAndEnglish" -resultBundlePath /Users/runner/work/_temp/results/ui-typing.xcresult
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  OCKeyboardUI: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCKeyboardUI
+  OCRime: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCRime
+  OCCore: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore
+
+Writing result bundle at path:
+	/Users/runner/work/_temp/results/ui-typing.xcresult
+
+2026-11-24 19:24:49.564926+0000 OrangeCellUITests-Runner[9968:38007] [Default] Running tests...
+objc[9968]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x107524310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x106f6c398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+Test Suite 'Selected tests' started at 2026-11-24 19:24:56.704.
+Test Suite 'OrangeCellUITests.xctest' started at 2026-11-24 19:24:56.705.
+Test Suite 'KeyboardUITests' started at 2026-11-24 19:24:56.706.
+Test Case '-[OrangeCellUITests.KeyboardUITests testRealExtensionTypesChineseAndEnglish]' started.
+    t =     0.00s Start Test at 2026-11-24 19:24:56.707
+    t =     1.18s Set Up
+    t =     1.18s Open io.github.ninmiao.orangecell.testhost
+    t =     1.18s     Launch io.github.ninmiao.orangecell.testhost
+2026-11-24 19:24:59.138 xcodebuild[7699:31081] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-24 19:24:59.139 xcodebuild[7699:31081] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     6.90s         Setting up automation session
+    t =     7.76s         Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =     9.26s Waiting 30.0s for "oc.testhost.field" TextField to exist
+    t =    10.30s     Checking `Expect predicate `existsNoRetry == 1` for object "oc.testhost.field" TextField`
+    t =    10.31s         Checking existence of `"oc.testhost.field" TextField`
+    t =    11.37s Tap "oc.testhost.field" TextField
+    t =    11.37s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    11.44s     Find the "oc.testhost.field" TextField
+    t =    12.27s     Check for interrupting elements affecting "oc.testhost.field" TextField
+    t =    12.80s     Synthesize event
+    t =    13.37s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    21.85s Added attachment named 'system-1-keyboard'
+    t =    21.87s Requesting snapshot of accessibility hierarchy for app with pid 10673
+    t =    23.42s Requesting snapshot of accessibility hierarchy for app with pid 10673
+    t =    23.77s Added attachment named 'system-host-hierarchy'
+    t =    23.82s Checking existence of `"inputView" Other`
+    t =    26.34s Find the "inputView" Other
+    t =    30.87s Find the Window (First Match)
+    t =    31.24s Find the Window (First Match)
+OCUI keyboardTop pixels=821.6666666666666 tree=534.0 width=402.0
+    t =    31.79s Find the Window (First Match)
+OCUI bottom row key centres: [201]
+/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:231: error: -[OrangeCellUITests.KeyboardUITests testRealExtensionTypesChineseAndEnglish] : XCTAssertTrue failed - expected 4 or 5 keys on the bottom row, found 1
+    t =    33.71s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testRealExtensionTypesChineseAndEnglish]' failed (44.153 seconds).
+Test Suite 'KeyboardUITests' failed at 2026-11-24 19:25:40.862.
+	 Executed 1 test, with 1 failure (0 unexpected) in 44.153 (44.156) seconds
+Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-24 19:25:40.863.
+	 Executed 1 test, with 1 failure (0 unexpected) in 44.153 (44.158) seconds
+Test Suite 'Selected tests' failed at 2026-11-24 19:25:40.865.
+	 Executed 1 test, with 1 failure (0 unexpected) in 44.153 (44.161) seconds
+2026-11-24 19:27:06.376 xcodebuild[7699:31081] [MT] IDETestOperationsObserverDebug: 186.647 elapsed -- Testing started completed.
+2026-11-24 19:27:06.377 xcodebuild[7699:31081] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-24 19:27:06.377 xcodebuild[7699:31081] [MT] IDETestOperationsObserverDebug: 186.647 sec, +186.647 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-typing.xcresult
+
+Failing tests:
+	KeyboardUITests.testRealExtensionTypesChineseAndEnglish()
+
+** TEST EXECUTE FAILED **
+
+Testing started

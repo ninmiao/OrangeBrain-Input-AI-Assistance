@@ -1,0 +1,36 @@
+======================================================================
+OrangeCellKeyboard [13341]: 64-bit    Footprint: 49 MB (16384 bytes per page)
+======================================================================
+
+  Dirty      Clean  Reclaimable    Regions    Category
+    ---        ---          ---        ---    ---
+  15 MB        0 B          0 B         71    dyld private memory
+  14 MB        0 B      3360 KB          6    MALLOC_SMALL
+7281 KB      32 KB          0 B        939    __DATA
+6754 KB      16 KB          0 B        969    __DATA_CONST
+1680 KB        0 B       304 KB        103    CoreAnimation
+1670 KB        0 B          0 B          1    page table
+ 974 KB        0 B          0 B       1008    unused dyld shared cache area
+ 864 KB        0 B          0 B         50    stack
+ 224 KB        0 B          0 B          8    MALLOC metadata
+ 192 KB        0 B          0 B          1    MALLOC_TINY
+ 160 KB        0 B          0 B          7    CG raster data
+ 155 KB        0 B          0 B         14    __DATA_DIRTY
+  52 KB        0 B          0 B          3    __TPRO_CONST
+  48 KB        0 B          0 B          1    Activity Tracing
+  32 KB        0 B          0 B          1    __AUTH_CONST
+  32 KB        0 B          0 B          3    untagged (VM_ALLOCATE)
+  32 KB        0 B          0 B          1    MALLOC_NANO
+  16 KB        0 B          0 B          1    Foundation
+  16 KB        0 B          0 B          1    os_alloc_once
+    0 B      23 MB          0 B         20    mapped file
+    0 B    8016 KB          0 B        982    __TEXT
+    0 B    1552 KB          0 B         71    __LINKEDIT
+    0 B        0 B          0 B          1    __FONT_DATA
+    ---        ---          ---        ---    ---
+  49 MB      33 MB      3664 KB       4264    TOTAL
+
+Auxiliary data:
+    phys_footprint: 49 MB
+    phys_footprint_peak: 50 MB
+

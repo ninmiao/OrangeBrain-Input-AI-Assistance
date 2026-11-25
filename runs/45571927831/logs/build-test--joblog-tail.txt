@@ -1,0 +1,400 @@
+2026-11-25T08:03:57.4470310Z [36;1mkill "$mock" 2>/dev/null || true[0m
+2026-11-25T08:03:57.4471220Z [36;1mexit "$code"[0m
+2026-11-25T08:03:57.4576060Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-25T08:03:57.4576900Z env:
+2026-11-25T08:03:57.4577150Z   OC_VERSION: 0.2.18
+2026-11-25T08:03:57.4577590Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T08:03:57.4578200Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-25T08:03:57.4578810Z   SIM_UDID: F8790ECF-0F6B-473C-89E1-FA3B1BD1B5FB
+2026-11-25T08:03:57.4579330Z ##[endgroup]
+2026-11-25T08:03:59.7642020Z ##[group]swift-test-macos
+2026-11-25T08:04:16.8776890Z Building for debugging...
+2026-11-25T08:04:16.8853760Z [0/10] /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/.build/arm64-apple-macosx/debug/OCCorePackageTests.derived/runner.swift
+2026-11-25T08:04:16.8868470Z [1/10] Write sources
+2026-11-25T08:04:17.1409040Z [4/10] Write swift-version-7974D3F7F03D5E95.txt
+2026-11-25T08:04:24.5762160Z [5/10] Compiling CNativeCore shim.cpp
+2026-11-25T08:04:33.0367690Z [7/22] Compiling OCCore AiBarState.swift
+2026-11-25T08:04:33.0370790Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:89:24: error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.0373450Z  87 | private final class CallStore: @unchecked Sendable {
+2026-11-25T08:04:33.0374350Z  88 |     private let lock = NSLock()
+2026-11-25T08:04:33.0375320Z  89 |     private var calls: [RequestStamp: AiCall] = [:]
+2026-11-25T08:04:33.0376960Z     |                        `- error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.0378420Z  90 | 
+2026-11-25T08:04:33.0379230Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:33.0379890Z 
+2026-11-25T08:04:33.0382000Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:93:14: error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0385110Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:33.0385850Z  92 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0386780Z  93 |         calls[call.request.stamp] = call
+2026-11-25T08:04:33.0388300Z     |              `- error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0390290Z  94 |         if calls.count > 8 { calls = calls.filter { $0.key.inputRevision >= call.request.stamp.inputRevision - 4 } }
+2026-11-25T08:04:33.0391540Z  95 |     }
+2026-11-25T08:04:33.0391900Z 
+2026-11-25T08:04:33.0392370Z Swift.Dictionary:1:11: note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0393400Z 1 | extension Dictionary {
+2026-11-25T08:04:33.0394080Z   |           `- note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0402940Z 2 |     @inlinable public subscript(key: Key) -> Value? { get set }
+2026-11-25T08:04:33.0405690Z 3 | }
+2026-11-25T08:04:33.0405990Z 
+2026-11-25T08:04:33.0425800Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:94:44: error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:33.0428680Z  92 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0430410Z  93 |         calls[call.request.stamp] = call
+2026-11-25T08:04:33.0431900Z  94 |         if calls.count > 8 { calls = calls.filter { $0.key.inputRevision >= call.request.stamp.inputRevision - 4 } }
+2026-11-25T08:04:33.0432940Z     |                                            `- error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:33.0434050Z  95 |     }
+2026-11-25T08:04:33.0434400Z  96 | 
+2026-11-25T08:04:33.0434550Z 
+2026-11-25T08:04:33.0435310Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:99:22: error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0436900Z  97 |     func take(_ stamp: RequestStamp) -> AiCall? {
+2026-11-25T08:04:33.0437590Z  98 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0438010Z  99 |         return calls.removeValue(forKey: stamp)
+2026-11-25T08:04:33.0438710Z     |                      `- error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0442660Z 100 |     }
+2026-11-25T08:04:33.0442870Z 101 | }
+2026-11-25T08:04:33.0443040Z 
+2026-11-25T08:04:33.0443260Z Swift.Dictionary:1:11: note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0443770Z  1 | extension Dictionary {
+2026-11-25T08:04:33.0444120Z    |           `- note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0444640Z  2 |     @inlinable public subscript(key: Key, default defaultValue: @autoclosure () -> Value) -> Value { get set }
+2026-11-25T08:04:33.0445520Z  3 |     @inlinable public func mapValues<T>(_ transform: (Value) throws -> T) rethrows -> [Key : T]
+2026-11-25T08:04:33.0446060Z [8/22] Compiling OCCore AiCall.swift
+2026-11-25T08:04:33.0446840Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:89:24: error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.0447730Z  87 | private final class CallStore: @unchecked Sendable {
+2026-11-25T08:04:33.0448110Z  88 |     private let lock = NSLock()
+2026-11-25T08:04:33.0448470Z  89 |     private var calls: [RequestStamp: AiCall] = [:]
+2026-11-25T08:04:33.0448970Z     |                        `- error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.0449420Z  90 | 
+2026-11-25T08:04:33.0449680Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:33.0449820Z 
+2026-11-25T08:04:33.0450580Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:93:14: error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0451530Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:33.0451920Z  92 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0452240Z  93 |         calls[call.request.stamp] = call
+2026-11-25T08:04:33.0452820Z     |              `- error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0453620Z  94 |         if calls.count > 8 { calls = calls.filter { $0.key.inputRevision >= call.request.stamp.inputRevision - 4 } }
+2026-11-25T08:04:33.0454250Z  95 |     }
+2026-11-25T08:04:33.0454340Z 
+2026-11-25T08:04:33.0454520Z Swift.Dictionary:1:11: note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0455240Z 1 | extension Dictionary {
+2026-11-25T08:04:33.0455590Z   |           `- note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0455960Z 2 |     @inlinable public subscript(key: Key) -> Value? { get set }
+2026-11-25T08:04:33.0456420Z 3 | }
+2026-11-25T08:04:33.0456540Z 
+2026-11-25T08:04:33.0457430Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:94:44: error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:33.0458530Z  92 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0458830Z  93 |         calls[call.request.stamp] = call
+2026-11-25T08:04:33.0459380Z  94 |         if calls.count > 8 { calls = calls.filter { $0.key.inputRevision >= call.request.stamp.inputRevision - 4 } }
+2026-11-25T08:04:33.0460330Z     |                                            `- error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:33.0460970Z  95 |     }
+2026-11-25T08:04:33.0461210Z  96 | 
+2026-11-25T08:04:33.0461340Z 
+2026-11-25T08:04:33.0462130Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:99:22: error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0463300Z  97 |     func take(_ stamp: RequestStamp) -> AiCall? {
+2026-11-25T08:04:33.0463780Z  98 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0464160Z  99 |         return calls.removeValue(forKey: stamp)
+2026-11-25T08:04:33.0464780Z     |                      `- error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0465300Z 100 |     }
+2026-11-25T08:04:33.0465650Z 101 | }
+2026-11-25T08:04:33.0465810Z 
+2026-11-25T08:04:33.0466020Z Swift.Dictionary:1:11: note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0466400Z  1 | extension Dictionary {
+2026-11-25T08:04:33.0466760Z    |           `- note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0467300Z  2 |     @inlinable public subscript(key: Key, default defaultValue: @autoclosure () -> Value) -> Value { get set }
+2026-11-25T08:04:33.0467960Z  3 |     @inlinable public func mapValues<T>(_ transform: (Value) throws -> T) rethrows -> [Key : T]
+2026-11-25T08:04:33.0468430Z [9/22] Compiling OCCore AiChatClient.swift
+2026-11-25T08:04:33.0469290Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:89:24: error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.0470160Z  87 | private final class CallStore: @unchecked Sendable {
+2026-11-25T08:04:33.0470480Z  88 |     private let lock = NSLock()
+2026-11-25T08:04:33.0470890Z  89 |     private var calls: [RequestStamp: AiCall] = [:]
+2026-11-25T08:04:33.0471370Z     |                        `- error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.0471730Z  90 | 
+2026-11-25T08:04:33.0471990Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:33.0472190Z 
+2026-11-25T08:04:33.0472930Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:93:14: error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0473880Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:33.0474160Z  92 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0474570Z  93 |         calls[call.request.stamp] = call
+2026-11-25T08:04:33.0475140Z     |              `- error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0476180Z  94 |         if calls.count > 8 { calls = calls.filter { $0.key.inputRevision >= call.request.stamp.inputRevision - 4 } }
+2026-11-25T08:04:33.0476750Z  95 |     }
+2026-11-25T08:04:33.0476880Z 
+2026-11-25T08:04:33.0477060Z Swift.Dictionary:1:11: note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0477520Z 1 | extension Dictionary {
+2026-11-25T08:04:33.0477810Z   |           `- note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0478250Z 2 |     @inlinable public subscript(key: Key) -> Value? { get set }
+2026-11-25T08:04:33.0478660Z 3 | }
+2026-11-25T08:04:33.0478740Z 
+2026-11-25T08:04:33.0479720Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:94:44: error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:33.0482300Z  92 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0483450Z  93 |         calls[call.request.stamp] = call
+2026-11-25T08:04:33.0484950Z  94 |         if calls.count > 8 { calls = calls.filter { $0.key.inputRevision >= call.request.stamp.inputRevision - 4 } }
+2026-11-25T08:04:33.0487040Z     |                                            `- error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:33.0487830Z  95 |     }
+2026-11-25T08:04:33.0488740Z  96 | 
+2026-11-25T08:04:33.0488890Z 
+2026-11-25T08:04:33.0563540Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:99:22: error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0567560Z  97 |     func take(_ stamp: RequestStamp) -> AiCall? {
+2026-11-25T08:04:33.0568090Z  98 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0568550Z  99 |         return calls.removeValue(forKey: stamp)
+2026-11-25T08:04:33.0569420Z     |                      `- error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0570090Z 100 |     }
+2026-11-25T08:04:33.0570320Z 101 | }
+2026-11-25T08:04:33.0570470Z 
+2026-11-25T08:04:33.0570680Z Swift.Dictionary:1:11: note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0571030Z  1 | extension Dictionary {
+2026-11-25T08:04:33.0571260Z    |           `- note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0571780Z  2 |     @inlinable public subscript(key: Key, default defaultValue: @autoclosure () -> Value) -> Value { get set }
+2026-11-25T08:04:33.0572510Z  3 |     @inlinable public func mapValues<T>(_ transform: (Value) throws -> T) rethrows -> [Key : T]
+2026-11-25T08:04:33.0576130Z [10/22] Compiling OCCore AiController.swift
+2026-11-25T08:04:33.0577060Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:89:24: error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.0577990Z  87 | private final class CallStore: @unchecked Sendable {
+2026-11-25T08:04:33.0578340Z  88 |     private let lock = NSLock()
+2026-11-25T08:04:33.0578720Z  89 |     private var calls: [RequestStamp: AiCall] = [:]
+2026-11-25T08:04:33.0579180Z     |                        `- error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.0579620Z  90 | 
+2026-11-25T08:04:33.0579960Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:33.0580240Z 
+2026-11-25T08:04:33.0581070Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:93:14: error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0582060Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:33.0583170Z  92 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0583630Z  93 |         calls[call.request.stamp] = call
+2026-11-25T08:04:33.0584180Z     |              `- error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0584910Z  94 |         if calls.count > 8 { calls = calls.filter { $0.key.inputRevision >= call.request.stamp.inputRevision - 4 } }
+2026-11-25T08:04:33.0585390Z  95 |     }
+2026-11-25T08:04:33.0585480Z 
+2026-11-25T08:04:33.0585600Z Swift.Dictionary:1:11: note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0585870Z 1 | extension Dictionary {
+2026-11-25T08:04:33.0586220Z   |           `- note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0586550Z 2 |     @inlinable public subscript(key: Key) -> Value? { get set }
+2026-11-25T08:04:33.0586880Z 3 | }
+2026-11-25T08:04:33.0587030Z 
+2026-11-25T08:04:33.0587930Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:94:44: error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:33.0589050Z  92 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0589440Z  93 |         calls[call.request.stamp] = call
+2026-11-25T08:04:33.0589930Z  94 |         if calls.count > 8 { calls = calls.filter { $0.key.inputRevision >= call.request.stamp.inputRevision - 4 } }
+2026-11-25T08:04:33.0591070Z     |                                            `- error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:33.0591770Z  95 |     }
+2026-11-25T08:04:33.0591950Z  96 | 
+2026-11-25T08:04:33.0592110Z 
+2026-11-25T08:04:33.0592940Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:99:22: error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0593860Z  97 |     func take(_ stamp: RequestStamp) -> AiCall? {
+2026-11-25T08:04:33.0594260Z  98 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0594640Z  99 |         return calls.removeValue(forKey: stamp)
+2026-11-25T08:04:33.0595350Z     |                      `- error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0595870Z 100 |     }
+2026-11-25T08:04:33.0596110Z 101 | }
+2026-11-25T08:04:33.0596250Z 
+2026-11-25T08:04:33.0596420Z Swift.Dictionary:1:11: note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0596740Z  1 | extension Dictionary {
+2026-11-25T08:04:33.0597080Z    |           `- note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0597680Z  2 |     @inlinable public subscript(key: Key, default defaultValue: @autoclosure () -> Value) -> Value { get set }
+2026-11-25T08:04:33.0598240Z  3 |     @inlinable public func mapValues<T>(_ transform: (Value) throws -> T) rethrows -> [Key : T]
+2026-11-25T08:04:33.0598670Z [11/22] Compiling OCCore AiModes.swift
+2026-11-25T08:04:33.0599500Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:89:24: error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.0600330Z  87 | private final class CallStore: @unchecked Sendable {
+2026-11-25T08:04:33.0600650Z  88 |     private let lock = NSLock()
+2026-11-25T08:04:33.0601050Z  89 |     private var calls: [RequestStamp: AiCall] = [:]
+2026-11-25T08:04:33.0601530Z     |                        `- error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.0601930Z  90 | 
+2026-11-25T08:04:33.0602230Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:33.0602420Z 
+2026-11-25T08:04:33.0603580Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:93:14: error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0604580Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:33.0604890Z  92 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0605140Z  93 |         calls[call.request.stamp] = call
+2026-11-25T08:04:33.0605580Z     |              `- error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0606260Z  94 |         if calls.count > 8 { calls = calls.filter { $0.key.inputRevision >= call.request.stamp.inputRevision - 4 } }
+2026-11-25T08:04:33.0606720Z  95 |     }
+2026-11-25T08:04:33.0606800Z 
+2026-11-25T08:04:33.0606910Z Swift.Dictionary:1:11: note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0607170Z 1 | extension Dictionary {
+2026-11-25T08:04:33.0607550Z   |           `- note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0607960Z 2 |     @inlinable public subscript(key: Key) -> Value? { get set }
+2026-11-25T08:04:33.0608310Z 3 | }
+2026-11-25T08:04:33.0608390Z 
+2026-11-25T08:04:33.0609280Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:94:44: error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:33.0610540Z  92 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0610800Z  93 |         calls[call.request.stamp] = call
+2026-11-25T08:04:33.0611230Z  94 |         if calls.count > 8 { calls = calls.filter { $0.key.inputRevision >= call.request.stamp.inputRevision - 4 } }
+2026-11-25T08:04:33.0612030Z     |                                            `- error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:33.0612650Z  95 |     }
+2026-11-25T08:04:33.0612830Z  96 | 
+2026-11-25T08:04:33.0612910Z 
+2026-11-25T08:04:33.0613700Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:99:22: error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0614660Z  97 |     func take(_ stamp: RequestStamp) -> AiCall? {
+2026-11-25T08:04:33.0614920Z  98 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0615270Z  99 |         return calls.removeValue(forKey: stamp)
+2026-11-25T08:04:33.0615920Z     |                      `- error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0616620Z 100 |     }
+2026-11-25T08:04:33.0616790Z 101 | }
+2026-11-25T08:04:33.0616880Z 
+2026-11-25T08:04:33.0617040Z Swift.Dictionary:1:11: note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0617350Z  1 | extension Dictionary {
+2026-11-25T08:04:33.0617650Z    |           `- note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0618170Z  2 |     @inlinable public subscript(key: Key, default defaultValue: @autoclosure () -> Value) -> Value { get set }
+2026-11-25T08:04:33.0618790Z  3 |     @inlinable public func mapValues<T>(_ transform: (Value) throws -> T) rethrows -> [Key : T]
+2026-11-25T08:04:33.0619190Z [12/22] Compiling OCCore AiRequestCoordinator.swift
+2026-11-25T08:04:33.0620070Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:89:24: error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.0620830Z  87 | private final class CallStore: @unchecked Sendable {
+2026-11-25T08:04:33.0621150Z  88 |     private let lock = NSLock()
+2026-11-25T08:04:33.0621720Z  89 |     private var calls: [RequestStamp: AiCall] = [:]
+2026-11-25T08:04:33.0622240Z     |                        `- error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.0622560Z  90 | 
+2026-11-25T08:04:33.0622800Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:33.0622990Z 
+2026-11-25T08:04:33.0623680Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:93:14: error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0624620Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:33.0624960Z  92 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0625260Z  93 |         calls[call.request.stamp] = call
+2026-11-25T08:04:33.0625810Z     |              `- error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0626550Z  94 |         if calls.count > 8 { calls = calls.filter { $0.key.inputRevision >= call.request.stamp.inputRevision - 4 } }
+2026-11-25T08:04:33.0627070Z  95 |     }
+2026-11-25T08:04:33.0627150Z 
+2026-11-25T08:04:33.0627310Z Swift.Dictionary:1:11: note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0627690Z 1 | extension Dictionary {
+2026-11-25T08:04:33.0627950Z   |           `- note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0628350Z 2 |     @inlinable public subscript(key: Key) -> Value? { get set }
+2026-11-25T08:04:33.0628770Z 3 | }
+2026-11-25T08:04:33.0628850Z 
+2026-11-25T08:04:33.0629660Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:94:44: error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:33.0630630Z  92 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0630890Z  93 |         calls[call.request.stamp] = call
+2026-11-25T08:04:33.0631310Z  94 |         if calls.count > 8 { calls = calls.filter { $0.key.inputRevision >= call.request.stamp.inputRevision - 4 } }
+2026-11-25T08:04:33.0632110Z     |                                            `- error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:33.0632680Z  95 |     }
+2026-11-25T08:04:33.0632820Z  96 | 
+2026-11-25T08:04:33.0632890Z 
+2026-11-25T08:04:33.0633620Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:99:22: error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0634510Z  97 |     func take(_ stamp: RequestStamp) -> AiCall? {
+2026-11-25T08:04:33.0634780Z  98 |         lock.lock(); defer { lock.unlock() }
+2026-11-25T08:04:33.0635070Z  99 |         return calls.removeValue(forKey: stamp)
+2026-11-25T08:04:33.0635660Z     |                      `- error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:33.0636110Z 100 |     }
+2026-11-25T08:04:33.0636240Z 101 | }
+2026-11-25T08:04:33.0636320Z 
+2026-11-25T08:04:33.0636430Z Swift.Dictionary:1:11: note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0636690Z  1 | extension Dictionary {
+2026-11-25T08:04:33.0636900Z    |           `- note: where 'Key' = 'RequestStamp'
+2026-11-25T08:04:33.0637330Z  2 |     @inlinable public subscript(key: Key, default defaultValue: @autoclosure () -> Value) -> Value { get set }
+2026-11-25T08:04:33.0637890Z  3 |     @inlinable public func mapValues<T>(_ transform: (Value) throws -> T) rethrows -> [Key : T]
+2026-11-25T08:04:33.2910710Z error: emit-module command failed with exit code 1 (use -v to see invocation)
+2026-11-25T08:04:33.2912780Z [13/27] Compiling OCCore AiStore.swift
+2026-11-25T08:04:33.2913660Z [14/27] Compiling OCCore AiTypes.swift
+2026-11-25T08:04:33.2914060Z [15/27] Compiling OCCore AppGroupLocator.swift
+2026-11-25T08:04:33.2914450Z [16/27] Compiling OCCore Diagnostics.swift
+2026-11-25T08:04:33.2914790Z [17/27] Compiling OCCore KeyStorage.swift
+2026-11-25T08:04:33.2915220Z [18/27] Emitting module OCCore
+2026-11-25T08:04:33.2916170Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:89:24: error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.2917090Z  87 | private final class CallStore: @unchecked Sendable {
+2026-11-25T08:04:33.2917690Z  88 |     private let lock = NSLock()
+2026-11-25T08:04:33.2917980Z  89 |     private var calls: [RequestStamp: AiCall] = [:]
+2026-11-25T08:04:33.2918400Z     |                        `- error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:33.2918790Z  90 | 
+2026-11-25T08:04:33.2918940Z  91 |     func put(_ call: AiCall) {
+2026-11-25T08:04:34.5503110Z [19/27] Compiling OCCore KeyboardSettings.swift
+2026-11-25T08:04:34.5504330Z [20/27] Compiling OCCore NativeCore.swift
+2026-11-25T08:04:34.5505250Z [21/27] Compiling OCCore ProvisioningProfile.swift
+2026-11-25T08:04:34.5505700Z [22/27] Compiling OCCore RimeData.swift
+2026-11-25T08:04:34.5505940Z [23/27] Compiling OCCore TextTraits.swift
+2026-11-25T08:04:34.6197990Z error: fatalError
+2026-11-25T08:04:34.6571210Z ##[endgroup]
+2026-11-25T08:04:34.7032010Z ##[error]step 'swift-test-macos' failed with exit code 1
+2026-11-25T08:04:34.7190550Z ##[error]7:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:89:24: error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:34.7233330Z ##[error]11:    |                        `- error: type 'RequestStamp' does not conform to protocol 'Hashable'
+2026-11-25T08:04:34.7288890Z ##[error]15:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:93:14: error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:34.7330990Z ##[error]19:    |              `- error: referencing subscript 'subscript(_:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:34.7377570Z ##[error]29:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:94:44: error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp 
+2026-11-25T08:04:34.7425510Z ##[error]33:    |                                            `- error: cannot assign value of type '[Dictionary<RequestStamp, AiCall>.Element]' (aka 'Array<(key: RequestStamp, value: AiCall)>') to type '[RequestStamp : AiCall]'
+2026-11-25T08:04:34.7488650Z ##[error]37:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiController.swift:99:22: error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:34.7528760Z ##[error]41:    |                      `- error: referencing instance method 'removeValue(forKey:)' on 'Dictionary' requires that 'RequestStamp' conform to 'Hashable'
+2026-11-25T08:04:34.7544550Z ##[error]Process completed with exit code 1.
+2026-11-25T08:04:34.7649400Z ##[group]Run python3 ios/scripts/check_tests.py "$CI_OUT/logs/swift-test-macos.log"
+2026-11-25T08:04:34.7650000Z [36;1mpython3 ios/scripts/check_tests.py "$CI_OUT/logs/swift-test-macos.log"[0m
+2026-11-25T08:04:34.8030450Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-25T08:04:34.8030850Z env:
+2026-11-25T08:04:34.8031080Z   OC_VERSION: 0.2.18
+2026-11-25T08:04:34.8031300Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T08:04:34.8033250Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-25T08:04:34.8034880Z   SIM_UDID: F8790ECF-0F6B-473C-89E1-FA3B1BD1B5FB
+2026-11-25T08:04:34.8035270Z ##[endgroup]
+2026-11-25T08:04:34.9843020Z check_tests: no test was executed
+2026-11-25T08:04:34.9885650Z ##[error]Process completed with exit code 1.
+2026-11-25T08:04:34.9944210Z ##[group]Run python3 ios/scripts/ci_summary.py build-test --out "$CI_OUT" --xcresult "$RUNNER_TEMP/results/unit.xcresult"
+2026-11-25T08:04:34.9945040Z [36;1mpython3 ios/scripts/ci_summary.py build-test --out "$CI_OUT" --xcresult "$RUNNER_TEMP/results/unit.xcresult"[0m
+2026-11-25T08:04:34.9993720Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-25T08:04:34.9994020Z env:
+2026-11-25T08:04:34.9994210Z   OC_VERSION: 0.2.18
+2026-11-25T08:04:34.9994420Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T08:04:34.9994900Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-25T08:04:34.9995400Z   SIM_UDID: F8790ECF-0F6B-473C-89E1-FA3B1BD1B5FB
+2026-11-25T08:04:34.9995640Z ##[endgroup]
+2026-11-25T08:04:35.1364190Z #### build-test (macos-26)
+2026-11-25T08:04:35.1365000Z - toolchain: Xcode 26.6; Build version 17F113; swift-driver version: 1.148.6 Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)
+2026-11-25T08:04:35.1365680Z - app unit tests (OrangeCellTests, simulator): no result
+2026-11-25T08:04:35.1366430Z - OCCore `swift test` on macOS: no result
+2026-11-25T08:04:35.1366690Z - UI tests `ui-embedded`: no result
+2026-11-25T08:04:35.1366860Z 
+2026-11-25T08:04:35.1366940Z | step | result | time |
+2026-11-25T08:04:35.1367210Z | --- | --- | --- |
+2026-11-25T08:04:35.1367430Z | toolchain | ok | 8s |
+2026-11-25T08:04:35.1367640Z | fetch-deps | ok | 10s |
+2026-11-25T08:04:35.1367880Z | xcodegen-install | ok | 1s |
+2026-11-25T08:04:35.1368080Z | xcodegen | ok | 0s |
+2026-11-25T08:04:35.1368290Z | simulator-create | ok | 1s |
+2026-11-25T08:04:35.1368530Z | build-sim | FAILED (65) | 43s |
+2026-11-25T08:04:35.1368750Z | uitests-embedded | FAILED (65) | 19s |
+2026-11-25T08:04:35.1369030Z | memory-debug-minimal | FAILED (65) | 226s |
+2026-11-25T08:04:35.1369760Z | memory-debug-all | FAILED (65) | 143s |
+2026-11-25T08:04:35.1370010Z | swift-test-macos | FAILED (1) | 35s |
+2026-11-25T08:04:35.1370180Z 
+2026-11-25T08:04:35.1485760Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-25T08:04:35.1486120Z with:
+2026-11-25T08:04:35.1486290Z   name: ci-build-test
+2026-11-25T08:04:35.1486580Z   path: ci-out/build-test
+!ci-out/build-test/logs/*.log
+
+2026-11-25T08:04:35.1486910Z   if-no-files-found: ignore
+2026-11-25T08:04:35.1487120Z   retention-days: 7
+2026-11-25T08:04:35.1487300Z   compression-level: 6
+2026-11-25T08:04:35.1487470Z   overwrite: false
+2026-11-25T08:04:35.1487660Z   include-hidden-files: false
+2026-11-25T08:04:35.1487870Z   archive: true
+2026-11-25T08:04:35.1488070Z env:
+2026-11-25T08:04:35.1488250Z   OC_VERSION: 0.2.18
+2026-11-25T08:04:35.1488470Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-25T08:04:35.1488930Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-25T08:04:35.1489450Z   SIM_UDID: F8790ECF-0F6B-473C-89E1-FA3B1BD1B5FB
+2026-11-25T08:04:35.1489740Z ##[endgroup]
+2026-11-25T08:04:35.7637210Z With the provided path, there will be 21 files uploaded
+2026-11-25T08:04:35.7641570Z Artifact name is valid!
+2026-11-25T08:04:35.7644740Z Root directory input is valid!
+2026-11-25T08:04:36.0722150Z Uploading artifact: ci-build-test.zip
+2026-11-25T08:04:36.0737630Z Beginning upload of artifact content to blob storage
+2026-11-25T08:04:36.1890680Z Uploaded bytes 16378
+2026-11-25T08:04:36.2092830Z Finished uploading artifact content to blob storage!
+2026-11-25T08:04:36.2095090Z SHA256 digest of uploaded artifact is 351d5b8013bc2e77a340f9907d9b8334ad1c90d3f9fe7f5aaa45bd77f8d5cf11
+2026-11-25T08:04:36.2096560Z Finalizing artifact upload
+2026-11-25T08:04:36.6051480Z Artifact ci-build-test successfully finalized. Artifact ID 15002882786
+2026-11-25T08:04:36.6053790Z Artifact ci-build-test has been successfully uploaded! Final size is 16378 bytes. Artifact ID is 15002882786
+2026-11-25T08:04:36.6055350Z Artifact download URL: https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45571927831/artifacts/15002882786
+2026-11-25T08:04:36.6682150Z Post job cleanup.
+2026-11-25T08:04:36.6692390Z ##[start-action display=Cache prebuilt libraries;id=__7f27aebd-5774-4154-a6dc-56ae29b10529.__actions_cache]
+2026-11-25T08:04:36.6695570Z ##[end-action id=__7f27aebd-5774-4154-a6dc-56ae29b10529.__actions_cache;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-11-25T08:04:36.6902210Z Post job cleanup.
+2026-11-25T08:04:37.1322400Z [command]/opt/homebrew/bin/git version
+2026-11-25T08:04:37.1981600Z git version 2.56.1
+2026-11-25T08:04:37.2014620Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/29a74897-b2ea-4611-afc2-4ba17a3c0379/.gitconfig'
+2026-11-25T08:04:37.2117050Z Temporarily overriding HOME='/Users/runner/work/_temp/29a74897-b2ea-4611-afc2-4ba17a3c0379' before making global git config changes
+2026-11-25T08:04:37.2119280Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-25T08:04:37.2130110Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance
+2026-11-25T08:04:37.2487960Z Removing SSH command configuration
+2026-11-25T08:04:37.2493230Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-25T08:04:37.2626650Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-25T08:04:37.6512580Z Removing HTTP extra header
+2026-11-25T08:04:37.6526000Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-25T08:04:37.6666320Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-25T08:04:37.8817130Z Removing includeIf entries pointing to credentials config files
+2026-11-25T08:04:37.8829910Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-25T08:04:37.9140660Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-25T08:04:38.1575410Z Cleaning up orphan processes
+2026-11-25T08:04:38.5860080Z Terminate orphan process: pid (8477) (Python)

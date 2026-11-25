@@ -1,0 +1,164 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/OrangeCell.xcodeproj -scheme OCUITests -configuration Release -destination id=A6F4E15F-2AD4-4F0F-8BF7-6A314E7A739A -derivedDataPath /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd "-only-testing:OrangeCellUITests/KeyboardUITests/testUserDictionaryAcrossDeployAndKeyboardRestart" -resultBundlePath /Users/runner/work/_temp/results/ui-learn.xcresult
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  OCRime: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCRime
+  OCCore: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore
+  OCKeyboardUI: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCKeyboardUI
+
+Writing result bundle at path:
+	/Users/runner/work/_temp/results/ui-learn.xcresult
+
+2026-11-24 20:09:23.766497+0000 OrangeCellUITests-Runner[14972:55553] [Default] Running tests...
+2026-11-24 20:09:23.976544+0000 OrangeCellUITests-Runner[14972:55930] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-11-24 20:09:24.021257+0000 OrangeCellUITests-Runner[14972:55930] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+objc[14972]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x105734310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x105698398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-24 20:09:33.971.
+Test Suite 'OrangeCellUITests.xctest' started at 2026-11-24 20:09:33.972.
+Test Suite 'KeyboardUITests' started at 2026-11-24 20:09:33.973.
+Test Case '-[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart]' started.
+    t =     0.00s Start Test at 2026-11-24 20:09:33.974
+    t =     1.11s Set Up
+    t =     1.11s Open io.github.ninmiao.orangecell.testhost
+    t =     1.11s     Launch io.github.ninmiao.orangecell.testhost
+2026-11-24 20:09:43.151 xcodebuild[13384:50630] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-24 20:09:43.152 xcodebuild[13384:50630] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    17.87s         Setting up automation session
+    t =    20.35s         Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    22.48s Waiting 30.0s for "oc.testhost.field" TextField to exist
+    t =    23.50s     Checking `Expect predicate `existsNoRetry == 1` for object "oc.testhost.field" TextField`
+    t =    23.50s         Checking existence of `"oc.testhost.field" TextField`
+    t =    29.51s Tap "oc.testhost.field" TextField
+    t =    29.51s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    29.54s     Find the "oc.testhost.field" TextField
+    t =    30.73s     Check for interrupting elements affecting "oc.testhost.field" TextField
+    t =    30.92s     Synthesize event
+    t =    31.43s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    39.45s Checking existence of `"inputView" Other`
+    t =    39.73s Find the "inputView" Other
+    t =    40.30s Find the Window (First Match)
+    t =    40.46s Find the Window (First Match)
+OCUI keyboardTop pixels=n/a tree=538.0 width=402.0
+    t =    40.75s Find the Window (First Match)
+OCUI bottom row key centres: [28, 77, 201, 349]
+    t =    40.87s Find the Window (First Match)
+    t =    40.89s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (282.6, 736.0)
+    t =    40.89s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    40.90s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    40.97s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    41.05s     Synthesize event
+    t =    41.06s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    41.09s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    41.12s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    41.46s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    43.87s Find the Window (First Match)
+    t =    43.97s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (301.5, 628.0)
+    t =    43.97s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    44.12s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    44.26s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    44.34s     Synthesize event
+    t =    44.35s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    44.44s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    44.53s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    44.94s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    45.20s Find the Window (First Match)
+    t =    45.28s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (240.6, 682.0)
+    t =    45.28s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    45.29s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    45.39s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    45.47s     Synthesize event
+    t =    45.50s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    45.55s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    45.60s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    45.96s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    46.22s Find the Window (First Match)
+    t =    46.24s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (42.6, 682.0)
+    t =    46.24s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    46.25s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    46.32s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    46.40s     Synthesize event
+    t =    46.41s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    46.46s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    46.50s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    46.85s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    47.11s Find the Window (First Match)
+    t =    47.13s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (341.7, 628.0)
+    t =    47.13s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    47.14s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    47.20s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    47.26s     Synthesize event
+    t =    47.27s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    47.32s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    47.38s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    47.78s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    49.29s Added attachment named 'system-learn-1-before'
+    t =    49.29s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (159.0, 580.0)
+    t =    49.30s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    49.30s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    49.39s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    49.46s     Synthesize event
+    t =    49.47s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    49.51s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    49.56s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    49.92s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    49.92s Find the "oc.testhost.field" TextField
+    t =    50.44s Find the "oc.testhost.field" TextField
+    t =    50.92s Find the "oc.testhost.field" TextField
+    t =    51.39s Find the "oc.testhost.field" TextField
+    t =    51.85s Find the "oc.testhost.field" TextField
+    t =    52.39s Find the "oc.testhost.field" TextField
+    t =    52.88s Find the "oc.testhost.field" TextField
+    t =    53.38s Find the "oc.testhost.field" TextField
+    t =    53.86s Find the "oc.testhost.field" TextField
+    t =    54.33s Find the "oc.testhost.field" TextField
+    t =    54.85s Find the "oc.testhost.field" TextField
+    t =    55.38s Find the "oc.testhost.field" TextField
+    t =    55.91s Find the "oc.testhost.field" TextField
+    t =    56.49s Find the "oc.testhost.field" TextField
+    t =    56.99s Find the "oc.testhost.field" TextField
+    t =    57.46s Find the "oc.testhost.field" TextField
+    t =    58.03s Find the "oc.testhost.field" TextField
+    t =    58.55s Find the "oc.testhost.field" TextField
+    t =    59.01s Find the "oc.testhost.field" TextField
+    t =    59.45s Find the "oc.testhost.field" TextField
+    t =    59.88s Find the "oc.testhost.field" TextField
+    t =    60.32s Find the "oc.testhost.field" TextField
+    t =    60.76s Find the "oc.testhost.field" TextField
+    t =    61.20s Find the "oc.testhost.field" TextField
+    t =    61.65s Find the "oc.testhost.field" TextField
+    t =    62.10s Find the "oc.testhost.field" TextField
+    t =    62.55s Find the "oc.testhost.field" TextField
+    t =    62.99s Find the "oc.testhost.field" TextField
+    t =    63.43s Find the "oc.testhost.field" TextField
+    t =    63.90s Find the "oc.testhost.field" TextField
+    t =    64.36s Find the "oc.testhost.field" TextField
+    t =    64.83s Find the "oc.testhost.field" TextField
+    t =    65.48s Added attachment named 'failure'
+    t =    65.48s Find the "oc.testhost.field" TextField
+OCUI field=n
+/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:274: error: -[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart] : failed - round 1: candidate 2 should have inserted 拟好
+    t =    66.42s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testUserDictionaryAcrossDeployAndKeyboardRestart]' failed (66.712 seconds).
+Test Suite 'KeyboardUITests' failed at 2026-11-24 20:10:40.685.
+	 Executed 1 test, with 1 failure (0 unexpected) in 66.712 (66.713) seconds
+Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-24 20:10:40.686.
+	 Executed 1 test, with 1 failure (0 unexpected) in 66.712 (66.713) seconds
+Test Suite 'Selected tests' failed at 2026-11-24 20:10:40.687.
+	 Executed 1 test, with 1 failure (0 unexpected) in 66.712 (66.715) seconds
+2026-11-24 20:11:47.957 xcodebuild[13384:50630] [MT] IDETestOperationsObserverDebug: 175.181 elapsed -- Testing started completed.
+2026-11-24 20:11:47.959 xcodebuild[13384:50630] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-24 20:11:47.959 xcodebuild[13384:50630] [MT] IDETestOperationsObserverDebug: 175.181 sec, +175.181 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-learn.xcresult
+
+Failing tests:
+	KeyboardUITests.testUserDictionaryAcrossDeployAndKeyboardRestart()
+
+** TEST EXECUTE FAILED **
+
+Testing started

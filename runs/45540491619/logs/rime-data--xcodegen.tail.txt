@@ -1,0 +1,1 @@
+Spec validation error: Target "OrangeCell" has a missing source directory "/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/rime-shared"

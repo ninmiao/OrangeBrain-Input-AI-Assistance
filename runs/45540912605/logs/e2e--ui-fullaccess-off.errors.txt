@@ -1,0 +1,5 @@
+67:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:249: error: -[OrangeCellUITests.KeyboardUITests testLearnedPhraseIsFirst] : XCTAssertTrue failed - expected 4 or 5 keys on the bottom row, found 1
+69:Test Case '-[OrangeCellUITests.KeyboardUITests testLearnedPhraseIsFirst]' failed (52.193 seconds).
+70:Test Suite 'KeyboardUITests' failed at 2026-11-25 03:57:36.050.
+72:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-25 03:57:36.051.
+74:Test Suite 'Selected tests' failed at 2026-11-25 03:57:36.052.

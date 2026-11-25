@@ -1,0 +1,400 @@
+2026-11-24 19:32:59.482 A  OrangeCell[20442:11738] (RunningBoardServices) didChangeInheritances
+2026-11-24 19:32:59.483 Df OrangeCell[20442:1172b] [com.apple.UIKit:Application] Deactivation reason removed: 5; deactivation reasons: 32 -> 0; animating application lifecycle event: 0
+2026-11-24 19:32:59.486 Df OrangeCell[20442:1172b] [com.apple.KeyboardArbiter:Client] startConnection
+2026-11-24 19:32:59.487 Df OrangeCell[20442:1172b] [com.apple.xpc:connection] [0x116d78000] activating connection: mach=true listener=false peer=false name=com.apple.UIKit.KeyboardManagement.hosted
+2026-11-24 19:32:59.502 Df OrangeCell[20442:1172b] [com.apple.KeyboardArbiter:Client] handleKeyboardChange: set currentKeyboard:N (wasKeyboard:N)
+2026-11-24 19:32:59.502 Df OrangeCell[20442:1172b] [com.apple.UIKit:KeyboardSceneDelegate] forceReloadInputViews
+2026-11-24 19:32:59.502 Df OrangeCell[20442:1172b] [com.apple.UIKit:KeyboardSceneDelegate] Reloading input views for key-window scene responder: <(null): 0x0; > force:Y
+2026-11-24 19:32:59.506 Df OrangeCell[20442:1172b] [com.apple.UIKit:KeyboardArbiterClientLog] isWritingToolsHandlingKeyboardTracking:Y (WT ready:Y, Arbiter ready:Y)
+2026-11-24 19:32:59.550 Df OrangeCell[20442:1172b] [com.apple.network:activity] <nw_activity 50:1 [57C00B66-0977-4B65-AF14-2D42D06E1BA4] (global parent) (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 2393ms
+2026-11-24 19:32:59.550 Df OrangeCell[20442:1172b] [com.apple.network:activity] <nw_activity 50:2 [92F29608-544B-4982-9D7C-0342DB0CD5DF] (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 2393ms
+2026-11-24 19:32:59.550 Df OrangeCell[20442:1172b] [com.apple.network:activity] Unsetting the global parent activity <nw_activity 50:1 [57C00B66-0977-4B65-AF14-2D42D06E1BA4] (global parent) (reporting strategy default) complete (reason success)>
+2026-11-24 19:32:59.550 Df OrangeCell[20442:1172b] [com.apple.network:activity] Unset the global parent activity
+2026-11-24 19:32:59.550 Df OrangeCell[20442:1172b] [com.apple.app_launch_measurement:ApplicationLaunch] alm_release_pageins_recording_assertion: releasing pageins recording assertion
+2026-11-24 19:32:59.588 A  OrangeCell[20442:11738] (RunningBoardServices) didChangeInheritances
+2026-11-24 19:33:00.297 Df axassetsd[15714:113ba] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x101849020> delivering update to host (0 plugins)
+2026-11-24 19:33:01.072 Df axassetsd[15714:113ba] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x101849020> delivering update to host (0 plugins)
+2026-11-24 19:33:02.976 Df axassetsd[15714:113ba] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x101849020> delivering update to host (0 plugins)
+2026-11-24 19:33:02.978 Df axassetsd[15714:113ba] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x101849020> delivering update to host (0 plugins)
+2026-11-24 19:33:02.979 Df axassetsd[15714:113ba] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x101849020> delivering update to host (0 plugins)
+2026-11-24 19:33:04.199 Df assistantd[15707:1080e] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] <PKHost:0x10a8f2400> Beginning discovery for flags: 0, point: com.apple.intents-service
+2026-11-24 19:33:04.585 Df axassetsd[15714:113ba] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x101849020> delivering update to host (0 plugins)
+2026-11-24 19:33:04.586 Df axassetsd[15714:113ba] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x101849020> delivering update to host (0 plugins)
+2026-11-24 19:33:07.924 Df OrangeCell[21018:11cdb] (libMobileGestalt.dylib) No persisted cache on this platform.
+2026-11-24 19:33:07.925 Df OrangeCell[21018:11ce0] [com.apple.xpc:connection] [0x103e686d0] activating connection: mach=true listener=false peer=false name=com.apple.cfprefsd.daemon
+2026-11-24 19:33:07.930 Df OrangeCell[21018:11ce3] [com.apple.BoardServices:XPCErrors] [C:1] Alloc com.apple.frontboard.systemappservices
+2026-11-24 19:33:07.932 Df OrangeCell[21018:11ce3] [com.apple.xpc:connection] [0x104534140] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-11-24 19:33:07.937 Df OrangeCell[21018:11ce0] [com.apple.UIKit:BackgroundTask] Creating new assertion because there is no existing background assertion.
+2026-11-24 19:33:07.938 Df OrangeCell[21018:11ce0] [com.apple.UIKit:BackgroundTask] Creating new background assertion
+2026-11-24 19:33:07.938 Df OrangeCell[21018:11ce0] [com.apple.UIKit:BackgroundTask] Created new background assertion <BKSProcessAssertion: 0x103e70ca0>
+2026-11-24 19:33:07.939 Df OrangeCell[21018:11ce0] [com.apple.runningboard:connection] Initializing connection
+2026-11-24 19:33:07.939 Df OrangeCell[21018:11ce0] [com.apple.runningboard:process] Removing all cached process handles
+2026-11-24 19:33:07.939 Df OrangeCell[21018:11ce0] [com.apple.runningboard:connection] Creating connection to com.apple.runningboard
+2026-11-24 19:33:07.940 Df OrangeCell[21018:11ce0] [com.apple.xpc:connection] [0x104534280] activating connection: mach=true listener=false peer=false name=com.apple.runningboard
+2026-11-24 19:33:07.940 A  OrangeCell[21018:11ce1] (CoreFoundation) Loading Preferences From User Session CFPrefsD
+2026-11-24 19:33:07.940 Df OrangeCell[21018:11ce7] [com.apple.runningboard:connection] Sending handshake request attempt #1 to server
+2026-11-24 19:33:07.940 Df OrangeCell[21018:11cdb] [com.apple.UIKit:Application] Deactivation reason added: 10; deactivation reasons: 0 -> 1024; animating application lifecycle event: 0
+2026-11-24 19:33:07.941 Df OrangeCell[21018:11cdb] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.open
+2026-11-24 19:33:07.941 A  OrangeCell[21018:11ce3] (RunningBoardServices) didChangeInheritances
+2026-11-24 19:33:07.942 Df OrangeCell[21018:11cdb] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.workspace-service
+2026-11-24 19:33:07.942 Df OrangeCell[21018:11ce7] [com.apple.runningboard:connection] Handshake succeeded
+2026-11-24 19:33:07.942 Df OrangeCell[21018:11ce7] [com.apple.runningboard:connection] Identity resolved as app<io.github.ninmiao.orangecell((null))>
+2026-11-24 19:33:07.942 Df OrangeCell[21018:11ce0] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x103e70ca0>
+2026-11-24 19:33:07.943 Df OrangeCell[21018:11ce0] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x1044889c0>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 1170 (elapsed = 0).
+2026-11-24 19:33:07.943 Df OrangeCell[21018:11cdb] [com.apple.FrontBoard:Common] FBSWorkspace registering source: com.apple.frontboard.systemappservices
+2026-11-24 19:33:07.943 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UIApplicationSceneKeyboardSettings on FBSSceneSettings
+2026-11-24 19:33:07.945 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneOcclusionSettings> on FBSSceneSettings
+2026-11-24 19:33:07.945 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneInterfaceProtectionSettings> on FBSSceneSettings
+2026-11-24 19:33:07.946 Df OrangeCell[21018:11cdb] [com.apple.FrontBoard:Common] FBSWorkspace connected to endpoint : <BSServiceConnectionEndpoint: 0x1045104c0; target: com.apple.frontboard.systemappservices; service: com.apple.frontboard.workspace-service>
+2026-11-24 19:33:07.946 Df OrangeCell[21018:11cdb] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x104500d20 com.apple.frontboard.systemappservices> attempting immediate handshake from activate
+2026-11-24 19:33:07.947 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferencesHostSettingsExtension on FBSSceneSettings
+2026-11-24 19:33:07.947 Df OrangeCell[21018:11cdb] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x104500d20 com.apple.frontboard.systemappservices> sent handshake
+2026-11-24 19:33:07.947 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneSafeAreaSettingsExtension on FBSSceneSettings
+2026-11-24 19:33:07.948 Df OrangeCell[21018:11cdb] [com.apple.runningboard:general] Added observer for process assertions expiration warning: <_RBSExpirationWarningClient: 0x104511200>
+2026-11-24 19:33:07.949 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferenceClientSettingsExtension on FBSSceneClientSettings
+2026-11-24 19:33:07.950 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UIHomeAffordanceHostSceneSettings> on FBSSceneSettings
+2026-11-24 19:33:07.950 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISystemShellSceneHostingEnvironmentSettings on FBSSceneSettings
+2026-11-24 19:33:07.950 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneRenderingEnvironmentSettings on FBSSceneSettings
+2026-11-24 19:33:07.951 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneRenderingEnvironmentClientSettings> on FBSSceneClientSettings
+2026-11-24 19:33:07.951 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneTransitioningHostSettings> on FBSSceneSettings
+2026-11-24 19:33:07.951 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneFocusSystemSettings> on FBSSceneSettings
+2026-11-24 19:33:07.951 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationSettingsExtension on FBSSceneSettings
+2026-11-24 19:33:07.951 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationClientSettingsExtension on FBSSceneClientSettings
+2026-11-24 19:33:07.951 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneWindowingControlClientSettings on FBSSceneClientSettings
+2026-11-24 19:33:07.952 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingContentSizePreferenceClientSettings> on FBSSceneClientSettings
+2026-11-24 19:33:07.953 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneHostingTraitCollectionPropagationSettings on FBSSceneSettings
+2026-11-24 19:33:07.953 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationSettings> on FBSSceneSettings
+2026-11-24 19:33:07.953 Df OrangeCell[21018:11cdb] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x104534500> for initial
+2026-11-24 19:33:07.954 Df OrangeCell[21018:11cdb] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x104534500> for CADisplay KVO
+2026-11-24 19:33:07.954 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationClientSettings> on FBSSceneClientSettings
+2026-11-24 19:33:07.955 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingEventDeferringSettings> on FBSSceneSettings
+2026-11-24 19:33:07.956 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneSettings
+2026-11-24 19:33:07.957 Df OrangeCell[21018:11cdb] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 1, category name = (null)
+2026-11-24 19:33:07.957 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneClientSettings
+2026-11-24 19:33:07.958 Df OrangeCell[21018:11cdb] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 0, category name = (null)
+2026-11-24 19:33:07.958 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingViewControllerPreferencePropagationClientSettings> on FBSSceneClientSettings
+2026-11-24 19:33:07.958 Df OrangeCell[21018:11ce0] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneZoomTransitionSettings> on FBSSceneSettings
+2026-11-24 19:33:07.958 Df OrangeCell[21018:11ce3] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneSettingsCore on FBSSceneSettings
+2026-11-24 19:33:07.963 Df OrangeCell[21018:11ce3] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneClientSettingsCore on FBSSceneClientSettings
+2026-11-24 19:33:07.976 Df OrangeCell[21018:11ce3] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneSettings setting counterpart class: UIApplicationSceneSettings
+2026-11-24 19:33:07.977 Df OrangeCell[21018:11ce3] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneClientSettings setting counterpart class: UIApplicationSceneClientSettings
+2026-11-24 19:33:07.977 Df OrangeCell[21018:11ce3] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneTransitionContextCore on FBSSceneTransitionContext
+2026-11-24 19:33:07.978 Df OrangeCell[21018:11cdb] [com.apple.dt.xctest:Default] Registering for test daemon availability notify post.
+2026-11-24 19:33:07.979 Df OrangeCell[21018:11cdb] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-11-24 19:33:07.980 Df OrangeCell[21018:11cdb] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-11-24 19:33:07.980 Df OrangeCell[21018:11cdb] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-11-24 19:33:07.983 Df OrangeCell[21018:11cdb] [com.apple.UIKit:Application] Deactivation reason added: 11; deactivation reasons: 1024 -> 3072; animating application lifecycle event: 0
+2026-11-24 19:33:07.988 Df OrangeCell[21018:11cdb] [com.apple.UIKit:Application] Deactivation reason removed: 10; deactivation reasons: 3072 -> 2048; animating application lifecycle event: 0
+2026-11-24 19:33:07.991 Df OrangeCell[21018:11cdb] [com.apple.UIKit:EventBus] Event Timing Profile for Touch: not found, path="/System/Library/EventTimingProfiles/Sim.Touch.plist"
+2026-11-24 19:33:07.991 Df OrangeCell[21018:11cdb] [com.apple.UIKit:EventBus] Event Timing Profile for Pencil: not found, path="/System/Library/EventTimingProfiles/Sim.Pencil.plist"
+2026-11-24 19:33:07.992 Df OrangeCell[21018:11cdb] [com.apple.UIKit:UpdateScheduler] Selected display: name=LCD (PurpleMain), id=1
+2026-11-24 19:33:08.003 Df OrangeCell[21018:11cdb] [com.apple.xpc:connection] [0x104534a00] activating connection: mach=true listener=false peer=false name=com.apple.lsd.mapdb
+2026-11-24 19:33:08.072 Df OrangeCell[21018:11cdb] [com.apple.BoardServices:XPCErrors] [C:2] Alloc com.apple.backboard.hid-services.xpc
+2026-11-24 19:33:08.072 Df OrangeCell[21018:11cdb] [com.apple.xpc:connection] [0x104534c80] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-11-24 19:33:08.074 Df OrangeCell[21018:11cdb] [com.apple.app_launch_measurement:ApplicationLaunch] alm_acquire_pageins_recording_assertion: acquired pageins recording assertion!
+2026-11-24 19:33:08.076 Df OrangeCell[21018:11cdb] [com.apple.UIKit:Application] Deactivation reason added: 5; deactivation reasons: 2048 -> 2080; animating application lifecycle event: 1
+2026-11-24 19:33:08.076 Df OrangeCell[21018:11ce4] [com.apple.BackBoard:EventDelivery] BKSHIDEventDeliveryManager - connection activation
+2026-11-24 19:33:08.076 Df OrangeCell[21018:11cdb] [com.apple.UIKit:InterfaceStyle] Should send trait collection or coordinate space update, interface style 1 -> 1, <UIWindowScene: 0x1044ec400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:08.078 Df OrangeCell[21018:11cdb] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1044ec400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:08.079 Df OrangeCell[21018:11cdb] [com.apple.UIKit:HomeAffordanceObservation] Initializing: <_UIHomeAffordanceSceneNotifier: 0x104630ee0>; with scene: <UIWindowScene: 0x1044ec400>
+2026-11-24 19:33:08.079 Df OrangeCell[21018:11cdb] [com.apple.BacklightServices:scenes] 0x1044247b0 setDelegate:<0x104426b50 _UIBacklightEnvironment> hasDelegate:YES for environment:sceneID:io.github.ninmiao.orangecell-default
+2026-11-24 19:33:08.081 Df OrangeCell[21018:11cdb] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1044ec400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:08.081 Df OrangeCell[21018:11cdb] [com.apple.UIKit:EventDeferring] [0x104631c00] Initialized with scene: <UIWindowScene: 0x1044ec400>; behavior: <_UIEventDeferringBehavior_iOS: 0x1047980c0>; availableForProcess: 1, systemShellManagesKeyboardFocus: 1
+2026-11-24 19:33:08.085 Df OrangeCell[21018:11ce4] [com.apple.BackBoard:EventDelivery] BKSHIDEventObserver - connection activation
+2026-11-24 19:33:08.086 Df OrangeCell[21018:11cdb] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x1045e8d20; process scope; status: target> was:none
+2026-11-24 19:33:08.086 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to LastOneWins
+2026-11-24 19:33:08.086 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyWindow] Scene target of keyboard event deferring environment did change: 1; scene: UIWindowScene: 0x1044ec400; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aio.github.ninmiao.orangecell-default
+2026-11-24 19:33:08.086 Df OrangeCell[21018:11cdb] [com.apple.UIKit:EventDeferring] [0x104631c00] Scene target of event deferring environments did update: scene: 0x1044ec400; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-11-24 19:33:08.086 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x1044ec400; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aio.github.ninmiao.orangecell-default
+2026-11-24 19:33:08.086 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyWindow] Stack[KeyWindow] 0x104426ca0: Taking no further action for migration from LastOneWins -> SystemShellManaged as there are no scenes
+2026-11-24 19:33:08.086 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to SystemShellManaged
+2026-11-24 19:33:08.087 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyWindow] Key window needs update: 0; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x1044ec400; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x0; reason: UIWindowScene: 0x1044ec400: Window scene became target of keyboard environment
+2026-11-24 19:33:08.088 Df OrangeCell[21018:11cdb] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1044ec400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:08.088 Df OrangeCell[21018:11cdb] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1044ec400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:08.090 Df OrangeCell[21018:11cdb] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1044ec400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:08.153 Df OrangeCell[21018:11cdb] [com.apple.UIKit:Orientation] <UIWindowScene: 0x1044ec400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45) Scene updated orientation preferences: none -> ( Pu )
+2026-11-24 19:33:08.156 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyWindow] Key window API is scene-level: YES
+2026-11-24 19:33:08.156 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyWindow] UIWindowScene: 0x1044ec400: Window became key in scene: UIWindow: 0x104594400; contextId: 0xD53FDAA9: reason: UIWindowScene: 0x1044ec400: Window requested to become key in scene: 0x104594400
+2026-11-24 19:33:08.156 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyWindow] Key window needs update: 1; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x1044ec400; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x104594400; reason: UIWindowScene: 0x1044ec400: Window requested to become key in scene: 0x104594400
+2026-11-24 19:33:08.156 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyWindow] Window did become application key: UIWindow: 0x104594400; contextId: 0xD53FDAA9; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aio.github.ninmiao.orangecell-default
+2026-11-24 19:33:08.156 Df OrangeCell[21018:11cdb] [com.apple.UIKit:EventDeferring] [0x104631c00] Begin local event deferring requested for token: 0x1045e9080; environments: 1; reason: UIWindowScene: 0x1044ec400: Begin event deferring in keyboardFocus for window: 0x104594400
+2026-11-24 19:33:08.157 Df OrangeCell[21018:11cdb] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1044ec400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:08.158 Df OrangeCell[21018:11ce4] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x1045e8d20; token: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aio.github.ninmiao.orangecell-default; status: ancestor> was:target
+2026-11-24 19:33:08.158 Df OrangeCell[21018:11cdb] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:io.github.ninmiao.orangecell-default  persistentID: 0D52DB05-2E49-41D8-8D4F-9446EEEC8E45
+2026-11-24 19:33:08.158 Df OrangeCell[21018:11cdb] [com.apple.UIKit:Application] Ignoring already applied deactivation reason: 5; deactivation reasons: 2080
+2026-11-24 19:33:08.158 Df OrangeCell[21018:11cdb] [com.apple.UIKit:Application] Deactivation reason added: 12; deactivation reasons: 2080 -> 6176; animating application lifecycle event: 1
+2026-11-24 19:33:08.158 Df OrangeCell[21018:11cdb] [com.apple.UIKit:Application] Deactivation reason removed: 11; deactivation reasons: 6176 -> 4128; animating application lifecycle event: 1
+2026-11-24 19:33:08.158 Df OrangeCell[21018:11cdb] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneIntelligenceSupportSettings> on FBSSceneSettings
+2026-11-24 19:33:08.159 Df OrangeCell[21018:11ce4] [com.apple.UIIntelligenceSupport:xpc] establishing connection to agent
+2026-11-24 19:33:08.159 Df OrangeCell[21018:11cdb] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1044ec400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:08.160 Df OrangeCell[21018:11ce4] [com.apple.xpc:session] [0x104599770] Session created.
+2026-11-24 19:33:08.160 Df OrangeCell[21018:11ce4] [com.apple.xpc:session] [0x104599770] Session created from connection [0x1047e2e40]
+2026-11-24 19:33:08.160 Df OrangeCell[21018:11ce4] [com.apple.xpc:connection] [0x1047e2e40] activating connection: mach=true listener=false peer=false name=com.apple.uiintelligencesupport.agent
+2026-11-24 19:33:08.160 Df OrangeCell[21018:11ce4] [com.apple.xpc:session] [0x104599770] Session activated
+2026-11-24 19:33:08.163 A  OrangeCell[21018:11cdb] (CoreFoundation) Updating Key-Value Observers Of Preferences
+2026-11-24 19:33:08.210 Df OrangeCell[21018:11ce0] [com.apple.xpc:connection] [0x1047e12c0] activating connection: mach=true listener=false peer=false name=com.apple.fontservicesd
+2026-11-24 19:33:08.243 Df OrangeCell[21018:11cdb] [PrototypeTools:domain] Not observing PTDefaults on customer install.
+2026-11-24 19:33:08.392 A  OrangeCell[21018:11ce4] (libsystem_containermanager.dylib) container_create_or_lookup_app_group_path_by_app_group_identifier
+2026-11-24 19:33:08.392 Df OrangeCell[21018:11ce4] [com.apple.containermanager:xpc] Requesting app group container lookup; identifier = group.io.github.ninmiao.orangecell, euid = 501, uid = 501, platform = 7
+2026-11-24 19:33:08.423 Df OrangeCell[21018:11ce4] [com.apple.containermanager:sandbox] Consumed sandbox extension; path = [/Users/runner/Library/Developer/CoreSimulator/Devices/2BCF8C5A-4964-470D-8C98-9F5E58ECC92E/data/Containers/Shared/AppGroup/0F12F9FC-00C6-4AF7-9B36-B096A1A49F0C], handle = 0
+2026-11-24 19:33:08.423 Df OrangeCell[21018:11ce4] [com.apple.containermanager:unspecified] container_create_or_lookup_app_group_path_by_app_group_identifier: success
+2026-11-24 19:33:08.428 A  OrangeCell[21018:11ce4] (Security) SecItemCopyMatching_ios
+2026-11-24 19:33:08.428 Df OrangeCell[21018:11ce4] [com.apple.securityd:secitemratelimit] Not internal release, disabling SIRL
+2026-11-24 19:33:08.429 Df OrangeCell[21018:11ce4] [com.apple.securityd:thread-local-client-debug] SecSecurityClientGet new thread!
+2026-11-24 19:33:08.430 Df OrangeCell[21018:11ce4] [com.apple.securityd:keychain] System Keychain Always Supported set via feature flag to disabled
+2026-11-24 19:33:08.430 Df OrangeCell[21018:11ce4] [com.apple.xpc:connection] [0x1073cd400] activating connection: mach=true listener=false peer=false name=com.apple.securityd
+2026-11-24 19:33:08.466 A  OrangeCell[21018:11ce4] (libsystem_containermanager.dylib) container_create_or_lookup_app_group_path_by_app_group_identifier
+2026-11-24 19:33:08.466 Df OrangeCell[21018:11ce4] [com.apple.containermanager:unspecified] container_create_or_lookup_app_group_path_by_app_group_identifier: success
+2026-11-24 19:33:08.469 A  OrangeCell[21018:11ce4] (libsystem_containermanager.dylib) container_create_or_lookup_app_group_path_by_app_group_identifier
+2026-11-24 19:33:08.469 Df OrangeCell[21018:11ce4] [com.apple.containermanager:unspecified] container_create_or_lookup_app_group_path_by_app_group_identifier: success
+2026-11-24 19:33:08.525 Df OrangeCell[21018:11cdb] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-11-24 19:33:08.525 Df OrangeCell[21018:11cdb] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-11-24 19:33:08.583 Df OrangeCell[21018:11cdb] [com.apple.xpc:connection] [0x11e592800] activating connection: mach=true listener=false peer=false name=com.apple.IOSurface.Remote
+2026-11-24 19:33:08.589 Df OrangeCell[21018:11cdb] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:1 [E4757FA6-2E8C-4D8E-B330-FBD73F3E7890] (reporting strategy default)>
+2026-11-24 19:33:08.589 Df OrangeCell[21018:11cdb] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:2 [543F91F9-4C6E-4628-9D54-F39FBEF9953A] (reporting strategy default)>
+2026-11-24 19:33:08.589 Df OrangeCell[21018:11cdb] [com.apple.network:activity] Set activity <nw_activity 50:1 [E4757FA6-2E8C-4D8E-B330-FBD73F3E7890] (reporting strategy default)> as the global parent
+2026-11-24 19:33:08.589 Df OrangeCell[21018:11cdb] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 1
+2026-11-24 19:33:08.589 Df OrangeCell[21018:11cdb] [com.apple.UIKit:BackgroundTask] Ending task with identifier 1 and description: <_UIBackgroundTaskInfo: 0x1044889c0>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 1170 (elapsed = 1), _expireHandler: (null)
+2026-11-24 19:33:08.589 Df OrangeCell[21018:11ce3] [com.apple.CoreAnalytics:client] No XPC connection in Simulator
+2026-11-24 19:33:08.589 E  OrangeCell[21018:11ce3] [com.apple.app_launch_measurement:General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-11-24 19:33:08.589 Df OrangeCell[21018:11cdb] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x103e70ca0> (used by background task with identifier 1: <_UIBackgroundTaskInfo: 0x1044889c0>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 1170 (elapsed = 1))
+2026-11-24 19:33:08.589 Df OrangeCell[21018:11cdb] [com.apple.UIKit:BackgroundTask] Will invalidate assertion: <BKSProcessAssertion: 0x103e70ca0> for task identifier: 1
+2026-11-24 19:33:08.590 Df OrangeCell[21018:11cdb] [com.apple.UIKit:UpdateScheduler] Target list changed: <CADisplay:LCD PurpleMain>
+2026-11-24 19:33:08.591 Df OrangeCell[21018:11cdb] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:io.github.ninmiao.orangecell-default  persistentID: 0D52DB05-2E49-41D8-8D4F-9446EEEC8E45
+2026-11-24 19:33:08.591 Df OrangeCell[21018:11cdb] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1044ec400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:08.593 Df OrangeCell[21018:11cdb] [com.apple.UIKit:EventDeferring] [0x104631c00] Scene target of event deferring environments did update: scene: 0x1044ec400; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-11-24 19:33:08.593 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x1044ec400; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aio.github.ninmiao.orangecell-default
+2026-11-24 19:33:08.594 A  OrangeCell[21018:11ce4] (RunningBoardServices) didChangeInheritances
+2026-11-24 19:33:08.597 Df OrangeCell[21018:11cdb] [com.apple.Accessibility:AXCommon] Read Per-App on Init: Smart invert = (null)
+2026-11-24 19:33:08.597 A  OrangeCell[21018:11ce0] (RunningBoardServices) didChangeInheritances
+2026-11-24 19:33:08.598 Df OrangeCell[21018:11cdb] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1044ec400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:08.599 Df OrangeCell[21018:11cdb] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:io.github.ninmiao.orangecell-default  persistentID: 0D52DB05-2E49-41D8-8D4F-9446EEEC8E45
+2026-11-24 19:33:08.599 Df OrangeCell[21018:11cdb] [com.apple.UIKit:Application] Deactivation reason removed: 12; deactivation reasons: 4128 -> 32; animating application lifecycle event: 1
+2026-11-24 19:33:08.599 Df OrangeCell[21018:11cdb] [com.apple.KeyboardArbiter:Client] Send setDeactivating: N (-DeactivationReason:SuspendedEventsOnly)
+2026-11-24 19:33:08.602 Df OrangeCell[21018:11cdb] [com.apple.UIKit:Application] Deactivation reason removed: 5; deactivation reasons: 32 -> 0; animating application lifecycle event: 0
+2026-11-24 19:33:08.604 Df OrangeCell[21018:11cdb] [com.apple.KeyboardArbiter:Client] startConnection
+2026-11-24 19:33:08.605 Df OrangeCell[21018:11cdb] [com.apple.xpc:connection] [0x1045366c0] activating connection: mach=true listener=false peer=false name=com.apple.UIKit.KeyboardManagement.hosted
+2026-11-24 19:33:08.701 A  OrangeCell[21018:11ce0] (RunningBoardServices) didChangeInheritances
+2026-11-24 19:33:09.040 Df OrangeCell[21018:11cdb] [com.apple.KeyboardArbiter:Client] handleKeyboardChange: set currentKeyboard:N (wasKeyboard:N)
+2026-11-24 19:33:09.046 Df OrangeCell[21018:11cdb] [com.apple.extensionkit:NSExtension] Class EXGetExtensionClass(void) returning EXConcreteExtension
+2026-11-24 19:33:09.046 Df OrangeCell[21018:11cdb] [com.apple.xpc:connection] [0x1047e2bc0] activating connection: mach=true listener=false peer=false name=com.apple.pluginkit.pkd
+2026-11-24 19:33:09.046 A  OrangeCell[21018:11cdb] (PlugInKit) discovery
+2026-11-24 19:33:09.046 Df OrangeCell[21018:11cdb] [com.apple.PlugInKit:discovery] [d EA553663-D230-4E25-A636-85A422E70317] <PKHost:0x11e7bdb80> Beginning discovery for flags: 1024, point: com.apple.keyboard-service
+2026-11-24 19:33:09.052 Df pkd[15787:fdf1] [com.apple.PlugInKit:discovery] [d EA553663-D230-4E25-A636-85A422E70317] Final plugin count: 1
+2026-11-24 19:33:09.053 Df OrangeCell[21018:11cdb] [com.apple.PlugInKit:discovery] [d EA553663-D230-4E25-A636-85A422E70317] <PKHost:0x11e7bdb80> Completed discovery. Final # of matches: 1
+2026-11-24 19:33:09.055 Df OrangeCell[21018:11cdb] (UIKitCore) Successfully load keyboard extensions
+2026-11-24 19:33:09.057 A  OrangeCell[21018:11cdb] (libsystem_containermanager.dylib) container_system_group_path_for_identifier
+2026-11-24 19:33:09.057 Df OrangeCell[21018:11cdb] [com.apple.containermanager:xpc] Requesting container lookup; class = 13, identifier = (null), group_identifier = systemgroup.com.apple.configurationprofiles, create = 1, temp = 0, euid = 501, uid = 501
+2026-11-24 19:33:09.057 A  OrangeCell[21018:11cdb] (libsystem_containermanager.dylib) container_query_t
+2026-11-24 19:33:09.057 Df OrangeCell[21018:11cdb] [com.apple.containermanager:xpc] Query; euid = 501, uid = 501, class = 13, identifier = [(null)](0), flags = 900000003
+2026-11-24 19:33:09.064 Df OrangeCell[21018:11cdb] [com.apple.containermanager:unspecified] _container_query_get_result_at_index: success
+2026-11-24 19:33:09.064 A  OrangeCell[21018:11cdb] (libsystem_containermanager.dylib) container_copy_object
+2026-11-24 19:33:09.064 Df OrangeCell[21018:11cdb] [com.apple.containermanager:unspecified] container_system_group_path_for_identifier: success
+2026-11-24 19:33:09.065 Df OrangeCell[21018:11cdb] [com.apple.ManagedConfiguration:MC] Got system group container path from MCM for systemgroup.com.apple.configurationprofiles: /Users/runner/Library/Developer/CoreSimulator/Devices/2BCF8C5A-4964-470D-8C98-9F5E58ECC92E/data/Containers/Shared/SystemGroup/systemgroup.com.apple.configurationprofiles
+2026-11-24 19:33:09.080 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyboardSceneDelegate] forceReloadInputViews
+2026-11-24 19:33:09.080 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyboardSceneDelegate] Reloading input views for key-window scene responder: <(null): 0x0; > force:Y
+2026-11-24 19:33:09.083 Df OrangeCell[21018:11cdb] [com.apple.UIKit:KeyboardArbiterClientLog] isWritingToolsHandlingKeyboardTracking:Y (WT ready:Y, Arbiter ready:Y)
+2026-11-24 19:33:09.126 Df OrangeCell[21018:11cdb] [com.apple.network:activity] <nw_activity 50:1 [E4757FA6-2E8C-4D8E-B330-FBD73F3E7890] (global parent) (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 1853ms
+2026-11-24 19:33:09.127 Df OrangeCell[21018:11cdb] [com.apple.network:activity] <nw_activity 50:2 [543F91F9-4C6E-4628-9D54-F39FBEF9953A] (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 1853ms
+2026-11-24 19:33:09.127 Df OrangeCell[21018:11cdb] [com.apple.network:activity] Unsetting the global parent activity <nw_activity 50:1 [E4757FA6-2E8C-4D8E-B330-FBD73F3E7890] (global parent) (reporting strategy default) complete (reason success)>
+2026-11-24 19:33:09.127 Df OrangeCell[21018:11cdb] [com.apple.network:activity] Unset the global parent activity
+2026-11-24 19:33:09.127 Df OrangeCell[21018:11cdb] [com.apple.app_launch_measurement:ApplicationLaunch] alm_release_pageins_recording_assertion: releasing pageins recording assertion
+2026-11-24 19:33:09.127 E  OrangeCell[21018:11ce4] [com.apple.app_launch_measurement:General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+2026-11-24 19:33:09.237 A  OrangeCell[21018:11ce0] (RunningBoardServices) didChangeInheritances
+2026-11-24 19:33:10.674 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 32D18ED2-5D86-4E89-B45B-9C8FEC94298A] [com.apple.TVRemoteUIService.TVRemoteIntentExtension(1.0)] Created plugin
+2026-11-24 19:33:11.205 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u C9BED1CF-E6A1-45D5-84CA-A6ED4ADECD05] [com.apple.siri.SiriAppLaunchIntents.AppLaunchIntentExtension(1.0)] Created plugin
+2026-11-24 19:33:11.249 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u A705266F-6A8C-4FD6-A035-88AC36C4E586] [com.apple.PeopleViewService.SelectPerson-iOS(1.0)] Created plugin
+2026-11-24 19:33:11.260 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 80187B67-1E0B-45C7-A981-86DA5076A161] [com.apple.TelephonyUtilities.PhoneIntentHandler(1.0)] Created plugin
+2026-11-24 19:33:11.297 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 68005AEB-2880-45FD-A8E4-844E6A380EA7] [com.apple.Maps.SiriTrafficIncidents(1.0)] Created plugin
+2026-11-24 19:33:11.578 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u CF9788E7-08D1-4D7A-AB4E-65397A813636] [com.apple.siri.SiriIdentityInternal.IdentityIntentExtension(1.0)] Created plugin
+2026-11-24 19:33:11.587 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u D29297A5-71AC-4A71-B0C5-291DA837CA87] [com.apple.CalendarWidget.IntentsExtension(1.0)] Created plugin
+2026-11-24 19:33:11.596 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u BAF9ADB4-A4B7-428E-BE9D-DDF26EB787D0] [com.apple.mobiletimer-framework.MobileTimerIntents(1.0)] Created plugin
+2026-11-24 19:33:11.604 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 36670162-A3A6-4466-B506-2964104BD506] [com.apple.reminders.IntentsExtension(7.0)] Created plugin
+2026-11-24 19:33:11.810 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 28406C74-2B18-4848-8CDC-C55A5452E35E] [com.apple.siri.SiriGeo.SiriGeoIntentExtension(1.0)] Created plugin
+2026-11-24 19:33:11.813 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 84F7F34F-4A65-4E09-99E8-B7B1DC8C5D80] [com.apple.DocumentManagerUICore.RecentsAvocadoIntentHandler(1.0)] Created plugin
+2026-11-24 19:33:11.816 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u A278D7DC-E3C2-4E80-80A6-DA9D81D3929B] [com.apple.news.widgetintents(1.0)] Created plugin
+2026-11-24 19:33:11.821 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u DB3B1CE5-3027-4E66-8EB9-D06D3D27D7A2] [com.apple.PassKit.PassKitIntentsExtension(1.0)] Created plugin
+2026-11-24 19:33:11.823 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 5B6E24D0-190B-439A-B5B8-7E81A310B80C] [com.apple.siri.SiriAnnounceExtensions.AnnounceIntentExtension(1.0)] Created plugin
+2026-11-24 19:33:11.826 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 67EF2C88-0D97-48A3-8F23-9E7AF1F53417] [com.apple.WorkflowKit.ShortcutsIntents(7.0)] Created plugin
+2026-11-24 19:33:11.845 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 998D098F-BD53-4BB1-A9D2-6007328723DA] [com.apple.Batteries.BatteriesWidgetIntentsExtension(1.0)] Created plugin
+2026-11-24 19:33:11.846 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u A8150051-8193-4DE7-85CB-4D167F569026] [com.apple.DoNotDisturb.Intents(1.0)] Created plugin
+2026-11-24 19:33:11.846 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u C7C8D9EF-3F83-40C2-979B-035F8093D6BD] [com.apple.HomeKit.HomeKitIntentExtension(1.0)] Created plugin
+2026-11-24 19:33:11.847 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 046B0876-D2D2-4593-9D43-050CA67D1A87] [com.apple.ActionKit.BundledIntentHandler(7.0)] Created plugin
+2026-11-24 19:33:11.847 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 15593374-F12E-45F4-80F7-159DA74050E0] [com.apple.news.NewsAudioExtension(1.0)] Created plugin
+2026-11-24 19:33:11.847 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 0834F01B-FDF1-4AAA-8C78-4D9EA45691CA] [com.apple.PBBridgeSupport.BridgeIntents(1.0)] Created plugin
+2026-11-24 19:33:11.848 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 5CA76390-377E-4F52-9E41-6238D25F7CC9] [com.apple.MobileSMS.MessagesAssistantExtension(26.0)] Created plugin
+2026-11-24 19:33:11.849 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u 7A2D6E88-D12C-4998-842B-6DC9F7F3BEF5] [com.apple.ScreenTimeWidgetApplication.ScreenTimeWidgetIntentsExtension(3.0)] Created plugin
+2026-11-24 19:33:11.849 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] [u A62AD9DE-49FF-4649-B66B-1C96E4949668] [com.apple.siri.SiriVideoIntents.VideoIntentExtension(1.0)] Created plugin
+2026-11-24 19:33:13.861 Df pkd[15787:dc21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] Final plugin count: 24
+2026-11-24 19:33:16.333 Df OrangeCell[21120:11e5a] (libMobileGestalt.dylib) No persisted cache on this platform.
+2026-11-24 19:33:16.335 Df OrangeCell[21120:11e6a] [com.apple.xpc:connection] [0x105d0c8c0] activating connection: mach=true listener=false peer=false name=com.apple.cfprefsd.daemon
+2026-11-24 19:33:16.345 Df OrangeCell[21120:11e6a] [com.apple.UIKit:BackgroundTask] Creating new assertion because there is no existing background assertion.
+2026-11-24 19:33:16.345 Df OrangeCell[21120:11e6a] [com.apple.UIKit:BackgroundTask] Creating new background assertion
+2026-11-24 19:33:16.346 Df OrangeCell[21120:11e6a] [com.apple.UIKit:BackgroundTask] Created new background assertion <BKSProcessAssertion: 0x105d0ce20>
+2026-11-24 19:33:16.346 Df OrangeCell[21120:11e6a] [com.apple.runningboard:connection] Initializing connection
+2026-11-24 19:33:16.346 Df OrangeCell[21120:11e6a] [com.apple.runningboard:process] Removing all cached process handles
+2026-11-24 19:33:16.346 Df OrangeCell[21120:11e6a] [com.apple.runningboard:connection] Creating connection to com.apple.runningboard
+2026-11-24 19:33:16.346 Df OrangeCell[21120:11e6a] [com.apple.xpc:connection] [0x106558140] activating connection: mach=true listener=false peer=false name=com.apple.runningboard
+2026-11-24 19:33:16.346 Df OrangeCell[21120:11e6c] [com.apple.runningboard:connection] Sending handshake request attempt #1 to server
+2026-11-24 19:33:16.348 Df OrangeCell[21120:11e6d] [com.apple.BoardServices:XPCErrors] [C:1] Alloc com.apple.frontboard.systemappservices
+2026-11-24 19:33:16.348 Df OrangeCell[21120:11e6c] [com.apple.runningboard:connection] Handshake succeeded
+2026-11-24 19:33:16.348 Df OrangeCell[21120:11e6d] [com.apple.xpc:connection] [0x106558280] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-11-24 19:33:16.348 Df OrangeCell[21120:11e6c] [com.apple.runningboard:connection] Identity resolved as app<io.github.ninmiao.orangecell((null))>
+2026-11-24 19:33:16.351 Df OrangeCell[21120:11e6a] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x105d0ce20>
+2026-11-24 19:33:16.352 A  OrangeCell[21120:11e6c] (RunningBoardServices) didChangeInheritances
+2026-11-24 19:33:16.359 Df OrangeCell[21120:11e6a] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x10648cb40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 1178 (elapsed = 0).
+2026-11-24 19:33:16.359 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UIApplicationSceneKeyboardSettings on FBSSceneSettings
+2026-11-24 19:33:16.362 Df OrangeCell[21120:11e5a] [com.apple.UIKit:Application] Deactivation reason added: 10; deactivation reasons: 0 -> 1024; animating application lifecycle event: 0
+2026-11-24 19:33:16.362 Df OrangeCell[21120:11e5a] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.open
+2026-11-24 19:33:16.364 Df OrangeCell[21120:11e5a] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.workspace-service
+2026-11-24 19:33:16.364 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneOcclusionSettings> on FBSSceneSettings
+2026-11-24 19:33:16.365 Df OrangeCell[21120:11e5a] [com.apple.FrontBoard:Common] FBSWorkspace registering source: com.apple.frontboard.systemappservices
+2026-11-24 19:33:16.365 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneInterfaceProtectionSettings> on FBSSceneSettings
+2026-11-24 19:33:16.368 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferencesHostSettingsExtension on FBSSceneSettings
+2026-11-24 19:33:16.371 Df OrangeCell[21120:11e5a] [com.apple.FrontBoard:Common] FBSWorkspace connected to endpoint : <BSServiceConnectionEndpoint: 0x106508a00; target: com.apple.frontboard.systemappservices; service: com.apple.frontboard.workspace-service>
+2026-11-24 19:33:16.371 Df OrangeCell[21120:11e5a] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x1064f4640 com.apple.frontboard.systemappservices> attempting immediate handshake from activate
+2026-11-24 19:33:16.372 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneSafeAreaSettingsExtension on FBSSceneSettings
+2026-11-24 19:33:16.372 Df OrangeCell[21120:11e5a] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x1064f4640 com.apple.frontboard.systemappservices> sent handshake
+2026-11-24 19:33:16.372 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferenceClientSettingsExtension on FBSSceneClientSettings
+2026-11-24 19:33:16.373 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UIHomeAffordanceHostSceneSettings> on FBSSceneSettings
+2026-11-24 19:33:16.374 Df OrangeCell[21120:11e5a] [com.apple.runningboard:general] Added observer for process assertions expiration warning: <_RBSExpirationWarningClient: 0x106508fc0>
+2026-11-24 19:33:16.375 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISystemShellSceneHostingEnvironmentSettings on FBSSceneSettings
+2026-11-24 19:33:16.393 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneRenderingEnvironmentSettings on FBSSceneSettings
+2026-11-24 19:33:16.394 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneRenderingEnvironmentClientSettings> on FBSSceneClientSettings
+2026-11-24 19:33:16.397 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneTransitioningHostSettings> on FBSSceneSettings
+2026-11-24 19:33:16.397 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneFocusSystemSettings> on FBSSceneSettings
+2026-11-24 19:33:16.398 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationSettingsExtension on FBSSceneSettings
+2026-11-24 19:33:16.398 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationClientSettingsExtension on FBSSceneClientSettings
+2026-11-24 19:33:16.408 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneWindowingControlClientSettings on FBSSceneClientSettings
+2026-11-24 19:33:16.408 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingContentSizePreferenceClientSettings> on FBSSceneClientSettings
+2026-11-24 19:33:16.410 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneHostingTraitCollectionPropagationSettings on FBSSceneSettings
+2026-11-24 19:33:16.412 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationSettings> on FBSSceneSettings
+2026-11-24 19:33:16.412 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationClientSettings> on FBSSceneClientSettings
+2026-11-24 19:33:16.412 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingEventDeferringSettings> on FBSSceneSettings
+2026-11-24 19:33:16.412 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneSettings
+2026-11-24 19:33:16.415 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneClientSettings
+2026-11-24 19:33:16.416 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingViewControllerPreferencePropagationClientSettings> on FBSSceneClientSettings
+2026-11-24 19:33:16.417 Df OrangeCell[21120:11e6a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneZoomTransitionSettings> on FBSSceneSettings
+2026-11-24 19:33:16.418 Df OrangeCell[21120:11e70] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneSettingsCore on FBSSceneSettings
+2026-11-24 19:33:16.422 A  OrangeCell[21120:11e6b] (CoreFoundation) Loading Preferences From User Session CFPrefsD
+2026-11-24 19:33:16.423 Df OrangeCell[21120:11e70] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneClientSettingsCore on FBSSceneClientSettings
+2026-11-24 19:33:16.424 Df OrangeCell[21120:11e5a] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x106558500> for initial
+2026-11-24 19:33:16.425 Df OrangeCell[21120:11e5a] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x106558500> for CADisplay KVO
+2026-11-24 19:33:16.425 Df OrangeCell[21120:11e70] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneSettings setting counterpart class: UIApplicationSceneSettings
+2026-11-24 19:33:16.425 Df OrangeCell[21120:11e70] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneClientSettings setting counterpart class: UIApplicationSceneClientSettings
+2026-11-24 19:33:16.426 Df OrangeCell[21120:11e70] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneTransitionContextCore on FBSSceneTransitionContext
+2026-11-24 19:33:16.427 Df OrangeCell[21120:11e5a] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 1, category name = (null)
+2026-11-24 19:33:16.427 Df OrangeCell[21120:11e5a] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 0, category name = (null)
+2026-11-24 19:33:16.433 Df OrangeCell[21120:11e5a] [com.apple.dt.xctest:Default] Registering for test daemon availability notify post.
+2026-11-24 19:33:16.434 Df OrangeCell[21120:11e5a] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-11-24 19:33:16.435 Df OrangeCell[21120:11e5a] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-11-24 19:33:16.435 Df OrangeCell[21120:11e5a] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-11-24 19:33:16.440 Df OrangeCell[21120:11e5a] [com.apple.UIKit:Application] Deactivation reason added: 11; deactivation reasons: 1024 -> 3072; animating application lifecycle event: 0
+2026-11-24 19:33:16.450 Df OrangeCell[21120:11e5a] [com.apple.UIKit:Application] Deactivation reason removed: 10; deactivation reasons: 3072 -> 2048; animating application lifecycle event: 0
+2026-11-24 19:33:16.458 Df OrangeCell[21120:11e5a] [com.apple.UIKit:EventBus] Event Timing Profile for Touch: not found, path="/System/Library/EventTimingProfiles/Sim.Touch.plist"
+2026-11-24 19:33:16.459 Df OrangeCell[21120:11e5a] [com.apple.UIKit:EventBus] Event Timing Profile for Pencil: not found, path="/System/Library/EventTimingProfiles/Sim.Pencil.plist"
+2026-11-24 19:33:16.461 Df OrangeCell[21120:11e5a] [com.apple.UIKit:UpdateScheduler] Selected display: name=LCD (PurpleMain), id=1
+2026-11-24 19:33:16.466 Df OrangeCell[21120:11e5a] [com.apple.xpc:connection] [0x106558a00] activating connection: mach=true listener=false peer=false name=com.apple.lsd.mapdb
+2026-11-24 19:33:16.527 Df OrangeCell[21120:11e5a] [com.apple.BoardServices:XPCErrors] [C:2] Alloc com.apple.backboard.hid-services.xpc
+2026-11-24 19:33:16.527 Df OrangeCell[21120:11e5a] [com.apple.xpc:connection] [0x106558c80] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-11-24 19:33:16.530 Df OrangeCell[21120:11e6f] [com.apple.BackBoard:EventDelivery] BKSHIDEventDeliveryManager - connection activation
+2026-11-24 19:33:16.532 Df OrangeCell[21120:11e5a] [com.apple.app_launch_measurement:ApplicationLaunch] alm_acquire_pageins_recording_assertion: acquired pageins recording assertion!
+2026-11-24 19:33:16.538 Df OrangeCell[21120:11e5a] [com.apple.UIKit:BackgroundTask] Will add backgroundTask with taskName: Persistent SceneSession Map Update, expirationHandler: <__NSGlobalBlock__: 0x1e78c84e8>
+2026-11-24 19:33:16.539 Df OrangeCell[21120:11e5a] [com.apple.UIKit:BackgroundTask] Reusing background assertion <BKSProcessAssertion: 0x105d0ce20>
+2026-11-24 19:33:16.539 Df OrangeCell[21120:11e5a] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x105d0ce20>
+2026-11-24 19:33:16.539 Df OrangeCell[21120:11e5a] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x106629900>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 1179 (elapsed = 0).
+2026-11-24 19:33:16.540 Df OrangeCell[21120:11e5a] [com.apple.UIKit:Application] Deactivation reason added: 5; deactivation reasons: 2048 -> 2080; animating application lifecycle event: 1
+2026-11-24 19:33:16.541 Df OrangeCell[21120:11e5a] [com.apple.UIKit:InterfaceStyle] Should send trait collection or coordinate space update, interface style 1 -> 1, <UIWindowScene: 0x1064e0400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:16.543 Df OrangeCell[21120:11e5a] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1064e0400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:16.543 Df OrangeCell[21120:11e5a] [com.apple.UIKit:HomeAffordanceObservation] Initializing: <_UIHomeAffordanceSceneNotifier: 0x106609110>; with scene: <UIWindowScene: 0x1064e0400>
+2026-11-24 19:33:16.544 Df OrangeCell[21120:11e5a] [com.apple.BacklightServices:scenes] 0x106427300 setDelegate:<0x106427330 _UIBacklightEnvironment> hasDelegate:YES for environment:sceneID:io.github.ninmiao.orangecell-default
+2026-11-24 19:33:16.545 Df OrangeCell[21120:11e5a] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1064e0400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:16.545 Df OrangeCell[21120:11e5a] [com.apple.UIKit:EventDeferring] [0x106609180] Initialized with scene: <UIWindowScene: 0x1064e0400>; behavior: <_UIEventDeferringBehavior_iOS: 0x10650bf20>; availableForProcess: 1, systemShellManagesKeyboardFocus: 1
+2026-11-24 19:33:16.548 Df OrangeCell[21120:11e6d] [com.apple.BackBoard:EventDelivery] BKSHIDEventObserver - connection activation
+2026-11-24 19:33:16.548 Df OrangeCell[21120:11e5a] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x10662c900; process scope; status: target> was:none
+2026-11-24 19:33:16.549 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to LastOneWins
+2026-11-24 19:33:16.549 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyWindow] Scene target of keyboard event deferring environment did change: 1; scene: UIWindowScene: 0x1064e0400; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aio.github.ninmiao.orangecell-default
+2026-11-24 19:33:16.549 Df OrangeCell[21120:11e5a] [com.apple.UIKit:EventDeferring] [0x106609180] Scene target of event deferring environments did update: scene: 0x1064e0400; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-11-24 19:33:16.549 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x1064e0400; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aio.github.ninmiao.orangecell-default
+2026-11-24 19:33:16.549 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyWindow] Stack[KeyWindow] 0x106426d00: Taking no further action for migration from LastOneWins -> SystemShellManaged as there are no scenes
+2026-11-24 19:33:16.549 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to SystemShellManaged
+2026-11-24 19:33:16.549 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyWindow] Key window needs update: 0; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x1064e0400; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x0; reason: UIWindowScene: 0x1064e0400: Window scene became target of keyboard environment
+2026-11-24 19:33:16.549 Df OrangeCell[21120:11e5a] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1064e0400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:16.550 Df OrangeCell[21120:11e5a] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1064e0400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:16.550 Df OrangeCell[21120:11e5a] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1064e0400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:16.612 Df OrangeCell[21120:11e5a] [com.apple.UIKit:Orientation] <UIWindowScene: 0x1064e0400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45) Scene updated orientation preferences: none -> ( Pu )
+2026-11-24 19:33:16.617 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyWindow] Key window API is scene-level: YES
+2026-11-24 19:33:16.617 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyWindow] UIWindowScene: 0x1064e0400: Window became key in scene: UIWindow: 0x106580400; contextId: 0x3A1B411E: reason: UIWindowScene: 0x1064e0400: Window requested to become key in scene: 0x106580400
+2026-11-24 19:33:16.617 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyWindow] Key window needs update: 1; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x1064e0400; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x106580400; reason: UIWindowScene: 0x1064e0400: Window requested to become key in scene: 0x106580400
+2026-11-24 19:33:16.617 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyWindow] Window did become application key: UIWindow: 0x106580400; contextId: 0x3A1B411E; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aio.github.ninmiao.orangecell-default
+2026-11-24 19:33:16.617 Df OrangeCell[21120:11e5a] [com.apple.UIKit:EventDeferring] [0x106609180] Begin local event deferring requested for token: 0x10662dc80; environments: 1; reason: UIWindowScene: 0x1064e0400: Begin event deferring in keyboardFocus for window: 0x106580400
+2026-11-24 19:33:16.620 Df OrangeCell[21120:11e5a] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1064e0400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:16.621 Df OrangeCell[21120:11e5a] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:io.github.ninmiao.orangecell-default  persistentID: 0D52DB05-2E49-41D8-8D4F-9446EEEC8E45
+2026-11-24 19:33:16.623 Df OrangeCell[21120:11e5a] [com.apple.UIKit:Application] Ignoring already applied deactivation reason: 5; deactivation reasons: 2080
+2026-11-24 19:33:16.623 Df OrangeCell[21120:11e5a] [com.apple.UIKit:Application] Deactivation reason added: 12; deactivation reasons: 2080 -> 6176; animating application lifecycle event: 1
+2026-11-24 19:33:16.624 Df OrangeCell[21120:11e5a] [com.apple.UIKit:Application] Deactivation reason removed: 11; deactivation reasons: 6176 -> 4128; animating application lifecycle event: 1
+2026-11-24 19:33:16.624 Df OrangeCell[21120:11e5a] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneIntelligenceSupportSettings> on FBSSceneSettings
+2026-11-24 19:33:16.627 Df OrangeCell[21120:11e5a] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1064e0400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:16.630 Df OrangeCell[21120:11e6d] [com.apple.UIIntelligenceSupport:xpc] establishing connection to agent
+2026-11-24 19:33:16.633 A  OrangeCell[21120:11e5a] (CoreFoundation) Updating Key-Value Observers Of Preferences
+2026-11-24 19:33:16.637 Df OrangeCell[21120:11e6d] [com.apple.xpc:session] [0x10658e940] Session created.
+2026-11-24 19:33:16.637 Df OrangeCell[21120:11e6d] [com.apple.xpc:session] [0x10658e940] Session created from connection [0x1067e88c0]
+2026-11-24 19:33:16.638 Df OrangeCell[21120:11e6d] [com.apple.xpc:connection] [0x1067e88c0] activating connection: mach=true listener=false peer=false name=com.apple.uiintelligencesupport.agent
+2026-11-24 19:33:16.639 Df OrangeCell[21120:11e6f] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x10662c900; token: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aio.github.ninmiao.orangecell-default; status: ancestor> was:target
+2026-11-24 19:33:16.639 Df OrangeCell[21120:11e6d] [com.apple.xpc:session] [0x10658e940] Session activated
+2026-11-24 19:33:16.694 Df OrangeCell[21120:11e6d] [com.apple.xpc:connection] [0x1067e9540] activating connection: mach=true listener=false peer=false name=com.apple.fontservicesd
+2026-11-24 19:33:16.717 Df OrangeCell[21120:11e5a] [PrototypeTools:domain] Not observing PTDefaults on customer install.
+2026-11-24 19:33:17.061 Df OrangeCell[21120:11e71] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 2
+2026-11-24 19:33:17.061 Df OrangeCell[21120:11e71] [com.apple.UIKit:BackgroundTask] Ending task with identifier 2 and description: <_UIBackgroundTaskInfo: 0x106629900>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 1179 (elapsed = 0), _expireHandler: <__NSGlobalBlock__: 0x1e78c84e8>
+2026-11-24 19:33:17.061 Df OrangeCell[21120:11e71] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x105d0ce20> (used by background task with identifier 2: <_UIBackgroundTaskInfo: 0x106629900>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 1179 (elapsed = 0))
+2026-11-24 19:33:17.204 Df OrangeCell[21120:11e5a] [com.apple.xpc:connection] [0x109365e00] activating connection: mach=true listener=false peer=false name=com.apple.IOSurface.Remote
+2026-11-24 19:33:17.211 Df OrangeCell[21120:11e5a] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:1 [C6A43A04-CCB8-47A3-BDC0-A814CEDEA7C8] (reporting strategy default)>
+2026-11-24 19:33:17.211 Df OrangeCell[21120:11e5a] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:2 [546B0EEA-FAA3-4436-9B00-D7F83E66D7F6] (reporting strategy default)>
+2026-11-24 19:33:17.211 Df OrangeCell[21120:11e5a] [com.apple.network:activity] Set activity <nw_activity 50:1 [C6A43A04-CCB8-47A3-BDC0-A814CEDEA7C8] (reporting strategy default)> as the global parent
+2026-11-24 19:33:17.211 Df OrangeCell[21120:11e5a] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 1
+2026-11-24 19:33:17.211 Df OrangeCell[21120:11e5a] [com.apple.UIKit:BackgroundTask] Ending task with identifier 1 and description: <_UIBackgroundTaskInfo: 0x10648cb40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 1178 (elapsed = 1), _expireHandler: (null)
+2026-11-24 19:33:17.211 Df OrangeCell[21120:11e5a] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x105d0ce20> (used by background task with identifier 1: <_UIBackgroundTaskInfo: 0x10648cb40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 1178 (elapsed = 1))
+2026-11-24 19:33:17.211 Df OrangeCell[21120:11e5a] [com.apple.UIKit:BackgroundTask] Will invalidate assertion: <BKSProcessAssertion: 0x105d0ce20> for task identifier: 1
+2026-11-24 19:33:17.213 Df OrangeCell[21120:11e5a] [com.apple.UIKit:UpdateScheduler] Target list changed: <CADisplay:LCD PurpleMain>
+2026-11-24 19:33:17.215 A  OrangeCell[21120:11e6f] (RunningBoardServices) didChangeInheritances
+2026-11-24 19:33:17.215 Df OrangeCell[21120:11e5a] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:io.github.ninmiao.orangecell-default  persistentID: 0D52DB05-2E49-41D8-8D4F-9446EEEC8E45
+2026-11-24 19:33:17.216 Df OrangeCell[21120:11e5a] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1064e0400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:17.218 A  OrangeCell[21120:11e6b] (RunningBoardServices) didChangeInheritances
+2026-11-24 19:33:17.224 Df OrangeCell[21120:11e5a] [com.apple.UIKit:EventDeferring] [0x106609180] Scene target of event deferring environments did update: scene: 0x1064e0400; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-11-24 19:33:17.224 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x1064e0400; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aio.github.ninmiao.orangecell-default
+2026-11-24 19:33:17.225 Df OrangeCell[21120:11e5a] [com.apple.Accessibility:AXCommon] Read Per-App on Init: Smart invert = (null)
+2026-11-24 19:33:17.229 Df OrangeCell[21120:11e5a] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1064e0400> (0D52DB05-2E49-41D8-8D4F-9446EEEC8E45)
+2026-11-24 19:33:17.230 Df OrangeCell[21120:11e5a] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:io.github.ninmiao.orangecell-default  persistentID: 0D52DB05-2E49-41D8-8D4F-9446EEEC8E45
+2026-11-24 19:33:17.230 Df OrangeCell[21120:11e5a] [com.apple.UIKit:Application] Deactivation reason removed: 12; deactivation reasons: 4128 -> 32; animating application lifecycle event: 1
+2026-11-24 19:33:17.230 Df OrangeCell[21120:11e5a] [com.apple.KeyboardArbiter:Client] Send setDeactivating: N (-DeactivationReason:SuspendedEventsOnly)
+2026-11-24 19:33:17.230 Df OrangeCell[21120:11e5a] [com.apple.UIKit:Application] Deactivation reason removed: 5; deactivation reasons: 32 -> 0; animating application lifecycle event: 0
+2026-11-24 19:33:17.231 Df OrangeCell[21120:11e5a] [com.apple.KeyboardArbiter:Client] startConnection
+2026-11-24 19:33:17.232 Df OrangeCell[21120:11e5a] [com.apple.xpc:connection] [0x109366800] activating connection: mach=true listener=false peer=false name=com.apple.UIKit.KeyboardManagement.hosted
+2026-11-24 19:33:17.235 Df OrangeCell[21120:11e5a] [com.apple.KeyboardArbiter:Client] handleKeyboardChange: set currentKeyboard:N (wasKeyboard:N)
+2026-11-24 19:33:17.248 Df OrangeCell[21120:11e5a] [com.apple.extensionkit:NSExtension] Class EXGetExtensionClass(void) returning EXConcreteExtension
+2026-11-24 19:33:17.248 Df OrangeCell[21120:11e5a] [com.apple.xpc:connection] [0x109366f80] activating connection: mach=true listener=false peer=false name=com.apple.pluginkit.pkd
+2026-11-24 19:33:17.248 A  OrangeCell[21120:11e5a] (PlugInKit) discovery
+2026-11-24 19:33:17.249 Df OrangeCell[21120:11e5a] [com.apple.PlugInKit:discovery] [d C69751A3-5780-421C-92B4-D22FC3230971] <PKHost:0x11824a380> Beginning discovery for flags: 1024, point: com.apple.keyboard-service
+2026-11-24 19:33:17.254 Df pkd[15787:11e93] [com.apple.PlugInKit:discovery] [d C69751A3-5780-421C-92B4-D22FC3230971] Final plugin count: 1
+2026-11-24 19:33:17.255 Df OrangeCell[21120:11e5a] [com.apple.PlugInKit:discovery] [d C69751A3-5780-421C-92B4-D22FC3230971] <PKHost:0x11824a380> Completed discovery. Final # of matches: 1
+2026-11-24 19:33:17.258 Df OrangeCell[21120:11e5a] (UIKitCore) Successfully load keyboard extensions
+2026-11-24 19:33:17.259 A  OrangeCell[21120:11e5a] (libsystem_containermanager.dylib) container_system_group_path_for_identifier
+2026-11-24 19:33:17.259 Df OrangeCell[21120:11e5a] [com.apple.containermanager:xpc] Requesting container lookup; class = 13, identifier = (null), group_identifier = systemgroup.com.apple.configurationprofiles, create = 1, temp = 0, euid = 501, uid = 501
+2026-11-24 19:33:17.259 A  OrangeCell[21120:11e5a] (libsystem_containermanager.dylib) container_query_t
+2026-11-24 19:33:17.259 Df OrangeCell[21120:11e5a] [com.apple.containermanager:xpc] Query; euid = 501, uid = 501, class = 13, identifier = [(null)](0), flags = 900000003
+2026-11-24 19:33:17.262 Df OrangeCell[21120:11e5a] [com.apple.containermanager:unspecified] _container_query_get_result_at_index: success
+2026-11-24 19:33:17.262 A  OrangeCell[21120:11e5a] (libsystem_containermanager.dylib) container_copy_object
+2026-11-24 19:33:17.262 Df OrangeCell[21120:11e5a] [com.apple.containermanager:unspecified] container_system_group_path_for_identifier: success
+2026-11-24 19:33:17.262 Df OrangeCell[21120:11e5a] [com.apple.ManagedConfiguration:MC] Got system group container path from MCM for systemgroup.com.apple.configurationprofiles: /Users/runner/Library/Developer/CoreSimulator/Devices/2BCF8C5A-4964-470D-8C98-9F5E58ECC92E/data/Containers/Shared/SystemGroup/systemgroup.com.apple.configurationprofiles
+2026-11-24 19:33:17.272 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyboardSceneDelegate] forceReloadInputViews
+2026-11-24 19:33:17.272 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyboardSceneDelegate] Reloading input views for key-window scene responder: <(null): 0x0; > force:Y
+2026-11-24 19:33:17.274 Df OrangeCell[21120:11e5a] [com.apple.UIKit:KeyboardArbiterClientLog] isWritingToolsHandlingKeyboardTracking:Y (WT ready:Y, Arbiter ready:Y)
+2026-11-24 19:33:17.324 A  OrangeCell[21120:11e6f] (RunningBoardServices) didChangeInheritances
+2026-11-24 19:33:17.332 Df OrangeCell[21120:11e5a] [com.apple.network:activity] <nw_activity 50:1 [C6A43A04-CCB8-47A3-BDC0-A814CEDEA7C8] (global parent) (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 1511ms
+2026-11-24 19:33:17.332 Df OrangeCell[21120:11e5a] [com.apple.network:activity] <nw_activity 50:2 [546B0EEA-FAA3-4436-9B00-D7F83E66D7F6] (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 1510ms
+2026-11-24 19:33:17.332 Df OrangeCell[21120:11e5a] [com.apple.network:activity] Unsetting the global parent activity <nw_activity 50:1 [C6A43A04-CCB8-47A3-BDC0-A814CEDEA7C8] (global parent) (reporting strategy default) complete (reason success)>
+2026-11-24 19:33:17.332 Df OrangeCell[21120:11e5a] [com.apple.network:activity] Unset the global parent activity
+2026-11-24 19:33:17.333 Df OrangeCell[21120:11e5a] [com.apple.app_launch_measurement:ApplicationLaunch] alm_release_pageins_recording_assertion: releasing pageins recording assertion
+2026-11-24 19:33:17.541 A  OrangeCell[21120:11e6a] (RunningBoardServices) didChangeInheritances
+2026-11-24 19:33:23.220 Df assistantd[15707:fe21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] <PKHost:0x10a8f2400> Completed discovery. Final # of matches: 24
+2026-11-24 19:33:23.220 Df assistantd[15707:fe21] [com.apple.PlugInKit:discovery] [d 914CB591-43FA-462C-A7FF-7A7FCF666E88] <PKHost:0x10a8f2400> Completed discovery. Final # of matches: 24

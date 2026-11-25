@@ -1,0 +1,27 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/OrangeCell.xcodeproj -scheme OCUITests -configuration Debug -destination id=065D0279-1902-4994-9EEB-2BF7AA2EE906 -derivedDataPath /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd "-only-testing:OrangeCellUITests/EmbeddedKeyboardUITests" -resultBundlePath /Users/runner/work/_temp/results/ui-embedded.xcresult
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  OCRime: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCRime
+  OCKeyboardUI: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCKeyboardUI
+  OCCore: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore
+
+Writing result bundle at path:
+	/Users/runner/work/_temp/results/ui-embedded.xcresult
+
+2026-11-25 08:29:52.194 xcodebuild[3468:13629] [MT] IDETestOperationsObserverDebug: 11.496 elapsed -- Testing started completed.
+2026-11-25 08:29:52.194 xcodebuild[3468:13629] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 08:29:52.194 xcodebuild[3468:13629] [MT] IDETestOperationsObserverDebug: 11.496 sec, +11.496 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-embedded.xcresult
+
+Testing failed:
+	Test target OrangeCellUITests encountered an error (The bundle identifier for OCTestHost.app couldn’t be read. No such file or directory: “/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Debug-iphonesimulator/OCTestHost.app”.)
+
+** TEST EXECUTE FAILED **
+
+Testing started

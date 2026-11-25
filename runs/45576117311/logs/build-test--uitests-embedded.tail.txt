@@ -1,0 +1,1 @@
+[ui-test] embedded: OrangeCellUITests/EmbeddedKeyboardUITests

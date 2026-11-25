@@ -1,0 +1,14 @@
+[e2e] install: ok (app with keyboard extension, test host)
+[ui-test] typing: OrangeCellUITests/KeyboardUITests/testRealExtensionTypesChineseAndEnglish
+[e2e] request: footprint-typing
+[e2e] keyboard process footprint after typing (Debug, pid 10691): 47.0 MB
+[e2e] no letter fell through to plain text in 中 mode (until typing): PASS (unhandledLetters=0)
+	 Executed 1 test, with 0 failures (0 unexpected) in 148.212 (148.218) seconds
+check_tests: 1 tests executed, none skipped
+[e2e] phase A: typing through the real keyboard extension (nihao, sentence, backspace, 中/EN): PASS 
+[e2e] keyboard report (A): fullAccess=false userDataShared=false rimeRunning=true dictionary=wanxiang v18.1.13
+[e2e] keyboard start-up after it appeared (A, simulator): engine ready 56.32901191711426 ms, first candidates 12132.503986358643 ms, user dictionary learning
+[e2e] phase A: engine running inside the extension: PASS 
+[e2e] phase A: without Full Access the user dictionary is private: PASS (userDataShared=false)
+[e2e] memory (Debug, information only): after typing 47.0 MB, highest 47 MB
+[e2e] failed checks: 0

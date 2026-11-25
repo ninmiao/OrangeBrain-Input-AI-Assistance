@@ -1,0 +1,6 @@
+toolchain	0	10
+fetch-deps	0	2
+xcodegen-install	0	0
+xcodegen	0	1
+rime-data	0	10
+verify-data-libs	0	0

@@ -1,0 +1,308 @@
+Building for debugging...
+[0/10] Write sources
+[0/10] /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/.build/arm64-apple-macosx/debug/OCCorePackageTests.derived/runner.swift
+[2/10] Write sources
+[4/10] Write swift-version-7974D3F7F03D5E95.txt
+[5/10] Compiling CNativeCore shim.cpp
+[7/22] Emitting module OCCore
+[8/22] Compiling OCCore AiStore.swift
+[9/22] Compiling OCCore AiTypes.swift
+[10/22] Compiling OCCore AppGroupLocator.swift
+[11/22] Compiling OCCore Diagnostics.swift
+[12/22] Compiling OCCore KeyStorage.swift
+[13/22] Compiling OCCore AiBarState.swift
+[14/22] Compiling OCCore AiCall.swift
+[15/22] Compiling OCCore AiChatClient.swift
+[16/22] Compiling OCCore AiController.swift
+[17/22] Compiling OCCore AiModes.swift
+[18/22] Compiling OCCore AiRequestCoordinator.swift
+[19/27] Compiling OCCore KeyboardSettings.swift
+[20/27] Compiling OCCore NativeCore.swift
+[21/27] Compiling OCCore ProvisioningProfile.swift
+[22/27] Compiling OCCore RimeData.swift
+[23/27] Compiling OCCore TextTraits.swift
+[23/27] Write Objects.LinkFileList
+[24/27] Archiving libOCCore.a
+[26/34] Compiling OCCoreTests AiControllerTests.swift
+[27/34] Compiling OCCoreTests AiCoordinatorTests.swift
+[28/34] Compiling OCCoreTests AiStoreTests.swift
+[29/37] Emitting module OCCoreTests
+[30/37] Compiling OCCoreTests AiTransportTests.swift
+[31/37] Compiling OCCoreTests KeyStorageTests.swift
+[32/37] Compiling OCCoreTests NativeCoreTests.swift
+[33/37] Compiling OCCoreTests ProvisioningProfileTests.swift
+[34/37] Compiling OCCoreTests TextTraitsTests.swift
+[35/37] Compiling OCCoreTests UserDictionaryTests.swift
+[36/39] Emitting module OCCorePackageTests
+[37/39] Compiling OCCorePackageTests runner.swift
+[37/39] Write Objects.LinkFileList
+[38/39] Linking OCCorePackageTests
+Build complete! (63.49s)
+Test Suite 'All tests' started at 2026-11-25 08:22:31.556.
+Test Suite 'OCCorePackageTests.xctest' started at 2026-11-25 08:22:31.570.
+Test Suite 'AiControllerTests' started at 2026-11-25 08:22:31.570.
+Test Case '-[OCCoreTests.AiControllerTests testACaretMoveFromOutsideClearsTheHold]' started.
+Test Case '-[OCCoreTests.AiControllerTests testACaretMoveFromOutsideClearsTheHold]' passed (0.113 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testACompositionStartsAnAutomaticCorrectionAfterTheDebounce]' started.
+Test Case '-[OCCoreTests.AiControllerTests testACompositionStartsAnAutomaticCorrectionAfterTheDebounce]' passed (0.187 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testAdoptingCommittedTextReplacesTheSentenceAfterCheckingTheProxy]' started.
+Test Case '-[OCCoreTests.AiControllerTests testAdoptingCommittedTextReplacesTheSentenceAfterCheckingTheProxy]' passed (0.119 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testAdoptingWhileComposingClearsTheCompositionThenInserts]' started.
+Test Case '-[OCCoreTests.AiControllerTests testAdoptingWhileComposingClearsTheCompositionThenInserts]' passed (0.191 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testAdoptionAbortsWhenTheTextBeforeTheCaretNoLongerEndsWithTheOriginal]' started.
+Test Case '-[OCCoreTests.AiControllerTests testAdoptionAbortsWhenTheTextBeforeTheCaretNoLongerEndsWithTheOriginal]' passed (0.182 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testAKeyPressAndACandidateTapEndTheManualHoldAndDropTheRequest]' started.
+Test Case '-[OCCoreTests.AiControllerTests testAKeyPressAndACandidateTapEndTheManualHoldAndDropTheRequest]' passed (0.278 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testALongCandidateOpensTheFullTextBeforeItIsAdopted]' started.
+Test Case '-[OCCoreTests.AiControllerTests testALongCandidateOpensTheFullTextBeforeItIsAdopted]' passed (0.132 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testALongPressCancelsTheRequest]' started.
+Test Case '-[OCCoreTests.AiControllerTests testALongPressCancelsTheRequest]' passed (0.018 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testAManualAssistantKeyTakesOverTheRunningAutomaticRequestAndItsLateDataIsDropped]' started.
+Test Case '-[OCCoreTests.AiControllerTests testAManualAssistantKeyTakesOverTheRunningAutomaticRequestAndItsLateDataIsDropped]' passed (0.397 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testAnAutomaticRequestAfterACommitWaitsForTheProxyToCatchUp]' started.
+Test Case '-[OCCoreTests.AiControllerTests testAnAutomaticRequestAfterACommitWaitsForTheProxyToCatchUp]' passed (0.557 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testAResultOfAnOlderRevisionIsNeverAdopted]' started.
+Test Case '-[OCCoreTests.AiControllerTests testAResultOfAnOlderRevisionIsNeverAdopted]' passed (0.120 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testBackgroundEventsNeverReplaceAManualRequest]' started.
+Test Case '-[OCCoreTests.AiControllerTests testBackgroundEventsNeverReplaceAManualRequest]' passed (0.373 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testEmoticonsGoAfterTheCommittedTextInsteadOfReplacingIt]' started.
+Test Case '-[OCCoreTests.AiControllerTests testEmoticonsGoAfterTheCommittedTextInsteadOfReplacingIt]' passed (0.054 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testNothingIsSentWithoutConsentFromASensitiveFieldOrWithoutFullAccess]' started.
+Test Case '-[OCCoreTests.AiControllerTests testNothingIsSentWithoutConsentFromASensitiveFieldOrWithoutFullAccess]' passed (1.095 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testPressingTheSameKeyAgainKeepsTheRunningRequest]' started.
+Test Case '-[OCCoreTests.AiControllerTests testPressingTheSameKeyAgainKeepsTheRunningRequest]' passed (0.274 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testTheEmojiKeyTakesOverARunningAssistantRequestAndTheLateAssistantDataIsDropped]' started.
+Test Case '-[OCCoreTests.AiControllerTests testTheEmojiKeyTakesOverARunningAssistantRequestAndTheLateAssistantDataIsDropped]' passed (0.345 seconds).
+Test Case '-[OCCoreTests.AiControllerTests testTrailingSentence]' started.
+Test Case '-[OCCoreTests.AiControllerTests testTrailingSentence]' passed (0.003 seconds).
+Test Suite 'AiControllerTests' passed at 2026-11-25 08:22:36.016.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 4.437 (4.446) seconds
+Test Suite 'AiRequestCoordinatorTests' started at 2026-11-25 08:22:36.016.
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testACancelledRequestPublishesNoFailure]' started.
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testACancelledRequestPublishesNoFailure]' passed (0.165 seconds).
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testAnewSubmitCancelsTheRunningRequestAndItsLateResultIsDropped]' started.
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testAnewSubmitCancelsTheRunningRequestAndItsLateResultIsDropped]' passed (0.229 seconds).
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testASubmittedRequestIsLoadingThenReady]' started.
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testASubmittedRequestIsLoadingThenReady]' passed (0.089 seconds).
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testFailuresAreCategorisedAndATimeoutNamesItsPhase]' started.
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testFailuresAreCategorisedAndATimeoutNamesItsPhase]' passed (0.148 seconds).
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testInvalidatePublishesIdleAndDropsLateData]' started.
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testInvalidatePublishesIdleAndDropsLateData]' passed (0.161 seconds).
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testNothingIsSentWhenDisabledSensitiveOrBlank]' started.
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testNothingIsSentWhenDisabledSensitiveOrBlank]' passed (0.185 seconds).
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testPartialResultsStreamIntoReadyUntilTheFinalOneAndLaterOnesAreDropped]' started.
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testPartialResultsStreamIntoReadyUntilTheFinalOneAndLaterOnesAreDropped]' passed (0.321 seconds).
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testTheDebounceDelaysTheSendAndInvalidateWithinItSendsNothing]' started.
+Test Case '-[OCCoreTests.AiRequestCoordinatorTests testTheDebounceDelaysTheSendAndInvalidateWithinItSendsNothing]' passed (0.618 seconds).
+Test Suite 'AiRequestCoordinatorTests' passed at 2026-11-25 08:22:37.937.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 1.917 (1.920) seconds
+Test Suite 'AiStoreTests' started at 2026-11-25 08:22:37.937.
+Test Case '-[OCCoreTests.AiStoreTests testAFreshStoreStartsWithTheThreeDefaultPoliciesAndNothingSwitchedOn]' started.
+Test Case '-[OCCoreTests.AiStoreTests testAFreshStoreStartsWithTheThreeDefaultPoliciesAndNothingSwitchedOn]' passed (0.016 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testAKeyBelongsToTheOriginItWasEnteredFor]' started.
+Test Case '-[OCCoreTests.AiStoreTests testAKeyBelongsToTheOriginItWasEnteredFor]' passed (0.002 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testAnAndroidConfigWithMissingAndUnknownKeysDecodes]' started.
+Test Case '-[OCCoreTests.AiStoreTests testAnAndroidConfigWithMissingAndUnknownKeysDecodes]' passed (0.010 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testAnUpdateIsValidatedAndRejectedWithoutChangingAnything]' started.
+Test Case '-[OCCoreTests.AiStoreTests testAnUpdateIsValidatedAndRejectedWithoutChangingAnything]' passed (0.061 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testAPolicyExportHasNoKeyAndImportsUnderAFreshIdWithAUniqueName]' started.
+Test Case '-[OCCoreTests.AiStoreTests testAPolicyExportHasNoKeyAndImportsUnderAFreshIdWithAUniqueName]' passed (0.039 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testChangingTheEndpointDropsTheCapabilitiesOfTheOldOne]' started.
+Test Case '-[OCCoreTests.AiStoreTests testChangingTheEndpointDropsTheCapabilitiesOfTheOldOne]' passed (0.009 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testCopyingAPolicyCopiesItsKey]' started.
+Test Case '-[OCCoreTests.AiStoreTests testCopyingAPolicyCopiesItsKey]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testImportRefusesPlainHttpOversizedAndBrokenFiles]' started.
+Test Case '-[OCCoreTests.AiStoreTests testImportRefusesPlainHttpOversizedAndBrokenFiles]' passed (0.005 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testKeysThatAreNotPlainSingleLineSecretsOrEndpointsThatAreNotHttpsAreRefused]' started.
+Test Case '-[OCCoreTests.AiStoreTests testKeysThatAreNotPlainSingleLineSecretsOrEndpointsThatAreNotHttpsAreRefused]' passed (0.004 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testPoliciesCanBeAddedSelectedRenamedAndDeleted]' started.
+Test Case '-[OCCoreTests.AiStoreTests testPoliciesCanBeAddedSelectedRenamedAndDeleted]' passed (0.045 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testSelectingOpenRouterBringsItsEndpointModelAndParameters]' started.
+Test Case '-[OCCoreTests.AiStoreTests testSelectingOpenRouterBringsItsEndpointModelAndParameters]' passed (0.014 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testTheChosenBackendIsRecordedOnceAndFollowed]' started.
+Test Case '-[OCCoreTests.AiStoreTests testTheChosenBackendIsRecordedOnceAndFollowed]' passed (0.008 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testTheLastPolicyCannotBeDeletedAndTheListIsCapped]' started.
+Test Case '-[OCCoreTests.AiStoreTests testTheLastPolicyCannotBeDeletedAndTheListIsCapped]' passed (0.310 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testTheModelListExportsAndImportsAndDropsValuesItNoLongerAllows]' started.
+Test Case '-[OCCoreTests.AiStoreTests testTheModelListExportsAndImportsAndDropsValuesItNoLongerAllows]' passed (0.032 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testThePromptPackageIsUpgradedAndTheLimitsHold]' started.
+Test Case '-[OCCoreTests.AiStoreTests testThePromptPackageIsUpgradedAndTheLimitsHold]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testTheStoreReadsBackWhatItWroteAndTheKeyboardSideReadsTheSameFile]' started.
+Test Case '-[OCCoreTests.AiStoreTests testTheStoreReadsBackWhatItWroteAndTheKeyboardSideReadsTheSameFile]' passed (0.013 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testTheSystemPromptComesFromTheSharedCore]' started.
+Test Case '-[OCCoreTests.AiStoreTests testTheSystemPromptComesFromTheSharedCore]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testTheVaultFallsBackToTheNextBackendWhenTheChosenOneHasNoKey]' started.
+Test Case '-[OCCoreTests.AiStoreTests testTheVaultFallsBackToTheNextBackendWhenTheChosenOneHasNoKey]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AiStoreTests testTheWholeConfigurationSurvivesAJsonRoundTrip]' started.
+Test Case '-[OCCoreTests.AiStoreTests testTheWholeConfigurationSurvivesAJsonRoundTrip]' passed (0.007 seconds).
+Test Suite 'AiStoreTests' passed at 2026-11-25 08:22:38.518.
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.575 (0.581) seconds
+Test Suite 'AiTransportTests' started at 2026-11-25 08:22:38.518.
+Test Case '-[OCCoreTests.AiTransportTests testABrokenStreamKeepsWhatAlreadyArrived]' started.
+/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Sources/OCCore/AiChatClient.swift:145: error: -[OCCoreTests.AiTransportTests testABrokenStreamKeepsWhatAlreadyArrived] : failed: caught error: "network"
+Test Case '-[OCCoreTests.AiTransportTests testABrokenStreamKeepsWhatAlreadyArrived]' failed (0.619 seconds).
+Test Case '-[OCCoreTests.AiTransportTests testABrokenStreamWithNothingBeforeItIsANetworkFailure]' started.
+Test Case '-[OCCoreTests.AiTransportTests testABrokenStreamWithNothingBeforeItIsANetworkFailure]' passed (0.005 seconds).
+Test Case '-[OCCoreTests.AiTransportTests testALoopbackRouteSendsToTheLocalServerWithTheSameBody]' started.
+Test Case '-[OCCoreTests.AiTransportTests testALoopbackRouteSendsToTheLocalServerWithTheSameBody]' passed (0.010 seconds).
+Test Case '-[OCCoreTests.AiTransportTests testAnEndpointThatIsNotPlainHttpsOrAKeyWithANewlineIsRefusedBeforeAnythingIsSent]' started.
+Test Case '-[OCCoreTests.AiTransportTests testAnEndpointThatIsNotPlainHttpsOrAKeyWithANewlineIsRefusedBeforeAnythingIsSent]' passed (0.002 seconds).
+Test Case '-[OCCoreTests.AiTransportTests testAPlainJsonAnswerIsAcceptedWhenAGatewayIgnoresStreaming]' started.
+Test Case '-[OCCoreTests.AiTransportTests testAPlainJsonAnswerIsAcceptedWhenAGatewayIgnoresStreaming]' passed (0.004 seconds).
+Test Case '-[OCCoreTests.AiTransportTests testARedirectIsNeverFollowed]' started.
+Test Case '-[OCCoreTests.AiTransportTests testARedirectIsNeverFollowed]' passed (1.549 seconds).
+Test Case '-[OCCoreTests.AiTransportTests testAStreamThatEndsWithoutAnyAnswerIsAnInvalidResponse]' started.
+Test Case '-[OCCoreTests.AiTransportTests testAStreamThatEndsWithoutAnyAnswerIsAnInvalidResponse]' passed (0.006 seconds).
+Test Case '-[OCCoreTests.AiTransportTests testATimeoutAfterTheFirstCandidateKeepsIt]' started.
+Test Case '-[OCCoreTests.AiTransportTests testATimeoutAfterTheFirstCandidateKeepsIt]' passed (1.034 seconds).
+Test Case '-[OCCoreTests.AiTransportTests testCancellingStopsTheConnectionAndDropsEverythingThatComesLater]' started.
+Test Case '-[OCCoreTests.AiTransportTests testCancellingStopsTheConnectionAndDropsEverythingThatComesLater]' passed (0.491 seconds).
+Test Case '-[OCCoreTests.AiTransportTests testChunkedStreamShowsOnlyClosedCandidatesAndTheFinalResultHasBoth]' started.
+Test Case '-[OCCoreTests.AiTransportTests testChunkedStreamShowsOnlyClosedCandidatesAndTheFinalResultHasBoth]' passed (0.626 seconds).
+Test Case '-[OCCoreTests.AiTransportTests testHttpFailuresAreReportedByStatusAndNeverWithTheBody]' started.
+Test Case '-[OCCoreTests.AiTransportTests testHttpFailuresAreReportedByStatusAndNeverWithTheBody]' passed (0.039 seconds).
+Test Case '-[OCCoreTests.AiTransportTests testTheRequestCarriesTheKeyInTheHeaderOnlyAndTheBodyComesFromTheSharedCore]' started.
+Test Case '-[OCCoreTests.AiTransportTests testTheRequestCarriesTheKeyInTheHeaderOnlyAndTheBodyComesFromTheSharedCore]' passed (0.017 seconds).
+Test Case '-[OCCoreTests.AiTransportTests testTheTimeoutNamesWhereItHappened]' started.
+Test Case '-[OCCoreTests.AiTransportTests testTheTimeoutNamesWhereItHappened]' passed (2.122 seconds).
+Test Suite 'AiTransportTests' failed at 2026-11-25 08:22:45.048.
+	 Executed 13 tests, with 1 failure (1 unexpected) in 6.525 (6.530) seconds
+Test Suite 'AppGroupLocatorTests' started at 2026-11-25 08:22:45.048.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testBareDotSuffixIsNotAMatch]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testBareDotSuffixIsNotAMatch]' passed (0.006 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing]' passed (0.006 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testExactNameBeatsSuffixedNames]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testExactNameBeatsSuffixedNames]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testGroupWithTeamIdSuffix]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testGroupWithTeamIdSuffix]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testMissingGroupMeansNoSharing]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testMissingGroupMeansNoSharing]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testNoProfileFallsBackToNominalName]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testNoProfileFallsBackToNominalName]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testPlainGroupIsUsedAsIs]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testPlainGroupIsUsedAsIs]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testTeamSuffixIsPreferredAmongSeveral]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testTeamSuffixIsPreferredAmongSeveral]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testUnparsableProfileIsReportedAsSuch]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testUnparsableProfileIsReportedAsSuch]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.AppGroupLocatorTests testUnrelatedGroupsAreIgnored]' started.
+Test Case '-[OCCoreTests.AppGroupLocatorTests testUnrelatedGroupsAreIgnored]' passed (0.000 seconds).
+Test Suite 'AppGroupLocatorTests' passed at 2026-11-25 08:22:45.063.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.014 (0.016) seconds
+Test Suite 'DiagnosticsTests' started at 2026-11-25 08:22:45.063.
+Test Case '-[OCCoreTests.DiagnosticsTests testMemoryProbeReportsPlausibleValueOnApplePlatforms]' started.
+Test Case '-[OCCoreTests.DiagnosticsTests testMemoryProbeReportsPlausibleValueOnApplePlatforms]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.DiagnosticsTests testProbeWithoutContainerIsNil]' started.
+Test Case '-[OCCoreTests.DiagnosticsTests testProbeWithoutContainerIsNil]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.DiagnosticsTests testProbeWrittenByOneRoleIsReadByTheOther]' started.
+Test Case '-[OCCoreTests.DiagnosticsTests testProbeWrittenByOneRoleIsReadByTheOther]' passed (0.005 seconds).
+Test Case '-[OCCoreTests.DiagnosticsTests testReportRoundTripsThroughJson]' started.
+Test Case '-[OCCoreTests.DiagnosticsTests testReportRoundTripsThroughJson]' passed (0.004 seconds).
+Test Suite 'DiagnosticsTests' passed at 2026-11-25 08:22:45.075.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.011 (0.011) seconds
+Test Suite 'KeyStorageTests' started at 2026-11-25 08:22:45.075.
+Test Case '-[OCCoreTests.KeyStorageTests testChoosesBackendFromKeyboardProbes]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testChoosesBackendFromKeyboardProbes]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testConcurrentFirstUseCreatesOneKey]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testConcurrentFirstUseCreatesOneKey]' passed (0.032 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testEncryptedFileStoreRoundTrip]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testEncryptedFileStoreRoundTrip]' passed (0.009 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testFilesOnDiskDoNotContainThePlaintext]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testFilesOnDiskDoNotContainThePlaintext]' passed (0.007 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testRemoveIsQuietForMissingFilesAndRemovesRealOnes]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testRemoveIsQuietForMissingFilesAndRemovesRealOnes]' passed (0.015 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testSecretFileCopiedToAnotherAccountDoesNotDecrypt]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testSecretFileCopiedToAnotherAccountDoesNotDecrypt]' passed (0.021 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testSelfTestSampleThroughEncryptedStore]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testSelfTestSampleThroughEncryptedStore]' passed (0.043 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testTamperedFileIsRejected]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testTamperedFileIsRejected]' passed (0.018 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testUnreadableKeyFileIsAnErrorAndNeverReplaced]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testUnreadableKeyFileIsAnErrorAndNeverReplaced]' passed (0.033 seconds).
+Test Case '-[OCCoreTests.KeyStorageTests testWrongSizedKeyFileIsRejectedNotReplaced]' started.
+Test Case '-[OCCoreTests.KeyStorageTests testWrongSizedKeyFileIsRejectedNotReplaced]' passed (0.002 seconds).
+Test Suite 'KeyStorageTests' passed at 2026-11-25 08:22:45.258.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.179 (0.183) seconds
+Test Suite 'NativeCoreTests' started at 2026-11-25 08:22:45.258.
+Test Case '-[OCCoreTests.NativeCoreTests testDecodeKeepsCompleteCandidatesOfTruncatedOutput]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testDecodeKeepsCompleteCandidatesOfTruncatedOutput]' passed (0.002 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testEncodeRoundTripThroughCApi]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testEncodeRoundTripThroughCApi]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testErrorsComeBackAsNativeCoreError]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testErrorsComeBackAsNativeCoreError]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testLargeAndUnicodeInput]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testLargeAndUnicodeInput]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testMalformedAndNullInputAreRejectedWithoutCrashing]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testMalformedAndNullInputAreRejectedWithoutCrashing]' passed (0.002 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testRawInvokeMatchesTheDocumentedEnvelope]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testRawInvokeMatchesTheDocumentedEnvelope]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testReasoningTextIsNotAccepted]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testReasoningTextIsNotAccepted]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testSelfTestPasses]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testSelfTestPasses]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.NativeCoreTests testSharedTruncationCorpus]' started.
+Test Case '-[OCCoreTests.NativeCoreTests testSharedTruncationCorpus]' passed (0.009 seconds).
+Test Suite 'NativeCoreTests' passed at 2026-11-25 08:22:45.276.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.016 (0.018) seconds
+Test Suite 'ProvisioningProfileTests' started at 2026-11-25 08:22:45.276.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiredProfile]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiredProfile]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiryParsing]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiryParsing]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExtractsPlistFromCmsEnvelope]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExtractsPlistFromCmsEnvelope]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testPlainXmlPlistWithoutEnvelopeIsAccepted]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testPlainXmlPlistWithoutEnvelopeIsAccepted]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsBrokenPropertyList]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsBrokenPropertyList]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsDataWithoutPropertyList]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsDataWithoutPropertyList]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testUnknownExpiryIsNotReportedAsExpiring]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testUnknownExpiryIsNotReportedAsExpiring]' passed (0.000 seconds).
+Test Suite 'ProvisioningProfileTests' passed at 2026-11-25 08:22:45.281.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.004 (0.005) seconds
+Test Suite 'TextTraitsTests' started at 2026-11-25 08:22:45.281.
+Test Case '-[OCCoreTests.TextTraitsTests testAChangeWithoutAnOwnChangeBeforeItIsTheHosts]' started.
+Test Case '-[OCCoreTests.TextTraitsTests testAChangeWithoutAnOwnChangeBeforeItIsTheHosts]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.TextTraitsTests testAnOwnChangeThatNeverGetsItsNotificationStopsMaskingAfterAWhile]' started.
+Test Case '-[OCCoreTests.TextTraitsTests testAnOwnChangeThatNeverGetsItsNotificationStopsMaskingAfterAWhile]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.TextTraitsTests testFieldsThatTakeOnlyLatinTextForceEnglishAndPadsTakeOverTheKeys]' started.
+Test Case '-[OCCoreTests.TextTraitsTests testFieldsThatTakeOnlyLatinTextForceEnglishAndPadsTakeOverTheKeys]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.TextTraitsTests testPlainTextEmailAndUrlFieldsMayUseAi]' started.
+Test Case '-[OCCoreTests.TextTraitsTests testPlainTextEmailAndUrlFieldsMayUseAi]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.TextTraitsTests testSecretAndNumericFieldsNeverGoToAi]' started.
+Test Case '-[OCCoreTests.TextTraitsTests testSecretAndNumericFieldsNeverGoToAi]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.TextTraitsTests testSentencesCapitaliseAtTheStartAfterATerminatorAndAfterANewline]' started.
+Test Case '-[OCCoreTests.TextTraitsTests testSentencesCapitaliseAtTheStartAfterATerminatorAndAfterANewline]' passed (0.002 seconds).
+Test Case '-[OCCoreTests.TextTraitsTests testTheKeyboardsOwnChangeIsNotAHostChangeEvenWhenTheProxyReportsItLate]' started.
+Test Case '-[OCCoreTests.TextTraitsTests testTheKeyboardsOwnChangeIsNotAHostChangeEvenWhenTheProxyReportsItLate]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.TextTraitsTests testTheReturnKeyWaitsForTextOnlyWhenTheHostAsksForIt]' started.
+Test Case '-[OCCoreTests.TextTraitsTests testTheReturnKeyWaitsForTextOnlyWhenTheHostAsksForIt]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.TextTraitsTests testTwoQuickInsertsAreBothOurs]' started.
+Test Case '-[OCCoreTests.TextTraitsTests testTwoQuickInsertsAreBothOurs]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.TextTraitsTests testWordsCapitaliseAfterWhiteSpaceAndAllCharactersAlways]' started.
+Test Case '-[OCCoreTests.TextTraitsTests testWordsCapitaliseAfterWhiteSpaceAndAllCharactersAlways]' passed (0.000 seconds).
+Test Suite 'TextTraitsTests' passed at 2026-11-25 08:22:45.288.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.005 (0.006) seconds
+Test Suite 'UserDictionaryTests' started at 2026-11-25 08:22:45.288.
+Test Case '-[OCCoreTests.UserDictionaryTests testInstallationFileGetsTheSyncDirectoryOnce]' started.
+Test Case '-[OCCoreTests.UserDictionaryTests testInstallationFileGetsTheSyncDirectoryOnce]' passed (0.005 seconds).
+Test Case '-[OCCoreTests.UserDictionaryTests testKeyboardDirectoriesDoNotDependOnFullAccess]' started.
+Test Case '-[OCCoreTests.UserDictionaryTests testKeyboardDirectoriesDoNotDependOnFullAccess]' passed (0.002 seconds).
+Test Case '-[OCCoreTests.UserDictionaryTests testLegacyDictionaryMovesWhenThePrivateFolderHasNone]' started.
+Test Case '-[OCCoreTests.UserDictionaryTests testLegacyDictionaryMovesWhenThePrivateFolderHasNone]' passed (0.003 seconds).
+Test Case '-[OCCoreTests.UserDictionaryTests testNothingMovesWhenThePrivateFolderAlreadyHasADictionary]' started.
+Test Case '-[OCCoreTests.UserDictionaryTests testNothingMovesWhenThePrivateFolderAlreadyHasADictionary]' passed (0.004 seconds).
+Test Case '-[OCCoreTests.UserDictionaryTests testNothingToMoveWithoutALegacyDictionary]' started.
+Test Case '-[OCCoreTests.UserDictionaryTests testNothingToMoveWithoutALegacyDictionary]' passed (0.001 seconds).
+Test Suite 'UserDictionaryTests' passed at 2026-11-25 08:22:45.304.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.015 (0.016) seconds
+Test Suite 'OCCorePackageTests.xctest' failed at 2026-11-25 08:22:45.304.
+	 Executed 112 tests, with 1 failure (1 unexpected) in 13.698 (13.734) seconds
+Test Suite 'All tests' failed at 2026-11-25 08:22:45.304.
+	 Executed 112 tests, with 1 failure (1 unexpected) in 13.698 (13.748) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.002 seconds.

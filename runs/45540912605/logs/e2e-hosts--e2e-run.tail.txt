@@ -1,0 +1,17 @@
+[e2e] install: ok (app with keyboard extension, test host)
+[ui-test] hosts: OrangeCellUITests/KeyboardUITests/testLearningAcrossTwoHostApps
+	 Executed 1 test, with 1 failure (0 unexpected) in 152.845 (152.857) seconds
+[e2e] two host apps take turns typing and learning (one dictionary, both phrases): **FAIL** (see ui-hosts logs and screenshots)
+[e2e] after the two hosts: the user dictionary folder exists with a CURRENT file: PASS (/Users/runner/Library/Developer/CoreSimulator/Devices/F92199FE-EE0C-41CB-BEE5-A31EE01E4E9E/data/Containers/Data/PluginKitPlugin/16242CB5-7456-42B8-9556-4A9B70F00E36/Library/Application Support/rime-user)
+[e2e] after the two hosts: no *.userdb.old (librime did not repair or rename the dictionary): PASS (0 found)
+[e2e] after the two hosts: user dictionary folders: 1
+[e2e] keyboard report (two hosts): userDictionaryMode=learning unhandledLetters=0 engineReadyMs=29.057979583740234 firstCandidatesMs=9224.658966064453
+[e2e] two hosts: no letter fell through to plain text: PASS (unhandledLetters=0)
+[ui-test] kill: OrangeCellUITests/KeyboardUITests/testLearningSurvivesAKillRightAfterTheCommit
+	 Executed 1 test, with 1 failure (0 unexpected) in 70.819 (70.823) seconds
+[e2e] kill -9 right after a commit (no hide, no deployment): the last word and the earlier one are both learned: **FAIL** (see ui-kill logs and screenshots)
+[e2e] after the kill: the user dictionary folder exists with a CURRENT file: PASS (/Users/runner/Library/Developer/CoreSimulator/Devices/F92199FE-EE0C-41CB-BEE5-A31EE01E4E9E/data/Containers/Data/PluginKitPlugin/16242CB5-7456-42B8-9556-4A9B70F00E36/Library/Application Support/rime-user)
+[e2e] after the kill: no *.userdb.old (librime did not repair or rename the dictionary): PASS (0 found)
+[e2e] after the kill: user dictionary folders: 1
+[e2e] memory budget: the highest keyboard footprint of 0 samples <= 55 MB: **FAIL** (highest 0 MB; after typing n/a MB)
+[e2e] failed checks: 3

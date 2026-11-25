@@ -1,0 +1,5 @@
+409:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:263: error: -[OrangeCellUITests.KeyboardUITests testRealExtensionTypesChineseAndEnglish] : failed - English mode should insert the letters directly
+411:Test Case '-[OrangeCellUITests.KeyboardUITests testRealExtensionTypesChineseAndEnglish]' failed (91.746 seconds).
+412:Test Suite 'KeyboardUITests' failed at 2026-11-24 19:45:24.328.
+414:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-24 19:45:24.329.
+416:Test Suite 'Selected tests' failed at 2026-11-24 19:45:24.329.

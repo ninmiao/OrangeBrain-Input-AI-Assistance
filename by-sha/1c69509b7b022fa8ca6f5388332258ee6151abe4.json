@@ -1,0 +1,16 @@
+{
+  "sha": "1c69509b7b022fa8ca6f5388332258ee6151abe4",
+  "runs": {
+    "iOS CI": {
+      "run_id": 45478953299,
+      "path": "runs/45478953299",
+      "conclusion": "success",
+      "published_at": "2026-11-24T20:36:04Z"
+    }
+  },
+  "run_id": 45478953299,
+  "path": "runs/45478953299",
+  "workflow": "iOS CI",
+  "conclusion": "success",
+  "published_at": "2026-11-24T20:36:04Z"
+}

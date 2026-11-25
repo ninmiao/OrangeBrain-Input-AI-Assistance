@@ -1,0 +1,6 @@
+toolchain	0	8
+fetch-deps	0	4
+xcodegen-install	0	1
+xcodegen	0	0
+build-device	0	97
+make-ipa	0	8

@@ -1,0 +1,2 @@
+Version: 2.48.0
+xcodegen 2.48.0 installed in /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.tools/xcodegen/xcodegen/bin

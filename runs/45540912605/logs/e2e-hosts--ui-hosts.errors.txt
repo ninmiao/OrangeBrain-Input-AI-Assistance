@@ -1,0 +1,5 @@
+435:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Tests/OrangeCellUITests/KeyboardUITests.swift:283: error: -[OrangeCellUITests.KeyboardUITests testLearningAcrossTwoHostApps] : failed - host 2: the second candidate should have inserted 我要吃
+437:Test Case '-[OrangeCellUITests.KeyboardUITests testLearningAcrossTwoHostApps]' failed (152.845 seconds).
+438:Test Suite 'KeyboardUITests' failed at 2026-11-25 03:49:51.247.
+440:Test Suite 'OrangeCellUITests.xctest' failed at 2026-11-25 03:49:51.251.
+442:Test Suite 'Selected tests' failed at 2026-11-25 03:49:51.252.

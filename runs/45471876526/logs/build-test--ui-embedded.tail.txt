@@ -1,0 +1,30 @@
+    t =    13.61s     Check for interrupting elements affecting "oc.key.o" Button
+    t =    13.66s     Synthesize event
+    t =    13.95s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    13.95s Checking existence of `"oc.candidate.0" Any`
+    t =    14.29s Added attachment named 'embedded-sentence-light'
+    t =    14.29s Tap "oc.key.space" Any
+    t =    14.29s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    14.29s     Find the "oc.key.space" Any
+    t =    14.46s     Check for interrupting elements affecting "oc.key.space" Button
+    t =    14.51s     Synthesize event
+    t =    14.81s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    15.17s Find the "oc.testhost.field" TextView
+    t =    15.21s Tear Down
+Test Case '-[OrangeCellUITests.EmbeddedKeyboardUITests testSentenceIsCommittedBySpace]' passed (15.443 seconds).
+Test Suite 'EmbeddedKeyboardUITests' passed at 2026-11-24 19:45:31.955.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 286.620 (286.629) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-24 19:45:31.956.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 286.620 (286.630) seconds
+Test Suite 'Selected tests' passed at 2026-11-24 19:45:31.957.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 286.620 (286.631) seconds
+2026-11-24 19:45:33.532 xcodebuild[4131:16777] [MT] IDETestOperationsObserverDebug: 403.123 elapsed -- Testing started completed.
+2026-11-24 19:45:33.532 xcodebuild[4131:16777] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-24 19:45:33.532 xcodebuild[4131:16777] [MT] IDETestOperationsObserverDebug: 403.123 sec, +403.123 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-embedded.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

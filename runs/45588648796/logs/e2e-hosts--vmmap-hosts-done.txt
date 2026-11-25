@@ -1,0 +1,68 @@
+Process:         OrangeCellKeyboard [16368]
+Path:            /Users/runner/Library/Developer/CoreSimulator/Devices/DD961387-4080-47C5-AD4F-31838B502F39/data/Containers/Bundle/Application/8A133355-1E1E-4659-A378-EF1455C6C006/OrangeCell.app/PlugIns/OrangeCellKeyboard.appex/OrangeCellKeyboard
+Load Address:    0x102a18000
+Identifier:      io.github.ninmiao.orangecell.keyboard
+Version:         0.3.23 (23)
+Code Type:       ARM64
+Platform:        iOS Simulator
+Parent Process:  launchd_sim [9018]
+Target Type:     corpse
+
+Date/Time:       2026-11-25 10:01:25.463 +0000
+Launch Time:     2026-11-25 10:00:33.449 +0000
+OS Version:      macOS 26.7.2 (25G332)
+Report Version:  7
+Analysis Tool:   /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/usr/bin/vmmap
+Analysis Tool Version:  iOS Simulator 26.5 (23F77)
+
+Physical footprint:         47.8M
+Physical footprint (peak):  48.5M
+Idle exit:                  untracked
+----
+
+ReadOnly portion of Libraries: Total=1.8G resident=238.9M(13%) swapped_out_or_unallocated=1.6G(87%)
+Writable regions: Total=45.1M written=1638K(4%) resident=12.4M(27%) swapped_out=6528K(14%) unallocated=26.4M(58%)
+
+                                VIRTUAL RESIDENT    DIRTY  SWAPPED VOLATILE   NONVOL    EMPTY   REGION 
+REGION TYPE                        SIZE     SIZE     SIZE     SIZE     SIZE     SIZE     SIZE    COUNT (non-coalesced) 
+===========                     ======= ========    =====  ======= ========   ======    =====  ======= 
+Activity Tracing                   256K      32K      32K       0K       0K      32K       0K        1 
+CG raster data                    1504K       0K       0K      96K       0K       0K       0K        5 
+CoreAnimation                     4752K    1392K       0K    1392K       0K    1392K    3168K       96 
+Foundation                          16K       0K       0K      16K       0K       0K       0K        1 
+Kernel Alloc Once                   32K      16K      16K       0K       0K       0K       0K        1 
+MALLOC guard page                   32K       0K       0K       0K       0K       0K       0K        2 
+MALLOC metadata                    704K     208K     208K      16K       0K       0K       0K        4 
+MALLOC_NANO metadata                32K      16K      16K       0K       0K       0K       0K        1         see MALLOC ZONE table below
+MALLOC_SMALL                      24.0M    9152K    8944K    4960K       0K       0K       0K       67         see MALLOC ZONE table below
+MALLOC_SMALL (empty)                32K       0K       0K       0K       0K       0K       0K        2         see MALLOC ZONE table below
+MALLOC_TINY                       4096K     128K     128K      64K       0K       0K       0K        1         see MALLOC ZONE table below
+STACK GUARD                       56.1M       0K       0K       0K       0K       0K       0K        5 
+Stack                             10.1M     144K     144K      64K       0K       0K       0K        5 
+VM_ALLOCATE                         16K       0K       0K      16K       0K       0K       0K        1 
+__AUTH_CONST                        32K       0K       0K      32K       0K       0K       0K        1 
+__DATA                            53.3M    9685K    2691K    4574K       0K       0K       0K      936 
+__DATA_CONST                     115.9M    46.3M    1686K    10.0M       0K       0K       0K      969 
+__DATA_DIRTY                       155K     123K     123K      32K       0K       0K       0K       13 
+__FONT_DATA                        2352       0K       0K       0K       0K       0K       0K        1 
+__LINKEDIT                       716.3M    2176K       0K       0K       0K       0K       0K       70 
+__OBJC_RO                         55.6M    11.7M       0K       0K       0K       0K       0K        1 
+__OBJC_RW                         2332K     972K      28K       0K       0K       0K       0K        1 
+__TEXT                             1.1G   236.8M       0K       0K       0K       0K       0K      982 
+__TPRO_CONST                       164K       4K       4K      48K       0K       0K       0K        3 
+dyld private memory                3.0G     496K     496K    15.0M       0K       0K       0K       76 
+mapped file                      481.4M    9312K       0K       0K       0K       0K       0K       21 
+page table in kernel              1638K    1638K    1638K       0K       0K       0K       0K        1 
+shared memory                       48K      16K      16K       0K       0K       0K       0K        2 
+unused but dirty shlib __DATA     28.4M    3181K     108K    4047K       0K       0K       0K      546 
+===========                     ======= ========    =====  ======= ========   ======    =====  ======= 
+TOTAL                              5.6G   332.6M    15.9M    40.0M       0K    1424K    3168K     3815 
+
+                                 VIRTUAL   RESIDENT      DIRTY    SWAPPED ALLOCATION      BYTES DIRTY+SWAP          REGION
+MALLOC ZONE                         SIZE       SIZE       SIZE       SIZE      COUNT  ALLOCATED  FRAG SIZE  % FRAG   COUNT
+===========                      =======  =========  =========  =========  =========  =========  =========  ======  ======
+DefaultMallocZone_0x103a6c000      27.9M      8928K      8752K      4928K      84911      10.9M      2514K     19%      40
+QuartzCore_0x103b18000              768K       528K       496K        96K       2547       216K       376K     64%      33
+===========                      =======  =========  =========  =========  =========  =========  =========  ======  ======
+TOTAL                              28.7M      9456K      9248K      5024K      87458      11.1M      2890K     21%      73
+

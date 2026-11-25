@@ -1,0 +1,11 @@
+keyboardTop pixels=461.0 tree=478.0 width=402.0
+bottom row key centres: [28, 83, 208, 353]
+warm-up: field before= after=
+helper footprint-fullaccess: answered
+helper deploy: answered
+settle: field before=拟好 after=拟好
+helper kill-keyboard: answered
+keyboardTop pixels=461.0 tree=478.0 width=402.0
+bottom row key centres: [28, 83, 208, 353]
+warm-up: field before= after=
+helper footprint-restarted: answered

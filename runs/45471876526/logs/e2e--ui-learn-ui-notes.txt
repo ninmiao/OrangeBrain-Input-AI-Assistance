@@ -1,0 +1,5 @@
+keyboardTop pixels=517.0 tree=534.0 width=402.0
+bottom row key centres: [28, 83, 161, 257, 353]
+helper footprint-learned: answered
+helper deploy: answered
+field=拟好拟好

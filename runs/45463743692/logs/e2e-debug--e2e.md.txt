@@ -1,0 +1,5 @@
+### Simulator end-to-end (Debug, typing)
+
+| step | result |
+| --- | --- |
+| products | missing OrangeCell.app or OCTestHost.app in /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Debug-iphonesimulator |

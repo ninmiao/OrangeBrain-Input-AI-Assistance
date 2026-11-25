@@ -1,0 +1,40 @@
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found JNI: /usr/lib/jvm/java-21-openjdk-amd64/include  found components: AWT JVM 
+-- Configuring done (0.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/native-core
+[ 12%] Building CXX object CMakeFiles/orangecell_core.dir/src/c_api.cpp.o
+[ 37%] Building CXX object CMakeFiles/orangecell_core.dir/src/jni.cpp.o
+[ 37%] Building CXX object CMakeFiles/orangecell_core_test.dir/tests/core_test.cpp.o
+[ 50%] Building CXX object CMakeFiles/orangecell_core.dir/src/core.cpp.o
+[ 62%] Building CXX object CMakeFiles/orangecell_core_test.dir/src/core.cpp.o
+[ 75%] Building CXX object CMakeFiles/orangecell_core_test.dir/src/c_api.cpp.o
+[ 87%] Linking CXX shared library liborangecell_core.so
+[ 87%] Built target orangecell_core
+[100%] Linking CXX executable orangecell_core_test
+[100%] Built target orangecell_core_test
+Internal ctest changing into directory: /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/native-core
+UpdateCTestConfiguration  from :/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/native-core/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/native-core/DartConfiguration.tcl
+Test project /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/native-core
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: native_core
+
+1: Test command: /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/native-core/orangecell_core_test
+1: Working Directory: /__w/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/native-core
+1: Test timeout computed to be: 10000000
+1: 780 native truncation/format/envelope cases passed
+1/1 Test #1: native_core ......................   Passed    0.32 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.32 sec

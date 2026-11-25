@@ -1,0 +1,40 @@
+Test Suite 'NativeCoreTests' passed at 2026-11-25 03:53:04.839.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.008 (0.009) seconds
+Test Suite 'ProvisioningProfileTests' started at 2026-11-25 03:53:04.839.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiredProfile]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiredProfile]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiryParsing]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiryParsing]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExtractsPlistFromCmsEnvelope]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testExtractsPlistFromCmsEnvelope]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testPlainXmlPlistWithoutEnvelopeIsAccepted]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testPlainXmlPlistWithoutEnvelopeIsAccepted]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsBrokenPropertyList]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsBrokenPropertyList]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsDataWithoutPropertyList]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsDataWithoutPropertyList]' passed (0.000 seconds).
+Test Case '-[OCCoreTests.ProvisioningProfileTests testUnknownExpiryIsNotReportedAsExpiring]' started.
+Test Case '-[OCCoreTests.ProvisioningProfileTests testUnknownExpiryIsNotReportedAsExpiring]' passed (0.000 seconds).
+Test Suite 'ProvisioningProfileTests' passed at 2026-11-25 03:53:04.843.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.003 (0.004) seconds
+Test Suite 'UserDictionaryTests' started at 2026-11-25 03:53:04.843.
+Test Case '-[OCCoreTests.UserDictionaryTests testInstallationFileGetsTheSyncDirectoryOnce]' started.
+Test Case '-[OCCoreTests.UserDictionaryTests testInstallationFileGetsTheSyncDirectoryOnce]' passed (0.003 seconds).
+Test Case '-[OCCoreTests.UserDictionaryTests testKeyboardDirectoriesDoNotDependOnFullAccess]' started.
+Test Case '-[OCCoreTests.UserDictionaryTests testKeyboardDirectoriesDoNotDependOnFullAccess]' passed (0.001 seconds).
+Test Case '-[OCCoreTests.UserDictionaryTests testLegacyDictionaryMovesWhenThePrivateFolderHasNone]' started.
+Test Case '-[OCCoreTests.UserDictionaryTests testLegacyDictionaryMovesWhenThePrivateFolderHasNone]' passed (0.003 seconds).
+Test Case '-[OCCoreTests.UserDictionaryTests testNothingMovesWhenThePrivateFolderAlreadyHasADictionary]' started.
+Test Case '-[OCCoreTests.UserDictionaryTests testNothingMovesWhenThePrivateFolderAlreadyHasADictionary]' passed (0.003 seconds).
+Test Case '-[OCCoreTests.UserDictionaryTests testNothingToMoveWithoutALegacyDictionary]' started.
+Test Case '-[OCCoreTests.UserDictionaryTests testNothingToMoveWithoutALegacyDictionary]' passed (0.001 seconds).
+Test Suite 'UserDictionaryTests' passed at 2026-11-25 03:53:04.855.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.010 (0.011) seconds
+Test Suite 'OCCorePackageTests.xctest' passed at 2026-11-25 03:53:04.855.
+	 Executed 45 tests, with 0 failures (0 unexpected) in 0.160 (0.169) seconds
+Test Suite 'All tests' passed at 2026-11-25 03:53:04.855.
+	 Executed 45 tests, with 0 failures (0 unexpected) in 0.160 (0.175) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

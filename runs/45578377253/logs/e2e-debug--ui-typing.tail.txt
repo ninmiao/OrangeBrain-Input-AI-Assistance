@@ -1,0 +1,30 @@
+    t =    72.92s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (341.7, 627.0)
+    t =    72.92s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    72.93s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    72.99s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    73.03s     Synthesize event
+    t =    73.04s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    73.08s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    73.13s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    73.46s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    73.72s Find the "oc.testhost.field" TextField
+    t =    73.98s Added attachment named 'system-5-english'
+OCUI helper footprint-typing: answered
+    t =   171.01s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testRealExtensionTypesChineseAndEnglish]' passed (174.483 seconds).
+Test Suite 'KeyboardUITests' passed at 2026-11-25 08:56:27.400.
+	 Executed 1 test, with 0 failures (0 unexpected) in 174.483 (174.487) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-25 08:56:27.400.
+	 Executed 1 test, with 0 failures (0 unexpected) in 174.483 (174.488) seconds
+Test Suite 'Selected tests' passed at 2026-11-25 08:56:27.401.
+	 Executed 1 test, with 0 failures (0 unexpected) in 174.483 (174.489) seconds
+2026-11-25 08:56:30.110 xcodebuild[9309:34312] [MT] IDETestOperationsObserverDebug: 276.034 elapsed -- Testing started completed.
+2026-11-25 08:56:30.112 xcodebuild[9309:34312] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 08:56:30.114 xcodebuild[9309:34312] [MT] IDETestOperationsObserverDebug: 276.034 sec, +276.034 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-typing.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

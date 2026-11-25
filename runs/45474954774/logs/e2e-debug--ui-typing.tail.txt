@@ -1,0 +1,30 @@
+    t =    62.79s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (341.7, 607.0)
+    t =    62.79s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    62.80s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    62.85s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    62.90s     Synthesize event
+    t =    62.91s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    62.94s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    63.04s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    63.37s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    63.64s Find the "oc.testhost.field" TextField
+    t =    63.87s Added attachment named 'system-5-english'
+OCUI helper footprint-typing: answered
+    t =    90.25s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testRealExtensionTypesChineseAndEnglish]' passed (91.076 seconds).
+Test Suite 'KeyboardUITests' passed at 2026-11-24 20:06:32.980.
+	 Executed 1 test, with 0 failures (0 unexpected) in 91.076 (91.083) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-24 20:06:32.981.
+	 Executed 1 test, with 0 failures (0 unexpected) in 91.076 (91.083) seconds
+Test Suite 'Selected tests' passed at 2026-11-24 20:06:32.982.
+	 Executed 1 test, with 0 failures (0 unexpected) in 91.076 (91.084) seconds
+2026-11-24 20:06:35.220 xcodebuild[7955:31908] [MT] IDETestOperationsObserverDebug: 146.957 elapsed -- Testing started completed.
+2026-11-24 20:06:35.220 xcodebuild[7955:31908] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-24 20:06:35.220 xcodebuild[7955:31908] [MT] IDETestOperationsObserverDebug: 146.957 sec, +146.957 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-typing.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

@@ -1,0 +1,30 @@
+    t =    56.88s Added attachment named 'system-learn-2-learned'
+    t =    56.89s Tap Target Application 'io.github.ninmiao.orangecell.testhost'[0.00, 0.00] -> (35.0, 503.0)
+    t =    56.89s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    56.90s     Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    56.99s     Check for interrupting elements affecting "OCTestHost" Application
+    t =    57.11s     Synthesize event
+    t =    57.13s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    57.19s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    57.26s         Find the Target Application 'io.github.ninmiao.orangecell.testhost'
+    t =    57.66s     Wait for io.github.ninmiao.orangecell.testhost to idle
+    t =    57.66s Find the "oc.testhost.field" TextField
+OCUI helper footprint-learned: answered
+    t =   101.80s Tear Down
+Test Case '-[OrangeCellUITests.KeyboardUITests testLearnAPhrase]' passed (102.102 seconds).
+Test Suite 'KeyboardUITests' passed at 2026-11-25 09:30:53.663.
+	 Executed 1 test, with 0 failures (0 unexpected) in 102.102 (102.107) seconds
+Test Suite 'OrangeCellUITests.xctest' passed at 2026-11-25 09:30:53.664.
+	 Executed 1 test, with 0 failures (0 unexpected) in 102.102 (102.108) seconds
+Test Suite 'Selected tests' passed at 2026-11-25 09:30:53.664.
+	 Executed 1 test, with 0 failures (0 unexpected) in 102.102 (102.109) seconds
+2026-11-25 09:30:55.478 xcodebuild[16309:55489] [MT] IDETestOperationsObserverDebug: 119.340 elapsed -- Testing started completed.
+2026-11-25 09:30:55.478 xcodebuild[16309:55489] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-25 09:30:55.478 xcodebuild[16309:55489] [MT] IDETestOperationsObserverDebug: 119.340 sec, +119.340 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/_temp/results/ui-learn.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

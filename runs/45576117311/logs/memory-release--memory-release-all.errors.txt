@@ -1,0 +1,2 @@
+17:*** If you believe this error represents a bug, please attach the result bundle at /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Logs/Test/Test-OrangeCell-2026.11.25_08-28-26-+0000.xcresult
+29:** TEST EXECUTE FAILED **

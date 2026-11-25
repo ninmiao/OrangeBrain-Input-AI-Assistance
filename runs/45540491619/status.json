@@ -1,0 +1,201 @@
+{
+  "run_id": 45540491619,
+  "run_number": "16",
+  "workflow": "iOS CI",
+  "event": "push",
+  "branch": "ios",
+  "head_sha": "7a95d06ed3bbef8a2dc33e3567b3eff8a482e389",
+  "conclusion": "failure",
+  "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45540491619",
+  "published_at": "2026-11-25T03:32:16Z",
+  "jobs": [
+    {
+      "name": "core-linux",
+      "id": 138957522084,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-25T03:30:51Z",
+      "completed_at": "2026-11-25T03:32:07Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45540491619/job/138957522084",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Prepare",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install build tools",
+          "conclusion": "success"
+        },
+        {
+          "name": "native-core C++ test (CMake, includes the C API cases)",
+          "conclusion": "success"
+        },
+        {
+          "name": "OCCore swift test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Summary",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload job results",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "rime-data",
+      "id": 138957522421,
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-25T03:30:52Z",
+      "completed_at": "2026-11-25T03:31:20Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45540491619/job/138957522421",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ./.github/actions/ios-mac-setup",
+          "conclusion": "failure"
+        },
+        {
+          "name": "Cache the compiled data",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Compile the Rime data",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Verify the data against the pinned librime files",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Record the size of what was built",
+          "conclusion": "success"
+        },
+        {
+          "name": "Publish the data for the other jobs",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Upload job results",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run ./.github/actions/ios-mac-setup",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "e2e-hosts",
+      "id": 138957720011,
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-25T03:31:20Z",
+      "completed_at": "2026-11-25T03:31:20Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45540491619/job/138957720011",
+      "steps": []
+    },
+    {
+      "name": "memory-release",
+      "id": 138957720058,
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-25T03:31:20Z",
+      "completed_at": "2026-11-25T03:31:20Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45540491619/job/138957720058",
+      "steps": []
+    },
+    {
+      "name": "e2e",
+      "id": 138957720267,
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-25T03:31:20Z",
+      "completed_at": "2026-11-25T03:31:20Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45540491619/job/138957720267",
+      "steps": []
+    },
+    {
+      "name": "ipa-device",
+      "id": 138957720331,
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-25T03:31:20Z",
+      "completed_at": "2026-11-25T03:31:20Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45540491619/job/138957720331",
+      "steps": []
+    },
+    {
+      "name": "build-test",
+      "id": 138957720524,
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-25T03:31:20Z",
+      "completed_at": "2026-11-25T03:31:20Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45540491619/job/138957720524",
+      "steps": []
+    },
+    {
+      "name": "e2e-debug",
+      "id": 138957721365,
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-25T03:31:20Z",
+      "completed_at": "2026-11-25T03:31:20Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45540491619/job/138957721365",
+      "steps": []
+    },
+    {
+      "name": "release",
+      "id": 138958025224,
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-25T03:32:07Z",
+      "completed_at": "2026-11-25T03:32:07Z",
+      "url": "https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45540491619/job/138958025224",
+      "steps": []
+    }
+  ]
+}

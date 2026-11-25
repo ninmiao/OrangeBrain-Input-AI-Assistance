@@ -1,0 +1,6 @@
+keyboardTop pixels=461.0 tree=478.0 width=402.0
+bottom row key centres: [28, 83, 208, 353]
+warm-up: field before= after=
+helper footprint-fullaccess: answered
+helper deploy: answered
+field=拟好waochihuoguo 

@@ -1,0 +1,69 @@
+{
+  "appVersion" : "0.2.21 (21)",
+  "bundleIdentifier" : "io.github.ninmiao.orangecell.keyboard",
+  "containerPath" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/4A4EAE5B-C0E1-4A36-9885-C6B5557F79D6\/data\/Containers\/Shared\/AppGroup\/581A3E86-B4B2-4298-8022-3F7DCFF0F1A8",
+  "containerWritable" : true,
+  "engineReadyMs" : 89.59400653839111,
+  "firstCandidatesMs" : 8588.916063308716,
+  "footprintMB" : 48.3,
+  "fullAccess" : true,
+  "generatedAt" : "2026-11-25T09:00:54Z",
+  "groupNominal" : "group.io.github.ninmiao.orangecell",
+  "groupResolved" : "group.io.github.ninmiao.orangecell",
+  "groupSource" : "nominalNoProfile",
+  "keyStorage" : [
+    {
+      "backend" : "keychain-default",
+      "crossProcessReadOK" : false,
+      "detail" : "sample not found"
+    },
+    {
+      "backend" : "encrypted-file",
+      "crossProcessReadOK" : true,
+      "detail" : ""
+    }
+  ],
+  "notes" : [
+    "no embedded.mobileprovision (simulator or test bundle)"
+  ],
+  "ocCoreOK" : true,
+  "peerProbe" : {
+    "bundleIdentifier" : "io.github.ninmiao.orangecell",
+    "groupIdentifier" : "group.io.github.ninmiao.orangecell",
+    "nonce" : "B47CEA25-EF60-4422-9D60-20DA0EBD2DDB",
+    "processID" : 6961,
+    "role" : "app",
+    "writtenAt" : "2026-11-25T08:51:03Z"
+  },
+  "probeWritten" : true,
+  "profileGroups" : [
+
+  ],
+  "rimeDataBuiltWithLibrime" : "1.17.0",
+  "rimeDataBytes" : 59178777,
+  "rimeDataDictionary" : "wanxiang v18.1.13",
+  "rimeDataSchema" : "orangecell_wanxiang",
+  "rimeDictionaryBytes" : 58714452,
+  "rimeModules" : [
+    "default",
+    "core",
+    "dict",
+    "gears",
+    "levers",
+    "deployer",
+    "lua",
+    "octagram",
+    "grammar",
+    "predict",
+    "qjs"
+  ],
+  "rimeRunning" : true,
+  "rimeVersion" : "1.17.0",
+  "role" : "keyboard",
+  "stagingDirectory" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/4A4EAE5B-C0E1-4A36-9885-C6B5557F79D6\/data\/Containers\/Shared\/AppGroup\/581A3E86-B4B2-4298-8022-3F7DCFF0F1A8\/rime-build",
+  "unhandledLetters" : 0,
+  "userBuild" : "none",
+  "userDataDirectory" : "\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/4A4EAE5B-C0E1-4A36-9885-C6B5557F79D6\/data\/Containers\/Data\/PluginKitPlugin\/831268C6-C681-4A7E-B18A-554986B9A40D\/Library\/Application Support\/rime-user",
+  "userDataShared" : false,
+  "userDictionaryMode" : "learning"
+}

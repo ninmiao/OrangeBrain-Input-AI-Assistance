@@ -1,0 +1,400 @@
+2026-11-24T18:59:22.5236270Z     
+2026-11-24T18:59:22.5236580Z     Signing Identity:     "Sign to Run Locally"
+2026-11-24T18:59:22.5236910Z     
+2026-11-24T18:59:22.5237740Z     /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Debug-iphonesimulator/OrangeCellUITests-Runner.app
+2026-11-24T18:59:22.5809860Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Debug-iphonesimulator/OrangeCellUITests-Runner.app: replacing existing signature
+2026-11-24T18:59:22.5813010Z 
+2026-11-24T18:59:22.5814120Z RegisterExecutionPolicyException /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Debug-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-24T18:59:22.5815390Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-24T18:59:22.5816440Z     builtin-RegisterExecutionPolicyException /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Debug-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest
+2026-11-24T18:59:22.5817210Z 
+2026-11-24T18:59:22.5817930Z Touch /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Debug-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest (in target 'OrangeCellUITests' from project 'OrangeCell')
+2026-11-24T18:59:22.5818950Z     cd /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios
+2026-11-24T18:59:22.5819850Z     /usr/bin/touch -c /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Build/Products/Debug-iphonesimulator/OrangeCellUITests-Runner.app/PlugIns/OrangeCellUITests.xctest
+2026-11-24T18:59:22.5820530Z 
+2026-11-24T18:59:22.6060350Z ** TEST BUILD SUCCEEDED **
+2026-11-24T18:59:22.6138370Z 
+2026-11-24T18:59:22.6794210Z ##[endgroup]
+2026-11-24T18:59:22.7232600Z ##[group]Run bash ios/scripts/ci_step.sh uitests-embedded -- bash ios/scripts/ui-test.sh embedded OrangeCellUITests/EmbeddedKeyboardUITests
+2026-11-24T18:59:22.7233640Z [36;1mbash ios/scripts/ci_step.sh uitests-embedded -- bash ios/scripts/ui-test.sh embedded OrangeCellUITests/EmbeddedKeyboardUITests[0m
+2026-11-24T18:59:22.8164550Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-24T18:59:22.8164900Z env:
+2026-11-24T18:59:22.8165130Z   OC_VERSION: 0.2.10
+2026-11-24T18:59:22.8165360Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-24T18:59:22.8165930Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-24T18:59:22.8166470Z   SIM_UDID: D5562468-1806-45B6-A21B-C897205B3886
+2026-11-24T18:59:22.8166960Z   DERIVED_DATA: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd
+2026-11-24T18:59:22.8167900Z   OC_RIME_SHARED: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/.rime-data/rime-shared
+2026-11-24T18:59:22.8168470Z ##[endgroup]
+2026-11-24T18:59:22.8659140Z ##[group]uitests-embedded
+2026-11-24T18:59:22.8846360Z [ui-test] embedded: OrangeCellUITests/EmbeddedKeyboardUITests
+2026-11-24T19:08:57.2964090Z 	 Executed 9 tests, with 1 failure (0 unexpected) in 352.411 (352.423) seconds
+2026-11-24T19:08:57.3024150Z ##[endgroup]
+2026-11-24T19:08:57.3658670Z ##[error]step 'uitests-embedded' failed with exit code 65
+2026-11-24T19:08:57.3818380Z ##[error]Process completed with exit code 65.
+2026-11-24T19:08:57.4207360Z ##[group]Run export TEST_RUNNER_OC_INFO_FILE="$CI_OUT/logs/ocinfo.txt"
+2026-11-24T19:08:57.4208220Z [36;1mexport TEST_RUNNER_OC_INFO_FILE="$CI_OUT/logs/ocinfo.txt"[0m
+2026-11-24T19:08:57.4212750Z [36;1mexport TEST_RUNNER_OC_RIME_SHARED="$GITHUB_WORKSPACE/ios/.rime-data/rime-shared"[0m
+2026-11-24T19:08:57.4213400Z [36;1mbash ios/scripts/ci_step.sh memory-debug-minimal -- xcodebuild test-without-building \[0m
+2026-11-24T19:08:57.4214230Z [36;1m  -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Debug \[0m
+2026-11-24T19:08:57.4215030Z [36;1m  -destination "id=$SIM_UDID" -derivedDataPath build/dd \[0m
+2026-11-24T19:08:57.4215680Z [36;1m  -only-testing:OrangeCellTests/MemoryBudgetTests[0m
+2026-11-24T19:08:57.4661600Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-24T19:08:57.4662230Z env:
+2026-11-24T19:08:57.4662560Z   OC_VERSION: 0.2.10
+2026-11-24T19:08:57.4663600Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-24T19:08:57.4664690Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-24T19:08:57.4665430Z   SIM_UDID: D5562468-1806-45B6-A21B-C897205B3886
+2026-11-24T19:08:57.4666020Z ##[endgroup]
+2026-11-24T19:08:57.7727000Z ##[group]memory-debug-minimal
+2026-11-24T19:08:59.4475290Z Command line invocation:
+2026-11-24T19:08:59.4478600Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Debug -destination id=D5562468-1806-45B6-A21B-C897205B3886 -derivedDataPath build/dd "-only-testing:OrangeCellTests/MemoryBudgetTests"
+2026-11-24T19:08:59.4485680Z 
+2026-11-24T19:09:00.7490700Z Resolve Package Graph
+2026-11-24T19:09:05.0814470Z 
+2026-11-24T19:09:05.0837720Z 
+2026-11-24T19:09:05.0840770Z Resolved source packages:
+2026-11-24T19:09:05.0842110Z   OCCore: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore
+2026-11-24T19:09:05.0843830Z   OCRime: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCRime
+2026-11-24T19:09:05.0845750Z   OCKeyboardUI: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCKeyboardUI
+2026-11-24T19:09:05.0846440Z 
+2026-11-24T19:10:04.8253250Z Test Suite 'Selected tests' started at 2026-11-24 19:10:04.671.
+2026-11-24T19:10:04.8388010Z Test Suite 'OrangeCellTests.xctest' started at 2026-11-24 19:10:04.671.
+2026-11-24T19:10:04.8394720Z Test Suite 'MemoryBudgetTests' started at 2026-11-24 19:10:04.672.
+2026-11-24T19:10:04.8408010Z Test Case '-[OrangeCellTests.MemoryBudgetTests testFootprintStagesWithTheShippedDictionary]' started.
+2026-11-24T19:10:04.8422640Z OCINFO memory.minimal.0-baseline=22.4
+2026-11-24T19:10:04.8900640Z OCINFO memory.minimal.1-engine-and-session=22.7
+2026-11-24T19:10:05.0082500Z OCINFO memory.minimal.2-first-sentence-typed=22.7
+2026-11-24T19:10:05.0185980Z OCINFO memory.minimal.3-committed=22.7
+2026-11-24T19:10:05.4802630Z OCINFO memory.minimal.4-five-more-phrases=22.7
+2026-11-24T19:10:05.4808290Z OCINFO memory.minimal.5-stopped=22.5
+2026-11-24T19:10:05.5038180Z Test Case '-[OrangeCellTests.MemoryBudgetTests testFootprintStagesWithTheShippedDictionary]' passed (0.813 seconds).
+2026-11-24T19:10:05.5048240Z Test Suite 'MemoryBudgetTests' passed at 2026-11-24 19:10:05.487.
+2026-11-24T19:10:05.5049570Z 	 Executed 1 test, with 0 failures (0 unexpected) in 0.813 (0.815) seconds
+2026-11-24T19:10:05.5052390Z Test Suite 'OrangeCellTests.xctest' passed at 2026-11-24 19:10:05.488.
+2026-11-24T19:10:05.5055560Z 	 Executed 1 test, with 0 failures (0 unexpected) in 0.813 (0.816) seconds
+2026-11-24T19:10:05.5057110Z Test Suite 'Selected tests' passed at 2026-11-24 19:10:05.488.
+2026-11-24T19:10:05.5120830Z 	 Executed 1 test, with 0 failures (0 unexpected) in 0.813 (0.817) seconds
+2026-11-24T19:10:05.9486880Z 2026-11-24 19:10:05.948 xcodebuild[17487:58019] [MT] IDETestOperationsObserverDebug: 57.028 elapsed -- Testing started completed.
+2026-11-24T19:10:05.9490330Z 2026-11-24 19:10:05.948 xcodebuild[17487:58019] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-24T19:10:05.9492750Z 2026-11-24 19:10:05.948 xcodebuild[17487:58019] [MT] IDETestOperationsObserverDebug: 57.028 sec, +57.028 sec -- end
+2026-11-24T19:10:06.1311300Z 
+2026-11-24T19:10:06.1314060Z Test session results, code coverage, and logs:
+2026-11-24T19:10:06.1317380Z 	/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Logs/Test/Test-OrangeCell-2026.11.24_19-09-05-+0000.xcresult
+2026-11-24T19:10:06.1319660Z 
+2026-11-24T19:10:06.1344620Z ** TEST EXECUTE SUCCEEDED **
+2026-11-24T19:10:06.1346430Z 
+2026-11-24T19:10:09.4375630Z Testing started
+2026-11-24T19:10:09.4381160Z ##[endgroup]
+2026-11-24T19:10:09.4956210Z ##[group]Run export TEST_RUNNER_OC_INFO_FILE="$CI_OUT/logs/ocinfo.txt"
+2026-11-24T19:10:09.4957130Z [36;1mexport TEST_RUNNER_OC_INFO_FILE="$CI_OUT/logs/ocinfo.txt"[0m
+2026-11-24T19:10:09.4957680Z [36;1mexport TEST_RUNNER_OC_RIME_SHARED="$GITHUB_WORKSPACE/ios/.rime-data/rime-shared"[0m
+2026-11-24T19:10:09.4958240Z [36;1mexport TEST_RUNNER_OC_RIME_MODULES=all[0m
+2026-11-24T19:10:09.4958750Z [36;1mbash ios/scripts/ci_step.sh memory-debug-all -- xcodebuild test-without-building \[0m
+2026-11-24T19:10:09.4959240Z [36;1m  -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Debug \[0m
+2026-11-24T19:10:09.4959660Z [36;1m  -destination "id=$SIM_UDID" -derivedDataPath build/dd \[0m
+2026-11-24T19:10:09.4960180Z [36;1m  -only-testing:OrangeCellTests/MemoryBudgetTests[0m
+2026-11-24T19:10:09.7418150Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-24T19:10:09.7419010Z env:
+2026-11-24T19:10:09.7419740Z   OC_VERSION: 0.2.10
+2026-11-24T19:10:09.7420520Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-24T19:10:09.7422660Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-24T19:10:09.7423190Z   SIM_UDID: D5562468-1806-45B6-A21B-C897205B3886
+2026-11-24T19:10:09.7423510Z ##[endgroup]
+2026-11-24T19:10:09.9148710Z ##[group]memory-debug-all
+2026-11-24T19:10:20.0153350Z Command line invocation:
+2026-11-24T19:10:20.0154900Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Debug -destination id=D5562468-1806-45B6-A21B-C897205B3886 -derivedDataPath build/dd "-only-testing:OrangeCellTests/MemoryBudgetTests"
+2026-11-24T19:10:20.0156650Z 
+2026-11-24T19:10:20.6924860Z Resolve Package Graph
+2026-11-24T19:10:24.3425750Z 
+2026-11-24T19:10:24.3445030Z 
+2026-11-24T19:10:24.3448230Z Resolved source packages:
+2026-11-24T19:10:24.3450390Z   OCCore: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore
+2026-11-24T19:10:24.3451520Z   OCKeyboardUI: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCKeyboardUI
+2026-11-24T19:10:24.3452460Z   OCRime: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCRime
+2026-11-24T19:10:24.3452900Z 
+2026-11-24T19:11:20.3239140Z Test Suite 'Selected tests' started at 2026-11-24 19:11:20.288.
+2026-11-24T19:11:20.3344670Z Test Suite 'OrangeCellTests.xctest' started at 2026-11-24 19:11:20.289.
+2026-11-24T19:11:20.3346220Z Test Suite 'MemoryBudgetTests' started at 2026-11-24 19:11:20.289.
+2026-11-24T19:11:20.3462100Z Test Case '-[OrangeCellTests.MemoryBudgetTests testFootprintStagesWithTheShippedDictionary]' started.
+2026-11-24T19:11:20.3578500Z OCINFO memory.all.0-baseline=22.4
+2026-11-24T19:11:20.3785530Z OCINFO memory.all.1-engine-and-session=23.0
+2026-11-24T19:11:20.6667670Z OCINFO memory.all.2-first-sentence-typed=23.0
+2026-11-24T19:11:20.6706570Z OCINFO memory.all.3-committed=23.0
+2026-11-24T19:11:20.8843390Z OCINFO memory.all.4-five-more-phrases=23.0
+2026-11-24T19:11:20.8945990Z OCINFO memory.all.5-stopped=22.6
+2026-11-24T19:11:20.9052740Z Test Case '-[OrangeCellTests.MemoryBudgetTests testFootprintStagesWithTheShippedDictionary]' passed (0.567 seconds).
+2026-11-24T19:11:20.9157410Z Test Suite 'MemoryBudgetTests' passed at 2026-11-24 19:11:20.857.
+2026-11-24T19:11:20.9420020Z 	 Executed 1 test, with 0 failures (0 unexpected) in 0.567 (0.568) seconds
+2026-11-24T19:11:20.9694080Z Test Suite 'OrangeCellTests.xctest' passed at 2026-11-24 19:11:20.857.
+2026-11-24T19:11:20.9766660Z 	 Executed 1 test, with 0 failures (0 unexpected) in 0.567 (0.569) seconds
+2026-11-24T19:11:20.9767320Z Test Suite 'Selected tests' passed at 2026-11-24 19:11:20.858.
+2026-11-24T19:11:20.9767870Z 	 Executed 1 test, with 0 failures (0 unexpected) in 0.567 (0.569) seconds
+2026-11-24T19:11:21.8316180Z 2026-11-24 19:11:21.808 xcodebuild[18407:62143] [MT] IDETestOperationsObserverDebug: 49.970 elapsed -- Testing started completed.
+2026-11-24T19:11:21.8456210Z 2026-11-24 19:11:21.808 xcodebuild[18407:62143] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-24T19:11:21.8602290Z 2026-11-24 19:11:21.808 xcodebuild[18407:62143] [MT] IDETestOperationsObserverDebug: 49.970 sec, +49.970 sec -- end
+2026-11-24T19:11:23.1844650Z 
+2026-11-24T19:11:23.1978450Z Test session results, code coverage, and logs:
+2026-11-24T19:11:24.0527870Z 	/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/build/dd/Logs/Test/Test-OrangeCell-2026.11.24_19-10-24-+0000.xcresult
+2026-11-24T19:11:24.1334260Z 
+2026-11-24T19:11:24.2155000Z ** TEST EXECUTE SUCCEEDED **
+2026-11-24T19:11:24.2977710Z 
+2026-11-24T19:11:26.3415370Z Testing started
+2026-11-24T19:11:26.3947790Z ##[endgroup]
+2026-11-24T19:11:26.4460500Z ##[group]Run bash ios/scripts/ci_step.sh swift-test-macos -- bash -c 'cd ios/Packages/OCCore && swift test'
+2026-11-24T19:11:26.4464160Z [36;1mbash ios/scripts/ci_step.sh swift-test-macos -- bash -c 'cd ios/Packages/OCCore && swift test'[0m
+2026-11-24T19:11:26.7140500Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-24T19:11:26.7140830Z env:
+2026-11-24T19:11:26.7141330Z   OC_VERSION: 0.2.10
+2026-11-24T19:11:26.7142020Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-24T19:11:26.7143140Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-24T19:11:26.7143760Z   SIM_UDID: D5562468-1806-45B6-A21B-C897205B3886
+2026-11-24T19:11:26.7144700Z ##[endgroup]
+2026-11-24T19:11:26.8734710Z ##[group]swift-test-macos
+2026-11-24T19:11:40.3473860Z Building for debugging...
+2026-11-24T19:11:40.3561740Z [0/10] Write sources
+2026-11-24T19:11:40.3566700Z [0/10] /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/.build/arm64-apple-macosx/debug/OCCorePackageTests.derived/runner.swift
+2026-11-24T19:11:40.3569760Z [2/10] Write sources
+2026-11-24T19:11:40.5605140Z [4/10] Write swift-version-7974D3F7F03D5E95.txt
+2026-11-24T19:11:47.1325140Z [5/10] Compiling CNativeCore shim.cpp
+2026-11-24T19:11:55.8407440Z [7/15] Emitting module OCCore
+2026-11-24T19:11:55.8408390Z [8/15] Compiling OCCore KeyStorage.swift
+2026-11-24T19:11:55.8408820Z [9/15] Compiling OCCore NativeCore.swift
+2026-11-24T19:11:55.8409260Z [10/15] Compiling OCCore AppGroupLocator.swift
+2026-11-24T19:11:55.8409620Z [11/15] Compiling OCCore Diagnostics.swift
+2026-11-24T19:11:56.6694860Z [12/17] Compiling OCCore ProvisioningProfile.swift
+2026-11-24T19:11:56.6695760Z [13/17] Compiling OCCore RimeData.swift
+2026-11-24T19:11:56.6961610Z [13/17] Write Objects.LinkFileList
+2026-11-24T19:11:56.7275160Z [14/17] Archiving libOCCore.a
+2026-11-24T19:12:13.0095930Z [16/20] Compiling OCCoreTests NativeCoreTests.swift
+2026-11-24T19:12:13.0098040Z [17/20] Emitting module OCCoreTests
+2026-11-24T19:12:13.0099110Z [18/20] Compiling OCCoreTests KeyStorageTests.swift
+2026-11-24T19:12:13.8717830Z [19/21] Compiling OCCoreTests ProvisioningProfileTests.swift
+2026-11-24T19:12:15.8615270Z [20/23] Emitting module OCCorePackageTests
+2026-11-24T19:12:15.8615950Z [21/23] Compiling OCCorePackageTests runner.swift
+2026-11-24T19:12:15.8703960Z [21/23] Write Objects.LinkFileList
+2026-11-24T19:12:16.8157680Z [22/23] Linking OCCorePackageTests
+2026-11-24T19:12:16.8222150Z Build complete! (36.57s)
+2026-11-24T19:12:18.2431530Z Test Suite 'All tests' started at 2026-11-24 19:12:17.539.
+2026-11-24T19:12:18.2434570Z Test Suite 'OCCorePackageTests.xctest' started at 2026-11-24 19:12:17.546.
+2026-11-24T19:12:18.2436340Z Test Suite 'AppGroupLocatorTests' started at 2026-11-24 19:12:17.546.
+2026-11-24T19:12:18.2437920Z Test Case '-[OCCoreTests.AppGroupLocatorTests testBareDotSuffixIsNotAMatch]' started.
+2026-11-24T19:12:18.2439810Z Test Case '-[OCCoreTests.AppGroupLocatorTests testBareDotSuffixIsNotAMatch]' passed (0.004 seconds).
+2026-11-24T19:12:18.2441940Z Test Case '-[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing]' started.
+2026-11-24T19:12:18.2445890Z /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/ProvisioningProfileTests.swift:151: error: -[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing] : failed - a profile that cannot be parsed must not look like a missing one
+2026-11-24T19:12:18.2450720Z Test Case '-[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing]' failed (0.285 seconds).
+2026-11-24T19:12:18.2453360Z Test Case '-[OCCoreTests.AppGroupLocatorTests testExactNameBeatsSuffixedNames]' started.
+2026-11-24T19:12:18.2455420Z Test Case '-[OCCoreTests.AppGroupLocatorTests testExactNameBeatsSuffixedNames]' passed (0.000 seconds).
+2026-11-24T19:12:18.2466620Z Test Case '-[OCCoreTests.AppGroupLocatorTests testGroupWithTeamIdSuffix]' started.
+2026-11-24T19:12:18.2469450Z Test Case '-[OCCoreTests.AppGroupLocatorTests testGroupWithTeamIdSuffix]' passed (0.000 seconds).
+2026-11-24T19:12:18.2471580Z Test Case '-[OCCoreTests.AppGroupLocatorTests testMissingGroupMeansNoSharing]' started.
+2026-11-24T19:12:18.2473730Z Test Case '-[OCCoreTests.AppGroupLocatorTests testMissingGroupMeansNoSharing]' passed (0.000 seconds).
+2026-11-24T19:12:18.2475520Z Test Case '-[OCCoreTests.AppGroupLocatorTests testNoProfileFallsBackToNominalName]' started.
+2026-11-24T19:12:18.2479050Z Test Case '-[OCCoreTests.AppGroupLocatorTests testNoProfileFallsBackToNominalName]' passed (0.000 seconds).
+2026-11-24T19:12:18.2480160Z Test Case '-[OCCoreTests.AppGroupLocatorTests testPlainGroupIsUsedAsIs]' started.
+2026-11-24T19:12:18.2480830Z Test Case '-[OCCoreTests.AppGroupLocatorTests testPlainGroupIsUsedAsIs]' passed (0.000 seconds).
+2026-11-24T19:12:18.2481640Z Test Case '-[OCCoreTests.AppGroupLocatorTests testTeamSuffixIsPreferredAmongSeveral]' started.
+2026-11-24T19:12:18.2482520Z Test Case '-[OCCoreTests.AppGroupLocatorTests testTeamSuffixIsPreferredAmongSeveral]' passed (0.000 seconds).
+2026-11-24T19:12:18.2483520Z Test Case '-[OCCoreTests.AppGroupLocatorTests testUnparsableProfileIsReportedAsSuch]' started.
+2026-11-24T19:12:18.2484380Z Test Case '-[OCCoreTests.AppGroupLocatorTests testUnparsableProfileIsReportedAsSuch]' passed (0.000 seconds).
+2026-11-24T19:12:18.2485090Z Test Case '-[OCCoreTests.AppGroupLocatorTests testUnrelatedGroupsAreIgnored]' started.
+2026-11-24T19:12:18.2485990Z Test Case '-[OCCoreTests.AppGroupLocatorTests testUnrelatedGroupsAreIgnored]' passed (0.000 seconds).
+2026-11-24T19:12:18.2486590Z Test Suite 'AppGroupLocatorTests' failed at 2026-11-24 19:12:17.840.
+2026-11-24T19:12:18.2488240Z 	 Executed 10 tests, with 1 failure (0 unexpected) in 0.292 (0.294) seconds
+2026-11-24T19:12:18.2489080Z Test Suite 'DiagnosticsTests' started at 2026-11-24 19:12:17.840.
+2026-11-24T19:12:18.2490300Z Test Case '-[OCCoreTests.DiagnosticsTests testMemoryProbeReportsPlausibleValueOnApplePlatforms]' started.
+2026-11-24T19:12:18.2491940Z Test Case '-[OCCoreTests.DiagnosticsTests testMemoryProbeReportsPlausibleValueOnApplePlatforms]' passed (0.001 seconds).
+2026-11-24T19:12:18.2493000Z Test Case '-[OCCoreTests.DiagnosticsTests testProbeWithoutContainerIsNil]' started.
+2026-11-24T19:12:18.2493750Z Test Case '-[OCCoreTests.DiagnosticsTests testProbeWithoutContainerIsNil]' passed (0.001 seconds).
+2026-11-24T19:12:18.2494480Z Test Case '-[OCCoreTests.DiagnosticsTests testProbeWrittenByOneRoleIsReadByTheOther]' started.
+2026-11-24T19:12:18.2495340Z Test Case '-[OCCoreTests.DiagnosticsTests testProbeWrittenByOneRoleIsReadByTheOther]' passed (0.004 seconds).
+2026-11-24T19:12:18.2496890Z Test Case '-[OCCoreTests.DiagnosticsTests testReportRoundTripsThroughJson]' started.
+2026-11-24T19:12:18.2497570Z Test Case '-[OCCoreTests.DiagnosticsTests testReportRoundTripsThroughJson]' passed (0.006 seconds).
+2026-11-24T19:12:18.2498300Z Test Suite 'DiagnosticsTests' passed at 2026-11-24 19:12:17.852.
+2026-11-24T19:12:18.2498900Z 	 Executed 4 tests, with 0 failures (0 unexpected) in 0.011 (0.012) seconds
+2026-11-24T19:12:18.2499500Z Test Suite 'KeyStorageTests' started at 2026-11-24 19:12:17.852.
+2026-11-24T19:12:18.2500050Z Test Case '-[OCCoreTests.KeyStorageTests testChoosesBackendFromKeyboardProbes]' started.
+2026-11-24T19:12:18.2500980Z Test Case '-[OCCoreTests.KeyStorageTests testChoosesBackendFromKeyboardProbes]' passed (0.001 seconds).
+2026-11-24T19:12:18.2501750Z Test Case '-[OCCoreTests.KeyStorageTests testConcurrentFirstUseCreatesOneKey]' started.
+2026-11-24T19:12:18.2502520Z Test Case '-[OCCoreTests.KeyStorageTests testConcurrentFirstUseCreatesOneKey]' passed (0.028 seconds).
+2026-11-24T19:12:18.2503130Z Test Case '-[OCCoreTests.KeyStorageTests testEncryptedFileStoreRoundTrip]' started.
+2026-11-24T19:12:18.2503820Z Test Case '-[OCCoreTests.KeyStorageTests testEncryptedFileStoreRoundTrip]' passed (0.007 seconds).
+2026-11-24T19:12:18.2505360Z Test Case '-[OCCoreTests.KeyStorageTests testFilesOnDiskDoNotContainThePlaintext]' started.
+2026-11-24T19:12:18.2506090Z Test Case '-[OCCoreTests.KeyStorageTests testFilesOnDiskDoNotContainThePlaintext]' passed (0.005 seconds).
+2026-11-24T19:12:18.2507470Z Test Case '-[OCCoreTests.KeyStorageTests testRemoveIsQuietForMissingFilesAndRemovesRealOnes]' started.
+2026-11-24T19:12:18.2508530Z Test Case '-[OCCoreTests.KeyStorageTests testRemoveIsQuietForMissingFilesAndRemovesRealOnes]' passed (0.006 seconds).
+2026-11-24T19:12:18.2509380Z Test Case '-[OCCoreTests.KeyStorageTests testSecretFileCopiedToAnotherAccountDoesNotDecrypt]' started.
+2026-11-24T19:12:18.2510100Z Test Case '-[OCCoreTests.KeyStorageTests testSecretFileCopiedToAnotherAccountDoesNotDecrypt]' passed (0.009 seconds).
+2026-11-24T19:12:18.2510850Z Test Case '-[OCCoreTests.KeyStorageTests testSelfTestSampleThroughEncryptedStore]' started.
+2026-11-24T19:12:18.2511570Z Test Case '-[OCCoreTests.KeyStorageTests testSelfTestSampleThroughEncryptedStore]' passed (0.005 seconds).
+2026-11-24T19:12:18.2512160Z Test Case '-[OCCoreTests.KeyStorageTests testTamperedFileIsRejected]' started.
+2026-11-24T19:12:18.2513360Z Test Case '-[OCCoreTests.KeyStorageTests testTamperedFileIsRejected]' passed (0.006 seconds).
+2026-11-24T19:12:18.2514090Z Test Case '-[OCCoreTests.KeyStorageTests testUnreadableKeyFileIsAnErrorAndNeverReplaced]' started.
+2026-11-24T19:12:18.2514840Z Test Case '-[OCCoreTests.KeyStorageTests testUnreadableKeyFileIsAnErrorAndNeverReplaced]' passed (0.009 seconds).
+2026-11-24T19:12:18.2515680Z Test Case '-[OCCoreTests.KeyStorageTests testWrongSizedKeyFileIsRejectedNotReplaced]' started.
+2026-11-24T19:12:18.2516340Z Test Case '-[OCCoreTests.KeyStorageTests testWrongSizedKeyFileIsRejectedNotReplaced]' passed (0.001 seconds).
+2026-11-24T19:12:18.2516970Z Test Suite 'KeyStorageTests' passed at 2026-11-24 19:12:17.932.
+2026-11-24T19:12:18.2517460Z 	 Executed 10 tests, with 0 failures (0 unexpected) in 0.077 (0.080) seconds
+2026-11-24T19:12:18.2517960Z Test Suite 'NativeCoreTests' started at 2026-11-24 19:12:17.932.
+2026-11-24T19:12:18.2518510Z Test Case '-[OCCoreTests.NativeCoreTests testDecodeKeepsCompleteCandidatesOfTruncatedOutput]' started.
+2026-11-24T19:12:18.2519670Z Test Case '-[OCCoreTests.NativeCoreTests testDecodeKeepsCompleteCandidatesOfTruncatedOutput]' passed (0.001 seconds).
+2026-11-24T19:12:18.2520400Z Test Case '-[OCCoreTests.NativeCoreTests testEncodeRoundTripThroughCApi]' started.
+2026-11-24T19:12:18.2520970Z Test Case '-[OCCoreTests.NativeCoreTests testEncodeRoundTripThroughCApi]' passed (0.000 seconds).
+2026-11-24T19:12:18.2521630Z Test Case '-[OCCoreTests.NativeCoreTests testErrorsComeBackAsNativeCoreError]' started.
+2026-11-24T19:12:18.2522300Z Test Case '-[OCCoreTests.NativeCoreTests testErrorsComeBackAsNativeCoreError]' passed (0.001 seconds).
+2026-11-24T19:12:18.2522880Z Test Case '-[OCCoreTests.NativeCoreTests testLargeAndUnicodeInput]' started.
+2026-11-24T19:12:18.2523480Z Test Case '-[OCCoreTests.NativeCoreTests testLargeAndUnicodeInput]' passed (0.001 seconds).
+2026-11-24T19:12:18.2524170Z Test Case '-[OCCoreTests.NativeCoreTests testMalformedAndNullInputAreRejectedWithoutCrashing]' started.
+2026-11-24T19:12:18.2524960Z Test Case '-[OCCoreTests.NativeCoreTests testMalformedAndNullInputAreRejectedWithoutCrashing]' passed (0.001 seconds).
+2026-11-24T19:12:18.2525630Z Test Case '-[OCCoreTests.NativeCoreTests testRawInvokeMatchesTheDocumentedEnvelope]' started.
+2026-11-24T19:12:18.2526350Z Test Case '-[OCCoreTests.NativeCoreTests testRawInvokeMatchesTheDocumentedEnvelope]' passed (0.000 seconds).
+2026-11-24T19:12:18.2527020Z Test Case '-[OCCoreTests.NativeCoreTests testReasoningTextIsNotAccepted]' started.
+2026-11-24T19:12:18.2527590Z Test Case '-[OCCoreTests.NativeCoreTests testReasoningTextIsNotAccepted]' passed (0.000 seconds).
+2026-11-24T19:12:18.2528200Z Test Case '-[OCCoreTests.NativeCoreTests testSelfTestPasses]' started.
+2026-11-24T19:12:18.2528750Z Test Case '-[OCCoreTests.NativeCoreTests testSelfTestPasses]' passed (0.000 seconds).
+2026-11-24T19:12:18.2529590Z Test Case '-[OCCoreTests.NativeCoreTests testSharedTruncationCorpus]' started.
+2026-11-24T19:12:18.2530220Z Test Case '-[OCCoreTests.NativeCoreTests testSharedTruncationCorpus]' passed (0.003 seconds).
+2026-11-24T19:12:18.2530820Z Test Suite 'NativeCoreTests' passed at 2026-11-24 19:12:17.941.
+2026-11-24T19:12:18.2531300Z 	 Executed 9 tests, with 0 failures (0 unexpected) in 0.008 (0.009) seconds
+2026-11-24T19:12:18.2531760Z Test Suite 'ProvisioningProfileTests' started at 2026-11-24 19:12:17.941.
+2026-11-24T19:12:18.2532380Z Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiredProfile]' started.
+2026-11-24T19:12:18.2533000Z Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiredProfile]' passed (0.001 seconds).
+2026-11-24T19:12:18.2533630Z Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiryParsing]' started.
+2026-11-24T19:12:18.2534180Z Test Case '-[OCCoreTests.ProvisioningProfileTests testExpiryParsing]' passed (0.001 seconds).
+2026-11-24T19:12:18.2534840Z Test Case '-[OCCoreTests.ProvisioningProfileTests testExtractsPlistFromCmsEnvelope]' started.
+2026-11-24T19:12:18.2535560Z Test Case '-[OCCoreTests.ProvisioningProfileTests testExtractsPlistFromCmsEnvelope]' passed (0.001 seconds).
+2026-11-24T19:12:18.2536250Z Test Case '-[OCCoreTests.ProvisioningProfileTests testPlainXmlPlistWithoutEnvelopeIsAccepted]' started.
+2026-11-24T19:12:18.2537030Z Test Case '-[OCCoreTests.ProvisioningProfileTests testPlainXmlPlistWithoutEnvelopeIsAccepted]' passed (0.000 seconds).
+2026-11-24T19:12:18.2537760Z Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsBrokenPropertyList]' started.
+2026-11-24T19:12:18.2538380Z Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsBrokenPropertyList]' passed (0.000 seconds).
+2026-11-24T19:12:18.2539080Z Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsDataWithoutPropertyList]' started.
+2026-11-24T19:12:18.2539810Z Test Case '-[OCCoreTests.ProvisioningProfileTests testRejectsDataWithoutPropertyList]' passed (0.000 seconds).
+2026-11-24T19:12:18.2540570Z Test Case '-[OCCoreTests.ProvisioningProfileTests testUnknownExpiryIsNotReportedAsExpiring]' started.
+2026-11-24T19:12:18.2541500Z Test Case '-[OCCoreTests.ProvisioningProfileTests testUnknownExpiryIsNotReportedAsExpiring]' passed (0.000 seconds).
+2026-11-24T19:12:18.2542190Z Test Suite 'ProvisioningProfileTests' passed at 2026-11-24 19:12:17.945.
+2026-11-24T19:12:18.2542700Z 	 Executed 7 tests, with 0 failures (0 unexpected) in 0.003 (0.004) seconds
+2026-11-24T19:12:18.2543150Z Test Suite 'OCCorePackageTests.xctest' failed at 2026-11-24 19:12:17.945.
+2026-11-24T19:12:18.2543660Z 	 Executed 40 tests, with 1 failure (0 unexpected) in 0.391 (0.399) seconds
+2026-11-24T19:12:18.2544200Z Test Suite 'All tests' failed at 2026-11-24 19:12:17.945.
+2026-11-24T19:12:18.2544670Z 	 Executed 40 tests, with 1 failure (0 unexpected) in 0.391 (0.406) seconds
+2026-11-24T19:12:18.2740880Z ◇ Test run started.
+2026-11-24T19:12:18.2741550Z ↳ Testing Library Version: 1902
+2026-11-24T19:12:18.2742070Z ↳ Target Platform: arm64e-apple-macos14.0
+2026-11-24T19:12:18.2742490Z ✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+2026-11-24T19:12:18.2946860Z ##[endgroup]
+2026-11-24T19:12:18.3481280Z ##[error]step 'swift-test-macos' failed with exit code 1
+2026-11-24T19:12:18.3705800Z ##[error]31:/Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ios/Packages/OCCore/Tests/OCCoreTests/ProvisioningProfileTests.swift:151: error: -[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing] : failed - a profile that cannot be parsed mu
+2026-11-24T19:12:18.3756790Z ##[error]32:Test Case '-[OCCoreTests.AppGroupLocatorTests testBundleWithGarbageProfileIsParseFailedNotMissing]' failed (0.285 seconds).
+2026-11-24T19:12:18.3770210Z ##[error]Process completed with exit code 1.
+2026-11-24T19:12:18.3912320Z ##[group]Run python3 ios/scripts/ci_summary.py build-test --out "$CI_OUT" --xcresult "$RUNNER_TEMP/results/unit.xcresult"
+2026-11-24T19:12:18.3913140Z [36;1mpython3 ios/scripts/ci_summary.py build-test --out "$CI_OUT" --xcresult "$RUNNER_TEMP/results/unit.xcresult"[0m
+2026-11-24T19:12:18.4296700Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-24T19:12:18.4297390Z env:
+2026-11-24T19:12:18.4297790Z   OC_VERSION: 0.2.10
+2026-11-24T19:12:18.4298280Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-24T19:12:18.4299510Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-24T19:12:18.4300750Z   SIM_UDID: D5562468-1806-45B6-A21B-C897205B3886
+2026-11-24T19:12:18.4301410Z ##[endgroup]
+2026-11-24T19:12:21.3177530Z #### build-test (macos-26)
+2026-11-24T19:12:21.3179210Z - toolchain: Xcode 26.6; Build version 17F113; swift-driver version: 1.148.6 Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)
+2026-11-24T19:12:21.3180880Z - app unit tests (OrangeCellTests, simulator): 14 passed, 0 failed, 0 skipped of 14
+2026-11-24T19:12:21.3181920Z - OCCore `swift test` on macOS: 40 tests, 1 failures
+2026-11-24T19:12:21.3182730Z - UI tests `ui-embedded`: 9 tests, 1 failures
+2026-11-24T19:12:21.3183970Z - unit-test observations (OCINFO lines):
+2026-11-24T19:12:21.3185930Z   - `appgroup.source` = `nominalNoProfile container=/Users/runner/Library/Developer/CoreSimulator/Devices/D5562468-1806-45B6-A21B-C897205B3886/data/Containers/Shared/AppGroup/4A4A574F-CD4C-4D4D-8192-2E26F54AFACC`
+2026-11-24T19:12:21.3189100Z   - `comma.handled` = `true commit=， composing=false`
+2026-11-24T19:12:21.3189900Z   - `data.builtWithLibrime` = `1.17.0 linked=1.17.0`
+2026-11-24T19:12:21.3225450Z   - `learning.after` = `拟好|你好|你号|你|泥`
+2026-11-24T19:12:21.3225890Z   - `learning.before` = `你好|你号|拟好|你|泥 learn=拟好`
+2026-11-24T19:12:21.3226440Z   - `learning.orderAfterEachRound` = `拟好,你好,你号 | 拟好,你好,你号 | 拟好,你好,你号 | 拟好,你好,你号 | 拟好,你好,你号 | 拟好,你好,你号`
+2026-11-24T19:12:21.3227080Z   - `learning.roundsToTop` = `1`
+2026-11-24T19:12:21.3227350Z   - `learning.tapIndices` = `2,0,0,0,0,0`
+2026-11-24T19:12:21.3227710Z   - `librime.missingRequired` = ``
+2026-11-24T19:12:21.3228170Z   - `librime.modules.afterStart` = `default,core,dict,gears,levers,deployer,lua,octagram,grammar,predict,qjs`
+2026-11-24T19:12:21.3231740Z   - `librime.modules.beforeStart` = `default,core,dict,gears,levers,deployer,lua,octagram,grammar,predict,qjs`
+2026-11-24T19:12:21.3232220Z   - `librime.started` = `true`
+2026-11-24T19:12:21.3232450Z   - `librime.version` = `1.17.0`
+2026-11-24T19:12:21.3240680Z   - `nihao.candidates` = `你好|你号|拟好|你|泥|拟|腻|逆`
+2026-11-24T19:12:21.3241050Z   - `nihao.preedit` = `ni hao`
+2026-11-24T19:12:21.3241420Z   - `oc_core.encode` = `["i": "nihao", "b": "previous"]`
+2026-11-24T19:12:21.3241920Z   - `test.footprintMB` = `36.4`
+2026-11-24T19:12:21.3242530Z   - `woyaochihuoguo.candidates` = `我要吃火锅|我要吃|我要|窝腰|我呀`
+2026-11-24T19:12:21.3242810Z 
+2026-11-24T19:12:21.3243150Z Memory with the shipped dictionary (phys_footprint in MB, XCTest process, baseline included):
+2026-11-24T19:12:21.3243590Z 
+2026-11-24T19:12:21.3243750Z | stage | all | minimal |
+2026-11-24T19:12:21.3244620Z | --- | --- | --- |
+2026-11-24T19:12:21.3245830Z | 0-baseline | 22.4 | 22.4 |
+2026-11-24T19:12:21.3246360Z | 1-engine-and-session | 23.0 | 22.7 |
+2026-11-24T19:12:21.3246710Z | 2-first-sentence-typed | 23.0 | 22.7 |
+2026-11-24T19:12:21.3247100Z | 3-committed | 23.0 | 22.7 |
+2026-11-24T19:12:21.3247420Z | 4-five-more-phrases | 23.0 | 22.7 |
+2026-11-24T19:12:21.3247750Z | 5-stopped | 22.6 | 22.5 |
+2026-11-24T19:12:21.3247940Z 
+2026-11-24T19:12:21.3254800Z - screenshots: `embedded-embedded-dark-1-zh-idle.png`, `embedded-embedded-dark-2-zh-candidates.png`, `embedded-embedded-dark-3-en.png`, `embedded-embedded-dark-4-123.png`, `embedded-embedded-dark-5-symbols.png`, `embedded-embedded-delete-hold.png`, `embedded-embedded-english-light.png`, `embedded-embedded-light-1-zh-idle.png`, `embedded-embedded-light-2-zh-candidates.png`, `embedded-embedded-light-3-en.png`, `embedded-embedded-light-4-123.png`, `embedded-embedded-light-5-symbols.png`, `embedded-embedded-numbers-light.png`, `embedded-embedded-sentence-light.png`
+2026-11-24T19:12:21.3259790Z 
+2026-11-24T19:12:21.3259920Z | step | result | time |
+2026-11-24T19:12:21.3260190Z | --- | --- | --- |
+2026-11-24T19:12:21.3260430Z | toolchain | ok | 9s |
+2026-11-24T19:12:21.3260690Z | fetch-deps | ok | 10s |
+2026-11-24T19:12:21.3260950Z | xcodegen-install | ok | 1s |
+2026-11-24T19:12:21.3263460Z | xcodegen | ok | 0s |
+2026-11-24T19:12:21.3263900Z | simulator-create | ok | 2s |
+2026-11-24T19:12:21.3264210Z | build-sim | ok | 60s |
+2026-11-24T19:12:21.3265360Z | unit-tests | ok | 70s |
+2026-11-24T19:12:21.3265900Z | build-ui-tests | ok | 20s |
+2026-11-24T19:12:21.3266310Z | uitests-embedded | FAILED (65) | 575s |
+2026-11-24T19:12:21.3266640Z | memory-debug-minimal | ok | 72s |
+2026-11-24T19:12:21.3266900Z | memory-debug-all | ok | 77s |
+2026-11-24T19:12:21.3267200Z | swift-test-macos | FAILED (1) | 52s |
+2026-11-24T19:12:21.3267380Z 
+2026-11-24T19:12:21.3420350Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-24T19:12:21.3420740Z with:
+2026-11-24T19:12:21.3420920Z   name: ci-build-test
+2026-11-24T19:12:21.3421260Z   path: ci-out/build-test
+!ci-out/build-test/logs/*.log
+
+2026-11-24T19:12:21.3421560Z   if-no-files-found: ignore
+2026-11-24T19:12:21.3421770Z   retention-days: 7
+2026-11-24T19:12:21.3421940Z   compression-level: 6
+2026-11-24T19:12:21.3422130Z   overwrite: false
+2026-11-24T19:12:21.3422320Z   include-hidden-files: false
+2026-11-24T19:12:21.3422510Z   archive: true
+2026-11-24T19:12:21.3422670Z env:
+2026-11-24T19:12:21.3422820Z   OC_VERSION: 0.2.10
+2026-11-24T19:12:21.3423050Z   XCODE_APP: /Applications/Xcode_26.6.app
+2026-11-24T19:12:21.3423590Z   CI_OUT: /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance/ci-out/build-test
+2026-11-24T19:12:21.3424070Z   SIM_UDID: D5562468-1806-45B6-A21B-C897205B3886
+2026-11-24T19:12:21.3424310Z ##[endgroup]
+2026-11-24T19:12:21.9276570Z With the provided path, there will be 50 files uploaded
+2026-11-24T19:12:21.9277180Z Artifact name is valid!
+2026-11-24T19:12:21.9277400Z Root directory input is valid!
+2026-11-24T19:12:22.1483670Z Uploading artifact: ci-build-test.zip
+2026-11-24T19:12:22.1539230Z Beginning upload of artifact content to blob storage
+2026-11-24T19:12:22.6930210Z Uploaded bytes 3370828
+2026-11-24T19:12:22.7089990Z Finished uploading artifact content to blob storage!
+2026-11-24T19:12:22.7091490Z SHA256 digest of uploaded artifact is 818f10f478ed64964486a0cbd0a4169752b3b3be76e30588cde485c29c2a1226
+2026-11-24T19:12:22.7092580Z Finalizing artifact upload
+2026-11-24T19:12:23.0517860Z Artifact ci-build-test successfully finalized. Artifact ID 14956455228
+2026-11-24T19:12:23.0518660Z Artifact ci-build-test has been successfully uploaded! Final size is 3370828 bytes. Artifact ID is 14956455228
+2026-11-24T19:12:23.0739420Z Artifact download URL: https://github.com/ninmiao/OrangeBrain-Input-AI-Assistance/actions/runs/45463743692/artifacts/14956455228
+2026-11-24T19:12:23.1353830Z Post job cleanup.
+2026-11-24T19:12:23.1368370Z ##[start-action display=Cache prebuilt libraries;id=__99a65296-4c0f-4b3b-b3f2-6c0dc30cc205.__actions_cache]
+2026-11-24T19:12:23.1380420Z ##[end-action id=__99a65296-4c0f-4b3b-b3f2-6c0dc30cc205.__actions_cache;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-11-24T19:12:23.1626650Z Post job cleanup.
+2026-11-24T19:12:23.4126630Z [command]/opt/homebrew/bin/git version
+2026-11-24T19:12:23.4291430Z git version 2.56.1
+2026-11-24T19:12:23.4352160Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/cfec972c-173c-42f0-ba3c-090429bb81c9/.gitconfig'
+2026-11-24T19:12:23.4367900Z Temporarily overriding HOME='/Users/runner/work/_temp/cfec972c-173c-42f0-ba3c-090429bb81c9' before making global git config changes
+2026-11-24T19:12:23.4368820Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-24T19:12:23.4371480Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/OrangeBrain-Input-AI-Assistance/OrangeBrain-Input-AI-Assistance
+2026-11-24T19:12:23.4487690Z Removing SSH command configuration
+2026-11-24T19:12:23.4503260Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-24T19:12:23.4622500Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-24T19:12:23.6084670Z Removing HTTP extra header
+2026-11-24T19:12:23.6094360Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-24T19:12:23.6165760Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-24T19:12:23.7925530Z Removing includeIf entries pointing to credentials config files
+2026-11-24T19:12:23.8029090Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-24T19:12:23.8346920Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-24T19:12:23.9525390Z Cleaning up orphan processes
