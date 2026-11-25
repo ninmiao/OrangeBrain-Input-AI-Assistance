@@ -120,6 +120,7 @@ final class EmbeddedHostViewController: UIViewController, UITextViewDelegate {
             output: KeyInputTextOutput(textView),
             notice: service == nil ? "测试宿主没有找到词库" : nil
         )
+        keyboardController.setTraits(TextTraits(capitalization: .none), contextBefore: nil, contextAfter: nil)
         let keyboard = KeyboardView(controller: keyboardController)
         keyboard.translatesAutoresizingMaskIntoConstraints = false
         let container = UIInputView(frame: CGRect(x: 0, y: 0, width: 0, height: KeyboardView.preferredHeight(landscape: false)),
