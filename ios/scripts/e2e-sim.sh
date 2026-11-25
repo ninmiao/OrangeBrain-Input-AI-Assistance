@@ -8,13 +8,16 @@
 #   settings Settings UI: Allow Full Access
 #   phase B  Full Access: the keyboard learns a phrase, the app deploys while the keyboard runs, the
 #            keyboard process is killed, a new one must still offer the learned phrase first
+#   ai       (E2E_MODE=ai) the AI row against a mock service on 127.0.0.1: a typo is corrected and adopted,
+#            the emoji key takes over a running assistant request, nothing is sent from a password field or
+#            without Full Access; the log of the mock service is checked
 #
 # The XCUITest cannot reach into the simulator, so it asks this script (files named request-<name>
 # in its result folder, answered with done-<name>) to measure `footprint`, run the app deployment
 # and kill the keyboard process. Every check is written to e2e.md; the exit code is the gate.
 #
 # env: SIM_UDID  PRODUCTS_DIR  DERIVED_DATA  CI_OUT  [PROJECT]  [CONFIGURATION=Release]
-#      [E2E_MODE=full|typing|hosts]  [FOOTPRINT_BUDGET_MB=55]
+#      [E2E_MODE=full|typing|hosts|ai]  [FOOTPRINT_BUDGET_MB=55]
 set -uo pipefail
 
 UDID="${SIM_UDID:?SIM_UDID}"
@@ -308,7 +311,127 @@ if [ "$MODE" = "hosts" ]; then
   userdb_intact "after the kill"
 fi
 
-if [ "$MODE" != "hosts" ]; then
+# ------------------------------------------------------- ai mode: the AI row against a mock service
+if [ "$MODE" = "ai" ]; then
+  MOCK_PORT=18765
+  MOCK_LOG="$LOGS/mock-ai.jsonl"
+  MOCK_READY="$OUT/.mock-ready"
+  rm -f "$MOCK_READY"
+  python3 "$SCRIPTS/mock_ai_server.py" --port "$MOCK_PORT" --log "$MOCK_LOG" --ready-file "$MOCK_READY" > "$LOGS/mock-ai.out" 2>&1 &
+  MOCK_PID=$!
+  for _ in $(seq 1 40); do [ -f "$MOCK_READY" ] && break; sleep 0.25; done
+  c=1; [ -f "$MOCK_READY" ] && c=0
+  check "ai: the mock service listens on 127.0.0.1:$MOCK_PORT (no real network, no real key)" "$c"
+
+  mock_requests() { grep -c '"event": "request"' "$MOCK_LOG" 2>/dev/null || true; }
+
+  check_mock() {
+    # check_mock <tag>: what the mock service saw so far
+    python3 - "$MOCK_LOG" "$1" > "$LOGS/mock-checks-$1.txt" <<'PY'
+import json, sys
+events = [json.loads(line) for line in open(sys.argv[1], encoding="utf8") if line.strip()]
+requests = [e for e in events if e["event"] == "request"]
+ends = {e["id"]: e for e in events if e["event"] in ("complete", "aborted")}
+tag = sys.argv[2]
+
+
+def verdict(ok, name):
+    print(("PASS" if ok else "FAIL") + "\t" + name)
+
+
+verdict(all(r["authorized"] for r in requests), "every request carried the stored key in its header")
+verdict(not any(r["bodyHasKey"] for r in requests), "the key is never inside a request body")
+verdict(not any(e["event"] == "bad-request" for e in events), "the shared core built bodies the service could read")
+if tag == "ai":
+    auto = [r for r in requests if r["kind"] == "assistant" and r["input"] == "woyaochihuogou"]
+    verdict(bool(auto), "typing the pinyin of a typo sent an automatic request (correction + assistant) with that pinyin")
+    manual = [r for r in requests if r["kind"] == "assistant" and r["input"] == "我要吃火锅"]
+    emoji = [r for r in requests if r["kind"] == "emoji"]
+    verdict(bool(manual) and bool(emoji) and emoji[-1]["id"] > manual[-1]["id"],
+            "the assistant key and then the emoji key each sent a request, the emoji one last")
+    ended = ends.get(manual[-1]["id"], {}) if manual else {}
+    verdict(ended.get("event") == "aborted",
+            "the assistant request was dropped by the keyboard when the emoji key took over (the service saw the connection close)")
+    verdict(any(e["event"] == "aborted" for e in events if e.get("kind") == "assistant"), "at least one running request was cancelled by a newer one")
+if tag == "secure":
+    verdict(not any("secretpass" in r["input"] for r in requests), "nothing typed in the password field was sent")
+PY
+    while IFS=$'\t' read -r verdict name; do
+      c=1; [ "$verdict" = "PASS" ] && c=0
+      check "ai ($1): $name" "$c"
+    done < "$LOGS/mock-checks-$1.txt"
+  }
+
+  # Full Access: the keyboard needs it for the configuration, the key and the network.
+  if OC_FULL_ACCESS=on run_ui_test "settings-fullaccess" "OrangeCellUITests/EnableKeyboardUITests"; then
+    check "Settings UI: Allow Full Access" 0
+  else
+    check "Settings UI: Allow Full Access" 1 "(see ui-settings-fullaccess logs)"
+  fi
+  seed_keyboards
+  reboot
+
+  # The app agrees to cloud AI, stores a made-up key and routes the three endpoints to the mock service.
+  xcrun simctl launch "$UDID" "$APP_ID" -OCSeedAi "http://127.0.0.1:$MOCK_PORT" -OCSeedAiMode assistant >/dev/null 2>&1
+  sleep 6
+  xcrun simctl terminate "$UDID" "$APP_ID" >/dev/null 2>&1 || true
+  group="$(group_directory)"
+  c=1; [ -n "$group" ] && [ -f "$group/config/ai-config.json" ] && [ -f "$group/config/loopback-routes.json" ] && c=0
+  check "ai: the app wrote the configuration and the loopback routes into the App Group" "$c" "(${group:-no group})"
+  if [ -n "$group" ] && [ -f "$group/config/ai-config.json" ]; then
+    cp "$group/config/ai-config.json" "$LOGS/ai-config.json"
+    c=0; grep -qi "sk-mock" "$group/config/ai-config.json" && c=1
+    check "ai: the configuration file holds no key" "$c"
+    ls -l "$group/secrets" > "$LOGS/secrets-listing.txt" 2>&1 || true
+  fi
+  xcrun simctl launch --terminate-running-process "$UDID" "$APP_ID" -OCOpenAi >/dev/null 2>&1
+  sleep 5
+  shot "e2e-ai-settings"
+  xcrun simctl launch --terminate-running-process "$UDID" "$APP_ID" -OCOpenPolicy openrouter >/dev/null 2>&1
+  sleep 5
+  shot "e2e-ai-policy"
+  xcrun simctl terminate "$UDID" "$APP_ID" >/dev/null 2>&1 || true
+
+  NAME_AI="ai: typo corrected and adopted, assistant then emoji key mid-stream (emoji wins), memory after the requests"
+  if run_ui_test "ai" "OrangeCellUITests/KeyboardUITests/testAiRowCorrectsAssistsAndPrefersTheEmojiKey"; then
+    check "$NAME_AI" 0
+  else
+    check "$NAME_AI" 1 "(see ui-ai logs and screenshots)"
+  fi
+  collect_reports "AI"
+  check_mock "ai"
+  row "mock service stats" "$(curl -s "http://127.0.0.1:$MOCK_PORT/__stats" || echo unreachable)"
+
+  NAME_SEC="ai: nothing is sent from a password field"
+  if run_ui_test "ai-secure" "OrangeCellUITests/KeyboardUITests/testAiNeverSendsFromASecureField"; then
+    check "$NAME_SEC" 0
+  else
+    check "$NAME_SEC" 1 "(see ui-ai-secure logs and screenshots)"
+  fi
+  check_mock "secure"
+
+  # Full Access off again: the AI row says so in one line and nothing leaves the keyboard.
+  if OC_FULL_ACCESS=off run_ui_test "settings-fullaccess-off" "OrangeCellUITests/EnableKeyboardUITests"; then
+    check "Settings UI: Full Access off again" 0
+  else
+    check "Settings UI: Full Access off again" 1 "(see ui-settings-fullaccess-off logs)"
+  fi
+  seed_keyboards
+  reboot
+  before_off="$(mock_requests)"
+  NAME_OFF="ai: without Full Access the AI row shows its hint and the keys do nothing"
+  if run_ui_test "ai-off" "OrangeCellUITests/KeyboardUITests/testAiNeedsFullAccess"; then
+    check "$NAME_OFF" 0
+  else
+    check "$NAME_OFF" 1 "(see ui-ai-off logs and screenshots)"
+  fi
+  after_off="$(mock_requests)"
+  c=1; [ "$before_off" = "$after_off" ] && c=0
+  check "ai: no request reached the service without Full Access" "$c" "(before $before_off, after $after_off)"
+  kill "$MOCK_PID" 2>/dev/null || true
+fi
+
+if [ "$MODE" != "hosts" ] && [ "$MODE" != "ai" ]; then
 # ---------------------------------------------------------------- phase A: no Full Access
 NAME_A="phase A: typing through the real keyboard extension (nihao, sentence, backspace, 中/EN)"
 if run_ui_test "typing" "OrangeCellUITests/KeyboardUITests/testRealExtensionTypesChineseAndEnglish"; then

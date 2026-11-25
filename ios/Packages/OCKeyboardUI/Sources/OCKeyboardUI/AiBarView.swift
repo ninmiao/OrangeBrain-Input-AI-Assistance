@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+import OCCore
 import UIKit
 
 /// The AI row: status dot, the AI candidates (纠错 / 助手 or emoticons) and the two trigger keys

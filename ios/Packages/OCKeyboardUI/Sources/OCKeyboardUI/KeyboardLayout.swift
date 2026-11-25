@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import Foundation
+import OCCore
 
 public enum InputMode: Equatable {
     case chinese   // 中: letters go to Rime, `ascii_mode` off
@@ -8,6 +9,8 @@ public enum InputMode: Equatable {
 
 public enum Panel: Equatable {
     case letters, numbers, symbols
+    /// The number, phone or decimal pad of a field that only takes digits.
+    case numeric
 }
 
 public enum ShiftState: Equatable {
@@ -37,6 +40,8 @@ struct KeySpec: Equatable {
     let title: String
     let weight: CGFloat
     let style: KeyStyle
+    /// False greys the key out and ignores touches (the return key of an empty field that asks for that).
+    var enabled = true
 }
 
 enum RowItem {
@@ -61,12 +66,15 @@ struct KeyboardLayout {
     let showGlobe: Bool
     /// The 1-0 row above qwerty (Android has it on by default); only on the letters panel.
     var numberRow = true
+    /// What the host field is (email, URL, digits only, ...).
+    var traits = TextTraits()
 
     var rows: [[RowItem]] {
         switch panel {
         case .letters: return letterRows
         case .numbers: return numberRows
         case .symbols: return symbolRows
+        case .numeric: return numericRows
         }
     }
 
@@ -123,6 +131,40 @@ struct KeyboardLayout {
         return [first, second, [numbersKey15] + third + [deleteKey], bottomRow(panelKey: lettersKey)]
     }
 
+    // MARK: number, phone and decimal pad
+
+    private var numericRows: [[RowItem]] {
+        func key(_ text: String, style: KeyStyle = .normal, weight: CGFloat = 10) -> RowItem {
+            .key(KeySpec(id: "d\(text)", action: .character(text), title: text, weight: weight, style: style))
+        }
+        let corner: [RowItem]
+        switch traits.layout {
+        case .decimalPad: corner = [key("."), key("0"), .spacer(10)]
+        case .phonePad: corner = [key("*"), key("0"), key("#")]
+        default: corner = [.spacer(10), key("0"), .spacer(10)]
+        }
+        let side: [RowItem]
+        if traits.layout == .phonePad {
+            side = [key("+", style: .modifier, weight: 14)]
+        } else if showGlobe {
+            side = [.key(KeySpec(id: "globe", action: .globe, title: "sf:globe", weight: 14, style: .modifier))]
+        } else {
+            side = [.spacer(14)]
+        }
+        let accent = returnKind != .standard && traits.returnEnabled
+        return [
+            [key("1"), key("2"), key("3"), deleteKeyWide],
+            [key("4"), key("5"), key("6"), .key(KeySpec(id: "space", action: .space, title: "sf:space", weight: 14, style: .modifier))],
+            [key("7"), key("8"), key("9"), .key(KeySpec(id: "return", action: .enter, title: returnKind.title ?? "sf:return.left", weight: 14,
+                                                       style: accent ? .accent : .modifier, enabled: traits.returnEnabled))],
+            corner + side,
+        ]
+    }
+
+    private var deleteKeyWide: RowItem {
+        .key(KeySpec(id: "delete", action: .delete, title: "sf:delete.left", weight: 14, style: .modifier))
+    }
+
     // MARK: shared keys
 
     private var shiftKey: RowItem {
@@ -161,11 +203,29 @@ struct KeyboardLayout {
         if showGlobe {
             row.append(.key(KeySpec(id: "globe", action: .globe, title: "sf:globe", weight: 10, style: .modifier)))
         }
-        row.append(.key(KeySpec(id: "language", action: .language, title: chinese ? "中" : "EN", weight: 12, style: .modifier)))
-        row.append(.key(KeySpec(id: "space", action: .space, title: chinese ? "空格" : "space", weight: showGlobe ? 36 : 46, style: .normal)))
-        let accent = returnKind != .standard
+        var spaceWeight: CGFloat = showGlobe ? 36 : 46
+        if traits.forcesEnglish {
+            // Latin-only field: no 中 / EN key, the space bar takes its place.
+            spaceWeight += 12
+        } else {
+            row.append(.key(KeySpec(id: "language", action: .language, title: chinese ? "中" : "EN", weight: 12, style: .modifier)))
+        }
+        if panel == .letters {
+            let extras: [String]
+            switch traits.layout {
+            case .email: extras = ["@", "."]
+            case .url: extras = [".", "/"]
+            default: extras = []
+            }
+            for extra in extras {
+                row.append(.key(KeySpec(id: "sym.\(extra)", action: .character(extra), title: extra, weight: 10, style: .normal)))
+                spaceWeight -= 10
+            }
+        }
+        row.append(.key(KeySpec(id: "space", action: .space, title: chinese ? "空格" : "space", weight: spaceWeight, style: .normal)))
+        let accent = returnKind != .standard && traits.returnEnabled
         row.append(.key(KeySpec(id: "return", action: .enter, title: returnKind.title ?? "sf:return.left",
-                                weight: 22, style: accent ? .accent : .modifier)))
+                                weight: 22, style: accent ? .accent : .modifier, enabled: traits.returnEnabled)))
         return row
     }
 }

@@ -257,7 +257,7 @@ def ipa(out: pathlib.Path) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("job", choices=["core-linux", "build-test", "ipa", "memory", "e2e", "e2e-debug", "e2e-hosts"])
+    parser.add_argument("job", choices=["core-linux", "build-test", "ipa", "memory", "e2e", "e2e-debug", "e2e-hosts", "e2e-ai"])
     parser.add_argument("--out", required=True)
     parser.add_argument("--xcresult", default="")
     args = parser.parse_args()
@@ -269,7 +269,7 @@ def main() -> None:
         text = build_test(out, pathlib.Path(args.xcresult) if args.xcresult else None)
     elif args.job == "memory":
         text = memory_job(out)
-    elif args.job in ("e2e", "e2e-debug", "e2e-hosts"):
+    elif args.job in ("e2e", "e2e-debug", "e2e-hosts", "e2e-ai"):
         text = e2e_job(out, args.job)
     else:
         text = ipa(out)

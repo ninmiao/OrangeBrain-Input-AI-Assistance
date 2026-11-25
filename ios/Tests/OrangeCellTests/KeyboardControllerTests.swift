@@ -3,14 +3,6 @@ import OCRime
 import XCTest
 @testable import OCKeyboardUI
 
-private final class RecordingOutput: KeyboardTextOutput {
-    var inserted: [String] = []
-    var deletions = 0
-    var returnKeyKind: ReturnKeyKind { .standard }
-    func insertText(_ text: String) { inserted.append(text) }
-    func deleteBackward() { deletions += 1 }
-}
-
 /// The keyboard logic against the real engine and the data CI compiles.
 final class KeyboardControllerTests: XCTestCase {
     private func sharedDirectory() throws -> String {
@@ -45,7 +37,7 @@ final class KeyboardControllerTests: XCTestCase {
 
     /// Types nihao right after the keyboard asked for its engine, then accepts the first candidate.
     private func typeNihao(startDelay: TimeInterval, waitForEngineFirst: Bool) throws -> Outcome {
-        let output = RecordingOutput()
+        let output = ProxyFake()
         let service = RimeService(configuration: RimeServiceConfiguration(
             sharedDataDirectory: try sharedDirectory(), userDataDirectory: temporaryUserDirectory().path, startDelay: startDelay))
         let controller = KeyboardController(service: service, output: output)
@@ -76,7 +68,7 @@ final class KeyboardControllerTests: XCTestCase {
 
     /// Backspace and clear edit the buffered letters, they do not reach the document.
     func testBackspaceEditsTheBufferedLettersWhileTheEngineStarts() throws {
-        let output = RecordingOutput()
+        let output = ProxyFake()
         let service = RimeService(configuration: RimeServiceConfiguration(
             sharedDataDirectory: try sharedDirectory(), userDataDirectory: temporaryUserDirectory().path, startDelay: 1.0))
         let controller = KeyboardController(service: service, output: output)

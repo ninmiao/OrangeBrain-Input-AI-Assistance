@@ -65,6 +65,10 @@ jobs:
         shell: bash
         run: |
           bash ios/scripts/ci_step.sh swift-test-linux -- bash -c 'cd ios/Packages/OCCore && swift test'
+      - name: Check that the OCCore tests really ran (Linux)
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: python3 ios/scripts/check_tests.py "$CI_OUT/logs/swift-test-linux.log"
       - name: Summary
         if: always()
         shell: bash
@@ -225,10 +229,23 @@ jobs:
         if: ${{ !cancelled() }}
         shell: bash
         run: python3 ios/scripts/check_tests.py "$CI_OUT/logs/memory-debug-all.log"
-      - name: OCCore swift test (macOS)
+      - name: OCCore swift test (macOS, with the mock AI server on 127.0.0.1)
         if: ${{ !cancelled() }}
         shell: bash
-        run: bash ios/scripts/ci_step.sh swift-test-macos -- bash -c 'cd ios/Packages/OCCore && swift test'
+        run: |
+          rm -f "$RUNNER_TEMP/mock-ready"
+          python3 ios/scripts/mock_ai_server.py --port 18766 --log "$CI_OUT/logs/mock-ai-unit.jsonl" --ready-file "$RUNNER_TEMP/mock-ready" > "$CI_OUT/logs/mock-ai-unit.out" 2>&1 &
+          mock=$!
+          for _ in $(seq 1 40); do [ -f "$RUNNER_TEMP/mock-ready" ] && break; sleep 0.25; done
+          export OC_MOCK_AI_PORT=18766
+          bash ios/scripts/ci_step.sh swift-test-macos -- bash -c 'cd ios/Packages/OCCore && swift test'
+          code=$?
+          kill "$mock" 2>/dev/null || true
+          exit "$code"
+      - name: Check that the OCCore tests really ran (macOS, none skipped)
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: python3 ios/scripts/check_tests.py "$CI_OUT/logs/swift-test-macos.log"
       - name: Summary
         if: always()
         shell: bash
@@ -406,6 +423,55 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  # The AI row through the real keyboard extension against a mock service on 127.0.0.1 (no real network, no real key):
+  # a typo is corrected and adopted, the emoji key takes over a running assistant request, nothing is sent from a
+  # password field or without Full Access, and the keyboard memory after the requests is within budget.
+  e2e-ai:
+    name: e2e-ai
+    needs: [rime-data]
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/ios-mac-setup
+        with:
+          job: e2e-ai
+      - name: Create the simulator
+        shell: bash
+        run: bash ios/scripts/ci_step.sh simulator-create -- bash ios/scripts/create-sim.sh
+      - name: Build the app, the keyboard and the UI tests (Release)
+        shell: bash
+        run: |
+          bash ios/scripts/ci_step.sh build-e2e -- xcodebuild build-for-testing \
+            -project ios/OrangeCell.xcodeproj -scheme OCUITests -configuration Release \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            MARKETING_VERSION="$OC_VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER"
+      - name: AI end-to-end run (Release)
+        shell: bash
+        env:
+          DERIVED_DATA: ${{ github.workspace }}/build/dd
+          PRODUCTS_DIR: ${{ github.workspace }}/build/dd/Build/Products/Release-iphonesimulator
+          CONFIGURATION: Release
+          E2E_MODE: ai
+        run: bash ios/scripts/ci_step.sh e2e-run -- bash ios/scripts/e2e-sim.sh
+      - name: Summary
+        if: always()
+        shell: bash
+        run: python3 ios/scripts/ci_summary.py e2e-ai --out "$CI_OUT"
+      - name: Upload job results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ci-e2e-ai
+          path: |
+            ci-out/e2e-ai
+            !ci-out/e2e-ai/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
   # The same typing run on the Debug build, for the number only (not a gate).
   e2e-debug:
     name: e2e-debug
@@ -509,7 +575,7 @@ jobs:
 
   release:
     name: release
-    needs: [core-linux, build-test, memory-release, e2e, e2e-hosts, ipa-device]
+    needs: [core-linux, build-test, memory-release, e2e, e2e-hosts, e2e-ai, ipa-device]
     if: github.ref == 'refs/heads/ios'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -563,7 +629,7 @@ jobs:
   publish-results:
     name: publish-results
     if: always()
-    needs: [core-linux, rime-data, build-test, memory-release, e2e, e2e-hosts, e2e-debug, ipa-device, release]
+    needs: [core-linux, rime-data, build-test, memory-release, e2e, e2e-hosts, e2e-ai, e2e-debug, ipa-device, release]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:

@@ -34,12 +34,22 @@ struct SystemKeyboardHost: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? "OCTestHost")
                 .font(.headline)
-            TextField("type here", text: $text)
-                .textFieldStyle(.roundedBorder)
-                .focused($focused)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.never)
-                .accessibilityIdentifier("oc.testhost.field")
+            // -OCSecureField: a password field (the keyboard must never send its text to an AI service).
+            if ProcessInfo.processInfo.arguments.contains("-OCSecureField") {
+                SecureField("type here", text: $text)
+                    .textFieldStyle(.roundedBorder)
+                    .focused($focused)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .accessibilityIdentifier("oc.testhost.field")
+            } else {
+                TextField("type here", text: $text)
+                    .textFieldStyle(.roundedBorder)
+                    .focused($focused)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .accessibilityIdentifier("oc.testhost.field")
+            }
             Text("typed: \(text)")
                 .font(.footnote)
                 .foregroundStyle(.secondary)

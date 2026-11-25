@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+import OCCore
 import OCRime
 import UIKit
 
@@ -132,7 +133,7 @@ public final class KeyboardView: UIView {
     private func currentLayout() -> KeyboardLayout {
         let state = controller.state
         return KeyboardLayout(panel: state.panel, mode: state.mode, shift: state.shift,
-                              returnKind: returnKind, showGlobe: showsGlobeKey, numberRow: numberRowEnabled)
+                              returnKind: returnKind, showGlobe: showsGlobeKey, numberRow: numberRowEnabled, traits: state.traits)
     }
 
     private func render(_ state: KeyboardState) {
@@ -220,8 +221,9 @@ public final class KeyboardView: UIView {
     private func reloadLayoutIfNeeded() {
         let layout = currentLayout()
         if let old = renderedLayout, old.panel == layout.panel, old.mode == layout.mode, old.showGlobe == layout.showGlobe,
-           old.numberRow == layout.numberRow {
-            if old.shift == layout.shift, old.returnKind == layout.returnKind { return }
+           old.numberRow == layout.numberRow, old.traits.layout == layout.traits.layout,
+           old.traits.forcesEnglish == layout.traits.forcesEnglish {
+            if old.shift == layout.shift, old.returnKind == layout.returnKind, old.traits.returnEnabled == layout.traits.returnEnabled { return }
             // Same keys in the same places, only some titles differ (capitals, caps lock, the
             // return key): retitle the existing buttons instead of replacing them.
             let specs = layout.rows.flatMap { $0 }.compactMap { item -> KeySpec? in

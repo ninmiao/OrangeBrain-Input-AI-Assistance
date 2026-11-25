@@ -13,6 +13,14 @@ private final class ProxyOutput: KeyboardTextOutput {
     func insertText(_ text: String) { owner?.textDocumentProxy.insertText(text) }
     func deleteBackward() { owner?.textDocumentProxy.deleteBackward() }
     var returnKeyKind: ReturnKeyKind { ReturnKeyKind(owner?.textDocumentProxy.returnKeyType ?? .default) }
+    var contextBefore: String? { owner?.textDocumentProxy.documentContextBeforeInput }
+    var contextAfter: String? { owner?.textDocumentProxy.documentContextAfterInput }
+    var selectedText: String? { owner?.textDocumentProxy.selectedText }
+    var textTraits: TextTraits {
+        guard let proxy = owner?.textDocumentProxy else { return TextTraits() }
+        return TextTraits(proxy, hasText: proxy.hasText)
+    }
+    var documentIdentifier: UUID? { owner?.textDocumentProxy.documentIdentifier }
 }
 
 /// The keyboard extension's view controller. The extension target only subclasses it
@@ -28,6 +36,11 @@ private final class ProxyOutput: KeyboardTextOutput {
 open class OCKeyboardViewController: UIInputViewController {
     private var controller: KeyboardController!
     private var keyboardView: KeyboardView!
+    private var proxyOutput: ProxyOutput!
+    private var ai: AiKeyboardController?
+    private lazy var groupContext = AppGroupContext.detect()
+    private var documentID: UUID?
+    private var fieldTraits: TextTraits?
     private var heightConstraint: NSLayoutConstraint?
     private var currentConfiguration: RimeServiceConfiguration?
     private var lastStamp: String?
@@ -45,8 +58,17 @@ open class OCKeyboardViewController: UIInputViewController {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        controller = KeyboardController(service: nil, output: ProxyOutput(owner: self))
+        proxyOutput = ProxyOutput(owner: self)
+        controller = KeyboardController(service: nil, output: proxyOutput)
         controller.onActivity = { [weak self] in self?.scheduleDiagnostics() }
+        // The AI row (Android AiKeyboardController): configuration and key from the App Group, read-only.
+        let ai = AiKeyboardController(
+            keyboard: controller, output: { [weak self] in self?.proxyOutput },
+            hasFullAccess: { [weak self] in self?.hasFullAccess ?? false },
+            groupContext: { [weak self] in self?.groupContext ?? AppGroupContext.detect() })
+        controller.aiHandler = ai.handler
+        controller.aiEvents = ai.events
+        self.ai = ai
         keyboardView = KeyboardView(controller: controller)
         keyboardView.translatesAutoresizingMaskIntoConstraints = false
         keyboardView.globeTarget = self   // weak in the view: the controller owns the view, not the other way round
@@ -78,6 +100,10 @@ open class OCKeyboardViewController: UIInputViewController {
         keyboardView.numberRowEnabled = hasFullAccess ? KeyboardSettings.load(in: AppGroupContext.detect()).numberRow : true
         keyboardView.hapticsEnabled = hasFullAccess
         keyboardView.returnKind = ReturnKeyKind(textDocumentProxy.returnKeyType ?? .default)
+        // Whatever field is focused now: its traits decide the panel, the language, the capitals and the AI row.
+        documentID = textDocumentProxy.documentIdentifier
+        fieldTraits = nil
+        fieldChanged(newField: true)
     }
 
     open override func viewWillLayoutSubviews() {
@@ -100,6 +126,9 @@ open class OCKeyboardViewController: UIInputViewController {
     /// closes the user dictionary (another keyboard process may want it next).
     private func keyboardWentAway() {
         keyboardView?.stopDeleteRepeat()
+        // Android commits the typed letters as composing text when the keyboard goes away; here the composition
+        // lives in the keyboard, never in the host text, so it is discarded (docs/IOS_PLAN.md section 15).
+        ai?.finish()
         controller?.deactivate()
     }
 
@@ -111,6 +140,40 @@ open class OCKeyboardViewController: UIInputViewController {
     open override func textDidChange(_ textInput: UITextInput?) {
         super.textDidChange(textInput)
         keyboardView?.returnKind = ReturnKeyKind(textDocumentProxy.returnKeyType ?? .default)
+        fieldChanged(newField: false)
+    }
+
+    /// The caret moved or the selection changed: a composition that was typed elsewhere is dropped.
+    open override func selectionDidChange(_ textInput: UITextInput?) {
+        super.selectionDidChange(textInput)
+        fieldChanged(newField: false)
+    }
+
+    /// The host changed something (a new field, a moved caret, other traits): the keyboard reads the field again.
+    private func fieldChanged(newField: Bool) {
+        guard let controller else { return }
+        let proxy = textDocumentProxy
+        let before = proxy.documentContextBeforeInput
+        let after = proxy.documentContextAfterInput
+        let traits = TextTraits(proxy, hasText: proxy.hasText)
+        let identifier = proxy.documentIdentifier
+        if newField || identifier != documentID || fieldTraits == nil {
+            documentID = identifier
+            fieldTraits = traits
+            controller.setTraits(traits, contextBefore: before, contextAfter: after)
+            keyboardView?.setNeedsLayout()
+            ai?.start(traits: traits)
+            return
+        }
+        controller.hostContextChanged(traits: traits, contextBefore: before, contextAfter: after)
+        // Whether the field is private is what the AI row cares about; an empty field filling up is not a new field.
+        let privacyChanged = traits.isPrivate != fieldTraits?.isPrivate
+        fieldTraits = traits
+        if privacyChanged {
+            ai?.start(traits: traits)
+        } else {
+            ai?.hostContextChanged()
+        }
     }
 
     private func currentHeight() -> CGFloat {

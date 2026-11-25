@@ -23,7 +23,7 @@ struct HomeView: View {
                     Text("iOS 版 · 预览 \(versionText)")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
-                    Text("拼音输入、万象词库已可用；在线 AI 候选在后续版本加入。")
+                    Text("拼音输入、万象词库离线可用；在线 AI 纠错、助手和表情候选需要在「AI 云端候选」里配置自己的 Key。")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -41,8 +41,8 @@ struct HomeView: View {
             }
 
             Section("关于「完全访问」") {
-                Text("不开完全访问：离线拼音输入照常使用；用户词库（学到的词）只保存在键盘自己的私有目录，不和本应用共享，键盘也不联网。")
-                Text("开启后：用户词库放进与本应用共享的目录，设置改动可由本应用部署后通知键盘；以后的在线 AI 候选也需要它。键入内容只在你同意云端 AI 之后才会发送。")
+                Text("不开完全访问：离线拼音输入照常使用；学到的词只保存在键盘自己的私有目录，键盘不联网，AI 行显示一句提示。")
+                Text("开启后：本应用的设置（含 AI 配置）和部署结果能让键盘读到；键盘才能联网请求 AI。用户词库仍只在键盘自己的私有目录。键入内容只在你同意云端 AI 之后才会发送，密码、验证码和纯数字输入框永远不发送。")
             }
             .font(.footnote)
 
@@ -52,6 +52,10 @@ struct HomeView: View {
             }
 
             Section {
+                NavigationLink(value: Route.ai) {
+                    Label("AI 云端候选", systemImage: "sparkles")
+                }
+                .accessibilityIdentifier("oc.home.ai")
                 NavigationLink(value: Route.diagnostics) {
                     Label("诊断", systemImage: "stethoscope")
                 }

@@ -5,6 +5,8 @@ import SwiftUI
 enum Route: Hashable {
     case diagnostics
     case licenses
+    case ai
+    case policy(String)
 }
 
 @main
@@ -22,6 +24,8 @@ struct OrangeCellApp: App {
                 _ = KeyStorageSelfTest.writeAndVerifyLocally(context: context)
             }
         }
+        // CI (simulator only; compiled out for a device): point the AI at the mock server on this machine.
+        AiSeed.applyIfRequested(arguments: arguments)
         if arguments.contains("-OCDeploy") {
             Task.detached(priority: .utility) {
                 DeployAction.save(DeployAction.run())
@@ -43,6 +47,8 @@ struct RootView: View {
         let arguments = ProcessInfo.processInfo.arguments
         if arguments.contains("-OCOpenDiagnostics") { return [.diagnostics] }
         if arguments.contains("-OCOpenLicenses") { return [.licenses] }
+        if arguments.contains("-OCOpenAi") { return [.ai] }
+        if let index = arguments.firstIndex(of: "-OCOpenPolicy"), index + 1 < arguments.count { return [.ai, .policy(arguments[index + 1])] }
         return []
     }()
 
@@ -55,6 +61,10 @@ struct RootView: View {
                         DiagnosticsView()
                     case .licenses:
                         LicensesView()
+                    case .ai:
+                        AiSettingsView()
+                    case .policy(let id):
+                        PolicyEditorView(policyID: id)
                     }
                 }
         }

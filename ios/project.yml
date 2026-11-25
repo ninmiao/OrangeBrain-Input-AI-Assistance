@@ -104,6 +104,10 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
         ITSAppUsesNonExemptEncryption: false
+        NSFaceIDUsageDescription: 橘脑一颗用面容 ID 或锁屏密码确认是你本人在修改 API Key。
+        # Loopback only (the CI mock server); every address the person can enter is https and goes through ATS.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
@@ -137,6 +141,9 @@ targets:
         CFBundleDisplayName: 橘脑一颗
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        # Loopback only (the CI mock server); a configured endpoint is https and goes through ATS.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
         NSExtension:
           NSExtensionPointIdentifier: com.apple.keyboard-service
           NSExtensionPrincipalClass: "$(PRODUCT_MODULE_NAME).KeyboardViewController"

@@ -87,6 +87,8 @@ final class KeyButton: UIControl {
             accessibilityLabel = spec.title
         }
         backgroundColor = isHighlighted ? pressedColor : baseColor
+        isEnabled = spec.enabled
+        alpha = spec.enabled ? 1 : 0.4
     }
 
     /// Gives the key another title, symbol or colour without recreating it: shift, caps lock
@@ -161,6 +163,7 @@ final class KeyButton: UIControl {
 
     /// For XCUITest: an accessibility activation taps the key.
     override func accessibilityActivate() -> Bool {
+        guard spec.enabled else { return false }
         onTouchDown?(self)
         onTouchUp?(self)
         lastTouchTimestamp = ProcessInfo.processInfo.systemUptime

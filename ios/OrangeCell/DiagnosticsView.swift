@@ -2,9 +2,11 @@
 import OCCore
 import OCRime
 import SwiftUI
+import UIKit
 
 struct DiagnosticsView: View {
     @StateObject private var model = DiagnosticsModel()
+    @State private var copied = false
 
     var body: some View {
         List {
@@ -12,6 +14,7 @@ struct DiagnosticsView: View {
                 appGroupSection(app)
                 probeSection(app)
                 keyStorageSection(app)
+                aiSection
                 profileSection(app)
                 rimeSection(app)
                 rimeDataSection(app)
@@ -91,6 +94,14 @@ struct DiagnosticsView: View {
                 Text("需要键盘运行过一次，才能判断跨进程读取。")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var aiSection: some View {
+        Section("AI 配置（不含 Key）") {
+            ForEach(model.aiLines, id: \.self) { line in
+                row(line.title, line.value)
             }
         }
     }
@@ -183,7 +194,20 @@ struct DiagnosticsView: View {
 
     private func shareSection(_ report: DiagnosticsReport) -> some View {
         Section("回传结果") {
+            Button("复制诊断信息") {
+                UIPasteboard.general.string = shareText(report)
+                copied = true
+            }
+            .accessibilityIdentifier("oc.diag.copy")
+            if copied {
+                Text("已复制到剪贴板。里面没有 Key，也没有你输入过的文字。")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("oc.diag.copied")
+            }
             ShareLink("分享诊断报告（JSON）", item: shareText(report))
+        } footer: {
+            Text("复制后可以粘贴到聊天或备忘录里发给开发者。")
         }
     }
 
@@ -193,6 +217,9 @@ struct DiagnosticsView: View {
         var text = DiagnosticsCollector.json(report)
         if let keyboard = model.keyboard {
             text += "\n" + DiagnosticsCollector.json(keyboard)
+        }
+        if !model.aiLines.isEmpty {
+            text += "\nAI 配置（不含 Key）\n" + model.aiLines.map { "\($0.title)：\($0.value)" }.joined(separator: "\n")
         }
         return text
     }

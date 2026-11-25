@@ -197,6 +197,15 @@ final class KeyboardUITests: XCTestCase {
             if fromPixels != nil { break }
             Thread.sleep(forTimeInterval: 1)
         } while Date() < deadline
+        if fromPixels == nil {
+            // iOS sometimes brings up the system pinyin keyboard after the Full Access switch changed:
+            // the globe key cycles to the next keyboard until ours shows.
+            for _ in 0..<3 where fromPixels == nil {
+                point(x: 41, y: app.windows.firstMatch.frame.height - 37).tap()
+                Thread.sleep(forTimeInterval: 2.5)
+                fromPixels = screen()?.keyboardTop
+            }
+        }
         note("keyboardTop pixels=\(fromPixels.map { String(describing: $0) } ?? "n/a") tree=\(fromTree) width=\(screenWidth)")
         if fromPixels == nil { saveShot("system-keyboard-not-found") }
         let value = fromPixels ?? fromTree
@@ -283,10 +292,10 @@ final class KeyboardUITests: XCTestCase {
         XCTFail(message)
     }
 
-    private func openHostAndFocus() -> XCUIElement {
-        app.launchArguments = ["-OCNoAutoFocus"]
+    private func openHostAndFocus(secure: Bool = false) -> XCUIElement {
+        app.launchArguments = ["-OCNoAutoFocus"] + (secure ? ["-OCSecureField"] : [])
         app.launch()
-        let field = app.textFields["oc.testhost.field"]
+        let field = secure ? app.secureTextFields["oc.testhost.field"] : app.textFields["oc.testhost.field"]
         XCTAssertTrue(field.waitForExistence(timeout: 30), "host text field missing")
         field.tap()
         // The extension needs a moment to start; its first dictionary lookup follows.
@@ -464,7 +473,7 @@ final class KeyboardUITests: XCTestCase {
         candidate(2).tap()
         waitForField(field1, "host 1: the third candidate should have inserted 拟好") { $0 == "拟好" }
 
-        // host 2 (a second keyboard process) learns 我要吃 (second candidate of woyaochihuoguo)
+        // host 2 (a second keyboard process) learns 种过 (second candidate of zhongguo)
         app = host2
         var field2 = openHostAndFocus()
         warmUp(field2)
@@ -472,31 +481,31 @@ final class KeyboardUITests: XCTestCase {
         Thread.sleep(forTimeInterval: 1)
         candidate(0).tap()
         waitForField(field2, "host 2 should already see the phrase host 1 learned") { $0 == "拟好" }
-        type("woyaochihuoguo")
+        type("zhongguo")
         Thread.sleep(forTimeInterval: 1)
-        candidate(1, phraseLengths: [5, 3, 2]).tap()
-        waitForField(field2, "host 2: the second candidate should have inserted 我要吃") { $0 == "拟好我要吃" }
+        candidate(1).tap()
+        waitForField(field2, "host 2: the second candidate should have inserted 种过") { $0 == "拟好种过" }
         saveShot("system-hosts-2-learned")
         requestHelper("footprint-host2")
 
         // back to host 1 (its keyboard process was in the background): both phrases are first
         field1 = switchTo(host1)
-        type("woyaochihuoguo")
+        type("zhongguo")
         Thread.sleep(forTimeInterval: 1)
         candidate(0).tap()
-        waitForField(field1, "host 1 should see the phrase host 2 learned") { $0 == "拟好我要吃" }
+        waitForField(field1, "host 1 should see the phrase host 2 learned") { $0 == "拟好种过" }
         type("nihao")
         Thread.sleep(forTimeInterval: 1)
         candidate(0).tap()
-        waitForField(field1, "host 1 keeps its own phrase") { $0 == "拟好我要吃拟好" }
+        waitForField(field1, "host 1 keeps its own phrase") { $0 == "拟好种过拟好" }
         saveShot("system-hosts-1-back")
 
         // and once more to host 2
         field2 = switchTo(host2)
-        type("woyaochihuoguo")
+        type("zhongguo")
         Thread.sleep(forTimeInterval: 1)
         candidate(0).tap()
-        waitForField(field2, "host 2 still has both phrases first") { $0 == "拟好我要吃我要吃" }
+        waitForField(field2, "host 2 still has both phrases first") { $0 == "拟好种过种过" }
         requestHelper("footprint-hosts-done")
     }
 
@@ -504,28 +513,109 @@ final class KeyboardUITests: XCTestCase {
     /// Needs a phrase learned in an earlier process (testLearnAPhrase or the two-host test) to check both.
     func testLearningSurvivesAKillRightAfterTheCommit() throws {
         app = XCUIApplication(bundleIdentifier: hostBundleID)
-        // A process that learns 我要吃 and dies a moment later.
+        // A process that learns 种过 and dies a moment later.
         var field = openHostAndFocus()
         warmUp(field)
-        type("woyaochihuoguo")
+        type("zhongguo")
         Thread.sleep(forTimeInterval: 1)
-        candidate(1, phraseLengths: [5, 3, 2]).tap()
-        waitForField(field, "the second candidate should have inserted 我要吃") { $0 == "我要吃" }
+        candidate(1).tap()
+        waitForField(field, "the second candidate should have inserted 种过") { $0 == "种过" }
         requestHelper("kill-keyboard")          // kill -9 at once: no hide, no deploy
         app.terminate()
 
         // The next process has the word learned just before the kill, and the one learned long before.
         field = openHostAndFocus()
         warmUp(field)
-        type("woyaochihuoguo")
+        type("zhongguo")
         Thread.sleep(forTimeInterval: 1)
         saveShot("system-kill-1-last-word")
         candidate(0).tap()
-        waitForField(field, "the word committed right before the kill is missing") { $0 == "我要吃" }
+        waitForField(field, "the word committed right before the kill is missing") { $0 == "种过" }
         type("nihao")
         Thread.sleep(forTimeInterval: 1)
         saveShot("system-kill-2-earlier-word")
         candidate(0).tap()
-        waitForField(field, "the word learned earlier is missing") { $0 == "我要吃拟好" }
+        waitForField(field, "the word learned earlier is missing") { $0 == "种过拟好" }
+    }
+
+    // MARK: the AI row (the mock service, the made-up key and the routes are set up by e2e-sim.sh in mode ai)
+
+    private var aiBarCenterY: CGFloat { keyboardTop + Metrics.top + Metrics.composition + Metrics.candidates + Metrics.aiBar / 2 }
+
+    /// The AI candidates start at x = 24 pt (after the status dot); the first one is far wider than 60 pt.
+    private func aiItem(_ index: Int, widths: [CGFloat] = []) -> XCUICoordinate {
+        var x: CGFloat = 24
+        for position in 0..<index { x += widths[position] }
+        return point(x: x + 30, y: aiBarCenterY)
+    }
+
+    /// The two trigger keys at the right end of the row (38 pt wide, the sparkles one is the last).
+    private var aiAssistantKey: XCUICoordinate { point(x: screenWidth - 21, y: aiBarCenterY) }
+    private var aiEmojiKey: XCUICoordinate { point(x: screenWidth - 59, y: aiBarCenterY) }
+
+    func testAiRowCorrectsAssistsAndPrefersTheEmojiKey() throws {
+        let field = openHostAndFocus()
+        warmUp(field)
+        saveShot("ai-0-idle")
+
+        // 1. A typo typed as pinyin: the correction streams in on its own and is adopted with a tap.
+        type("woyaochihuogou")
+        Thread.sleep(forTimeInterval: 3.5)
+        saveShot("ai-1-correction-streamed")
+        aiItem(0).tap()
+        waitForField(field, "tapping the 纠错 candidate should put the corrected sentence into the field") { $0 == "我要吃火锅" }
+        saveShot("ai-2-adopted")
+
+        // 2. The assistant key starts a slow request; while it is still streaming the emoji key takes over.
+        Thread.sleep(forTimeInterval: 1.5)
+        aiAssistantKey.tap()
+        Thread.sleep(forTimeInterval: 1.0)
+        saveShot("ai-3-assistant-streaming")
+        aiEmojiKey.tap()
+        Thread.sleep(forTimeInterval: 2.0)
+        saveShot("ai-4-emoji-wins")
+        // The slow second assistant candidate would have arrived by now; it must not replace the emoticons.
+        Thread.sleep(forTimeInterval: 3.0)
+        saveShot("ai-5-late-assistant-data-dropped")
+        XCTAssertEqual(fieldText(field), "我要吃火锅", "nothing is inserted until a candidate is tapped")
+        aiItem(0).tap()
+        waitForField(field, "the first emoticon goes after the text, no assistant text") {
+            $0.hasPrefix("我要吃火锅") && $0.count > 5 && !$0.contains("好啊") && !$0.contains("。")
+        }
+        saveShot("ai-6-emoticon-adopted")
+        requestHelper("footprint-ai")
+    }
+
+    /// A password field: the keyboard switches to English, the row says nothing is sent, the keys do nothing.
+    func testAiNeverSendsFromASecureField() throws {
+        let field = openHostAndFocus(secure: true)
+        _ = keyboardTop
+        saveShot("ai-secure-0")
+        type("secretpass")
+        Thread.sleep(forTimeInterval: 2)
+        saveShot("ai-secure-1-typed")
+        aiAssistantKey.tap()
+        Thread.sleep(forTimeInterval: 1)
+        aiEmojiKey.tap()
+        Thread.sleep(forTimeInterval: 2)
+        saveShot("ai-secure-2-keys-pressed")
+        let mirror = app.staticTexts["oc.testhost.mirror"].label
+        XCTAssertTrue(mirror.contains("secretpass"), "the letters themselves still go in (\(mirror)); \(field.exists)")
+        requestHelper("footprint-ai-secure")
+    }
+
+    /// Without Full Access the AI row says so in one line and the keys do nothing.
+    func testAiNeedsFullAccess() throws {
+        let field = openHostAndFocus()
+        warmUp(field)
+        type("nihao")
+        Thread.sleep(forTimeInterval: 2)
+        saveShot("ai-nofullaccess-1-hint")
+        aiAssistantKey.tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        aiEmojiKey.tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        saveShot("ai-nofullaccess-2-keys-pressed")
+        XCTAssertEqual(fieldText(field), "", "pressing the AI keys inserts nothing")
     }
 }

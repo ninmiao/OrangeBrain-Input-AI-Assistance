@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import Foundation
+import OCCore
 import OCRime
 
 /// What the keyboard view shows. The controller owns it and publishes changes.
@@ -19,6 +20,8 @@ public struct KeyboardState: Equatable {
     public var notice: String?
     /// The AI row under the candidates.
     public var ai = AiBarState.disabled
+    /// What the host field is (keyboard type, secure entry, capitalisation, ...).
+    public var traits = TextTraits()
 
     public init() {}
 }
@@ -31,6 +34,17 @@ public protocol AiBarHandler: AnyObject {
     func aiCancelTapped()
     func aiAdoptTapped(_ index: Int)
     func aiDismissExpanded()
+}
+
+/// What the AI logic wants to hear from the keyboard (`AiKeyboardController`). All calls come on the main
+/// thread.
+public protocol KeyboardAiEvents: AnyObject {
+    /// A key, a candidate tap or anything else the person did.
+    func keyboardUserInput()
+    /// Text went into the document (a commit from Rime, a plain character, a symbol).
+    func keyboardCommitted(_ text: String)
+    /// Rime composition or candidates changed.
+    func keyboardCompositionChanged()
 }
 
 /// Start-up numbers for the CI report: how long after the keyboard appeared the engine was ready and the
@@ -58,6 +72,7 @@ public final class KeyboardController {
     /// refresh its diagnostics a little later).
     public var onActivity: (() -> Void)?
     public weak var aiHandler: AiBarHandler?
+    public weak var aiEvents: KeyboardAiEvents?
     /// Letters that went into the document as plain text although 中 mode (or the dictionary) was meant:
     /// Rime did not take them, or there was no working engine. The CI gate requires 0.
     public private(set) var unhandledLetters = 0
@@ -67,6 +82,12 @@ public final class KeyboardController {
 
     private var service: RimeService?
     private var output: KeyboardTextOutput?
+    /// Tells changes made by the host from changes made by the keyboard (a composition is dropped when the
+    /// person moves the caret).
+    private var hostTracker = HostChangeTracker()
+    /// The language before a Latin-only field (email, URL, password, digits) switched the keyboard to EN.
+    private var modeBeforeForcing: InputMode?
+    private static func now() -> TimeInterval { ProcessInfo.processInfo.systemUptime }
     private var lastShiftTap: TimeInterval = -.infinity
     /// Two taps on shift within this time (in seconds of touch time) lock caps.
     static let doubleTapInterval: TimeInterval = 0.4
@@ -121,12 +142,101 @@ public final class KeyboardController {
         } else if state.mode == .english {
             service?.setAsciiMode(true) { _ in }
         }
+        if service != nil, state.traits.forcesEnglish, state.mode == .chinese {
+            modeBeforeForcing = .chinese
+            state.mode = .english
+            service?.setAsciiMode(true) { _ in }
+        }
         if let old, old !== service { old.deactivate() }
     }
 
     public var rimeService: RimeService? { service }
 
     public func setAi(_ ai: AiBarState) { state.ai = ai }
+
+    // MARK: what the AI logic reads and does
+
+    /// The composition for the AI logic: what was typed and what Rime shows for it.
+    public var aiComposition: AiComposition? {
+        guard state.isComposing, !lastApplied.rawInput.isEmpty else { return nil }
+        return AiComposition(raw: lastApplied.rawInput, preedit: state.composition)
+    }
+
+    public var isChineseMode: Bool { state.mode == .chinese }
+
+    /// Inserts text for the AI logic (an adopted candidate): not a key press, nothing to tell the AI about.
+    public func insertForAi(_ text: String) {
+        output?.insertText(text)
+        hostTracker.ownChange(now: Self.now())
+        onActivity?()
+    }
+
+    public func deleteForAi(_ count: Int) {
+        for _ in 0..<max(count, 0) {
+            output?.deleteBackward()
+            hostTracker.ownChange(now: Self.now())
+        }
+        onActivity?()
+    }
+
+    // MARK: the host field
+
+    /// The host moved to another field (or the keyboard appeared): the traits decide the language, the panel,
+    /// the capitals and the return key. A field of the same kind keeps the language the person chose.
+    public func setTraits(_ traits: TextTraits, contextBefore: String?, contextAfter: String?) {
+        let old = state.traits
+        state.traits = traits
+        hostTracker.reset(before: contextBefore, after: contextAfter)
+        // Latin-only fields (email, URL, password, digits) switch to EN and the language comes back afterwards.
+        if traits.forcesEnglish {
+            if !old.forcesEnglish { modeBeforeForcing = state.mode }
+            if state.mode == .chinese, service != nil { setMode(.english) }
+        } else if old.forcesEnglish, let saved = modeBeforeForcing {
+            modeBeforeForcing = nil
+            if saved != state.mode, service != nil { setMode(saved) }
+        }
+        if traits.isNumericPad {
+            state.panel = .numeric
+        } else if traits.layout == .numbersAndPunctuation && old.layout != .numbersAndPunctuation {
+            state.panel = .numbers
+        } else if state.panel == .numeric {
+            state.panel = .letters
+        }
+        if old.capitalization != traits.capitalization, state.shift != .locked { state.shift = .off }
+        applyAutoCapitalization(before: contextBefore)
+    }
+
+    /// The host reported a change (`textDidChange`, `selectionDidChange`). A change the keyboard did not make
+    /// while something is being composed means the person moved the caret or edited elsewhere: the composition
+    /// no longer belongs to that place and is dropped (Android does the same). The traits are read again too
+    /// (the host may change them without changing the field).
+    public func hostContextChanged(traits: TextTraits, contextBefore: String?, contextAfter: String?) {
+        let external = hostTracker.observe(before: contextBefore, after: contextAfter, now: Self.now())
+        var comparable = traits
+        comparable.hasText = state.traits.hasText
+        if comparable != state.traits {
+            setTraits(traits, contextBefore: contextBefore, contextAfter: contextAfter)
+        } else {
+            // Only "has text" changed (the field filled or emptied): the return key may follow, nothing else.
+            if traits.hasText != state.traits.hasText { state.traits.hasText = traits.hasText }
+            applyAutoCapitalization(before: contextBefore)
+        }
+        if external, composingNow { clearComposition() }
+    }
+
+    private func applyAutoCapitalization(before: String?) {
+        guard state.mode == .english else { return }
+        switch state.traits.capitalization {
+        case .allCharacters:
+            if state.shift != .locked { state.shift = .locked }
+        case .none:
+            break
+        case .words, .sentences:
+            if state.shift == .locked { return }
+            let target: ShiftState = AutoCapitalization.wantsShift(state.traits.capitalization, before: before) ? .once : .off
+            if state.shift != target { state.shift = target }
+        }
+    }
 
     func aiItemTapped(_ index: Int) { aiHandler?.aiItemTapped(index) }
     func aiAssistantTapped() { aiHandler?.aiAssistantTapped() }
@@ -177,6 +287,7 @@ public final class KeyboardController {
 
     /// `timestamp` is when the touch happened (UITouch clock); it only matters for double taps.
     func handle(_ action: KeyAction, timestamp: TimeInterval = ProcessInfo.processInfo.systemUptime) {
+        aiEvents?.keyboardUserInput()
         switch action {
         case .character(let text): tapCharacter(text)
         case .space: tapSpace()
@@ -227,6 +338,7 @@ public final class KeyboardController {
     }
 
     func tapReturn() {
+        guard state.traits.returnEnabled || composingNow else { return }
         if composingNow, service != nil {
             // Return confirms the typed letters as they are (Rime commits the raw input).
             send(.enter, outstanding: .other, rawFallback: nil)
@@ -240,6 +352,7 @@ public final class KeyboardController {
             send(.backspace, outstanding: .backspace, rawFallback: nil)
         } else {
             output?.deleteBackward()
+            hostTracker.ownChange(now: Self.now())
             onActivity?()
         }
     }
@@ -259,12 +372,19 @@ public final class KeyboardController {
     }
 
     func show(_ panel: Panel) {
+        // The pad of a digits-only field is the only panel there.
+        guard state.panel != .numeric else { return }
         state.panel = panel
     }
 
     func toggleLanguage() {
+        guard service != nil, !state.traits.forcesEnglish else { return }
+        setMode(state.mode == .chinese ? .english : .chinese)
+    }
+
+    /// Switches 中 / EN: drops what is being composed and tells Rime.
+    private func setMode(_ next: InputMode) {
         guard let service else { return }
-        let next: InputMode = state.mode == .chinese ? .english : .chinese
         epoch += 1
         outstanding = []
         service.clear { _ in }
@@ -272,12 +392,15 @@ public final class KeyboardController {
         state.mode = next
         state.shift = .off
         resetScreen()
+        applyAutoCapitalization(before: output?.contextBefore)
+        aiEvents?.keyboardCompositionChanged()
     }
 
     // MARK: candidates
 
     public func selectCandidate(at index: Int) {
         guard let service, state.candidates.indices.contains(index) else { return }
+        aiEvents?.keyboardUserInput()
         let expected = state.candidates[index].text
         issued += 1
         let myEpoch = epoch
@@ -306,6 +429,7 @@ public final class KeyboardController {
         outstanding = []
         resetScreen()
         service?.clear { _ in }
+        aiEvents?.keyboardCompositionChanged()
     }
 
     // MARK: engine lifecycle
@@ -392,6 +516,7 @@ public final class KeyboardController {
         if !update.candidates.isEmpty, timings.firstCandidatesMs == nil, let shownAt {
             timings.firstCandidatesMs = Date().timeIntervalSince(shownAt) * 1000
         }
+        aiEvents?.keyboardCompositionChanged()
     }
 
     // MARK: helpers
@@ -409,6 +534,8 @@ public final class KeyboardController {
 
     private func insert(_ text: String) {
         output?.insertText(text)
+        hostTracker.ownChange(now: Self.now())
         onActivity?()
+        aiEvents?.keyboardCommitted(text)
     }
 }
