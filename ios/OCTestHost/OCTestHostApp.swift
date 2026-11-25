@@ -48,6 +48,9 @@ struct SystemKeyboardHost: View {
         }
         .padding()
         .task {
+            // With -OCNoAutoFocus the test taps the field itself, once: tapping a field that is
+            // already focused makes the system show its AutoFill callout over it in the screenshots.
+            guard !ProcessInfo.processInfo.arguments.contains("-OCNoAutoFocus") else { return }
             try? await Task.sleep(nanoseconds: 700_000_000)
             focused = true
         }
@@ -129,7 +132,7 @@ final class EmbeddedHostViewController: UIViewController, UITextViewDelegate {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        textView.becomeFirstResponder()
+        if !ProcessInfo.processInfo.arguments.contains("-OCNoAutoFocus") { textView.becomeFirstResponder() }
     }
 
     /// The extension sizes itself like this (OCKeyboardViewController.currentHeight).

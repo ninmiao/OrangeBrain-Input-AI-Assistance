@@ -81,18 +81,27 @@ public struct RimeServiceConfiguration: Equatable, Sendable {
     public var modules: [String]?
     /// Schema to select after the session is created (`nil` keeps the first of schema_list).
     public var schemaID: String?
+    /// Compiled configuration deployed by the app (App Group); `nil` uses `<user>/build`.
+    public var stagingDirectory: String?
+    /// Test hook: the engine start is held back this long (a slow device), so a test can type
+    /// before the engine is ready. Always 0 in the product.
+    public var startDelay: TimeInterval
 
     public init(
         sharedDataDirectory: String,
         userDataDirectory: String,
-        maxCandidates: Int = 30,
+        maxCandidates: Int = 100,
         modules: [String]? = RimeEngine.minimalModules,
-        schemaID: String? = nil
+        schemaID: String? = nil,
+        stagingDirectory: String? = nil,
+        startDelay: TimeInterval = 0
     ) {
         self.sharedDataDirectory = sharedDataDirectory
         self.userDataDirectory = userDataDirectory
         self.maxCandidates = maxCandidates
         self.modules = modules
         self.schemaID = schemaID
+        self.stagingDirectory = stagingDirectory
+        self.startDelay = startDelay
     }
 }

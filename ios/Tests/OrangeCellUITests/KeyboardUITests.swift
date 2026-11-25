@@ -84,8 +84,8 @@ final class KeyboardUITests: XCTestCase {
 
     /// Mirrors KeyboardView.metrics(landscape: false).
     private enum Metrics {
-        static let top: CGFloat = 4, composition: CGFloat = 18, candidates: CGFloat = 40, keysGap: CGFloat = 6
-        static let keyHeight: CGFloat = 44, rowGap: CGFloat = 10, keyGap: CGFloat = 6, side: CGFloat = 3
+        static let top: CGFloat = 4, composition: CGFloat = 18, candidates: CGFloat = 40, aiBar: CGFloat = 30, keysGap: CGFloat = 6
+        static let keyHeight: CGFloat = 40, rowGap: CGFloat = 8, keyGap: CGFloat = 6, side: CGFloat = 3
     }
 
     override func setUp() {
@@ -203,7 +203,7 @@ final class KeyboardUITests: XCTestCase {
         return value
     }
 
-    private var keysTop: CGFloat { keyboardTop + Metrics.top + Metrics.composition + Metrics.candidates + Metrics.keysGap }
+    private var keysTop: CGFloat { keyboardTop + Metrics.top + Metrics.composition + Metrics.candidates + Metrics.aiBar + Metrics.keysGap }
 
     private func rowCenterY(_ row: Int) -> CGFloat {
         keysTop + CGFloat(row) * (Metrics.keyHeight + Metrics.rowGap) + Metrics.keyHeight / 2
@@ -229,28 +229,29 @@ final class KeyboardUITests: XCTestCase {
 
     private func letter(_ c: Character) -> XCUICoordinate {
         let ten = [CGFloat](repeating: 10, count: 10)
-        if let i = topRow.firstIndex(of: c) { return keyPoint(row: 0, index: topRow.distance(from: topRow.startIndex, to: i), weights: ten) }
+        // Row 0 is the number row.
+        if let i = topRow.firstIndex(of: c) { return keyPoint(row: 1, index: topRow.distance(from: topRow.startIndex, to: i), weights: ten) }
         if let i = middleRow.firstIndex(of: c) {
-            return keyPoint(row: 1, index: 1 + middleRow.distance(from: middleRow.startIndex, to: i), weights: [5] + [CGFloat](repeating: 10, count: 9) + [5])
+            return keyPoint(row: 2, index: 1 + middleRow.distance(from: middleRow.startIndex, to: i), weights: [5] + [CGFloat](repeating: 10, count: 9) + [5])
         }
         let i = bottomLetters.distance(from: bottomLetters.startIndex, to: bottomLetters.firstIndex(of: c)!)
-        return keyPoint(row: 2, index: 1 + i, weights: [15] + [CGFloat](repeating: 10, count: 7) + [15])
+        return keyPoint(row: 3, index: 1 + i, weights: [15] + [CGFloat](repeating: 10, count: 7) + [15])
     }
 
-    private var deleteKey: XCUICoordinate { keyPoint(row: 2, index: 8, weights: [15] + [CGFloat](repeating: 10, count: 7) + [15]) }
+    private var deleteKey: XCUICoordinate { keyPoint(row: 3, index: 8, weights: [15] + [CGFloat](repeating: 10, count: 7) + [15]) }
 
     /// Bottom row: 123, [globe], 中/EN, space, return. Whether the globe is there is read from the screen.
     private var bottomRow: [CGFloat] {
         if bottomRowCache.count >= 4 { return bottomRowCache }
-        let centers = screen()?.keyCenters(atY: rowCenterY(3)) ?? []
+        let centers = screen()?.keyCenters(atY: rowCenterY(4)) ?? []
         note("bottom row key centres: \(centers.map { Int($0) })")
         XCTAssertTrue((4...5).contains(centers.count), "expected 4 or 5 keys on the bottom row, found \(centers.count)")
         bottomRowCache = centers
         return centers
     }
 
-    private var languageKey: XCUICoordinate { point(x: bottomRow[bottomRow.count - 3], y: rowCenterY(3)) }
-    private var spaceKey: XCUICoordinate { point(x: bottomRow[bottomRow.count - 2], y: rowCenterY(3)) }
+    private var languageKey: XCUICoordinate { point(x: bottomRow[bottomRow.count - 3], y: rowCenterY(4)) }
+    private var spaceKey: XCUICoordinate { point(x: bottomRow[bottomRow.count - 2], y: rowCenterY(4)) }
 
     /// Candidate cells are as wide as their text: a two-character phrase is 62 pt (20 pt font, 22 pt
     /// padding) and phrases carry no comment, so the first cells of a phrase list are all this wide.
@@ -282,6 +283,7 @@ final class KeyboardUITests: XCTestCase {
     }
 
     private func openHostAndFocus() -> XCUIElement {
+        app.launchArguments = ["-OCNoAutoFocus"]
         app.launch()
         let field = app.textFields["oc.testhost.field"]
         XCTAssertTrue(field.waitForExistence(timeout: 30), "host text field missing")
@@ -346,36 +348,53 @@ final class KeyboardUITests: XCTestCase {
         requestHelper("footprint-typing")
     }
 
-    // MARK: user dictionary across the app deployment and a keyboard restart
+    // MARK: user dictionary: one live place, whatever the Full Access switch says
 
-    /// Which candidate to tap in each round to teach the keyboard 拟好 for nihao. The phrase starts third
-    /// and is first after one choice; RimeSessionTests asserts that (`learning.tapIndices` starts 2, 0).
-    private let learnSchedule: [Int] = (ProcessInfo.processInfo.environment["OC_LEARN_SCHEDULE"] ?? "2")
-        .split(separator: ",").compactMap { Int($0) }
+    /// Which candidate to tap to teach the keyboard 拟好 for nihao. The phrase starts third and is first
+    /// after one choice; RimeSessionTests asserts that (`learning.tapIndices` starts 2, 0).
+    private let learnIndex = 2
 
-    func testUserDictionaryAcrossDeployAndKeyboardRestart() throws {
-        var field = openHostAndFocus()
+    /// Phase A (no Full Access): teach the keyboard.
+    func testLearnAPhrase() throws {
+        let field = openHostAndFocus()
         warmUp(field)
-
-        // 1. teach the keyboard
-        var expected = ""
-        for (round, index) in learnSchedule.enumerated() {
-            type("nihao")
-            Thread.sleep(forTimeInterval: 1)
-            if round == 0 { saveShot("system-learn-1-before") }
-            candidate(index).tap()
-            expected += "拟好"
-            waitForField(field, "round \(round + 1): candidate \(index) should have inserted 拟好") { $0 == expected }
-        }
+        type("nihao")
+        Thread.sleep(forTimeInterval: 1)
+        saveShot("system-learn-1-before")
+        candidate(learnIndex).tap()
+        waitForField(field, "candidate \(learnIndex) should have inserted 拟好") { $0 == "拟好" }
         type("nihao")
         Thread.sleep(forTimeInterval: 1)
         saveShot("system-learn-2-learned")
         candidate(0).tap()
-        expected += "拟好"
-        waitForField(field, "after learning, 拟好 should be the first candidate") { $0 == expected }
+        waitForField(field, "after learning, 拟好 should be the first candidate") { $0 == "拟好拟好" }
         requestHelper("footprint-learned")
+    }
 
-        // 2. the app deploys while the keyboard is up; typing goes on
+    /// The learned phrase is first right now (a keyboard start after the Full Access switch changed).
+    func testLearnedPhraseIsFirst() throws {
+        let field = openHostAndFocus()
+        warmUp(field)
+        type("nihao")
+        Thread.sleep(forTimeInterval: 1)
+        saveShot("system-learned-candidates")
+        candidate(0).tap()
+        waitForField(field, "the learned 拟好 should be first after the Full Access switch changed") { $0 == "拟好" }
+    }
+
+    /// Phase B (Full Access on): the learned phrase is still first, the app deploys while the keyboard runs,
+    /// typing goes on, the keyboard process is killed, the new process still has the phrase first.
+    func testLearnedPhraseSurvivesDeployAndKeyboardRestart() throws {
+        var field = openHostAndFocus()
+        warmUp(field)
+        type("nihao")
+        Thread.sleep(forTimeInterval: 1)
+        saveShot("system-learned-candidates")
+        candidate(0).tap()
+        waitForField(field, "the learned 拟好 should be first with Full Access on") { $0 == "拟好" }
+        requestHelper("footprint-fullaccess")
+
+        // the app deploys while the keyboard is up; typing goes on
         requestHelper("deploy")
         // The app came to the front for the deployment and was closed again: bring the host back.
         // The keyboard appears again and sees the new deploy stamp.
@@ -387,10 +406,9 @@ final class KeyboardUITests: XCTestCase {
         type("woyaochihuoguo")
         Thread.sleep(forTimeInterval: 1)
         spaceKey.tap()
-        expected += "我要吃火锅"
-        waitForField(field, "typing must still work after the app deployed") { $0 == expected }
+        waitForField(field, "typing must still work after the app deployed") { $0 == "拟好我要吃火锅" }
 
-        // 3. the keyboard process dies (as when the system reclaims memory); a new one starts
+        // the keyboard process dies (as when the system reclaims memory); a new one starts
         requestHelper("kill-keyboard")
         app.terminate()
         field = openHostAndFocus()

@@ -59,6 +59,8 @@ struct KeyboardLayout {
     let shift: ShiftState
     let returnKind: ReturnKeyKind
     let showGlobe: Bool
+    /// The 1-0 row above qwerty (Android has it on by default); only on the letters panel.
+    var numberRow = true
 
     var rows: [[RowItem]] {
         switch panel {
@@ -80,7 +82,11 @@ struct KeyboardLayout {
         let top = "qwertyuiop".map(letter)
         let middle = [RowItem.spacer(5)] + "asdfghjkl".map(letter) + [.spacer(5)]
         let bottom = [shiftKey] + "zxcvbnm".map(letter) + [deleteKey]
-        return [top, middle, bottom, bottomRow(panelKey: numbersKey)]
+        let digits: [[RowItem]] = numberRow
+            ? [Array("1234567890").map { RowItem.key(KeySpec(id: "d\($0)", action: .character(String($0)), title: String($0),
+                                                              weight: 10, style: .normal)) }]
+            : []
+        return digits + [top, middle, bottom, bottomRow(panelKey: numbersKey)]
     }
 
     // MARK: numbers and symbols

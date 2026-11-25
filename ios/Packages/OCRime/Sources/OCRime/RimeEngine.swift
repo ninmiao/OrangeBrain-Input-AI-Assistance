@@ -34,11 +34,16 @@ public final class RimeEngine {
         public var userData: String
         /// `nil` or empty keeps glog on stderr only.
         public var log: String?
+        /// Where compiled configuration is looked up first (librime's `staging_dir`, default
+        /// `<userData>/build`); the app deploys into a folder of the App Group and the keyboard reads it.
+        /// What is not found there comes from `<sharedData>/build`.
+        public var stagingData: String?
 
-        public init(sharedData: String, userData: String, log: String? = nil) {
+        public init(sharedData: String, userData: String, log: String? = nil, stagingData: String? = nil) {
             self.sharedData = sharedData
             self.userData = userData
             self.log = log
+            self.stagingData = stagingData
         }
     }
 
@@ -137,7 +142,7 @@ public final class RimeEngine {
     }
 
     private func makeTraits() -> RimeTraits {
-        for path in [directories.sharedData, directories.userData] {
+        for path in [directories.sharedData, directories.userData] + (directories.stagingData.map { [$0] } ?? []) {
             try? FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
         }
         var fresh = RimeTraits()
@@ -150,7 +155,18 @@ public final class RimeEngine {
         fresh.app_name = keep(appName)
         fresh.min_log_level = 2
         fresh.log_dir = keep(directories.log ?? "")
+        if let staging = directories.stagingData, !staging.isEmpty { fresh.staging_dir = keep(staging) }
         return fresh
+    }
+
+    /// Exports the user dictionary as text snapshots into the sync directory (`sync_dir` of
+    /// `installation.yaml`) and waits for it. librime closes every session for this, so the
+    /// caller stops the engine right afterwards.
+    func syncUserData() -> Bool {
+        guard let api = rime_get_api(), isInitialized else { return false }
+        let started = api.pointee.sync_user_data() != 0
+        api.pointee.join_maintenance_thread()
+        return started
     }
 
     func finalize() {

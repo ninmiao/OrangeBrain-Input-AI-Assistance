@@ -200,6 +200,7 @@ targets:
     dependencies:
       - package: OCCore
       - package: OCRime
+      - package: OCKeyboardUI
       - sdk: JavaScriptCore.framework
 
   OrangeCellUITests:

@@ -146,7 +146,14 @@ public struct DiagnosticsReport: Codable, Equatable, Sendable {
     public var rimeDataBytes: Int?
     public var rimeDictionaryBytes: Int?
     public var userDataDirectory: String?
+    /// Always false from M2 on: the live user dictionary is private to the keyboard.
     public var userDataShared: Bool?
+    /// App Group `rime-build`, where the app deploys (keyboard with Full Access only).
+    public var stagingDirectory: String?
+    /// What the keyboard exported to App Group `rime-sync` (count, size, newest), if anything.
+    public var snapshotSummary: String?
+    /// What happened to a user dictionary an M1 build left in the App Group.
+    public var userDictionaryMigration: String?
     public var deployStamp: String?
     /// Whether the keyboard's engine was running when the report was made (nil in the app).
     public var rimeRunning: Bool?
@@ -169,6 +176,7 @@ public enum DiagnosticsCollector {
         rimeModules: [String],
         rimeRunning: Bool? = nil,
         unhandledLetters: Int? = nil,
+        userDictionaryMigration: String? = nil,
         now: Date = Date()
     ) -> DiagnosticsReport {
         let context = AppGroupContext.detect(bundle: bundle)
@@ -203,7 +211,8 @@ public enum DiagnosticsCollector {
         } else {
             notes.append("no compiled Rime data found in the app bundle")
         }
-        let userDirectory = RimeDataLocator.userDataDirectory(context: context, hasFullAccess: fullAccess ?? true)
+        let directories = role == "keyboard" ? RimeDataLocator.keyboardDirectories(context: context, hasFullAccess: fullAccess ?? false) : nil
+        let snapshot = context.containerURL.flatMap { SnapshotSummary.describe(directory: $0.appendingPathComponent(RimeDataLocator.syncFolderName)) }
 
         return DiagnosticsReport(
             role: role,
@@ -234,8 +243,11 @@ public enum DiagnosticsCollector {
             rimeDataBuiltWithLibrime: dataStamp?.builtWithLibrime,
             rimeDataBytes: dataStamp?.totalBytes,
             rimeDictionaryBytes: dataStamp?.dictionaryBytes,
-            userDataDirectory: userDirectory?.url.path,
-            userDataShared: userDirectory?.isShared,
+            userDataDirectory: directories?.user.path,
+            userDataShared: directories == nil ? nil : false,
+            stagingDirectory: directories?.staging?.path,
+            snapshotSummary: snapshot,
+            userDictionaryMigration: userDictionaryMigration,
             deployStamp: DeployStamp.read(in: context),
             rimeRunning: rimeRunning,
             unhandledLetters: unhandledLetters
@@ -272,5 +284,24 @@ public enum DiagnosticsCollector {
     public static func json(_ report: DiagnosticsReport) -> String {
         guard let data = try? DiagnosticsFiles.encoder().encode(report) else { return "{}" }
         return String(decoding: data, as: UTF8.self)
+    }
+}
+
+/// One line about the snapshots the keyboard exports into the App Group (`*.userdb.txt`).
+public enum SnapshotSummary {
+    public static func describe(directory: URL, fileManager: FileManager = .default) -> String? {
+        guard let enumerator = fileManager.enumerator(at: directory, includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey]) else { return nil }
+        var count = 0
+        var bytes = 0
+        var newest: Date?
+        for case let url as URL in enumerator where url.lastPathComponent.hasSuffix(".userdb.txt") {
+            let values = try? url.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
+            count += 1
+            bytes += values?.fileSize ?? 0
+            if let date = values?.contentModificationDate, newest.map({ date > $0 }) ?? true { newest = date }
+        }
+        guard count > 0 else { return nil }
+        let when = newest.map { ISO8601DateFormatter().string(from: $0) } ?? "?"
+        return "\(count) file(s), \(bytes) bytes, newest \(when)"
     }
 }

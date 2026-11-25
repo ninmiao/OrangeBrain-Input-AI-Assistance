@@ -94,8 +94,14 @@ final class EnableKeyboardUITests: XCTestCase {
         let toggle = settings.switches.matching(NSPredicate(format: "label CONTAINS[c] %@", "Full Access")).firstMatch
         if toggle.waitForExistence(timeout: 6) {
             let before = (toggle.value as? String) ?? "?"
-            note("settings.fullAccess.before=\(before)")
-            if before != "1" {
+            // OC_FULL_ACCESS=off (TEST_RUNNER_OC_FULL_ACCESS) switches it off again for the second half of the run.
+            let wantOn = ProcessInfo.processInfo.environment["OC_FULL_ACCESS"] != "off"
+            note("settings.fullAccess.before=\(before) wanted=\(wantOn ? "on" : "off")")
+            if !wantOn && before == "1" {
+                toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+                Thread.sleep(forTimeInterval: 1)
+                snap("full-access-off")
+            } else if wantOn && before != "1" {
                 // The element spans the whole row; the visible switch is at its right end.
                 toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
                 Thread.sleep(forTimeInterval: 1)

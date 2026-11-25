@@ -11,6 +11,15 @@ public final class KeyboardView: UIView {
     /// (`UIInputViewController.needsInputModeSwitchKey`). Target / action of that key
     /// are set by the view controller (`handleInputModeList(from:with:)`).
     public var showsGlobeKey = false { didSet { if showsGlobeKey != oldValue { reloadLayoutIfNeeded() } } }
+    /// The 1-0 row above qwerty (setting in the app, on by default).
+    public var numberRowEnabled = true {
+        didSet {
+            guard numberRowEnabled != oldValue else { return }
+            reloadLayoutIfNeeded()
+            invalidateIntrinsicContentSize()
+            setNeedsLayout()
+        }
+    }
     public var returnKind: ReturnKeyKind = .standard { didSet { if returnKind != oldValue { reloadLayoutIfNeeded() } } }
     public var globeTarget: AnyObject?
     public var globeAction: Selector?
@@ -19,6 +28,11 @@ public final class KeyboardView: UIView {
 
     private let compositionLabel = UILabel()
     private let separator = UIView()
+    private let aiBar = AiBarView()
+    private let expandButton = UIButton(type: .system)
+    private let gridView = CandidateGridView()
+    private let textPanel = AiTextPanel()
+    private var gridOpen = false
     private let candidateLayout = UICollectionViewFlowLayout()
     private lazy var candidateView = UICollectionView(frame: .zero, collectionViewLayout: candidateLayout)
     private var keyButtons: [KeyButton] = []
@@ -33,19 +47,27 @@ public final class KeyboardView: UIView {
     // MARK: sizes
 
     struct Metrics {
-        let top: CGFloat, composition: CGFloat, candidates: CGFloat, keysGap: CGFloat
+        let top: CGFloat, composition: CGFloat, candidates: CGFloat, aiBar: CGFloat, keysGap: CGFloat
         let keyHeight: CGFloat, rowGap: CGFloat, keyGap: CGFloat, side: CGFloat, bottom: CGFloat
-        var height: CGFloat { top + composition + candidates + keysGap + 4 * keyHeight + 3 * rowGap + bottom }
+        /// Height with `rows` key rows (5 with the number row on the letters panel, otherwise 4).
+        func height(rows: Int) -> CGFloat {
+            top + composition + candidates + aiBar + keysGap + CGFloat(rows) * keyHeight + CGFloat(rows - 1) * rowGap + bottom
+        }
+        /// Where the first key row starts.
+        var keysTop: CGFloat { top + composition + candidates + aiBar + keysGap }
+        var expandWidth: CGFloat { 34 }
     }
 
     static func metrics(landscape: Bool) -> Metrics {
         landscape
-            ? Metrics(top: 3, composition: 14, candidates: 32, keysGap: 4, keyHeight: 34, rowGap: 6, keyGap: 5, side: 4, bottom: 4)
-            : Metrics(top: 4, composition: 18, candidates: 40, keysGap: 6, keyHeight: 44, rowGap: 10, keyGap: 6, side: 3, bottom: 8)
+            ? Metrics(top: 3, composition: 12, candidates: 28, aiBar: 24, keysGap: 3, keyHeight: 30, rowGap: 4, keyGap: 5, side: 4, bottom: 3)
+            : Metrics(top: 4, composition: 18, candidates: 40, aiBar: 30, keysGap: 6, keyHeight: 40, rowGap: 8, keyGap: 6, side: 3, bottom: 8)
     }
 
-    public static func preferredHeight(landscape: Bool) -> CGFloat {
-        metrics(landscape: landscape).height
+    /// The keyboard has one height in every panel: the one with the number row (when it is on) or
+    /// without it; panels with fewer rows get taller keys.
+    public static func preferredHeight(landscape: Bool, numberRow: Bool = true) -> CGFloat {
+        metrics(landscape: landscape).height(rows: numberRow ? 5 : 4)
     }
 
     private var isLandscape: Bool { traitCollection.verticalSizeClass == .compact }
@@ -55,6 +77,7 @@ public final class KeyboardView: UIView {
     public init(controller: KeyboardController) {
         self.controller = controller
         super.init(frame: CGRect(x: 0, y: 0, width: 390, height: Self.preferredHeight(landscape: false)))
+        clipsToBounds = true
         backgroundColor = KeyboardTheme.background
         autoresizingMask = [.flexibleWidth]
         accessibilityIdentifier = "oc.keyboard"
@@ -79,6 +102,35 @@ public final class KeyboardView: UIView {
         separator.backgroundColor = KeyboardTheme.separator
         addSubview(separator)
 
+        addSubview(aiBar)
+        aiBar.onItem = { [weak controller] index in controller?.aiItemTapped(index) }
+        aiBar.onAssistant = { [weak controller] in controller?.aiAssistantTapped() }
+        aiBar.onEmoji = { [weak controller] in controller?.aiEmojiTapped() }
+        aiBar.onCancel = { [weak controller] in controller?.aiCancelTapped() }
+
+        let chevron = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
+        expandButton.setImage(UIImage(systemName: "chevron.down", withConfiguration: chevron), for: .normal)
+        expandButton.tintColor = KeyboardTheme.secondaryText
+        expandButton.accessibilityIdentifier = "oc.expand"
+        expandButton.accessibilityLabel = "展开候选"
+        expandButton.addTarget(self, action: #selector(toggleGrid), for: .touchUpInside)
+        expandButton.isHidden = true
+        addSubview(expandButton)
+
+        gridView.isHidden = true
+        gridView.onSelect = { [weak self] index in
+            guard let self else { return }
+            if self.hapticsEnabled { self.impact.impactOccurred() }
+            self.closeGrid()
+            self.controller.selectCandidate(at: index)
+        }
+        addSubview(gridView)
+
+        textPanel.isHidden = true
+        textPanel.onAdopt = { [weak controller] index in controller?.aiAdoptTapped(index) }
+        textPanel.onClose = { [weak controller] in controller?.aiDismissExpanded() }
+        addSubview(textPanel)
+
         controller.onChange = { [weak self] state in self?.render(state) }
         render(controller.state)
     }
@@ -92,7 +144,7 @@ public final class KeyboardView: UIView {
     private func currentLayout() -> KeyboardLayout {
         let state = controller.state
         return KeyboardLayout(panel: state.panel, mode: state.mode, shift: state.shift,
-                              returnKind: returnKind, showGlobe: showsGlobeKey)
+                              returnKind: returnKind, showGlobe: showsGlobeKey, numberRow: numberRowEnabled)
     }
 
     private func render(_ state: KeyboardState) {
@@ -106,15 +158,51 @@ public final class KeyboardView: UIView {
         if candidatesChanged {
             candidateView.reloadData()
             candidateView.setContentOffset(.zero, animated: false)
+            gridView.candidates = candidates
         } else if highlightChanged {
             candidateView.reloadData()
         }
+        // The expand key exists while there are candidates; the grid closes with them.
+        expandButton.isHidden = candidates.isEmpty
+        if candidates.isEmpty && gridOpen { closeGrid() }
+        aiBar.apply(state.ai)
+        if let index = state.ai.expandedIndex, state.ai.items.indices.contains(index) {
+            textPanel.show(item: state.ai.items[index], index: index)
+        } else {
+            textPanel.isHidden = true
+        }
         reloadLayoutIfNeeded()
+        setNeedsLayout()
+    }
+
+    @objc private func toggleGrid() {
+        if hapticsEnabled { impact.impactOccurred() }
+        if gridOpen { closeGrid() } else { openGrid() }
+    }
+
+    private func openGrid() {
+        guard !candidates.isEmpty else { return }
+        gridOpen = true
+        gridView.candidates = candidates
+        gridView.isHidden = false
+        let chevron = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
+        expandButton.setImage(UIImage(systemName: "chevron.up", withConfiguration: chevron), for: .normal)
+        expandButton.accessibilityLabel = "收起候选"
+        setNeedsLayout()
+    }
+
+    private func closeGrid() {
+        gridOpen = false
+        gridView.isHidden = true
+        let chevron = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
+        expandButton.setImage(UIImage(systemName: "chevron.down", withConfiguration: chevron), for: .normal)
+        expandButton.accessibilityLabel = "展开候选"
     }
 
     private func reloadLayoutIfNeeded() {
         let layout = currentLayout()
-        if let old = renderedLayout, old.panel == layout.panel, old.mode == layout.mode, old.showGlobe == layout.showGlobe {
+        if let old = renderedLayout, old.panel == layout.panel, old.mode == layout.mode, old.showGlobe == layout.showGlobe,
+           old.numberRow == layout.numberRow {
             if old.shift == layout.shift, old.returnKind == layout.returnKind { return }
             // Same keys in the same places, only some titles differ (capitals, caps lock, the
             // return key): retitle the existing buttons instead of replacing them.
@@ -142,6 +230,9 @@ public final class KeyboardView: UIView {
                 keyButtons.append(button)
             }
         }
+        // The grid and the text panel stay above the keys.
+        bringSubviewToFront(gridView)
+        bringSubviewToFront(textPanel)
         setNeedsLayout()
     }
 
@@ -230,7 +321,7 @@ public final class KeyboardView: UIView {
     // MARK: layout
 
     public override var intrinsicContentSize: CGSize {
-        CGSize(width: UIView.noIntrinsicMetric, height: Self.preferredHeight(landscape: isLandscape))
+        CGSize(width: UIView.noIntrinsicMetric, height: Self.preferredHeight(landscape: isLandscape, numberRow: numberRowEnabled))
     }
 
     public override func layoutSubviews() {
@@ -239,10 +330,20 @@ public final class KeyboardView: UIView {
         let width = bounds.width
         compositionLabel.frame = CGRect(x: 12, y: m.top, width: width - 24, height: m.composition)
         let candidateTop = m.top + m.composition
-        candidateView.frame = CGRect(x: 0, y: candidateTop, width: width, height: m.candidates)
-        separator.frame = CGRect(x: 0, y: candidateTop + m.candidates, width: width, height: 1 / UIScreen.main.scale)
+        let expand = expandButton.isHidden ? 0 : m.expandWidth
+        candidateView.frame = CGRect(x: 0, y: candidateTop, width: width - expand, height: m.candidates)
+        expandButton.frame = CGRect(x: width - m.expandWidth, y: candidateTop, width: m.expandWidth, height: m.candidates)
+        let aiTop = candidateTop + m.candidates
+        aiBar.frame = CGRect(x: 0, y: aiTop, width: width, height: m.aiBar)
+        separator.frame = CGRect(x: 0, y: aiTop, width: width, height: 1 / UIScreen.main.scale)
 
-        var y = candidateTop + m.candidates + m.keysGap
+        // Key rows share the height under the AI bar equally: a panel with four rows has taller keys than
+        // the letters panel with its number row, and the keyboard keeps one height.
+        let keysTop = m.keysTop
+        let rowCount = max(rows.count, 1)
+        let available = max(bounds.height - keysTop - m.bottom, 0)
+        let keyHeight = max((available - CGFloat(rowCount - 1) * m.rowGap) / CGFloat(rowCount), 0)
+        var y = keysTop
         var buttonIndex = 0
         for row in rows {
             let totalWeight = row.reduce(0) { $0 + $1.weight }
@@ -252,13 +353,19 @@ public final class KeyboardView: UIView {
             for item in row {
                 let itemWidth = unit * item.weight
                 if case .key = item {
-                    keyButtons[buttonIndex].frame = CGRect(x: x, y: y, width: itemWidth, height: m.keyHeight).integral
+                    keyButtons[buttonIndex].frame = CGRect(x: x, y: y, width: itemWidth, height: keyHeight).integral
                     buttonIndex += 1
                 }
                 x += itemWidth + m.keyGap
             }
-            y += m.keyHeight + m.rowGap
+            y += keyHeight + m.rowGap
         }
+
+        // The candidate grid and the AI text panel cover everything under the candidate row.
+        let coverTop = aiTop
+        let cover = CGRect(x: 0, y: coverTop, width: width, height: max(bounds.height - coverTop, 0))
+        gridView.frame = cover
+        textPanel.frame = cover
     }
 
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -332,10 +439,10 @@ final class CandidateCell: UICollectionViewCell {
         ceil(attributed(candidate).size().width) + 22
     }
 
-    func configure(_ candidate: RimeCandidate, highlighted: Bool, index: Int) {
+    func configure(_ candidate: RimeCandidate, highlighted: Bool, index: Int, identifierPrefix: String = "oc.candidate.") {
         label.attributedText = Self.attributed(candidate)
         contentView.backgroundColor = highlighted ? KeyboardTheme.candidateHighlight : .clear
-        accessibilityIdentifier = "oc.candidate.\(index)"
+        accessibilityIdentifier = identifierPrefix + String(index)
         accessibilityLabel = candidate.text
         accessibilityTraits = highlighted ? [.button, .selected] : .button
     }

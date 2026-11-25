@@ -13,6 +13,8 @@ final class RimeRuntime {
         var sharedData: String
         var userData: String
         var modules: [String]?
+        var stagingData: String? = nil
+        var startDelay: TimeInterval = 0
     }
 
     static let shared = RimeRuntime()
@@ -29,7 +31,9 @@ final class RimeRuntime {
     func ensureStarted(_ wanted: Configuration) -> Error? {
         if let engine, engine.isInitialized, configuration == wanted { return nil }
         finalizeLocked()
-        let engine = RimeEngine(directories: .init(sharedData: wanted.sharedData, userData: wanted.userData))
+        if wanted.startDelay > 0 { Thread.sleep(forTimeInterval: wanted.startDelay) }
+        let engine = RimeEngine(directories: .init(sharedData: wanted.sharedData, userData: wanted.userData,
+                                                   stagingData: wanted.stagingData))
         do {
             try engine.start(modules: wanted.modules)
         } catch {
@@ -51,6 +55,9 @@ final class RimeRuntime {
     }
 
     var isRunning: Bool { engine?.isInitialized == true }
+
+    @discardableResult
+    func syncUserDataLocked() -> Bool { engine?.syncUserData() ?? false }
 }
 
 /// Thread-safe front door to librime for one keyboard (one session). Every call runs
@@ -82,7 +89,8 @@ public final class RimeService {
 
     private var runtimeConfiguration: RimeRuntime.Configuration {
         .init(sharedData: configuration.sharedDataDirectory, userData: configuration.userDataDirectory,
-              modules: configuration.modules)
+              modules: configuration.modules, stagingData: configuration.stagingDirectory,
+              startDelay: configuration.startDelay)
     }
 
     // MARK: lifecycle
@@ -109,8 +117,17 @@ public final class RimeService {
         }
     }
 
-    public func stopSync() {
-        runtime.queue.sync { stopLocked() }
+    public func stopSync(exportSnapshot: Bool = false) {
+        runtime.queue.sync { stopLocked(exportSnapshot: exportSnapshot) }
+    }
+
+    /// Like `stop`, after writing the user dictionary as text snapshots into the sync directory
+    /// of `installation.yaml` (Full Access: the app can show or back them up).
+    public func stopExportingSnapshot(completion: (() -> Void)? = nil) {
+        runtime.queue.async { [self] in
+            stopLocked(exportSnapshot: true)
+            if let completion { DispatchQueue.main.async { completion() } }
+        }
     }
 
     public var isRunning: Bool {
@@ -214,8 +231,9 @@ public final class RimeService {
         return nil
     }
 
-    private func stopLocked() {
+    private func stopLocked(exportSnapshot: Bool = false) {
         session = nil          // destroys this service's librime session first
+        if exportSnapshot { runtime.syncUserDataLocked() }
         runtime.finalizeLocked()
     }
 

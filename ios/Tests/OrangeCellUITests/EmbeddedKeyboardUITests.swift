@@ -13,7 +13,7 @@ final class EmbeddedKeyboardUITests: XCTestCase {
     }
 
     private func launch(dark: Bool = false) {
-        app.launchArguments = ["-OCEmbeddedKeyboard", "-OCAppearance", dark ? "dark" : "light"]
+        app.launchArguments = ["-OCEmbeddedKeyboard", "-OCNoAutoFocus", "-OCAppearance", dark ? "dark" : "light"]
         if let shared = ProcessInfo.processInfo.environment["OC_RIME_SHARED"] {
             app.launchEnvironment["OC_RIME_SHARED"] = shared
         }
@@ -147,6 +147,37 @@ final class EmbeddedKeyboardUITests: XCTestCase {
         key("numbers").tap()
         key("sym.,").tap()
         XCTAssertEqual(fieldText, "12，【,")
+    }
+
+    func testNumberRowTypesDigitsInBothModes() {
+        launch()
+        key("d1").tap(); key("d2").tap()
+        XCTAssertEqual(fieldText, "12")
+        key("language").tap()                     // EN
+        key("d3").tap()
+        XCTAssertEqual(fieldText, "123")
+        saveShot("embedded-number-row-light")
+    }
+
+    /// ⌄ opens the candidate grid, a tap selects, ⌃ closes it.
+    func testExpandedCandidateGrid() {
+        launch()
+        type("ni")
+        wait("candidates never showed") { self.element("oc.candidate.1").exists }
+        element("oc.expand").tap()
+        wait("the grid did not open") { self.element("oc.grid.item.1").exists }
+        saveShot("embedded-grid-light")
+        let second = element("oc.grid.item.1").label
+        element("oc.grid.item.1").tap()
+        wait("the second candidate was not inserted") { self.fieldText == second }
+        XCTAssertFalse(element("oc.grid").exists && element("oc.grid").isHittable, "the grid must close after a selection")
+        // ⌃ closes the grid without selecting.
+        type("ni")
+        wait("candidates never showed again") { self.element("oc.candidate.1").exists }
+        element("oc.expand").tap()
+        wait("the grid did not open again") { self.element("oc.grid.item.0").exists }
+        element("oc.expand").tap()
+        wait("the grid did not close") { !self.element("oc.grid.item.0").exists || !self.element("oc.grid.item.0").isHittable }
     }
 
     func testDeleteRepeatsWhenHeld() {

@@ -24,6 +24,14 @@
 
 ## 待发布
 
+### 2026-11-24 · iOS 0.3.x · M2 进行中：M1 跟进项 F1–F5（分支 `ios`）
+
+- F1 键盘引擎还没就绪时按下的键：先缓冲并显示在输入串里，引擎就绪后按顺序送进 Rime；中文模式下字母不再直接插入文档（引擎启动失败时才作为普通文本插入并计数）。单元测试用人为延迟的引擎启动（`startDelay`）验证：立刻打字的结果和正常路径一致。
+- F2 用户词库只有一个活的位置：始终在键盘扩展自己的 `Application Support/rime-user`，不受「完全访问」开关影响。M1 版本留在 App Group `rime-user` 里的用户词库在键盘下次出现时搬过来一次（私有目录还没有时）。开启完全访问时，主应用的部署结果放在 App Group `rime-build`（librime 的 `staging_dir`，键盘读取，没有的文件回退到包内预编译文件），键盘空闲时把用户词库导出成文本快照到 `rime-sync`（尽力而为）。端到端测试：不开完全访问时教键盘「拟好」，打开完全访问后仍排第一，主应用部署、杀键盘进程、重启后仍排第一，再关掉完全访问仍排第一。
+- F3 键盘布局对齐 Android：字母面板上方加 1–0 数字行（主应用里可关，默认开）；候选栏右端加 ⌄ 展开键，打开后是整页候选网格（可上下滚动，点选，⌃ 关闭）；候选栏下面是 AI 行（M2 里接入），键盘高度固定。系统级端到端测试的坐标同步更新。
+- F4 应用图标改为用 `branding/export_assets.py` 的新 `ios` 目标生成：1024×1024，不透明，铺满，不带圆角（系统自己裁），像素猫按整数倍（14×）放大，底色和 Android 自适应图标一样；`branding/` 在 `.gitignore` 里，脚本改动只在本机，提交的是生成的图片。
+- F5 测试宿主不再自己抢焦点（`-OCNoAutoFocus`），测试只点一次文本框，截图里不再出现系统的「自动填充」气泡。
+
 ### 2026-11-24 · iOS 0.2.14 · M1「能打字」（分支 `ios`）
 
 - 词库在 CI 里编译：`ios/tools/oc_deployer`（一个 C 小程序，调用 librime 的 setup / deployer_initialize / deploy）用固定版本的 macOS 版 librime，把 Android 随包的 `orangecell_wanxiang` 方案和词典编译成 `build/*.bin`，连同 OpenCC 数据和许可证放进 `rime-shared/`，作为 artifact 交给其他任务，并随主应用打包（扩展读主应用包里的同一份）。与 Android 用同一份源文件和同一份 `default.custom.yaml` 约定（方案列表只有 `orangecell_wanxiang`），语法模型关闭，键盘里不做完整部署。`ios/scripts/build-rime-data.sh` 按输入文件的哈希缓存。预置文件取自 `android/app/data/rime/prelude/`（`assets/shared` 里那几份只是指向它的文本指针）。

@@ -288,20 +288,30 @@ else
 fi
 
 if [ "$MODE" = "full" ]; then
+  # ----------------------------------------------- phase A, second half: teach the keyboard a phrase
+  NAME_L="phase A: learn 拟好 without Full Access"
+  if run_ui_test "learn" "OrangeCellUITests/KeyboardUITests/testLearnAPhrase"; then
+    check "$NAME_L" 0
+  else
+    check "$NAME_L" 1 "(see ui-learn logs and screenshots)"
+  fi
+  collect_reports "A2"
+  USER_A="$(json_field "$LOGS/report-keyboard-A2.json" userDataDirectory)"
+
   # ------------------------------------------------------------ Full Access through Settings
-  if run_ui_test "settings-fullaccess" "OrangeCellUITests/EnableKeyboardUITests"; then
+  if OC_FULL_ACCESS=on run_ui_test "settings-fullaccess" "OrangeCellUITests/EnableKeyboardUITests"; then
     check "Settings UI: Allow Full Access" 0
   else
     check "Settings UI: Allow Full Access" 1 "(see ui-settings-fullaccess logs)"
   fi
   reboot
 
-  # ---------------------------------------------- phase B: learning, deployment, restart
-  NAME_B="phase B: learn 拟好, app deploys, keyboard restarts, 拟好 is still first"
-  if run_ui_test "learn" "OrangeCellUITests/KeyboardUITests/testUserDictionaryAcrossDeployAndKeyboardRestart"; then
+  # ------------------------------ phase B: Full Access on, same phrase first, deployment, restart
+  NAME_B="phase B: with Full Access 拟好 is still first, the app deploys, the keyboard restarts, 拟好 is still first"
+  if run_ui_test "fullaccess" "OrangeCellUITests/KeyboardUITests/testLearnedPhraseSurvivesDeployAndKeyboardRestart"; then
     check "$NAME_B" 0
   else
-    check "$NAME_B" 1 "(see ui-learn logs and screenshots)"
+    check "$NAME_B" 1 "(see ui-fullaccess logs and screenshots)"
   fi
   collect_reports "B"
   list_userdb "B"
@@ -310,10 +320,17 @@ if [ "$MODE" = "full" ]; then
     shared="$(json_field "$LOGS/report-keyboard-B.json" userDataShared)"
     running="$(json_field "$LOGS/report-keyboard-B.json" rimeRunning)"
     stamp="$(json_field "$LOGS/report-keyboard-B.json" deployStamp)"
-    row "keyboard report (B)" "fullAccess=$fa userDataShared=$shared rimeRunning=$running deployStamp=$stamp"
-    c=1; [ "$shared" = "true" ] && c=0
-    check "phase B: with Full Access the user dictionary is in the App Group" "$c" "(userDataShared=$shared)"
-    # What the extension itself reports (report-keyboard.json), the checks the first end-to-end run lacked.
+    staging="$(json_field "$LOGS/report-keyboard-B.json" stagingDirectory)"
+    user_b="$(json_field "$LOGS/report-keyboard-B.json" userDataDirectory)"
+    snapshot="$(json_field "$LOGS/report-keyboard-B.json" snapshotSummary)"
+    row "keyboard report (B)" "fullAccess=$fa userDataShared=$shared rimeRunning=$running deployStamp=$stamp staging=${staging:+set} snapshot=${snapshot:-none}"
+    c=1; [ "$fa" = "true" ] && c=0
+    check "phase B: the keyboard runs with Full Access" "$c"
+    c=1; [ "$shared" = "false" ] && [ -n "$user_b" ] && [ "$user_b" = "$USER_A" ] && c=0
+    check "phase B: the live user dictionary is the same private folder as without Full Access" "$c" "(userDataShared=$shared)"
+    c=1; [ -n "$staging" ] && c=0
+    check "phase B: with Full Access the keyboard reads the app deployments from the App Group" "$c"
+    # What the extension itself reports (report-keyboard.json).
     python3 - "$LOGS/report-keyboard-B.json" > "$LOGS/report-checks.txt" <<'PY'
 import json, sys
 report = json.load(open(sys.argv[1], encoding="utf8"))
@@ -336,10 +353,33 @@ PY
   else
     check "phase B: keyboard report exists" 1
   fi
-  group="$(group_directory)"
   c=1
-  if [ -n "$group" ] && ls "$group"/rime-user/*.userdb/CURRENT >/dev/null 2>&1; then c=0; fi
-  check "phase B: user dictionary files present in the App Group" "$c"
+  if [ -n "${USER_A:-}" ] && ls "$USER_A"/*.userdb/CURRENT >/dev/null 2>&1; then c=0; fi
+  check "phase B: the user dictionary files are in the keyboard private folder" "$c"
+  # The text snapshot export is best effort (written when the engine goes idle); only reported.
+  group="$(group_directory)"
+  row "snapshot export in the App Group (information)" "$(find "$group/rime-sync" -name '*.userdb.txt' 2>/dev/null | wc -l | tr -d ' ') file(s)"
+
+  # ------------------------------------------------ Full Access off again: the phrase is still first
+  if OC_FULL_ACCESS=off run_ui_test "settings-fullaccess-off" "OrangeCellUITests/EnableKeyboardUITests"; then
+    check "Settings UI: Full Access off again" 0
+  else
+    check "Settings UI: Full Access off again" 1 "(see ui-settings-fullaccess-off logs)"
+  fi
+  reboot
+  NAME_C="phase C: Full Access off again, 拟好 is still first"
+  if run_ui_test "fullaccess-off" "OrangeCellUITests/KeyboardUITests/testLearnedPhraseIsFirst"; then
+    check "$NAME_C" 0
+  else
+    check "$NAME_C" 1 "(see ui-fullaccess-off logs and screenshots)"
+  fi
+  collect_reports "C"
+  if [ -f "$LOGS/report-keyboard-C.json" ]; then
+    fa="$(json_field "$LOGS/report-keyboard-C.json" fullAccess)"
+    user_c="$(json_field "$LOGS/report-keyboard-C.json" userDataDirectory)"
+    c=1; [ "$fa" = "false" ] && [ "$user_c" = "$USER_A" ] && c=0
+    check "phase C: Full Access off and the same private user dictionary folder" "$c" "(fullAccess=$fa)"
+  fi
 fi
 
 # ------------------------------------------------------------------ the app pages, for the screenshots

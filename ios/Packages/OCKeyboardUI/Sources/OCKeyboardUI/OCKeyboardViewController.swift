@@ -33,6 +33,9 @@ open class OCKeyboardViewController: UIInputViewController {
     private var lastStamp: String?
     private var stopWorkItem: DispatchWorkItem?
     private var diagnosticsWorkItem: DispatchWorkItem?
+    /// Full Access: the user dictionary is exported as text snapshots into the App Group when the engine goes idle.
+    private var exportsSnapshot = false
+    private var lastMigration: String?
 
     /// How long the engine stays up after the keyboard disappeared.
     private let idleStopDelay: TimeInterval = 8
@@ -65,6 +68,8 @@ open class OCKeyboardViewController: UIInputViewController {
             heightConstraint = constraint
         }
         configureEngine()
+        // Settings the app writes into the App Group (Full Access); without them the defaults apply.
+        keyboardView.numberRowEnabled = hasFullAccess ? KeyboardSettings.load(in: AppGroupContext.detect()).numberRow : true
         keyboardView.hapticsEnabled = hasFullAccess
         keyboardView.returnKind = ReturnKeyKind(textDocumentProxy.returnKeyType ?? .default)
     }
@@ -83,7 +88,10 @@ open class OCKeyboardViewController: UIInputViewController {
     open override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         controller.clearComposition()
-        let item = DispatchWorkItem { [weak self] in self?.controller.rimeService?.stop() }
+        let item = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            if self.exportsSnapshot { self.controller.rimeService?.stopExportingSnapshot() } else { self.controller.rimeService?.stop() }
+        }
         stopWorkItem = item
         DispatchQueue.main.asyncAfter(deadline: .now() + idleStopDelay, execute: item)
     }
@@ -99,7 +107,7 @@ open class OCKeyboardViewController: UIInputViewController {
     }
 
     private func currentHeight() -> CGFloat {
-        KeyboardView.preferredHeight(landscape: traitCollection.verticalSizeClass == .compact)
+        KeyboardView.preferredHeight(landscape: traitCollection.verticalSizeClass == .compact, numberRow: keyboardView?.numberRowEnabled ?? true)
     }
 
     // MARK: engine
@@ -108,13 +116,24 @@ open class OCKeyboardViewController: UIInputViewController {
     private func configureEngine() {
         let context = AppGroupContext.detect()
         guard let shared = RimeDataLocator.sharedDataDirectory(),
-              let user = RimeDataLocator.userDataDirectory(context: context, hasFullAccess: hasFullAccess)
+              let directories = RimeDataLocator.keyboardDirectories(context: context, hasFullAccess: hasFullAccess)
         else {
             controller.setService(nil)
             currentConfiguration = nil
             return
         }
-        let configuration = RimeServiceConfiguration(sharedDataDirectory: shared.path, userDataDirectory: user.url.path)
+        // The live user dictionary is private to the keyboard whatever Full Access says. A dictionary an M1
+        // build left in the App Group is moved here once; with Full Access the app deployments (staging)
+        // are read from the group and the dictionary is exported there as text when the engine is idle.
+        if let legacy = directories.legacyUser {
+            let result = UserDictionaryMigration.migrate(from: legacy, to: directories.user)
+            if result != .notNeeded { lastMigration = result.summary }
+        }
+        RimeInstallation.prepare(userDirectory: directories.user, syncDirectory: directories.syncExport)
+        exportsSnapshot = directories.syncExport != nil
+        let configuration = RimeServiceConfiguration(
+            sharedDataDirectory: shared.path, userDataDirectory: directories.user.path,
+            stagingDirectory: directories.staging?.path)
         let stamp = DeployStamp.read(in: context)
         if configuration != currentConfiguration {
             controller.setService(RimeService(configuration: configuration))
@@ -134,6 +153,7 @@ open class OCKeyboardViewController: UIInputViewController {
     private func scheduleDiagnostics() {
         diagnosticsWorkItem?.cancel()
         let fullAccess = hasFullAccess
+        let migration = lastMigration
         let item = DispatchWorkItem { [weak self] in
             guard let self else { return }
             let service = self.controller.rimeService
@@ -149,7 +169,8 @@ open class OCKeyboardViewController: UIInputViewController {
                     rimeVersion: RimeEngine.version(),
                     rimeModules: RimeEngine.registeredModules(),
                     rimeRunning: running,
-                    unhandledLetters: unhandled
+                    unhandledLetters: unhandled,
+                    userDictionaryMigration: migration
                 )
                 DiagnosticsCollector.save(report)
             }

@@ -55,12 +55,13 @@ public enum RimeDeployer {
     /// Returns whether librime reported success. Stops the process's engine first; the app
     /// does not type, so nothing is running.
     @discardableResult
-    public static func deployConfigFile(sharedData: URL, userData: URL, file: String = "default.yaml",
+    public static func deployConfigFile(sharedData: URL, userData: URL, stagingData: URL? = nil, file: String = "default.yaml",
                                         versionKey: String = "config_version") -> Bool {
         let runtime = RimeRuntime.shared
         return runtime.queue.sync {
             runtime.finalizeLocked()
-            let engine = RimeEngine(directories: .init(sharedData: sharedData.path, userData: userData.path))
+            let engine = RimeEngine(directories: .init(sharedData: sharedData.path, userData: userData.path,
+                                                       stagingData: stagingData?.path))
             return engine.deployConfigFile(file, versionKey: versionKey)
         }
     }

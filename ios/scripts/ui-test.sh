@@ -33,7 +33,7 @@ shrink() {
 }
 
 echo "[ui-test] $TAG: $*"
-TEST_RUNNER_OC_SHOT_DIR="$DIR" TEST_RUNNER_OC_RIME_SHARED="${OC_RIME_SHARED:-}" \
+TEST_RUNNER_OC_SHOT_DIR="$DIR" TEST_RUNNER_OC_RIME_SHARED="${OC_RIME_SHARED:-}" TEST_RUNNER_OC_FULL_ACCESS="${OC_FULL_ACCESS:-on}" \
   xcodebuild test-without-building \
   -project "$PROJECT" -scheme OCUITests -configuration "$CONFIGURATION" \
   -destination "id=$UDID" -derivedDataPath "$DD" \

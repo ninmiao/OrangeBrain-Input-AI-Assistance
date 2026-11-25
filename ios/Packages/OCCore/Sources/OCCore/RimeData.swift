@@ -33,15 +33,24 @@ public struct RimeDataStamp: Codable, Equatable, Sendable {
     }
 }
 
-/// Where the Rime data lives at run time (docs/IOS_PLAN.md section 4.3).
+//// Where the Rime data lives at run time (docs/IOS_PLAN.md section 4.3).
 ///
 /// * shared data (read-only): `rime-shared/` inside the app bundle. The keyboard
 ///   extension sits in `OrangeCell.app/PlugIns/`, so it reads its host app's copy.
-/// * user data (read-write): `rime-user/` in the App Group when Full Access allows
-///   it, otherwise a private folder of the extension (docs/IOS_PLAN.md section 2).
+/// * user data (read-write, the live user dictionary): always the keyboard's own
+///   `Application Support/rime-user`, whatever the Full Access switch says. Only the keyboard
+///   opens it, so learned words do not depend on a setting the user can flip.
+/// * staging (Full Access): `rime-build/` in the App Group. The app deploys its compiled
+///   configuration there, the keyboard reads it ahead of the prebuilt files.
+/// * snapshot export (Full Access): `rime-sync/` in the App Group, text snapshots of the user
+///   dictionary the keyboard writes when it goes idle, for the app to show or back up.
 public enum RimeDataLocator {
     public static let bundleFolderName = "rime-shared"
     public static let userFolderName = "rime-user"
+    public static let stagingFolderName = "rime-build"
+    public static let syncFolderName = "rime-sync"
+    /// The app scratch directory for deployments (it holds `default.custom.yaml`).
+    public static let appFolderName = "rime-app"
     public static let stampFileName = "oc-data.json"
 
     /// `Bundle.main/rime-shared` for the app, `../../rime-shared` for an app extension.
@@ -61,28 +70,125 @@ public enum RimeDataLocator {
         return try? JSONDecoder().decode(RimeDataStamp.self, from: data)
     }
 
-    public struct UserDirectory: Equatable, Sendable {
-        public var url: URL
-        /// True when it lives in the App Group (shared with the app).
-        public var isShared: Bool
+    /// The directories one keyboard process hands to librime.
+    public struct KeyboardDirectories: Equatable, Sendable {
+        /// Live user dictionary (LevelDB), `user.yaml`, `installation.yaml`; private to the extension.
+        public var user: URL
+        /// App Group `rime-build`, only with Full Access and a usable group.
+        public var staging: URL?
+        /// App Group `rime-sync`, only with Full Access and a usable group.
+        public var syncExport: URL?
+        /// App Group `rime-user` of an M1 build, if there is one to migrate.
+        public var legacyUser: URL?
     }
 
-    /// Shared container when Full Access is on and the group is available, else the process's private folder.
-    public static func userDataDirectory(
-        context: AppGroupContext,
-        hasFullAccess: Bool,
-        fileManager: FileManager = .default
-    ) -> UserDirectory? {
-        if hasFullAccess, let container = context.containerURL {
-            let url = container.appendingPathComponent(userFolderName, isDirectory: true)
-            if (try? fileManager.createDirectory(at: url, withIntermediateDirectories: true)) != nil {
-                return UserDirectory(url: url, isShared: true)
-            }
-        }
+    /// `Application Support/rime-user` of this process.
+    public static func privateUserDirectory(fileManager: FileManager = .default) -> URL? {
         guard let support = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return nil }
         let url = support.appendingPathComponent(userFolderName, isDirectory: true)
         guard (try? fileManager.createDirectory(at: url, withIntermediateDirectories: true)) != nil else { return nil }
-        return UserDirectory(url: url, isShared: false)
+        return url
+    }
+
+    public static func keyboardDirectories(
+        context: AppGroupContext,
+        hasFullAccess: Bool,
+        privateUser: URL? = nil,
+        fileManager: FileManager = .default
+    ) -> KeyboardDirectories? {
+        guard let user = privateUser ?? privateUserDirectory(fileManager: fileManager) else { return nil }
+        var directories = KeyboardDirectories(user: user, staging: nil, syncExport: nil, legacyUser: nil)
+        if hasFullAccess, let container = context.containerURL {
+            directories.staging = container.appendingPathComponent(stagingFolderName, isDirectory: true)
+            directories.syncExport = container.appendingPathComponent(syncFolderName, isDirectory: true)
+            directories.legacyUser = container.appendingPathComponent(userFolderName, isDirectory: true)
+        }
+        return directories
+    }
+
+    /// The app directories for a deployment: a scratch user directory with the customisation
+    /// and the staging directory the keyboard reads. Needs the App Group.
+    public static func appDeployDirectories(context: AppGroupContext, fileManager: FileManager = .default) -> (user: URL, staging: URL)? {
+        guard let container = context.containerURL else { return nil }
+        let user = container.appendingPathComponent(appFolderName, isDirectory: true)
+        let staging = container.appendingPathComponent(stagingFolderName, isDirectory: true)
+        for url in [user, staging] {
+            guard (try? fileManager.createDirectory(at: url, withIntermediateDirectories: true)) != nil else { return nil }
+        }
+        return (user, staging)
+    }
+}
+
+/// M1 builds kept the live user dictionary in the App Group when Full Access was on. From M2 on it
+/// lives in the keyboard private folder in every case; a dictionary found in the group is moved
+/// there once, if the private folder has none yet.
+public enum UserDictionaryMigration {
+    public enum Result: Equatable, Sendable {
+        case notNeeded
+        case moved([String])
+        case failed(String)
+
+        public var summary: String {
+            switch self {
+            case .notNeeded: return "not needed"
+            case .moved(let names): return "moved " + names.joined(separator: ",")
+            case .failed(let reason): return "failed " + reason
+            }
+        }
+    }
+
+    private static func userdbs(in directory: URL, fileManager: FileManager) -> [String] {
+        ((try? fileManager.contentsOfDirectory(atPath: directory.path)) ?? []).filter { $0.hasSuffix(".userdb") }.sorted()
+    }
+
+    @discardableResult
+    public static func migrate(from legacy: URL, to privateUser: URL, fileManager: FileManager = .default) -> Result {
+        let old = userdbs(in: legacy, fileManager: fileManager)
+        guard !old.isEmpty, userdbs(in: privateUser, fileManager: fileManager).isEmpty else { return .notNeeded }
+        do {
+            try fileManager.createDirectory(at: privateUser, withIntermediateDirectories: true)
+            var moved: [String] = []
+            for name in old {
+                let source = legacy.appendingPathComponent(name, isDirectory: true)
+                let target = privateUser.appendingPathComponent(name, isDirectory: true)
+                do {
+                    try fileManager.moveItem(at: source, to: target)
+                } catch {
+                    // Another volume, or a file that cannot be renamed: copy, then remove the original.
+                    try fileManager.copyItem(at: source, to: target)
+                    try? fileManager.removeItem(at: source)
+                }
+                moved.append(name)
+            }
+            return .moved(moved)
+        } catch {
+            return .failed(String(describing: error))
+        }
+    }
+}
+
+/// `installation.yaml` tells librime where `sync_user_data` exports to. The keyboard writes the
+/// sync directory (App Group `rime-sync`) into it before the engine starts.
+public enum RimeInstallation {
+    public static let installationID = "orangecell-ios"
+
+    /// Creates or updates `installation.yaml` so that `sync_dir` is `syncDirectory`. Returns whether it changed.
+    @discardableResult
+    public static func prepare(userDirectory: URL, syncDirectory: URL?, fileManager: FileManager = .default) -> Bool {
+        let file = userDirectory.appendingPathComponent("installation.yaml")
+        let existing = (try? String(contentsOf: file, encoding: .utf8)) ?? ""
+        var lines = existing.split(separator: "\n", omittingEmptySubsequences: true).map(String.init)
+        func set(_ key: String, _ value: String?) {
+            lines.removeAll { $0.hasPrefix(key + ":") }
+            if let value { lines.append(key + ": \"" + value + "\"") }
+        }
+        if !lines.contains(where: { $0.hasPrefix("installation_id:") }) { set("installation_id", installationID) }
+        set("sync_dir", syncDirectory?.path)
+        let text = lines.joined(separator: "\n") + "\n"
+        guard text != existing else { return false }
+        try? fileManager.createDirectory(at: userDirectory, withIntermediateDirectories: true)
+        if let syncDirectory { try? fileManager.createDirectory(at: syncDirectory, withIntermediateDirectories: true) }
+        return (try? text.write(to: file, atomically: true, encoding: .utf8)) != nil
     }
 }
 

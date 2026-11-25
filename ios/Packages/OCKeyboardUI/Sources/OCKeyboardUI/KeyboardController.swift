@@ -15,8 +15,20 @@ public struct KeyboardState: Equatable {
     /// Set when the dictionary cannot be used; the keyboard then types like a plain
     /// English keyboard and shows this text.
     public var notice: String?
+    /// The AI row under the candidates.
+    public var ai = AiBarState.disabled
 
     public init() {}
+}
+
+/// Taps on the AI row, answered by the AI controller (`AiKeyboardController`).
+public protocol AiBarHandler: AnyObject {
+    func aiItemTapped(_ index: Int)
+    func aiAssistantTapped()
+    func aiEmojiTapped()
+    func aiCancelTapped()
+    func aiAdoptTapped(_ index: Int)
+    func aiDismissExpanded()
 }
 
 /// Input logic: turns taps into text for the document and into key events for Rime
@@ -33,12 +45,20 @@ public final class KeyboardController {
     /// Called after text was inserted or removed (the keyboard extension uses it to
     /// refresh its diagnostics a little later).
     public var onActivity: (() -> Void)?
+    public weak var aiHandler: AiBarHandler?
     /// How many letters typed in 中 mode Rime did not take and the keyboard had to insert as plain text
     /// (the diagnostics report shows it; it should stay 0).
     public private(set) var unhandledLetters = 0
 
     private var service: RimeService?
     private var output: KeyboardTextOutput?
+
+    /// False from the moment an engine is attached until it reports ready (on a phone the first start
+    /// takes a while after the keyboard appears). Keys typed meanwhile wait in `pendingKeys`, show in the
+    /// composition row and are replayed into Rime once it is ready: a letter is never inserted raw in 中 mode.
+    public private(set) var engineReady = false
+    private var startRequested = false
+    private var pendingKeys: [(key: RimeKey, letter: Character?)] = []
     private var lastShiftTap: TimeInterval = -.infinity
     /// Two taps on shift within this time (in seconds of touch time) lock caps.
     static let doubleTapInterval: TimeInterval = 0.4
@@ -51,6 +71,7 @@ public final class KeyboardController {
             state.mode = .english
             englishOnlyBecauseNoEngine = true
         }
+        engineReady = false
     }
 
     /// True while the keyboard is English only because there is no engine (yet). The extension
@@ -65,6 +86,9 @@ public final class KeyboardController {
     /// composition; a `nil` service turns the keyboard into a plain English one.
     public func setService(_ service: RimeService?, notice: String? = nil) {
         self.service = service
+        engineReady = false
+        startRequested = false
+        pendingKeys = []
         resetComposition()
         state.notice = service == nil ? (notice ?? "没有找到词库，当前只能输入英文") : nil
         if service == nil {
@@ -82,9 +106,73 @@ public final class KeyboardController {
 
     public var rimeService: RimeService? { service }
 
+    public func setAi(_ ai: AiBarState) { state.ai = ai }
+
+    func aiItemTapped(_ index: Int) { aiHandler?.aiItemTapped(index) }
+    func aiAssistantTapped() { aiHandler?.aiAssistantTapped() }
+    func aiEmojiTapped() { aiHandler?.aiEmojiTapped() }
+    func aiCancelTapped() { aiHandler?.aiCancelTapped() }
+    func aiAdoptTapped(_ index: Int) { aiHandler?.aiAdoptTapped(index) }
+    func aiDismissExpanded() { aiHandler?.aiDismissExpanded() }
+
     /// Starts the engine in the background so the first key does not wait for it.
     public func prepare() {
-        service?.start(completion: nil)
+        guard let started = service else { return }
+        engineReady = false
+        startRequested = true
+        started.start { [weak self] error in
+            guard let self, self.service === started else { return }
+            if error == nil {
+                self.engineReady = true
+                self.flushPending()
+            } else {
+                self.engineFailedToStart()
+            }
+        }
+    }
+
+    /// The engine cannot start (data missing or broken): what was typed meanwhile goes in as plain text and
+    /// the keyboard types English from now on, with a notice.
+    private func engineFailedToStart() {
+        let letters = pendingKeys.compactMap(\.letter)
+        pendingKeys = []
+        service = nil
+        englishOnlyBecauseNoEngine = true
+        state.mode = .english
+        state.notice = "词库载入失败，当前只能输入英文"
+        resetComposition()
+        if !letters.isEmpty {
+            unhandledLetters += letters.count
+            insert(String(letters))
+        }
+    }
+
+    /// Replays the keys typed before the engine was ready, in order.
+    private func flushPending() {
+        guard let service, !pendingKeys.isEmpty else { return }
+        let keys = pendingKeys
+        pendingKeys = []
+        for entry in keys {
+            let update = service.processSync(entry.key)
+            apply(update)
+            if !update.handled && update.commit == nil, let letter = entry.letter {
+                unhandledLetters += 1
+                insert(String(letter))
+            }
+        }
+    }
+
+    private func buffer(_ key: RimeKey, letter: Character?) {
+        pendingKeys.append((key, letter))
+        showPending()
+    }
+
+    private func showPending() {
+        let letters = pendingKeys.compactMap(\.letter)
+        state.composition = String(letters)
+        state.candidates = []
+        state.highlighted = 0
+        state.isComposing = !pendingKeys.isEmpty
     }
 
     // MARK: keys
@@ -108,6 +196,11 @@ public final class KeyboardController {
         let isLetter = text.count == 1 && text.unicodeScalars.allSatisfy { ("a"..."z").contains(Character($0)) || ("A"..."Z").contains(Character($0)) }
         if state.panel == .letters, isLetter, state.mode == .chinese, let service,
            let key = text.lowercased().first.flatMap({ RimeKey.character($0) }) {
+            guard engineReady else {
+                if !startRequested { prepare() }
+                buffer(key, letter: text.lowercased().first)
+                return
+            }
             let update = service.processSync(key)
             apply(update)
             if !update.handled && update.commit == nil {
@@ -123,7 +216,9 @@ public final class KeyboardController {
     }
 
     func tapSpace() {
-        if state.isComposing, let service {
+        if !engineReady, service != nil, !pendingKeys.isEmpty {
+            buffer(.space, letter: nil)
+        } else if state.isComposing, let service {
             apply(service.processSync(.space))
         } else {
             insert(" ")
@@ -131,7 +226,9 @@ public final class KeyboardController {
     }
 
     func tapReturn() {
-        if state.isComposing, let service {
+        if !engineReady, service != nil, !pendingKeys.isEmpty {
+            buffer(.enter, letter: nil)
+        } else if state.isComposing, let service {
             // Return confirms the typed letters as they are (Rime commits the raw input).
             apply(service.processSync(.enter))
         } else {
@@ -140,7 +237,10 @@ public final class KeyboardController {
     }
 
     func tapDelete() {
-        if state.isComposing, let service {
+        if !pendingKeys.isEmpty {
+            pendingKeys.removeLast()
+            showPending()
+        } else if state.isComposing, let service {
             apply(service.processSync(.backspace))
         } else {
             output?.deleteBackward()
@@ -168,6 +268,7 @@ public final class KeyboardController {
 
     func toggleLanguage() {
         guard service != nil else { return }
+        pendingKeys = []
         let next: InputMode = state.mode == .chinese ? .english : .chinese
         if let service {
             _ = service.clearSync()
@@ -189,6 +290,7 @@ public final class KeyboardController {
     }
 
     public func clearComposition() {
+        if !pendingKeys.isEmpty { resetComposition(); return }
         guard let service, state.isComposing else { return }
         apply(service.clearSync())
     }
@@ -197,6 +299,7 @@ public final class KeyboardController {
 
     /// The engine is restarted (deployment changed, memory) without losing the screen state.
     public func resetComposition() {
+        pendingKeys = []
         state.composition = ""
         state.candidates = []
         state.isComposing = false
