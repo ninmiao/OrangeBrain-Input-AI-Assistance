@@ -111,7 +111,7 @@ public struct AiResult: Codable, Equatable, Sendable {
 }
 
 /// What a result was requested for. Any change of one of these makes an older result stale.
-public struct RequestStamp: Equatable, Sendable {
+public struct RequestStamp: Hashable, Sendable {
     public var editorSession: Int64
     public var inputRevision: Int64
     public var promptGeneration: Int64
