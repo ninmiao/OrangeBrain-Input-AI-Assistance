@@ -22,7 +22,7 @@ extension TextTraits {
         default: capitalization = .sentences
         }
         isSecure = traits.isSecureTextEntry ?? false
-        if let type = traits.textContentType {
+        if let type = traits.textContentType.flatMap({ $0 }) {
             hasSensitiveContentType = Self.sensitiveContentTypes.contains(type)
         }
         enablesReturnKeyAutomatically = traits.enablesReturnKeyAutomatically ?? false

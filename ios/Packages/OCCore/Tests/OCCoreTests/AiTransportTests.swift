@@ -76,6 +76,7 @@ final class ScriptedServer: URLProtocol, @unchecked Sendable {
                 Self.lock.lock(); Self.deliveredCount += 1; Self.lock.unlock()
             }
             if let failure = script.failure {
+                Thread.sleep(forTimeInterval: 0.3)   // a real connection breaks after the data was read
                 client?.urlProtocol(self, didFailWithError: failure)
             } else if script.finish {
                 client?.urlProtocolDidFinishLoading(self)

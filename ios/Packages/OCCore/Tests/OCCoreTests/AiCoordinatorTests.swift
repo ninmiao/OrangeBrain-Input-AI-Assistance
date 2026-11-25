@@ -82,7 +82,7 @@ final class AiRequestCoordinatorTests: XCTestCase {
     private var states: [AiState] = []
     private var coordinator: AiRequestCoordinator!
 
-    override func setUp() {
+    override func setUp() async throws {
         transport = ScriptedTransport()
         states = []
         coordinator = AiRequestCoordinator(transport: transport.call, publish: { [unowned self] in self.states.append($0) })
