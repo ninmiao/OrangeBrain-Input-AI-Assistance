@@ -193,7 +193,7 @@ struct DiagnosticsView: View {
     }
 
     private func shareSection(_ report: DiagnosticsReport) -> some View {
-        Section("回传结果") {
+        Section {
             Button("复制诊断信息") {
                 UIPasteboard.general.string = shareText(report)
                 copied = true
@@ -206,6 +206,8 @@ struct DiagnosticsView: View {
                     .accessibilityIdentifier("oc.diag.copied")
             }
             ShareLink("分享诊断报告（JSON）", item: shareText(report))
+        } header: {
+            Text("回传结果")
         } footer: {
             Text("复制后可以粘贴到聊天或备忘录里发给开发者。")
         }
