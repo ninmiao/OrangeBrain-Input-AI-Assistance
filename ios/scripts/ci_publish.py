@@ -318,7 +318,19 @@ def main():
             # SideStore source
             if source_json is not None:
                 (work / "sidestore").mkdir(exist_ok=True)
-                shutil.copy2(source_json, work / "sidestore" / "source.json")
+                target = work / "sidestore" / "source.json"
+
+                def build_of(path):
+                    try:
+                        return int(json.loads(path.read_text(encoding="utf8"))["apps"][0]["versions"][0]["buildVersion"])
+                    except Exception:  # noqa: BLE001
+                        return -1
+
+                # An older run that finishes late must not replace the source of a newer build.
+                if target.exists() and build_of(target) > build_of(source_json):
+                    print(f"sidestore/source.json already points at build {build_of(target)}, newer than {build_of(source_json)}: kept")
+                else:
+                    shutil.copy2(source_json, target)
             (work / "README.md").write_text(
                 "Scratch branch written by the iOS workflows (ios/scripts/ci_publish.py). "
                 "It is rebuilt as one orphan commit per run; do not rely on its history.\n", encoding="utf8")

@@ -13,6 +13,8 @@ struct OrangeCellApp: App {
         // Nothing runs at a normal launch: no self-test, no key writes, no deployment.
         // The CI end-to-end run asks for them with launch arguments.
         let arguments = ProcessInfo.processInfo.arguments
+        // A deployment made for older bundled data (an app update) is removed; cheap, file operations only.
+        Task.detached(priority: .utility) { DeployAction.removeStaleBuild() }
         if arguments.contains("-OCRunSelfTest") {
             Task.detached(priority: .utility) {
                 let context = AppGroupContext.detect()

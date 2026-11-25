@@ -21,17 +21,18 @@ public final class KeyboardView: UIView {
         }
     }
     public var returnKind: ReturnKeyKind = .standard { didSet { if returnKind != oldValue { reloadLayoutIfNeeded() } } }
-    public var globeTarget: AnyObject?
+    public weak var globeTarget: AnyObject?
     public var globeAction: Selector?
     /// Haptics need Full Access in a keyboard extension.
-    public var hapticsEnabled = false
+    public var hapticsEnabled = false { didSet { if hapticsEnabled { impact.prepare() } } }
 
     private let compositionLabel = UILabel()
     private let separator = UIView()
     private let aiBar = AiBarView()
     private let expandButton = UIButton(type: .system)
-    private let gridView = CandidateGridView()
-    private let textPanel = AiTextPanel()
+    /// Created when first needed: a hidden collection view and text view still cost memory in the keyboard process.
+    private var gridView: CandidateGridView?
+    private var textPanel: AiTextPanel?
     private var gridOpen = false
     private let candidateLayout = UICollectionViewFlowLayout()
     private lazy var candidateView = UICollectionView(frame: .zero, collectionViewLayout: candidateLayout)
@@ -117,19 +118,6 @@ public final class KeyboardView: UIView {
         expandButton.isHidden = true
         addSubview(expandButton)
 
-        gridView.isHidden = true
-        gridView.onSelect = { [weak self] index in
-            guard let self else { return }
-            if self.hapticsEnabled { self.impact.impactOccurred() }
-            self.closeGrid()
-            self.controller.selectCandidate(at: index)
-        }
-        addSubview(gridView)
-
-        textPanel.isHidden = true
-        textPanel.onAdopt = { [weak controller] index in controller?.aiAdoptTapped(index) }
-        textPanel.onClose = { [weak controller] in controller?.aiDismissExpanded() }
-        addSubview(textPanel)
 
         controller.onChange = { [weak self] state in self?.render(state) }
         render(controller.state)
@@ -158,7 +146,7 @@ public final class KeyboardView: UIView {
         if candidatesChanged {
             candidateView.reloadData()
             candidateView.setContentOffset(.zero, animated: false)
-            gridView.candidates = candidates
+            gridView?.candidates = candidates
         } else if highlightChanged {
             candidateView.reloadData()
         }
@@ -166,25 +154,54 @@ public final class KeyboardView: UIView {
         expandButton.isHidden = candidates.isEmpty
         if candidates.isEmpty && gridOpen { closeGrid() }
         aiBar.apply(state.ai)
+        if gridOpen { gridView?.candidates = state.moreCandidates ?? candidates }
         if let index = state.ai.expandedIndex, state.ai.items.indices.contains(index) {
-            textPanel.show(item: state.ai.items[index], index: index)
+            presentTextPanel().show(item: state.ai.items[index], index: index)
         } else {
-            textPanel.isHidden = true
+            textPanel?.isHidden = true
         }
         reloadLayoutIfNeeded()
         setNeedsLayout()
     }
 
     @objc private func toggleGrid() {
-        if hapticsEnabled { impact.impactOccurred() }
+        feedback()
         if gridOpen { closeGrid() } else { openGrid() }
+    }
+
+    private func presentGrid() -> CandidateGridView {
+        if let gridView { return gridView }
+        let grid = CandidateGridView()
+        grid.onSelect = { [weak self] index in
+            guard let self else { return }
+            self.feedback()
+            self.closeGrid()
+            self.controller.selectCandidate(at: index)
+        }
+        addSubview(grid)
+        gridView = grid
+        return grid
+    }
+
+    private func presentTextPanel() -> AiTextPanel {
+        if let textPanel { return textPanel }
+        let panel = AiTextPanel()
+        panel.onAdopt = { [weak controller] index in controller?.aiAdoptTapped(index) }
+        panel.onClose = { [weak controller] in controller?.aiDismissExpanded() }
+        addSubview(panel)
+        textPanel = panel
+        setNeedsLayout()
+        return panel
     }
 
     private func openGrid() {
         guard !candidates.isEmpty else { return }
         gridOpen = true
-        gridView.candidates = candidates
-        gridView.isHidden = false
+        let grid = presentGrid()
+        grid.candidates = candidates
+        grid.isHidden = false
+        controller.expandCandidates()
+        setNeedsLayout()
         let chevron = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
         expandButton.setImage(UIImage(systemName: "chevron.up", withConfiguration: chevron), for: .normal)
         expandButton.accessibilityLabel = "收起候选"
@@ -193,7 +210,8 @@ public final class KeyboardView: UIView {
 
     private func closeGrid() {
         gridOpen = false
-        gridView.isHidden = true
+        gridView?.isHidden = true
+        controller.collapseCandidates()
         let chevron = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
         expandButton.setImage(UIImage(systemName: "chevron.down", withConfiguration: chevron), for: .normal)
         expandButton.accessibilityLabel = "展开候选"
@@ -231,8 +249,8 @@ public final class KeyboardView: UIView {
             }
         }
         // The grid and the text panel stay above the keys.
-        bringSubviewToFront(gridView)
-        bringSubviewToFront(textPanel)
+        if let gridView { bringSubviewToFront(gridView) }
+        if let textPanel { bringSubviewToFront(textPanel) }
         setNeedsLayout()
     }
 
@@ -254,8 +272,17 @@ public final class KeyboardView: UIView {
 
     // MARK: feedback
 
+    /// Haptics and the key click need Full Access in a keyboard extension (`hapticsEnabled`). The generator is
+    /// prepared again after every tap so the next one has no latency.
+    private func feedback() {
+        guard hapticsEnabled else { return }
+        impact.impactOccurred()
+        impact.prepare()
+        UIDevice.current.playInputClick()
+    }
+
     private func touchDown(_ key: KeyButton) {
-        if hapticsEnabled { impact.impactOccurred() }
+        feedback()
         switch key.spec.action {
         case .delete:
             controller.handle(.delete)
@@ -289,7 +316,8 @@ public final class KeyboardView: UIView {
         deleteTimer = timer
     }
 
-    private func stopDeleteRepeat() {
+    /// Stops a held delete (the keyboard goes away or turns while a finger is down: no touch-up will come).
+    public func stopDeleteRepeat() {
         deleteTimer?.invalidate()
         deleteTimer = nil
     }
@@ -328,14 +356,18 @@ public final class KeyboardView: UIView {
         super.layoutSubviews()
         let m = Self.metrics(landscape: isLandscape)
         let width = bounds.width
-        compositionLabel.frame = CGRect(x: 12, y: m.top, width: width - 24, height: m.composition)
+        // In landscape the notch and the home indicator reserve the sides: nothing is laid out under them.
+        let left = safeAreaInsets.left
+        let right = safeAreaInsets.right
+        let usable = max(width - left - right, 0)
+        compositionLabel.frame = CGRect(x: left + 12, y: m.top, width: max(usable - 24, 0), height: m.composition)
         let candidateTop = m.top + m.composition
         let expand = expandButton.isHidden ? 0 : m.expandWidth
-        candidateView.frame = CGRect(x: 0, y: candidateTop, width: width - expand, height: m.candidates)
-        expandButton.frame = CGRect(x: width - m.expandWidth, y: candidateTop, width: m.expandWidth, height: m.candidates)
+        candidateView.frame = CGRect(x: left, y: candidateTop, width: max(usable - expand, 0), height: m.candidates)
+        expandButton.frame = CGRect(x: width - right - m.expandWidth, y: candidateTop, width: m.expandWidth, height: m.candidates)
         let aiTop = candidateTop + m.candidates
-        aiBar.frame = CGRect(x: 0, y: aiTop, width: width, height: m.aiBar)
-        separator.frame = CGRect(x: 0, y: aiTop, width: width, height: 1 / UIScreen.main.scale)
+        aiBar.frame = CGRect(x: left, y: aiTop, width: usable, height: m.aiBar)
+        separator.frame = CGRect(x: 0, y: aiTop, width: width, height: 1 / max(traitCollection.displayScale, 1))
 
         // Key rows share the height under the AI bar equally: a panel with four rows has taller keys than
         // the letters panel with its number row, and the keyboard keeps one height.
@@ -348,8 +380,8 @@ public final class KeyboardView: UIView {
         for row in rows {
             let totalWeight = row.reduce(0) { $0 + $1.weight }
             let gaps = CGFloat(max(row.count - 1, 0)) * m.keyGap
-            let unit = (width - 2 * m.side - gaps) / totalWeight
-            var x = m.side
+            let unit = (usable - 2 * m.side - gaps) / totalWeight
+            var x = left + m.side
             for item in row {
                 let itemWidth = unit * item.weight
                 if case .key = item {
@@ -363,14 +395,22 @@ public final class KeyboardView: UIView {
 
         // The candidate grid and the AI text panel cover everything under the candidate row.
         let coverTop = aiTop
-        let cover = CGRect(x: 0, y: coverTop, width: width, height: max(bounds.height - coverTop, 0))
-        gridView.frame = cover
-        textPanel.frame = cover
+        let cover = CGRect(x: left, y: coverTop, width: usable, height: max(bounds.height - coverTop, 0))
+        gridView?.frame = cover
+        textPanel?.frame = cover
+    }
+
+    public override func safeAreaInsetsDidChange() {
+        super.safeAreaInsetsDidChange()
+        setNeedsLayout()
     }
 
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        if previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass { invalidateIntrinsicContentSize() }
+        if previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass {
+            invalidateIntrinsicContentSize()
+            stopDeleteRepeat()
+        }
         candidateView.reloadData()
     }
 }
@@ -396,7 +436,7 @@ extension KeyboardView: UICollectionViewDataSource, UICollectionViewDelegateFlow
     }
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if hapticsEnabled { impact.impactOccurred() }
+        feedback()
         controller.selectCandidate(at: indexPath.item)
     }
 }
@@ -446,4 +486,10 @@ final class CandidateCell: UICollectionViewCell {
         accessibilityLabel = candidate.text
         accessibilityTraits = highlighted ? [.button, .selected] : .button
     }
+}
+
+/// `UIDevice.playInputClick()` plays the system key click only when a superview of the touched view says clicks
+/// are wanted (and the person has keyboard clicks switched on in Settings).
+extension KeyboardView: UIInputViewAudioFeedback {
+    public var enableInputClicksWhenVisible: Bool { true }
 }

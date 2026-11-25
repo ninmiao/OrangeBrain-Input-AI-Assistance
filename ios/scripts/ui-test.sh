@@ -56,4 +56,8 @@ else
   tail -n 30 "$LOGS/ui-$TAG.log" > "$LOGS/ui-$TAG.tail.txt"
 fi
 grep -E "Executed [0-9]+ tests?" "$LOGS/ui-$TAG.log" | tail -n 1 || true
+# Zero executed tests or a skipped test is a failure, not a pass.
+if [ "$code" -eq 0 ]; then
+  python3 "$(dirname "$0")/check_tests.py" "$LOGS/ui-$TAG.log" || code=1
+fi
 exit "$code"

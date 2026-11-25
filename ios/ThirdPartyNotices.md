@@ -101,3 +101,4 @@ SOFTWARE.
 - 万象词库与语法（CC BY 4.0）：iOS 包里的编译结果（`rime-shared/build/*.bin`）由与 Android 相同的源文件生成，署名和许可证原文随数据放在应用包里的 `rime-shared/licenses/wanxiang`。iOS 包不含 GPL-3.0-only 的雾凇词库。
 - 应用图标是占位：把仓库里 256 px 的 `docs/images/orangecell-logo.png` 用最近邻放大 4 倍，贴在奶油色底上，不是正式图标。
 - 键盘界面代码（`OCKeyboardUI`）为原创，没有复制 Hamster、Trime、Squirrel 等项目的代码。
+- rime-prelude（LGPL-3.0）：`rime-shared` 里的 `default.yaml`、`punctuation.yaml`、`symbols.yaml`、`key_bindings.yaml`（编译进 `build/`，源文件也随包）来自 rime-prelude，LGPL-3.0 全文、它引用的 GPL-3.0 全文和作者名单在 `ios/Resources/licenses/rime-prelude`，应用的「致谢与开源许可」页可以查看。包里不再带方案、算法和词典的 yaml 源文件（它们的 import 不会随包，M4 部署方案时整套一起带）。

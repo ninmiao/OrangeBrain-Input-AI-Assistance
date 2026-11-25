@@ -65,12 +65,12 @@ echo "deploy took $(( $(date +%s) - start )) s"
 # ---- 4. package ------------------------------------------------------------------
 cp -R "$DEPS/share/opencc" "$RESULT/opencc"
 # Sources of the small configuration files (a few hundred KiB), so the app can recompile
-# default.yaml in the App Group after the user changed settings. The dictionary sources
-# (50 MiB of text) stay out of the bundle.
-for f in default.yaml key_bindings.yaml punctuation.yaml symbols.yaml orangecell_wanxiang.schema.yaml; do
+# default.yaml in the App Group after the user changed settings. Nothing else is shipped as source:
+# no schema, algebra or dictionary yaml (their imports would not be there either); the compiled
+# schema and dictionary are in build/. A later deployment of a schema (M4) ships its sources whole.
+for f in default.yaml key_bindings.yaml punctuation.yaml symbols.yaml; do
   cp "$WORK/src/$f" "$RESULT/$f"
 done
-cp "$WORK"/src/orangecell_wanxiang_d_*_algebra.yaml "$WORK"/src/orangecell_wanxiang_d_*.dict.yaml "$RESULT/"
 cp "$IOS_DIR/rime/default.custom.yaml" "$RESULT/default.custom.yaml"
 mkdir -p "$RESULT/licenses/wanxiang"
 cp "$ANDROID_SHARED/licenses/wanxiang/"* "$RESULT/licenses/wanxiang/"
@@ -90,6 +90,7 @@ def tree_hash(root):
                 digest.update(hashlib.sha256(handle.read()).digest())
     return digest.hexdigest()
 
+lock = json.load(open(os.path.join(repo, "ios", "deps.lock.json"), encoding="utf8"))
 log = open(os.path.join(work, "deployer.log"), encoding="utf8", errors="replace").read()
 match = re.search(r"librime (\S+)", log)
 dictionaries = json.load(open(os.path.join(android_shared, "orangecell-dictionaries.json"), encoding="utf8"))
@@ -109,6 +110,14 @@ stamp = {
         "license": "CC BY 4.0 (amzxyz and contributors)",
     },
     "grammarModel": False,
+    # The data was compiled by the macOS librime below; the app links the iOS builds listed here. Both say
+    # 1.17.0 but come from different upstream builds (iOS 2026-11-06, macOS 2026-11-17), so the exact files
+    # are recorded; verify-data-libs.py (CI) checks them against deps.lock.json.
+    "libraries": {
+        "compiledWithMacosLibrimeSha256": lock["packages"]["librime"]["macos-arm64"]["sha256"],
+        "linkedIosLibrimeSha256": {v: lock["packages"]["librime"][v]["sha256"] for v in ("os64", "sim-arm64")},
+        "upstreamUpdatedAt": lock["upstreamUpdatedAt"],
+    },
     "inputSha256": tree_hash(os.path.join(work, "src")) + ":" + tree_hash(os.path.join(work, "user")),
     "builtAtUtc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     "files": files,

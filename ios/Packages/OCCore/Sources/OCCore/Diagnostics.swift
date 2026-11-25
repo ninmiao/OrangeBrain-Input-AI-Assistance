@@ -154,6 +154,13 @@ public struct DiagnosticsReport: Codable, Equatable, Sendable {
     public var snapshotSummary: String?
     /// What happened to a user dictionary an M1 build left in the App Group.
     public var userDictionaryMigration: String?
+    /// Start-up numbers of the keyboard (ms after it appeared): engine ready, first candidates on screen.
+    public var engineReadyMs: Double?
+    public var firstCandidatesMs: Double?
+    /// `learning` (user dictionary open), `busy` (another process had it: no learning), `off` (no session).
+    public var userDictionaryMode: String?
+    /// What the keyboard made of the app deployment in the App Group: valid, ignored (and why), none.
+    public var userBuild: String?
     public var deployStamp: String?
     /// Whether the keyboard's engine was running when the report was made (nil in the app).
     public var rimeRunning: Bool?
@@ -177,6 +184,10 @@ public enum DiagnosticsCollector {
         rimeRunning: Bool? = nil,
         unhandledLetters: Int? = nil,
         userDictionaryMigration: String? = nil,
+        engineReadyMs: Double? = nil,
+        firstCandidatesMs: Double? = nil,
+        userDictionaryMode: String? = nil,
+        userBuild: String? = nil,
         now: Date = Date()
     ) -> DiagnosticsReport {
         let context = AppGroupContext.detect(bundle: bundle)
@@ -248,6 +259,10 @@ public enum DiagnosticsCollector {
             stagingDirectory: directories?.staging?.path,
             snapshotSummary: snapshot,
             userDictionaryMigration: userDictionaryMigration,
+            engineReadyMs: engineReadyMs,
+            firstCandidatesMs: firstCandidatesMs,
+            userDictionaryMode: userDictionaryMode,
+            userBuild: userBuild,
             deployStamp: DeployStamp.read(in: context),
             rimeRunning: rimeRunning,
             unhandledLetters: unhandledLetters

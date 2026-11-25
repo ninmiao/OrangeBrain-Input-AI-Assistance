@@ -32,7 +32,7 @@ struct SystemKeyboardHost: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("OCTestHost")
+            Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? "OCTestHost")
                 .font(.headline)
             TextField("type here", text: $text)
                 .textFieldStyle(.roundedBorder)

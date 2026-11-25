@@ -20,6 +20,12 @@ mkdir -p "$(dirname "$INFO")" "$(dirname "$IPA_PATH")"
 IPA_PATH="$(cd "$(dirname "$IPA_PATH")" && pwd)/$(basename "$IPA_PATH")"
 
 [ -d "$APPEX" ] || { echo "keyboard extension missing from $APP" >&2; exit 1; }
+# The IPA must carry the compiled Rime data, the licence texts and the icon: without the data the keyboard
+# would be an empty shell that still installs.
+for required in rime-shared/oc-data.json rime-shared/default.yaml rime-shared/build/default.yaml                 rime-shared/build/orangecell_wanxiang.schema.yaml licenses/index.json Assets.car; do
+  [ -f "$APP/$required" ] || { echo "ERROR: $required is missing from the app bundle" >&2; exit 1; }
+done
+ls "$APP"/rime-shared/build/*.table.bin "$APP"/rime-shared/build/*.prism.bin >/dev/null   || { echo "ERROR: the compiled dictionary (table.bin / prism.bin) is missing" >&2; exit 1; }
 rm -rf "$APP/_CodeSignature" "$APPEX/_CodeSignature"
 
 codesign --force --sign - --timestamp=none --entitlements "$CONFIG/OrangeCellKeyboard.entitlements" "$APPEX"
@@ -82,3 +88,7 @@ rm -rf "$work"
   unzip -l "$IPA_PATH" | tail -n 25
 } > "$INFO" 2>&1 || true
 cat "$INFO"
+# The info file is evidence, so it has to say what it should: errors above must not pass silently.
+for expected in 'CFBundleIdentifier' 'RequestsOpenAccess' 'arm64' 'com.apple.security.application-groups' 'Signature=adhoc'; do
+  grep -q "$expected" "$INFO" || { echo "ERROR: $expected is not in $INFO" >&2; exit 1; }
+done

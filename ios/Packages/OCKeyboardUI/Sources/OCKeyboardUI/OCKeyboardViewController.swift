@@ -31,14 +31,17 @@ open class OCKeyboardViewController: UIInputViewController {
     private var heightConstraint: NSLayoutConstraint?
     private var currentConfiguration: RimeServiceConfiguration?
     private var lastStamp: String?
-    private var stopWorkItem: DispatchWorkItem?
     private var diagnosticsWorkItem: DispatchWorkItem?
-    /// Full Access: the user dictionary is exported as text snapshots into the App Group when the engine goes idle.
-    private var exportsSnapshot = false
     private var lastMigration: String?
+    private var lastUserBuild: String?
+    private var backgroundObserver: NSObjectProtocol?
 
-    /// How long the engine stays up after the keyboard disappeared.
-    private let idleStopDelay: TimeInterval = 8
+    deinit {
+        if let backgroundObserver { NotificationCenter.default.removeObserver(backgroundObserver) }
+        // The engine front door is closed with the controller (its session, its lease): an old keyboard
+        // can never keep the user dictionary open or finalise what a new one uses.
+        controller?.deactivate()
+    }
 
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,8 +49,13 @@ open class OCKeyboardViewController: UIInputViewController {
         controller.onActivity = { [weak self] in self?.scheduleDiagnostics() }
         keyboardView = KeyboardView(controller: controller)
         keyboardView.translatesAutoresizingMaskIntoConstraints = false
-        keyboardView.globeTarget = self
+        keyboardView.globeTarget = self   // weak in the view: the controller owns the view, not the other way round
         keyboardView.globeAction = #selector(handleInputModeList(from:with:))
+        // The host app went to the background (the app switcher, another app): the user dictionary must not
+        // stay open in a process that is about to be suspended.
+        backgroundObserver = NotificationCenter.default.addObserver(
+            forName: NSNotification.Name.NSExtensionHostDidEnterBackground, object: nil, queue: .main
+        ) { [weak self] _ in self?.keyboardWentAway() }
         view.addSubview(keyboardView)
         NSLayoutConstraint.activate([
             keyboardView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -59,8 +67,6 @@ open class OCKeyboardViewController: UIInputViewController {
 
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        stopWorkItem?.cancel()
-        stopWorkItem = nil
         if heightConstraint == nil {
             let constraint = view.heightAnchor.constraint(equalToConstant: currentHeight())
             constraint.priority = UILayoutPriority(999)
@@ -87,18 +93,19 @@ open class OCKeyboardViewController: UIInputViewController {
 
     open override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        controller.clearComposition()
-        let item = DispatchWorkItem { [weak self] in
-            guard let self else { return }
-            if self.exportsSnapshot { self.controller.rimeService?.stopExportingSnapshot() } else { self.controller.rimeService?.stop() }
-        }
-        stopWorkItem = item
-        DispatchQueue.main.asyncAfter(deadline: .now() + idleStopDelay, execute: item)
+        keyboardWentAway()
+    }
+
+    /// Hidden or in the background: drop what is being composed and close the session, which flushes and
+    /// closes the user dictionary (another keyboard process may want it next).
+    private func keyboardWentAway() {
+        keyboardView?.stopDeleteRepeat()
+        controller?.deactivate()
     }
 
     open override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        controller.rimeService?.handleMemoryWarning()
+        controller.handleMemoryWarning()
     }
 
     open override func textDidChange(_ textInput: UITextInput?) {
@@ -130,18 +137,26 @@ open class OCKeyboardViewController: UIInputViewController {
             if result != .notNeeded { lastMigration = result.summary }
         }
         RimeInstallation.prepare(userDirectory: directories.user, syncDirectory: directories.syncExport)
-        exportsSnapshot = directories.syncExport != nil
+        // The app deployment is used only when it matches the data bundled with this version of the app.
+        var staging: URL?
+        if let candidate = directories.staging {
+            let validity = RimeBuildStamp.validate(stagingDirectory: candidate, sharedDirectory: shared)
+            lastUserBuild = validity.summary
+            if validity == .valid { staging = candidate }
+        } else {
+            lastUserBuild = nil
+        }
         let configuration = RimeServiceConfiguration(
             sharedDataDirectory: shared.path, userDataDirectory: directories.user.path,
-            stagingDirectory: directories.staging?.path)
+            stagingDirectory: staging?.path, exportSnapshotOnIdle: directories.syncExport != nil)
         let stamp = DeployStamp.read(in: context)
         if configuration != currentConfiguration {
             controller.setService(RimeService(configuration: configuration))
             currentConfiguration = configuration
             lastStamp = stamp
         } else if stamp != lastStamp {
-            // The app deployed something: drop the engine, it restarts with the next key.
-            controller.rimeService?.stopSync()
+            // The app deployed something: a new session reads it (prepare below opens it).
+            controller.rimeService?.deactivate()
             controller.resetComposition()
             lastStamp = stamp
         }
@@ -154,13 +169,16 @@ open class OCKeyboardViewController: UIInputViewController {
         diagnosticsWorkItem?.cancel()
         let fullAccess = hasFullAccess
         let migration = lastMigration
+        let userBuild = lastUserBuild
         let item = DispatchWorkItem { [weak self] in
             guard let self else { return }
             let service = self.controller.rimeService
             let unhandled = self.controller.unhandledLetters
+            let timings = self.controller.timings
             DispatchQueue.global(qos: .utility).async {
                 // Asked on this queue: the engine's own queue may be busy and must not stall typing.
                 let running = service?.isRunning
+                let mode = service?.userDictionaryMode.rawValue
                 let report = DiagnosticsCollector.collect(
                     role: "keyboard",
                     peerRole: "app",
@@ -170,7 +188,11 @@ open class OCKeyboardViewController: UIInputViewController {
                     rimeModules: RimeEngine.registeredModules(),
                     rimeRunning: running,
                     unhandledLetters: unhandled,
-                    userDictionaryMigration: migration
+                    userDictionaryMigration: migration,
+                    engineReadyMs: timings.engineReadyMs,
+                    firstCandidatesMs: timings.firstCandidatesMs,
+                    userDictionaryMode: mode,
+                    userBuild: userBuild
                 )
                 DiagnosticsCollector.save(report)
             }

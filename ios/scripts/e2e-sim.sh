@@ -14,7 +14,7 @@
 # and kill the keyboard process. Every check is written to e2e.md; the exit code is the gate.
 #
 # env: SIM_UDID  PRODUCTS_DIR  DERIVED_DATA  CI_OUT  [PROJECT]  [CONFIGURATION=Release]
-#      [E2E_MODE=full|typing]  [FOOTPRINT_BUDGET_MB=55]
+#      [E2E_MODE=full|typing|hosts]  [FOOTPRINT_BUDGET_MB=55]
 set -uo pipefail
 
 UDID="${SIM_UDID:?SIM_UDID}"
@@ -251,6 +251,7 @@ boot
 shot "e2e-00-springboard"
 if ! xcrun simctl install "$UDID" "$PRODUCTS/OrangeCell.app"; then row "install OrangeCell.app" "FAILED"; exit 2; fi
 if ! xcrun simctl install "$UDID" "$PRODUCTS/OCTestHost.app"; then row "install OCTestHost.app" "FAILED"; exit 2; fi
+if [ -d "$PRODUCTS/OCTestHost2.app" ]; then xcrun simctl install "$UDID" "$PRODUCTS/OCTestHost2.app" || row "install OCTestHost2.app" "FAILED"; fi
 row "install" "ok (app with keyboard extension, test host)"
 
 # The app leaves its probe file and key sample in the App Group when asked to.
@@ -260,10 +261,54 @@ xcrun simctl terminate "$UDID" "$APP_ID" >/dev/null 2>&1 || true
 
 # Make the system offer our keyboard (docs/IOS_PLAN.md section 8, method 1): the entry is the
 # extension's bundle id. Two more keyboards are listed, so the system asks for a globe key.
-xcrun simctl spawn "$UDID" defaults write -g AppleKeyboards -array "$KB_ID" "en_US@sw=QWERTY;hw=Automatic" "emoji@sw=Emoji" > "$LOGS/seed.txt" 2>&1
-xcrun simctl spawn "$UDID" defaults write -g AppleKeyboardsExpanded -int 1 >> "$LOGS/seed.txt" 2>&1
+seed_keyboards() {
+  xcrun simctl spawn "$UDID" defaults write -g AppleKeyboards -array "$KB_ID" "en_US@sw=QWERTY;hw=Automatic" "emoji@sw=Emoji" >> "$LOGS/seed.txt" 2>&1
+  xcrun simctl spawn "$UDID" defaults write -g AppleKeyboardsExpanded -int 1 >> "$LOGS/seed.txt" 2>&1
+}
+: > "$LOGS/seed.txt"
+seed_keyboards
 reboot
 
+# ------------------------------------------------------------ hosts mode: two host apps, kills
+if [ "$MODE" = "hosts" ]; then
+  userdb_intact() {
+    # userdb_intact <tag>: the shared user dictionary folder of the keyboard is whole
+    local dir old files
+    dir="$(find "$SIM_DATA/Containers/Data/PluginKitPlugin" -type d -name rime-user 2>/dev/null | head -n 1)"
+    list_userdb "$1"
+    c=1
+    if [ -n "$dir" ] && ls "$dir"/*.userdb/CURRENT >/dev/null 2>&1; then c=0; fi
+    check "$1: the user dictionary folder exists with a CURRENT file" "$c" "(${dir:-none})"
+    old="$(find "$SIM_DATA/Containers/Data/PluginKitPlugin" -name '*.userdb.old' 2>/dev/null | wc -l | tr -d ' ')"
+    c=1; [ "$old" = "0" ] && c=0
+    check "$1: no *.userdb.old (librime did not repair or rename the dictionary)" "$c" "($old found)"
+    files="$(find "$SIM_DATA/Containers/Data/PluginKitPlugin" -type d -name '*.userdb' 2>/dev/null | wc -l | tr -d ' ')"
+    row "$1: user dictionary folders" "$files"
+  }
+  if run_ui_test "hosts" "OrangeCellUITests/KeyboardUITests/testLearningAcrossTwoHostApps"; then
+    check "two host apps take turns typing and learning (one dictionary, both phrases)" 0
+  else
+    check "two host apps take turns typing and learning (one dictionary, both phrases)" 1 "(see ui-hosts logs and screenshots)"
+  fi
+  collect_reports "H"
+  userdb_intact "after the two hosts"
+  if [ -f "$LOGS/report-keyboard-H.json" ]; then
+    mode="$(json_field "$LOGS/report-keyboard-H.json" userDictionaryMode)"
+    unhandled="$(json_field "$LOGS/report-keyboard-H.json" unhandledLetters)"
+    row "keyboard report (two hosts)" "userDictionaryMode=$mode unhandledLetters=$unhandled engineReadyMs=$(json_field "$LOGS/report-keyboard-H.json" engineReadyMs) firstCandidatesMs=$(json_field "$LOGS/report-keyboard-H.json" firstCandidatesMs)"
+    c=1; [ "$unhandled" = "0" ] && c=0
+    check "two hosts: no letter fell through to plain text" "$c" "(unhandledLetters=$unhandled)"
+  fi
+  if run_ui_test "kill" "OrangeCellUITests/KeyboardUITests/testLearningSurvivesAKillRightAfterTheCommit"; then
+    check "kill -9 right after a commit (no hide, no deployment): the last word and the earlier one are both learned" 0
+  else
+    check "kill -9 right after a commit (no hide, no deployment): the last word and the earlier one are both learned" 1 "(see ui-kill logs and screenshots)"
+  fi
+  collect_reports "K"
+  userdb_intact "after the kill"
+fi
+
+if [ "$MODE" != "hosts" ]; then
 # ---------------------------------------------------------------- phase A: no Full Access
 NAME_A="phase A: typing through the real keyboard extension (nihao, sentence, backspace, 中/EN)"
 if run_ui_test "typing" "OrangeCellUITests/KeyboardUITests/testRealExtensionTypesChineseAndEnglish"; then
@@ -279,6 +324,7 @@ if [ -f "$LOGS/report-keyboard-A.json" ]; then
   running="$(json_field "$LOGS/report-keyboard-A.json" rimeRunning)"
   version="$(json_field "$LOGS/report-keyboard-A.json" rimeDataDictionary)"
   row "keyboard report (A)" "fullAccess=$fa userDataShared=$shared rimeRunning=$running dictionary=$version"
+  row "keyboard start-up after it appeared (A, simulator)" "engine ready $(json_field "$LOGS/report-keyboard-A.json" engineReadyMs) ms, first candidates $(json_field "$LOGS/report-keyboard-A.json" firstCandidatesMs) ms, user dictionary $(json_field "$LOGS/report-keyboard-A.json" userDictionaryMode)"
   c=1; [ "$running" = "true" ] && c=0
   check "phase A: engine running inside the extension" "$c"
   c=1; [ "$shared" = "false" ] && c=0
@@ -304,6 +350,7 @@ if [ "$MODE" = "full" ]; then
   else
     check "Settings UI: Allow Full Access" 1 "(see ui-settings-fullaccess logs)"
   fi
+  seed_keyboards
   reboot
 
   # ------------------------------ phase B: Full Access on, same phrase first, deployment, restart
@@ -366,6 +413,10 @@ PY
   else
     check "Settings UI: Full Access off again" 1 "(see ui-settings-fullaccess-off logs)"
   fi
+  # Switching Full Access off in Settings can drop our keyboard from the enabled list: list it again.
+  defaults_dump="$(xcrun simctl spawn "$UDID" defaults read -g AppleKeyboards 2>&1)"
+  echo "$defaults_dump" > "$LOGS/keyboards-after-fullaccess-off.txt"
+  seed_keyboards
   reboot
   NAME_C="phase C: Full Access off again, 拟好 is still first"
   if run_ui_test "fullaccess-off" "OrangeCellUITests/KeyboardUITests/testLearnedPhraseIsFirst"; then
@@ -382,6 +433,8 @@ PY
   fi
 fi
 
+fi
+
 # ------------------------------------------------------------------ the app pages, for the screenshots
 xcrun simctl launch --terminate-running-process "$UDID" "$APP_ID" >/dev/null 2>&1
 sleep 4
@@ -394,13 +447,15 @@ sleep 4
 shot "e2e-app-licenses"
 
 # ------------------------------------------------------------------ memory gate
-typing_mb="$(awk -F'\t' '$1 == "typing" {print $2}' "$FOOTPRINTS" | head -n 1)"
-worst_mb="$(awk -F'\t' '$2 != "n/a" && $2 + 0 > m {m = $2 + 0} END {print m + 0}' "$FOOTPRINTS")"
+typing_mb="$(awk -F'	' '$1 == "typing" {print $2}' "$FOOTPRINTS" | head -n 1)"
+worst_mb="$(awk -F'	' '$2 != "n/a" && $2 + 0 > m {m = $2 + 0} END {print m + 0}' "$FOOTPRINTS")"
+samples="$(awk -F'	' '$2 != "n/a"' "$FOOTPRINTS" | wc -l | tr -d ' ')"
 echo "${typing_mb:-n/a}" > "$OUT/footprint-keyboard-mb.txt"
+# The gate is the highest of all samples (typing, learning, after a restart, the second host), not the first one.
 if [ "$CONFIGURATION" = "Release" ]; then
   c=1
-  if [ -n "$typing_mb" ] && [ "$typing_mb" != "n/a" ] && awk -v v="$typing_mb" -v b="$BUDGET" 'BEGIN { exit !(v + 0 <= b + 0) }'; then c=0; fi
-  check "memory budget: keyboard footprint after typing <= $BUDGET MB" "$c" "(measured ${typing_mb:-n/a} MB, highest of all measurements ${worst_mb:-n/a} MB)"
+  if [ "${samples:-0}" -gt 0 ] && awk -v v="$worst_mb" -v b="$BUDGET" 'BEGIN { exit !(v + 0 <= b + 0) }'; then c=0; fi
+  check "memory budget: the highest keyboard footprint of $samples samples <= $BUDGET MB" "$c" "(highest ${worst_mb:-n/a} MB; after typing ${typing_mb:-n/a} MB)"
 else
   row "memory (Debug, information only)" "after typing ${typing_mb:-n/a} MB, highest ${worst_mb:-n/a} MB"
 fi

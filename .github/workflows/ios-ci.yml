@@ -105,6 +105,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         shell: bash
         run: bash ios/scripts/ci_step.sh rime-data -- bash ios/scripts/build-rime-data.sh
+      - name: Verify the data against the pinned librime files
+        shell: bash
+        run: bash ios/scripts/ci_step.sh verify-data-libs -- python3 ios/scripts/verify-data-libs.py ios/.rime-data/rime-shared ios/deps.lock.json
       - name: Record the size of what was built
         if: always()
         shell: bash
@@ -178,6 +181,10 @@ jobs:
             -destination "id=$SIM_UDID" -derivedDataPath build/dd \
             -only-testing:OrangeCellTests -skip-testing:OrangeCellTests/MemoryBudgetTests \
             -resultBundlePath "$RUNNER_TEMP/results/unit.xcresult"
+      - name: Check that the unit-tests tests really ran
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: python3 ios/scripts/check_tests.py "$CI_OUT/logs/unit-tests.log"
       - name: Build the UI tests
         shell: bash
         run: |
@@ -199,6 +206,10 @@ jobs:
             -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Debug \
             -destination "id=$SIM_UDID" -derivedDataPath build/dd \
             -only-testing:OrangeCellTests/MemoryBudgetTests
+      - name: Check that the memory-debug-minimal tests really ran
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: python3 ios/scripts/check_tests.py "$CI_OUT/logs/memory-debug-minimal.log"
       - name: Memory with the shipped dictionary (Debug, all modules)
         if: ${{ !cancelled() }}
         shell: bash
@@ -210,6 +221,10 @@ jobs:
             -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Debug \
             -destination "id=$SIM_UDID" -derivedDataPath build/dd \
             -only-testing:OrangeCellTests/MemoryBudgetTests
+      - name: Check that the memory-debug-all tests really ran
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: python3 ios/scripts/check_tests.py "$CI_OUT/logs/memory-debug-all.log"
       - name: OCCore swift test (macOS)
         if: ${{ !cancelled() }}
         shell: bash
@@ -262,6 +277,10 @@ jobs:
             -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Release \
             -destination "id=$SIM_UDID" -derivedDataPath build/dd \
             -only-testing:OrangeCellTests/MemoryBudgetTests
+      - name: Check that the memory-release-minimal tests really ran
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: python3 ios/scripts/check_tests.py "$CI_OUT/logs/memory-release-minimal.log"
       - name: Memory with the shipped dictionary (Release, all modules)
         if: ${{ !cancelled() }}
         shell: bash
@@ -273,6 +292,10 @@ jobs:
             -project ios/OrangeCell.xcodeproj -scheme OrangeCell -configuration Release \
             -destination "id=$SIM_UDID" -derivedDataPath build/dd \
             -only-testing:OrangeCellTests/MemoryBudgetTests
+      - name: Check that the memory-release-all tests really ran
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: python3 ios/scripts/check_tests.py "$CI_OUT/logs/memory-release-all.log"
       - name: Summary
         if: always()
         shell: bash
@@ -333,6 +356,53 @@ jobs:
           path: |
             ci-out/e2e
             !ci-out/e2e/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # Two host apps (two keyboard processes) share one user dictionary; a kill -9 right after a commit loses nothing.
+  e2e-hosts:
+    name: e2e-hosts
+    needs: [rime-data]
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/ios-mac-setup
+        with:
+          job: e2e-hosts
+      - name: Create the simulator
+        shell: bash
+        run: bash ios/scripts/ci_step.sh simulator-create -- bash ios/scripts/create-sim.sh
+      - name: Build the app, the keyboard and the UI tests (Release)
+        shell: bash
+        run: |
+          bash ios/scripts/ci_step.sh build-e2e -- xcodebuild build-for-testing \
+            -project ios/OrangeCell.xcodeproj -scheme OCUITests -configuration Release \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build/dd \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            MARKETING_VERSION="$OC_VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER"
+      - name: Two hosts and kills (Release)
+        shell: bash
+        env:
+          DERIVED_DATA: ${{ github.workspace }}/build/dd
+          PRODUCTS_DIR: ${{ github.workspace }}/build/dd/Build/Products/Release-iphonesimulator
+          CONFIGURATION: Release
+          E2E_MODE: hosts
+        run: bash ios/scripts/ci_step.sh e2e-run -- bash ios/scripts/e2e-sim.sh
+      - name: Summary
+        if: always()
+        shell: bash
+        run: python3 ios/scripts/ci_summary.py e2e-hosts --out "$CI_OUT"
+      - name: Upload job results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ci-e2e-hosts
+          path: |
+            ci-out/e2e-hosts
+            !ci-out/e2e-hosts/logs/*.log
           if-no-files-found: ignore
           retention-days: 7
 
@@ -439,13 +509,15 @@ jobs:
 
   release:
     name: release
-    needs: [core-linux, build-test, memory-release, e2e, ipa-device]
+    needs: [core-linux, build-test, memory-release, e2e, e2e-hosts, ipa-device]
     if: github.ref == 'refs/heads/ios'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
       contents: write
-    # Publishing is never cancelled half-way by a newer push; runs queue behind each other.
+    # A release that is running is never cancelled by a newer push. GitHub keeps only one *pending* job per
+    # group and drops older pending ones, so at most the newest waiting release survives: the newest build
+    # wins. publish-release.sh and ci_publish.py also refuse to replace a newer published build.
     concurrency:
       group: ios-release
       cancel-in-progress: false
@@ -491,7 +563,7 @@ jobs:
   publish-results:
     name: publish-results
     if: always()
-    needs: [core-linux, rime-data, build-test, memory-release, e2e, e2e-debug, ipa-device, release]
+    needs: [core-linux, rime-data, build-test, memory-release, e2e, e2e-hosts, e2e-debug, ipa-device, release]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:

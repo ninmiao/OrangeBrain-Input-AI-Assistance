@@ -97,26 +97,28 @@ struct KeyboardLayout {
         symbols.map { .key(KeySpec(id: "sym.\($0)", action: .character($0), title: $0, weight: weight, style: .normal)) }
     }
 
+    /// A key whose legend is `title` and which sends `send` (ASCII: Rime's punctuator turns it into the
+    /// Chinese mark in 中 mode, with pairs for quotes and a candidate list where there are several).
+    private func punctuationKeys(_ keys: [(title: String, send: String)], weight: CGFloat = 10) -> [RowItem] {
+        keys.map { .key(KeySpec(id: "sym.\($0.title)", action: .character($0.send), title: $0.title, weight: weight, style: .normal)) }
+    }
+
     private var numberRows: [[RowItem]] {
         let digits = symbolKeys(["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"])
-        let second = chinese
-            ? symbolKeys(["－", "／", "：", "；", "（", "）", "￥", "&", "@", "“"])
-            : symbolKeys(["-", "/", ":", ";", "(", ")", "$", "&", "@", "\""])
+        // The same keys in both modes: in 中 mode Rime maps them (: becomes the full-width colon, " pairs up
+        // into the curly quotes, - stays a hyphen so dates and URLs are not broken).
+        let second = symbolKeys(["-", "/", ":", ";", "(", ")", "$", "&", "@", "\""])
         let third = chinese
-            ? symbolKeys(["。", "，", "、", "？", "！"], weight: 14)
+            ? punctuationKeys([("。", "."), ("，", ","), ("、", "\\"), ("？", "?"), ("！", "!")], weight: 14)
             : symbolKeys([".", ",", "?", "!", "'"], weight: 14)
         return [digits, second, [symbolsKey] + third + [deleteKey], bottomRow(panelKey: lettersKey)]
     }
 
     private var symbolRows: [[RowItem]] {
-        let first = chinese
-            ? symbolKeys(["【", "】", "「", "」", "#", "%", "^", "*", "+", "="])
-            : symbolKeys(["[", "]", "{", "}", "#", "%", "^", "*", "+", "="])
-        let second = chinese
-            ? symbolKeys(["_", "＼", "｜", "～", "《", "》", "€", "£", "¥", "•"])
-            : symbolKeys(["_", "\\", "|", "~", "<", ">", "€", "£", "¥", "•"])
+        let first = symbolKeys(["[", "]", "{", "}", "#", "%", "^", "*", "+", "="])
+        let second = symbolKeys(["_", "\\", "|", "~", "<", ">", "€", "£", "¥", "•"])
         let third = chinese
-            ? symbolKeys(["。", "，", "、", "？", "！"], weight: 14)
+            ? punctuationKeys([("。", "."), ("，", ","), ("、", "\\"), ("？", "?"), ("！", "!")], weight: 14)
             : symbolKeys([".", ",", "?", "!", "'"], weight: 14)
         return [first, second, [numbersKey15] + third + [deleteKey], bottomRow(panelKey: lettersKey)]
     }

@@ -7,10 +7,16 @@ import Foundation
 final class RimeSession {
     private let api: UnsafeMutablePointer<RimeApi>
     private(set) var id: RimeSessionId = 0
+    /// The engine generation this session was created in (see `RimeRuntime.currentGeneration`).
+    let generation: Int
+    /// Called after the session was destroyed (the user dictionary is closed by then); the runtime counts
+    /// live sessions with it and releases the user-dictionary lock after the last one.
+    var onClose: ((Int) -> Void)?
 
-    init?() {
+    init?(generation: Int) {
         guard let api = rime_get_api() else { return nil }
         self.api = api
+        self.generation = generation
         id = api.pointee.create_session()
         if id == 0 { return nil }
     }
@@ -22,7 +28,10 @@ final class RimeSession {
     func markStale() { stale = true }
 
     deinit {
-        if id != 0, !stale { _ = api.pointee.destroy_session(id) }
+        // A session of an older engine generation is already gone (its id may even belong to a new
+        // session by now), so only the current generation is destroyed.
+        if id != 0, !stale, generation == RimeRuntime.currentGeneration { _ = api.pointee.destroy_session(id) }
+        onClose?(generation)
     }
 
     // MARK: input
@@ -42,6 +51,35 @@ final class RimeSession {
 
     func clearComposition() {
         api.pointee.clear_composition(id)
+    }
+
+    /// A key no processor handles. librime commits the pending user-dictionary transaction when a key stays
+    /// unhandled (`Memory::OnUnhandledKey`), so this writes what was just learned to disk without
+    /// waiting for the next commit or for the session to end.
+    @discardableResult
+    func flushLearning() -> Bool {
+        api.pointee.process_key(id, RimeSession.voidSymbol, 0) != 0
+    }
+
+    static let voidSymbol: Int32 = 0xFFFFFF
+
+    /// The letters the person typed for the current composition (what Rime calls the input).
+    func rawInput() -> String {
+        guard let input = api.pointee.get_input(id) else { return "" }
+        return String(cString: input)
+    }
+
+    /// The text of the candidate at `index` of the whole list, if there is one.
+    func candidateText(at index: Int) -> String? {
+        var iterator = RimeCandidateListIterator()
+        guard api.pointee.candidate_list_begin(id, &iterator) != 0 else { return nil }
+        defer { api.pointee.candidate_list_end(&iterator) }
+        var position = 0
+        while api.pointee.candidate_list_next(&iterator) != 0 {
+            if position == index { return iterator.candidate.text.map { String(cString: $0) } }
+            position += 1
+        }
+        return nil
     }
 
     @discardableResult
@@ -94,6 +132,7 @@ final class RimeSession {
             update.selectionStart = RimeSession.characterOffset(in: preedit, byteOffset: Int(composition.sel_start))
             update.selectionEnd = RimeSession.characterOffset(in: preedit, byteOffset: Int(composition.sel_end))
             update.isComposing = composition.length > 0
+            update.rawInput = update.isComposing ? rawInput() : ""
             let menu = context.menu
             update.pageSize = Int(menu.page_size)
             update.pageNumber = Int(menu.page_no)

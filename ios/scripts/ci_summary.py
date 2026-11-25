@@ -170,7 +170,7 @@ def e2e_job(out: pathlib.Path, title: str) -> str:
     if footprints:
         lines.append("- keyboard process footprint (`footprint`, MB): " + ", ".join(
             f"{row.split(chr(9))[0]} **{row.split(chr(9))[1]}**" for row in footprints.splitlines() if chr(9) in row))
-    for tag in ("A", "B"):
+    for tag in ("A", "A2", "B", "C", "H", "K"):
         report = out / "logs" / f"report-keyboard-{tag}.json"
         if not report.exists():
             continue
@@ -180,7 +180,10 @@ def e2e_job(out: pathlib.Path, title: str) -> str:
                          f"engine running `{data.get('rimeRunning')}`, user dictionary shared `{data.get('userDataShared')}` "
                          f"(`{data.get('userDataDirectory')}`), deploy stamp `{data.get('deployStamp')}`, "
                          f"data `{data.get('rimeDataDictionary')}` / schema `{data.get('rimeDataSchema')}`, "
-                         f"in-process phys_footprint {data.get('footprintMB')} MB")
+                         f"in-process phys_footprint {data.get('footprintMB')} MB, start-up (after the keyboard appeared) engine ready "
+                         f"{data.get('engineReadyMs')} ms / first candidates {data.get('firstCandidatesMs')} ms, "
+                         f"user dictionary `{data.get('userDictionaryMode')}`, user build `{data.get('userBuild')}`, "
+                         f"letters through to plain text {data.get('unhandledLetters')}")
             for probe in data.get("keyStorage", []):
                 lines.append(f"  - key storage `{probe.get('backend')}`: cross-process read `{probe.get('crossProcessReadOK')}` {probe.get('detail', '')}")
         except Exception as error:  # noqa: BLE001
@@ -206,7 +209,7 @@ MEMORY_STAGES = ["0-baseline", "1-engine-and-session", "2-first-sentence-typed",
 
 def memory_table(info: dict) -> str:
     """Rows are stages, columns are the <mode> part of the memory.<mode>.<stage> keys."""
-    modes = sorted({k.split(".")[1] for k in info if k.startswith("memory.") and k.count(".") >= 2})
+    modes = sorted({k.split(".")[1] for k in info if k.startswith("memory.") and k.count(".") >= 2 and k.split(".")[1] in ("minimal", "all")})
     if not modes:
         return ""
     header = "| stage | " + " | ".join(modes) + " |"
@@ -234,6 +237,8 @@ def memory_job(out: pathlib.Path) -> str:
                 lines.append(f"- {mode} modules: engine + dictionary + first sentence cost **{delta:.1f} MB** over the baseline")
             except (KeyError, ValueError):
                 pass
+    for key in sorted(k for k in info if k.startswith("memory.mature")):
+        lines.append(f"- mature user dictionary, `{key}` = `{info[key]}`")
     lines += ["", steps_table(out)]
     return "\n".join(lines)
 
@@ -252,7 +257,7 @@ def ipa(out: pathlib.Path) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("job", choices=["core-linux", "build-test", "ipa", "memory", "e2e", "e2e-debug"])
+    parser.add_argument("job", choices=["core-linux", "build-test", "ipa", "memory", "e2e", "e2e-debug", "e2e-hosts"])
     parser.add_argument("--out", required=True)
     parser.add_argument("--xcresult", default="")
     args = parser.parse_args()
@@ -264,7 +269,7 @@ def main() -> None:
         text = build_test(out, pathlib.Path(args.xcresult) if args.xcresult else None)
     elif args.job == "memory":
         text = memory_job(out)
-    elif args.job in ("e2e", "e2e-debug"):
+    elif args.job in ("e2e", "e2e-debug", "e2e-hosts"):
         text = e2e_job(out, args.job)
     else:
         text = ipa(out)

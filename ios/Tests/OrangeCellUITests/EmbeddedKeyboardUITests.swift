@@ -131,22 +131,30 @@ final class EmbeddedKeyboardUITests: XCTestCase {
         key("numbers").tap()
         XCTAssertTrue(key("sym.1").waitForExistence(timeout: 5))
         key("sym.1").tap(); key("sym.2").tap()
-        XCTAssertEqual(fieldText, "12")
-        // Chinese mode: full-width punctuation.
+        wait("digits were not inserted") { self.fieldText == "12" }
+        // 中 mode: the key goes through Rime's punctuator, which makes the full-width mark.
         key("sym.，").tap()
-        XCTAssertEqual(fieldText, "12，")
+        wait("the Chinese comma was not inserted") { self.fieldText == "12，" }
+        // ... but a hyphen stays a hyphen, so dates and URLs are not broken.
+        key("sym.-").tap()
+        key("sym.3").tap()
+        wait("the hyphen was changed or lost") { self.fieldText == "12，-3" }
+        // Quotes pair up.
+        key("sym.\"").tap()
+        key("sym.\"").tap()
+        wait("the quotes did not pair") { self.fieldText == "12，-3“”" }
         saveShot("embedded-numbers-light")
         key("symbols").tap()
-        XCTAssertTrue(key("sym.【").waitForExistence(timeout: 5))
-        key("sym.【").tap()
-        XCTAssertEqual(fieldText, "12，【")
+        XCTAssertTrue(key("sym.#").waitForExistence(timeout: 5))
+        key("sym.#").tap()
+        wait("# was not inserted") { self.fieldText == "12，-3“”#" }
         key("letters").tap()
         XCTAssertTrue(key("q").waitForExistence(timeout: 5))
-        // English mode: ASCII punctuation.
+        // English mode: ASCII punctuation as it is.
         key("language").tap()
         key("numbers").tap()
         key("sym.,").tap()
-        XCTAssertEqual(fieldText, "12，【,")
+        wait("the ASCII comma was not inserted") { self.fieldText == "12，-3“”#," }
     }
 
     func testNumberRowTypesDigitsInBothModes() {

@@ -219,3 +219,54 @@ public enum DeployStamp {
         return value
     }
 }
+
+/// `oc-build.json` next to the compiled files the app deploys into App Group `rime-build`. librime reads
+/// that folder ahead of the prebuilt data, so the keyboard must be sure the files belong to the data bundled
+/// with this version of the app (an app update with new data makes an older deployment stale) and are
+/// complete (the app builds into a temporary folder and renames it, but a file can still be damaged).
+public struct RimeBuildStamp: Codable, Equatable, Sendable {
+    public var appBuild: String
+    /// `inputSha256` of the `oc-data.json` the deployment was made against.
+    public var dataInputSha256: String
+    public var builtWithLibrime: String?
+    public var deployedAt: String
+
+    public static let fileName = "oc-build.json"
+
+    public init(appBuild: String, dataInputSha256: String, builtWithLibrime: String?, deployedAt: String) {
+        self.appBuild = appBuild
+        self.dataInputSha256 = dataInputSha256
+        self.builtWithLibrime = builtWithLibrime
+        self.deployedAt = deployedAt
+    }
+
+    public enum Validity: Equatable, Sendable {
+        case valid
+        /// Nothing deployed (no `default.yaml`): the prebuilt files are used.
+        case missing
+        /// Deployed, but not usable: the keyboard ignores it (the app removes or rebuilds it).
+        case invalid(String)
+
+        public var summary: String {
+            switch self {
+            case .valid: return "valid"
+            case .missing: return "none"
+            case .invalid(let reason): return "ignored: " + reason
+            }
+        }
+    }
+
+    public static func validate(stagingDirectory: URL, sharedDirectory: URL, fileManager: FileManager = .default) -> Validity {
+        let compiled = stagingDirectory.appendingPathComponent("default.yaml")
+        guard fileManager.fileExists(atPath: compiled.path) else { return .missing }
+        guard let data = try? Data(contentsOf: stagingDirectory.appendingPathComponent(fileName)),
+              let stamp = try? JSONDecoder().decode(RimeBuildStamp.self, from: data)
+        else { return .invalid("no build stamp") }
+        guard let bundled = RimeDataLocator.dataStamp(sharedDirectory: sharedDirectory) else { return .invalid("no bundled data stamp") }
+        guard stamp.dataInputSha256 == bundled.inputSha256 else { return .invalid("made for older bundled data") }
+        guard let text = try? String(contentsOf: compiled, encoding: .utf8), text.contains("schema_list") else {
+            return .invalid("default.yaml unreadable")
+        }
+        return .valid
+    }
+}

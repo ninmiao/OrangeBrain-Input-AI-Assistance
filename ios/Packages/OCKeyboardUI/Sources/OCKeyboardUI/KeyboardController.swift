@@ -12,8 +12,10 @@ public struct KeyboardState: Equatable {
     public var candidates: [RimeCandidate] = []
     public var highlighted: Int = 0
     public var isComposing: Bool = false
-    /// Set when the dictionary cannot be used; the keyboard then types like a plain
-    /// English keyboard and shows this text.
+    /// The longer candidate list of the expanded grid (asked for when the grid opens), nil otherwise.
+    public var moreCandidates: [RimeCandidate]?
+    /// Shown instead of the composition while nothing is composed: the dictionary cannot be used, the
+    /// engine failed, the user dictionary is busy.
     public var notice: String?
     /// The AI row under the candidates.
     public var ai = AiBarState.disabled
@@ -31,12 +33,22 @@ public protocol AiBarHandler: AnyObject {
     func aiDismissExpanded()
 }
 
+/// Start-up numbers for the CI report: how long after the keyboard appeared the engine was ready and the
+/// first candidates were on screen.
+public struct KeyboardTimings: Equatable, Sendable {
+    public var engineReadyMs: Double?
+    public var firstCandidatesMs: Double?
+}
+
 /// Input logic: turns taps into text for the document and into key events for Rime
-/// (docs/IOS_PLAN.md section 2, M1). Main thread only.
+/// (docs/IOS_PLAN.md section 2). Main thread only.
 ///
-/// Rime calls go through `RimeService`, which runs them on its serial queue; the
-/// controller uses the synchronous variants so that the result of one key is in
-/// place before the next key is looked at (a key takes milliseconds).
+/// Every Rime call is asynchronous. A key is sent to the engine queue at once and the screen shows what was
+/// typed (letters waiting for their answer) without waiting; answers arrive in the order the keys were sent,
+/// every commit is inserted in that order, and only the answer to the newest operation is rendered. While the
+/// engine is still starting (the first start after the keyboard appeared takes a while on a phone) the keys
+/// simply queue behind it: a letter never goes into the document as plain text in 中 mode, except when the
+/// engine cannot start at all (then the person is told and the letters are counted).
 public final class KeyboardController {
     public private(set) var state = KeyboardState() {
         didSet { if state != oldValue { onChange?(state) } }
@@ -46,22 +58,35 @@ public final class KeyboardController {
     /// refresh its diagnostics a little later).
     public var onActivity: (() -> Void)?
     public weak var aiHandler: AiBarHandler?
-    /// How many letters typed in 中 mode Rime did not take and the keyboard had to insert as plain text
-    /// (the diagnostics report shows it; it should stay 0).
+    /// Letters that went into the document as plain text although 中 mode (or the dictionary) was meant:
+    /// Rime did not take them, or there was no working engine. The CI gate requires 0.
     public private(set) var unhandledLetters = 0
+    public private(set) var timings = KeyboardTimings()
+    /// True once the engine reported ready after the keyboard appeared.
+    public private(set) var engineReady = false
 
     private var service: RimeService?
     private var output: KeyboardTextOutput?
-
-    /// False from the moment an engine is attached until it reports ready (on a phone the first start
-    /// takes a while after the keyboard appears). Keys typed meanwhile wait in `pendingKeys`, show in the
-    /// composition row and are replayed into Rime once it is ready: a letter is never inserted raw in 中 mode.
-    public private(set) var engineReady = false
-    private var startRequested = false
-    private var pendingKeys: [(key: RimeKey, letter: Character?)] = []
     private var lastShiftTap: TimeInterval = -.infinity
     /// Two taps on shift within this time (in seconds of touch time) lock caps.
     static let doubleTapInterval: TimeInterval = 0.4
+
+    // Async bookkeeping.
+    private enum Outstanding: Equatable {
+        case letter(Character)
+        case backspace
+        case other
+    }
+    private var outstanding: [Outstanding] = []
+    private var issued = 0
+    private var completed = 0
+    /// Bumped when the service is replaced or the screen state is reset: answers of older epochs commit text
+    /// but are not rendered.
+    private var epoch = 0
+    private var lastApplied = RimeUpdate()
+    private var shownAt: Date?
+    /// True while the keyboard is English only because there is no engine at all.
+    private var englishOnlyBecauseNoEngine = false
 
     public init(service: RimeService?, output: KeyboardTextOutput?, notice: String? = nil) {
         self.service = service
@@ -71,12 +96,7 @@ public final class KeyboardController {
             state.mode = .english
             englishOnlyBecauseNoEngine = true
         }
-        engineReady = false
     }
-
-    /// True while the keyboard is English only because there is no engine (yet). The extension
-    /// starts without one and attaches it in viewWillAppear; the keyboard must then open in 中.
-    private var englishOnlyBecauseNoEngine = false
 
     public func attach(output: KeyboardTextOutput?) {
         self.output = output
@@ -85,10 +105,9 @@ public final class KeyboardController {
     /// Swaps the engine front door (data found, user directory changed). Clears the
     /// composition; a `nil` service turns the keyboard into a plain English one.
     public func setService(_ service: RimeService?, notice: String? = nil) {
+        let old = self.service
         self.service = service
         engineReady = false
-        startRequested = false
-        pendingKeys = []
         resetComposition()
         state.notice = service == nil ? (notice ?? "没有找到词库，当前只能输入英文") : nil
         if service == nil {
@@ -102,6 +121,7 @@ public final class KeyboardController {
         } else if state.mode == .english {
             service?.setAsciiMode(true) { _ in }
         }
+        if let old, old !== service { old.deactivate() }
     }
 
     public var rimeService: RimeService? { service }
@@ -115,64 +135,42 @@ public final class KeyboardController {
     func aiAdoptTapped(_ index: Int) { aiHandler?.aiAdoptTapped(index) }
     func aiDismissExpanded() { aiHandler?.aiDismissExpanded() }
 
-    /// Starts the engine in the background so the first key does not wait for it.
+    // MARK: lifecycle
+
+    /// The keyboard appeared: asks for the engine and the session in the background. Keys typed before it is
+    /// ready are queued behind it.
     public func prepare() {
         guard let started = service else { return }
         engineReady = false
-        startRequested = true
+        shownAt = Date()
+        timings = KeyboardTimings()
         started.start { [weak self] error in
             guard let self, self.service === started else { return }
-            if error == nil {
-                self.engineReady = true
-                self.flushPending()
+            if let shownAt = self.shownAt { self.timings.engineReadyMs = Date().timeIntervalSince(shownAt) * 1000 }
+            if let error {
+                self.state.notice = "词库载入失败，字母会按原样输入（\(error)）"
             } else {
-                self.engineFailedToStart()
+                self.engineReady = true
+                if started.userDictionaryMode == .busy {
+                    self.state.notice = "用户词库正被另一个窗口使用，这次不记忆新词"
+                } else if self.state.notice != nil && !self.englishOnlyBecauseNoEngine {
+                    self.state.notice = nil
+                }
             }
         }
     }
 
-    /// The engine cannot start (data missing or broken): what was typed meanwhile goes in as plain text and
-    /// the keyboard types English from now on, with a notice.
-    private func engineFailedToStart() {
-        let letters = pendingKeys.compactMap(\.letter)
-        pendingKeys = []
-        service = nil
-        englishOnlyBecauseNoEngine = true
-        state.mode = .english
-        state.notice = "词库载入失败，当前只能输入英文"
-        resetComposition()
-        if !letters.isEmpty {
-            unhandledLetters += letters.count
-            insert(String(letters))
-        }
+    /// The keyboard went away: the session is closed, which flushes and closes the user dictionary.
+    public func deactivate() {
+        epoch += 1
+        outstanding = []
+        engineReady = false
+        resetScreen()
+        service?.deactivate()
     }
 
-    /// Replays the keys typed before the engine was ready, in order.
-    private func flushPending() {
-        guard let service, !pendingKeys.isEmpty else { return }
-        let keys = pendingKeys
-        pendingKeys = []
-        for entry in keys {
-            let update = service.processSync(entry.key)
-            apply(update)
-            if !update.handled && update.commit == nil, let letter = entry.letter {
-                unhandledLetters += 1
-                insert(String(letter))
-            }
-        }
-    }
-
-    private func buffer(_ key: RimeKey, letter: Character?) {
-        pendingKeys.append((key, letter))
-        showPending()
-    }
-
-    private func showPending() {
-        let letters = pendingKeys.compactMap(\.letter)
-        state.composition = String(letters)
-        state.candidates = []
-        state.highlighted = 0
-        state.isComposing = !pendingKeys.isEmpty
+    public func handleMemoryWarning() {
+        service?.handleMemoryWarning()
     }
 
     // MARK: keys
@@ -191,57 +189,55 @@ public final class KeyboardController {
         }
     }
 
+    /// Something is being composed, or a key that starts a composition is on its way to the engine.
+    private var composingNow: Bool { state.isComposing || outstanding.contains { if case .letter = $0 { return true } else { return false } } }
+
     /// A key from the letters panel or the symbol panels.
     func tapCharacter(_ text: String) {
         let isLetter = text.count == 1 && text.unicodeScalars.allSatisfy { ("a"..."z").contains(Character($0)) || ("A"..."Z").contains(Character($0)) }
-        if state.panel == .letters, isLetter, state.mode == .chinese, let service,
-           let key = text.lowercased().first.flatMap({ RimeKey.character($0) }) {
-            guard engineReady else {
-                if !startRequested { prepare() }
-                buffer(key, letter: text.lowercased().first)
-                return
-            }
-            let update = service.processSync(key)
-            apply(update)
-            if !update.handled && update.commit == nil {
-                unhandledLetters += 1
-                insert(text)
-            }
+        if state.panel == .letters, isLetter, state.mode == .chinese, service != nil,
+           let letter = text.lowercased().first, let key = RimeKey.character(letter) {
+            send(key, outstanding: .letter(letter), rawFallback: text)
             return
         }
-        // Everything else is plain text; a pending composition is committed first.
-        resolveComposition()
-        insert(text)
+        // 中 mode: punctuation goes through Rime's punctuator (full-width marks, paired quotes, candidate lists),
+        // like on Android. If Rime does not take the key the character is inserted as it is.
+        if state.mode == .chinese, service != nil, text.count == 1, let scalar = text.unicodeScalars.first,
+           scalar.isASCII, !isLetter, !("0"..."9").contains(Character(scalar)), let key = RimeKey.character(Character(scalar)) {
+            send(key, outstanding: .other, rawFallback: text)
+            return
+        }
+        // Everything else is plain text; a composition on its way is committed first, and the text follows
+        // that commit (the answers arrive in order).
+        if isLetter, englishOnlyBecauseNoEngine { unhandledLetters += 1 }
+        if composingNow, service != nil {
+            commitFirstCandidate(then: { [weak self] in self?.insert(text) })
+        } else {
+            insert(text)
+        }
         if state.mode == .english, state.shift == .once, isLetter { state.shift = .off }
     }
 
     func tapSpace() {
-        if !engineReady, service != nil, !pendingKeys.isEmpty {
-            buffer(.space, letter: nil)
-        } else if state.isComposing, let service {
-            apply(service.processSync(.space))
+        if composingNow, let service {
+            send(.space, outstanding: .other, rawFallback: nil, service: service)
         } else {
             insert(" ")
         }
     }
 
     func tapReturn() {
-        if !engineReady, service != nil, !pendingKeys.isEmpty {
-            buffer(.enter, letter: nil)
-        } else if state.isComposing, let service {
+        if composingNow, service != nil {
             // Return confirms the typed letters as they are (Rime commits the raw input).
-            apply(service.processSync(.enter))
+            send(.enter, outstanding: .other, rawFallback: nil)
         } else {
             insert("\n")
         }
     }
 
     func tapDelete() {
-        if !pendingKeys.isEmpty {
-            pendingKeys.removeLast()
-            showPending()
-        } else if state.isComposing, let service {
-            apply(service.processSync(.backspace))
+        if composingNow, service != nil {
+            send(.backspace, outstanding: .backspace, rawFallback: nil)
         } else {
             output?.deleteBackward()
             onActivity?()
@@ -267,63 +263,152 @@ public final class KeyboardController {
     }
 
     func toggleLanguage() {
-        guard service != nil else { return }
-        pendingKeys = []
+        guard let service else { return }
         let next: InputMode = state.mode == .chinese ? .english : .chinese
-        if let service {
-            _ = service.clearSync()
-            _ = service.setAsciiModeSync(next == .english)
-        }
+        epoch += 1
+        outstanding = []
+        service.clear { _ in }
+        service.setAsciiMode(next == .english) { _ in }
         state.mode = next
         state.shift = .off
-        state.composition = ""
-        state.candidates = []
-        state.isComposing = false
-        state.highlighted = 0
+        resetScreen()
     }
 
     // MARK: candidates
 
     public func selectCandidate(at index: Int) {
         guard let service, state.candidates.indices.contains(index) else { return }
-        apply(service.selectSync(candidateAt: index))
+        let expected = state.candidates[index].text
+        issued += 1
+        let myEpoch = epoch
+        service.select(candidateAt: index, expecting: expected) { [weak self] update in
+            self?.answered(update, epoch: myEpoch, letter: nil, rawFallback: nil)
+        }
+    }
+
+    /// The expanded grid wants every candidate Rime offers (the bar only holds the first few).
+    public func expandCandidates() {
+        guard let service, state.isComposing else { return }
+        let myEpoch = epoch
+        service.refresh(limit: 120) { [weak self] update in
+            guard let self, myEpoch == self.epoch, self.completed == self.issued, update.isComposing else { return }
+            self.state.moreCandidates = update.candidates
+        }
+    }
+
+    public func collapseCandidates() {
+        state.moreCandidates = nil
     }
 
     public func clearComposition() {
-        if !pendingKeys.isEmpty { resetComposition(); return }
-        guard let service, state.isComposing else { return }
-        apply(service.clearSync())
+        guard state.isComposing || !outstanding.isEmpty else { return }
+        epoch += 1
+        outstanding = []
+        resetScreen()
+        service?.clear { _ in }
     }
 
     // MARK: engine lifecycle
 
     /// The engine is restarted (deployment changed, memory) without losing the screen state.
     public func resetComposition() {
-        pendingKeys = []
+        epoch += 1
+        outstanding = []
+        resetScreen()
+    }
+
+    private func resetScreen() {
         state.composition = ""
         state.candidates = []
         state.isComposing = false
         state.highlighted = 0
+        lastApplied = RimeUpdate()
+    }
+
+    // MARK: sending to the engine and handling the answers
+
+    private func send(_ key: RimeKey, outstanding op: Outstanding, rawFallback: String?, service explicit: RimeService? = nil) {
+        guard let service = explicit ?? self.service else { return }
+        issued += 1
+        outstanding.append(op)
+        showOptimistic()
+        let myEpoch = epoch
+        var typedLetter: Character?
+        if case .letter(let letter) = op { typedLetter = letter }
+        service.process(key) { [weak self] update in
+            self?.answered(update, epoch: myEpoch, letter: typedLetter, rawFallback: rawFallback)
+        }
+    }
+
+    private func answered(_ update: RimeUpdate, epoch answeredEpoch: Int, letter: Character?, rawFallback: String?,
+                          then: (() -> Void)? = nil) {
+        completed += 1
+        if answeredEpoch == epoch, !outstanding.isEmpty { outstanding.removeFirst() }
+        if update.engineFailed {
+            if state.notice == nil || !state.notice!.hasPrefix("输入引擎") {
+                state.notice = "输入引擎没有启动，字母会按原样输入"
+            }
+        }
+        if let commit = update.commit {
+            insert(commit)
+        } else if !update.handled, let fallback = rawFallback {
+            // Rime did not take the key (or there was no engine): the person must not lose it. A letter that
+            // falls through counts against the gate.
+            if letter != nil { unhandledLetters += 1 }
+            insert(fallback)
+        }
+        then?()
+        guard answeredEpoch == epoch else { return }
+        lastApplied = update
+        if completed == issued {
+            apply(update)
+        } else {
+            showOptimistic()
+        }
+    }
+
+    /// While answers are outstanding the screen shows what was typed: the engine's last composition (as
+    /// letters) with the waiting keys applied.
+    private func showOptimistic() {
+        var letters = Array(lastApplied.rawInput)
+        for op in outstanding {
+            switch op {
+            case .letter(let letter): letters.append(letter)
+            case .backspace: if !letters.isEmpty { letters.removeLast() }
+            case .other: break
+            }
+        }
+        guard !outstanding.isEmpty else { return }
+        state.composition = String(letters)
+        state.isComposing = true
+    }
+
+    private func apply(_ update: RimeUpdate) {
+        state.moreCandidates = nil
+        state.composition = update.preedit
+        state.candidates = update.candidates
+        state.highlighted = update.highlighted
+        state.isComposing = update.isComposing
+        if !update.candidates.isEmpty, timings.firstCandidatesMs == nil, let shownAt {
+            timings.firstCandidatesMs = Date().timeIntervalSince(shownAt) * 1000
+        }
     }
 
     // MARK: helpers
 
     /// Commits the first candidate (a symbol or digit was tapped while composing).
-    private func resolveComposition() {
-        guard state.isComposing, let service else { return }
-        apply(service.selectSync(candidateAt: 0))
+    private func commitFirstCandidate(then: @escaping () -> Void) {
+        guard let service else { then(); return }
+        let expected = state.candidates.first?.text
+        issued += 1
+        let myEpoch = epoch
+        service.select(candidateAt: 0, expecting: expected) { [weak self] update in
+            self?.answered(update, epoch: myEpoch, letter: nil, rawFallback: nil, then: then)
+        }
     }
 
     private func insert(_ text: String) {
         output?.insertText(text)
         onActivity?()
-    }
-
-    private func apply(_ update: RimeUpdate) {
-        if let commit = update.commit { insert(commit) }
-        state.composition = update.preedit
-        state.candidates = update.candidates
-        state.highlighted = update.highlighted
-        state.isComposing = update.isComposing
     }
 }

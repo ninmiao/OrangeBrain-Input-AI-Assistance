@@ -84,7 +84,6 @@ targets:
       - path: .rime-data/rime-shared
         type: folder
         buildPhase: resources
-        optional: true
     settings:
       groups: [rimeLink]
       base:
@@ -186,6 +185,35 @@ targets:
       - package: OCRime
       - sdk: JavaScriptCore.framework
 
+  # A second test host (the same code): the keyboard extension runs one process per host app, so two hosts
+  # make two keyboard processes that share one user dictionary.
+  OCTestHost2:
+    type: application
+    platform: iOS
+    sources:
+      - path: OCTestHost
+    settings:
+      groups: [rimeLink]
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.ninmiao.orangecell.testhost2
+        PRODUCT_NAME: OCTestHost2
+        TARGETED_DEVICE_FAMILY: "1"
+    info:
+      path: Config/OCTestHost2-Info.plist
+      properties:
+        CFBundleDisplayName: OCTestHost2
+        CFBundleName: OCTestHost2
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    dependencies:
+      - package: OCKeyboardUI
+      - package: OCCore
+      - package: OCRime
+      - sdk: JavaScriptCore.framework
+
   # Logic tests (no host app) that link librime directly.
   OrangeCellTests:
     type: bundle.unit-test
@@ -232,6 +260,7 @@ schemes:
     build:
       targets:
         OCTestHost: all
+        OCTestHost2: all
         OrangeCell: all
     test:
       config: Debug

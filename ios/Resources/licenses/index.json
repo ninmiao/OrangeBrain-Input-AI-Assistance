@@ -17,6 +17,7 @@
     {"id": "yaml-cpp", "name": "yaml-cpp", "license": "MIT", "url": "https://github.com/jbeder/yaml-cpp", "files": ["LICENSE.txt"]},
     {"id": "zstd", "name": "Zstandard", "license": "BSD-3-Clause 或 GPL-2.0（双许可，取 BSD-3-Clause）", "url": "https://github.com/facebook/zstd", "files": ["LICENSE.txt"]},
     {"id": "nlohmann-json", "name": "nlohmann/json 3.12.0（AI 核心）", "license": "MIT", "url": "https://github.com/nlohmann/json", "files": ["LICENSE.txt"]},
+    {"id": "rime-prelude", "name": "rime-prelude（default.yaml 基础、punctuation.yaml、symbols.yaml、key_bindings.yaml，随词库打进应用）", "license": "LGPL-3.0", "url": "https://github.com/rime/rime-prelude", "files": ["LICENSE-LGPL-3.0.txt", "GPL-3.0.txt", "AUTHORS.txt"]},
     {"id": "fcitx5-prebuilder", "name": "fcitx5-prebuilder（iOS 预编译静态库的来源）", "license": "MIT", "url": "https://github.com/fcitx-contrib/fcitx5-prebuilder", "files": ["LICENSE.txt"]}
   ],
   "data": [

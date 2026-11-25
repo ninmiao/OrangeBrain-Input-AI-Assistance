@@ -69,6 +69,10 @@ public struct RimeUpdate: Equatable, Sendable {
     public var isLastPage: Bool = true
     public var isComposing: Bool = false
     public var asciiMode: Bool = false
+    /// The letters typed for this composition (Rime "input"); empty when nothing is composed.
+    public var rawInput: String = ""
+    /// True when the engine or the session could not be started for this operation (see `RimeService.startError`).
+    public var engineFailed: Bool = false
 
     public init() {}
 }
@@ -86,15 +90,29 @@ public struct RimeServiceConfiguration: Equatable, Sendable {
     /// Test hook: the engine start is held back this long (a slow device), so a test can type
     /// before the engine is ready. Always 0 in the product.
     public var startDelay: TimeInterval
+    /// Opens the user dictionary (learning) when the cross-process lock allows it. Switch off for tools.
+    public var useUserDictionary: Bool
+    /// The schema whose configuration says "no user dictionary" while another process holds the lock.
+    public var userDictionarySchema: String
+    /// When the engine goes idle (Full Access) the user dictionary is exported as text snapshots.
+    public var exportSnapshotOnIdle: Bool
+
+    /// The advisory lock file next to the user dictionary (not inside the LevelDB folder).
+    public var userDictionaryLockPath: String {
+        (userDataDirectory as NSString).appendingPathComponent("orangecell.lock")
+    }
 
     public init(
         sharedDataDirectory: String,
         userDataDirectory: String,
-        maxCandidates: Int = 100,
+        maxCandidates: Int = 30,
         modules: [String]? = RimeEngine.minimalModules,
         schemaID: String? = nil,
         stagingDirectory: String? = nil,
-        startDelay: TimeInterval = 0
+        startDelay: TimeInterval = 0,
+        useUserDictionary: Bool = true,
+        userDictionarySchema: String = "orangecell_wanxiang",
+        exportSnapshotOnIdle: Bool = false
     ) {
         self.sharedDataDirectory = sharedDataDirectory
         self.userDataDirectory = userDataDirectory
@@ -103,5 +121,8 @@ public struct RimeServiceConfiguration: Equatable, Sendable {
         self.schemaID = schemaID
         self.stagingDirectory = stagingDirectory
         self.startDelay = startDelay
+        self.useUserDictionary = useUserDictionary
+        self.userDictionarySchema = userDictionarySchema
+        self.exportSnapshotOnIdle = exportSnapshotOnIdle
     }
 }

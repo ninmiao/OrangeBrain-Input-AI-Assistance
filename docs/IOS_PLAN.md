@@ -127,14 +127,19 @@ void  oc_free(char* p);
 
 | 位置 | 内容 | 谁写 |
 | --- | --- | --- |
-| 应用包内 `rime-shared/` | 预编译的万象词库（`build/*.bin`）、方案、opencc、lua | CI |
-| App Group `rime-user/` | `default.custom.yaml`、用户词库（leveldb）、`installation.yaml` | 主应用（部署）、键盘（学习） |
-| App Group `rime-user/build/` | 主应用部署出的产物（用户改方案、下载新词库后） | 主应用 |
+| 应用包内 `rime-shared/` | 预编译的万象词库（`build/*.bin`、`build/*.schema.yaml`）、`default.yaml` / `key_bindings.yaml` / `punctuation.yaml` / `symbols.yaml` / `default.custom.yaml` 源文件、opencc、`oc-data.json`（词库版本、`inputSha256`、编译与链接的 librime SHA-256）、`licenses/` | CI（只读） |
+| **键盘扩展私有目录** `Application Support/rime-user/` | **唯一的活用户词库**（leveldb）、`user.yaml`、`installation.yaml`、跨进程锁文件 `orangecell.lock`；不论「完全访问」开不开都在这里，只有键盘打开它 | 键盘 |
+| App Group `rime-build/` | 主应用部署出的编译产物（librime 的 `staging_dir`：键盘先读它，没有的文件回退到包内预编译文件）+ `oc-build.json`（应用版本、`inputSha256`）。主应用先写 `rime-build.tmp-*` 再改名替换 | 主应用；键盘只读（需要完全访问，键盘发现与包内词库不匹配就忽略它） |
+| App Group `rime-app/` | 主应用部署时用的临时用户目录：`default.custom.yaml`（包内版本变了且没被人改过才更新）及其哈希记录 | 主应用 |
+| App Group `rime-sync/` | 键盘空闲时导出的用户词库文本快照（librime `sync_user_data`，需要完全访问，尽力而为），主应用可显示或备份 | 键盘 |
+| App Group `rime-user/`（旧） | M1 版本放活词库的地方。键盘出现时，若私有目录还没有词库就把它搬过去一次（`UserDictionaryMigration`） | 只读，迁移后空 |
 | App Group `config/ai-config.json` | 与 Android `AiConfig` 同结构（不含 Key） | 主应用；键盘只读 |
-| App Group `state/deploy-stamp` | 部署版本戳；键盘每次出现时比较，变化则重启 Rime 会话 | 主应用 |
+| App Group `config/keyboard.json` | 键盘设置（数字行开关等）；没有完全访问时键盘用默认值 | 主应用；键盘只读 |
+| App Group `state/deploy-stamp`、`state/config-stamp` | 部署 / 配置版本戳；键盘每次出现时比较，变化则重新载入 | 主应用 |
 | App Group `logs/` | 滚动日志、最近一次崩溃诊断 | 两者 |
 | Keychain 访问组（或 App Group `secrets/`） | 每个 Policy 一条 Key，见第 4.6 节 | 主应用写；键盘读 |
-| 扩展私有目录 | 未开完全访问时的用户词库 | 键盘 |
+
+**为什么活用户词库不放 App Group**（M2 决定）：学到的词不能依赖「完全访问」这个用户随时能拨的开关；而且只有键盘打开它，主应用从来不需要。主应用想看词库内容时读 `rime-sync/` 里的文本快照。
 
 **App Group 的真实名字在运行时确定。** 工程里写的是 `group.io.github.ninmiao.orangecell`，但 SideStore 用免费账号重签时会改成 `group.io.github.ninmiao.orangecell.<团队ID>` 并重新注册。主应用和键盘各自启动时：
 
@@ -148,7 +153,13 @@ void  oc_free(char* p);
 
 - **键盘从不做完整部署。** 默认词库在 CI 预编译进包；用户改配置、换词库、下载新版后，由主应用部署，写出新部署戳。
 - **版本一致。** 预编译所用的 librime 必须与 iOS 静态库同一提交，否则设备上会触发重建（在键盘里极易超内存）。做法：CI 用 prebuilder 同批次的 macOS librime 链接一个 40 行的 `oc_deployer` 小工具来编译词库；两份库都从镜像 Release 按锁文件下载。启动时检查 `rime_get_api()->get_version()` 与包内记录是否一致，不一致只记录告警并使用包内产物。
-- **用户词库锁。** Rime 的用户词库是 LevelDB，同一时刻只能被一个进程打开。规则：只有键盘打开用户词库；主应用部署时跳过用户词库相关任务（只部署方案和配置），用户词库的升级 / 备份在键盘下次空闲时做。M1 在模拟器里让两个进程同时运行来验证。
+- **用户词库与多个键盘进程。** iOS 给每个宿主应用起一个键盘进程，两个进程可能同时存在，挂起的进程还会一直握着 LevelDB 的锁；而 librime 打开失败会安排修复任务（`RepairDB`，失败就把库改名成 `*.userdb.old` 再新建），所以绝不能在没有锁的情况下打开。规则：
+  1. 用户词库只在会话存在期间打开：键盘显示时建会话，隐藏 / 宿主进入后台 / 控制器释放时销毁会话（销毁最后一个会话就会关闭并写盘 LevelDB，引擎和模块保持加载）；
+  2. 建会话前先取 `orangecell.lock` 上的 `flock`（300 ms 内重试）；拿不到就不带用户词库运行：先打开 `orangecell_wanxiang` 的 schema 配置并把 `translator/enable_user_dict` 设为 `false`，再建会话（librime 按 schema 缓存配置，会话读到的就是这份），界面提示「用户词库正被另一个窗口使用」；
+  3. 每次上屏后发一个没人处理的键（`XK_VoidSymbol`），librime 的 `Memory::OnUnhandledKey` 会提交待写的学习事务，所以 `kill -9` 不丢最后一个词；
+  4. 引擎由运行时按租约管理：最后一个租约释放并且空闲 8 秒才 `finalize`，旧控制器无法拆新控制器的引擎；
+  5. 主应用部署时不碰用户词库（只编译 `default.yaml` 到 `rime-build/`）。
+  验收：单元测试查进程打开的文件（隐藏后没有 `.userdb`）、模拟一个进程占着锁（不带词库运行，没有创建或改名任何目录）、旧服务释放后新服务照常打字、上屏后立刻拷走词库文件新进程能读到；端到端 `e2e-hosts` 用两个宿主应用（OCTestHost 和 OCTestHost2，两个键盘进程）轮流打字和学词，并检查词库目录完整、没有 `*.userdb.old`。
 - **会话。** 键盘 `viewWillAppear` 初始化（已初始化则复用），`viewDidDisappear` 提交用户词库；收到内存警告时释放候选缓存并关闭预测。
 
 ### 4.5 AI 请求链路
@@ -443,6 +454,14 @@ ios/
 | 19 | 系统级端到端测试拆成独立任务：`e2e`（Release，闸门）和 `e2e-debug`（只给 Debug 的内存数字）；XCUITest 通过「请求文件」让脚本去量内存、部署、杀键盘进程；按键位置用屏幕像素确定（键盘顶部、底行有没有地球键） | M0 的脚本只要第一个界面测试通过就退出 0，没有真正的闸门；XCUITest 在模拟器里无法自己量别的进程的内存或杀进程 |
 | 20 | 验证者要求「用一个需要 lua / octagram 的方案证明它们真的载入」：随包的万象方案不用这些插件（语法模型关闭，见 12），所以改为两层证据：单元测试 `testLuaPluginRunsATranslatorFromASchema` 在临时用户目录里放一个用 `lua_translator@*oc_probe` 的小方案和一段 Lua 脚本，部署后输入 `luaprobe`，首选候选必须是脚本给出的 `LUA-OK`（CI 里通过，证明 Lua 插件在链接的 librime 里真的载入并运行）；端到端闸门检查键盘自己报告的已注册模块列表含 lua / octagram / predict / qjs。octagram 没有语法模型可用，只证明了注册 | 没有现成的、需要这些插件的方案；注册表里有这些模块说明静态构造函数没有被链接器丢掉（M0 已证实），Lua 的实际运行由探针方案证明 |
 | 21 | 键盘的用户词典位置随「完全访问」变化：开启时在 App Group 的 `rime-user`，关闭时在扩展私有的 `Application Support/rime-user`，切换时不迁移 | 没有完全访问就读不到 App Group；用户在中途开关完全访问时之前学到的词会「消失」（还在另一个目录里），M2 前要决定是否迁移或提示 |
+| 22 | 活用户词库只有一个位置：键盘私有目录，不论完全访问开关（取代第 21 行）。M1 留在 App Group 的词库一次性迁移；主应用的部署产物放 App Group `rime-build/`（`staging_dir`）；开启完全访问时键盘空闲导出文本快照到 `rime-sync/`（尽力而为，端到端里只记录文件数）；端到端学词测试：不开完全访问学「拟好」、打开后仍排第一、主应用部署 + 杀键盘进程后仍排第一、再关掉仍排第一 | 协调者决定（F2）：学到的词不能依赖用户随手能拨的开关 |
+| 23 | 键盘按键一律异步走 Rime 队列，带序号；引擎启动时按键排队、界面立刻显示已按的字母、答案按顺序处理只渲染最新的；引擎启动失败提示并计入漏字母数；闸门要求漏字母数为 0；报告里有「出现到引擎就绪 / 首批候选」的毫秒数 | 验证者 R5/R6、协调者 F1：真机上引擎启动要几百毫秒，不能卡主线程，也不能把中文模式的字母原样插入 |
+| 24 | 用户词库只在会话存在期间打开，隐藏时关闭写盘；跨进程 `flock`；拿不到锁时用「schema 配置临时关掉用户词库」的方式运行（没有用预编译的无学习方案变体）；每次上屏后用无人处理的键触发提交；运行时租约代替控制器析构时 `finalize` | 验证者 R1–R3：见第 4.4 节。选择配置缓存而不是方案变体，是因为会话创建时就会按默认方案打开用户词库，变体也挡不住；该做法由单元测试验证（没有锁时不创建 `*.userdb`） |
+| 25 | 主应用部署原子化（临时目录改名）、`oc-build.json` 记录应用版本和词库 `inputSha256`，键盘校验后才使用，应用更新后删除过期部署；`default.custom.yaml` 在包内版本变化且没被人改过时更新，被改过的保留 | 验证者 R4（librime 优先读 staging 目录，坏的或过期的部署会盖住包内数据） |
+| 26 | 数字行（默认开，主应用里可关）、候选栏右端 ⌄ 展开键和整页候选网格（网格打开时才向 Rime 要 120 个候选，平时候选栏只读 30 个）、AI 行；键盘高度固定（有数字行 338 pt） | 协调者 F3；候选上限和面板延迟创建都是因为内存：一次尝试把候选上限设成 100、网格和文本面板常驻时，键盘进程内存从 46 MB 涨到 54–56 MB，超出预算 |
+| 27 | 中文模式下标点走 Rime 的标点处理器：按键发 ASCII 键，Rime 给出全角标点、成对引号或候选列表；`-` 保持半角 | 验证者 R10：直接插全角字符会打断日期、网址 |
+| 28 | IPA 内容检查、期望 entitlements 入库、测试数为 0 或有跳过就失败、旧运行不覆盖新的 SideStore 源、`oc-data.json` 记录并校验 librime 的 SHA-256 | 验证者 R14、R15、R17 |
+| 29 | rime-prelude（LGPL-3.0）随包带许可证全文、GPL-3.0 全文和作者名单；包里不再放方案 / 算法 / 词典 yaml 源文件 | 验证者 R13 |
 
 ### M1 实测结果（CI 运行 #14，提交 `1c69509`，全部任务通过，发布了 `ios-nightly` 0.2.14）
 

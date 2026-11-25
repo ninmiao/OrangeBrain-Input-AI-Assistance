@@ -80,7 +80,7 @@ extension XCTestCase {
 /// through the host text field. The in-process tests (EmbeddedKeyboardUITests) cover
 /// everything else by identifier.
 final class KeyboardUITests: XCTestCase {
-    private let app = XCUIApplication(bundleIdentifier: hostBundleID)
+    private var app = XCUIApplication(bundleIdentifier: hostBundleID)
 
     /// Mirrors KeyboardView.metrics(landscape: false).
     private enum Metrics {
@@ -198,6 +198,7 @@ final class KeyboardUITests: XCTestCase {
             Thread.sleep(forTimeInterval: 1)
         } while Date() < deadline
         note("keyboardTop pixels=\(fromPixels.map { String(describing: $0) } ?? "n/a") tree=\(fromTree) width=\(screenWidth)")
+        if fromPixels == nil { saveShot("system-keyboard-not-found") }
         let value = fromPixels ?? fromTree
         keyboardTopCache = value
         return value
@@ -420,5 +421,111 @@ final class KeyboardUITests: XCTestCase {
         candidate(0).tap()
         waitForField(field, "the learned 拟好 should still be first after the restart") { $0 == "拟好" }
         requestHelper("footprint-restarted")
+    }
+
+    // MARK: two host apps, kills
+
+    /// Where the candidate `index` sits when the first candidates are phrases of `characters[i]` characters
+    /// (a phrase cell is 20 pt per character plus 22 pt of padding).
+    private func candidate(_ index: Int, phraseLengths characters: [Int]) -> XCUICoordinate {
+        var x: CGFloat = 4
+        for position in 0..<index { x += CGFloat(characters[position] * 20 + 22) }
+        x += CGFloat(characters[index] * 20 + 22) / 2
+        return point(x: x, y: keyboardTop + Metrics.top + Metrics.composition + Metrics.candidates / 2)
+    }
+
+    private let host2 = XCUIApplication(bundleIdentifier: "io.github.ninmiao.orangecell.testhost2")
+
+    /// Brings an already running host to the front and focuses its field (its keyboard process, if it still
+    /// exists, is resumed rather than started anew).
+    private func switchTo(_ host: XCUIApplication) -> XCUIElement {
+        app = host
+        host.activate()
+        let field = host.textFields["oc.testhost.field"]
+        XCTAssertTrue(field.waitForExistence(timeout: 30), "host text field missing")
+        field.tap()
+        Thread.sleep(forTimeInterval: 4)
+        keyboardTopCache = nil
+        bottomRowCache = []
+        return field
+    }
+
+    /// The keyboard extension runs one process per host app. Two hosts take turns typing and learning; the
+    /// user dictionary they share must stay intact and hold both phrases (the end-to-end script checks the
+    /// folder for leftovers of a repair).
+    func testLearningAcrossTwoHostApps() throws {
+        let host1 = app
+        // host 1 learns 拟好 (third candidate of nihao)
+        app = host1
+        var field1 = openHostAndFocus()
+        warmUp(field1)
+        type("nihao")
+        Thread.sleep(forTimeInterval: 1)
+        candidate(2).tap()
+        waitForField(field1, "host 1: the third candidate should have inserted 拟好") { $0 == "拟好" }
+
+        // host 2 (a second keyboard process) learns 我要吃 (second candidate of woyaochihuoguo)
+        app = host2
+        var field2 = openHostAndFocus()
+        warmUp(field2)
+        type("nihao")
+        Thread.sleep(forTimeInterval: 1)
+        candidate(0).tap()
+        waitForField(field2, "host 2 should already see the phrase host 1 learned") { $0 == "拟好" }
+        type("woyaochihuoguo")
+        Thread.sleep(forTimeInterval: 1)
+        candidate(1, phraseLengths: [5, 3, 2]).tap()
+        waitForField(field2, "host 2: the second candidate should have inserted 我要吃") { $0 == "拟好我要吃" }
+        saveShot("system-hosts-2-learned")
+        requestHelper("footprint-host2")
+
+        // back to host 1 (its keyboard process was in the background): both phrases are first
+        field1 = switchTo(host1)
+        type("woyaochihuoguo")
+        Thread.sleep(forTimeInterval: 1)
+        candidate(0).tap()
+        waitForField(field1, "host 1 should see the phrase host 2 learned") { $0 == "拟好我要吃" }
+        type("nihao")
+        Thread.sleep(forTimeInterval: 1)
+        candidate(0).tap()
+        waitForField(field1, "host 1 keeps its own phrase") { $0 == "拟好我要吃拟好" }
+        saveShot("system-hosts-1-back")
+
+        // and once more to host 2
+        field2 = switchTo(host2)
+        type("woyaochihuoguo")
+        Thread.sleep(forTimeInterval: 1)
+        candidate(0).tap()
+        waitForField(field2, "host 2 still has both phrases first") { $0 == "拟好我要吃我要吃" }
+        requestHelper("footprint-hosts-done")
+    }
+
+    /// What was committed last survives a kill -9 right after it, with no hide and no deployment in between.
+    /// Needs a phrase learned in an earlier process (testLearnAPhrase or the two-host test) to check both.
+    func testLearningSurvivesAKillRightAfterTheCommit() throws {
+        app = XCUIApplication(bundleIdentifier: hostBundleID)
+        // A process that learns 我要吃 and dies a moment later.
+        var field = openHostAndFocus()
+        warmUp(field)
+        type("woyaochihuoguo")
+        Thread.sleep(forTimeInterval: 1)
+        candidate(1, phraseLengths: [5, 3, 2]).tap()
+        waitForField(field, "the second candidate should have inserted 我要吃") { $0 == "我要吃" }
+        requestHelper("kill-keyboard")          // kill -9 at once: no hide, no deploy
+        app.terminate()
+
+        // The next process has the word learned just before the kill, and the one learned long before.
+        field = openHostAndFocus()
+        warmUp(field)
+        type("woyaochihuoguo")
+        Thread.sleep(forTimeInterval: 1)
+        saveShot("system-kill-1-last-word")
+        candidate(0).tap()
+        waitForField(field, "the word committed right before the kill is missing") { $0 == "我要吃" }
+        type("nihao")
+        Thread.sleep(forTimeInterval: 1)
+        saveShot("system-kill-2-earlier-word")
+        candidate(0).tap()
+        waitForField(field, "the word learned earlier is missing") { $0 == "我要吃拟好" }
     }
 }
